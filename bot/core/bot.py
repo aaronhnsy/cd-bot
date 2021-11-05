@@ -31,7 +31,7 @@ class CD(commands.AutoShardedBot):
     def __init__(self) -> None:
         super().__init__(
             status=discord.Status.dnd,
-            activity=discord.Activity(type=discord.ActivityType.listening, name="to you."),
+            activity=discord.Activity(type=discord.ActivityType.listening, name="you."),
             allowed_mentions=discord.AllowedMentions(everyone=False, users=True, roles=True, replied_user=False),
             help_command=custom.HelpCommand(),
             intents=discord.Intents.all(),

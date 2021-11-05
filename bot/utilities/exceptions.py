@@ -10,11 +10,11 @@ from core import values
 from utilities import utils
 
 
-class LifeError(commands.CommandError):
+class CDError(commands.CommandError):
     pass
 
 
-class EmbedError(LifeError):
+class EmbedError(CDError):
 
     def __init__(
         self,
