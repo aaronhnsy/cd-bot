@@ -28,6 +28,8 @@ __all__ = (
 
 class Context(commands.Context["CD"]):
 
+    # Paginators
+
     async def paginate_text(
         self,
         *,
@@ -199,3 +201,15 @@ class Context(commands.Context["CD"]):
         await paginator.paginate()
 
         return paginator
+
+    # Misc
+
+    async def dm(self, *args, **kwargs) -> discord.Message | None:
+
+        try:
+            return await self.author.send(*args, **kwargs)
+        except (discord.HTTPException, discord.Forbidden):
+            try:
+                return await self.reply(*args, **kwargs)
+            except (discord.HTTPException, discord.Forbidden):
+                return None

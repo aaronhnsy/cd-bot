@@ -28,9 +28,10 @@ BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = (f"\u001b[{30 + i}m" for
 def logger() -> Generator[None, None, None]:
 
     loggers: dict[str, logging.Logger] = {
-        "bot":     logging.getLogger("bot"),
-        "discord": logging.getLogger("discord"),
-        "slate":   logging.getLogger("slate"),
+        "bot":        logging.getLogger("bot"),
+        "extensions": logging.getLogger("extensions"),
+        "discord":    logging.getLogger("discord"),
+        "slate":      logging.getLogger("slate"),
     }
 
     for name, log in loggers.items():
@@ -71,6 +72,7 @@ def logger() -> Generator[None, None, None]:
         stream_handler.setFormatter(stream_formatter)
 
     loggers["bot"].setLevel(logging.DEBUG)
+    loggers["extensions"].setLevel(logging.DEBUG)
     loggers["discord"].setLevel(logging.INFO)
     loggers["slate"].setLevel(logging.INFO)
 

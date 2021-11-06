@@ -38,3 +38,9 @@ class DatetimeFormat(Enum):
 
     LONG_DATETIME = "dddd Do MMMM YYYY [at] hh:mm A"
     LONG_DATETIME_WITH_SECONDS = "dddd Do MMMM YYYY [at] hh:mm:ss A"
+
+
+class LogType(Enum):
+    DM = 0
+    GUILD = 1
+    ERROR = 2
