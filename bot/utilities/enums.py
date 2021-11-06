@@ -33,8 +33,8 @@ class DatetimeFormat(Enum):
     FULL_LONG_DATETIME = "dddd [the] Do [of] MMMM YYYY [at] hh:mm A"
     FULL_LONG_DATETIME_WITH_SECONDS = "dddd [the] Do [of] MMMM YYYY [at] hh:mm:ss A"
 
-    PARTIAL_LONG_DATETIME = "dddd Do [of] MMMM YYYY [at] hh:mm"
-    PARTIAL_LONG_DATETIME_WITH_SECONDS = "dddd Do [of] MMMM YYYY [at] hh:mm:ss"
+    PARTIAL_LONG_DATETIME = "dddd Do [of] MMMM YYYY [at] hh:mm A"
+    PARTIAL_LONG_DATETIME_WITH_SECONDS = "dddd Do [of] MMMM YYYY [at] hh:mm:ss A"
 
-    LONG_DATETIME = "dddd Do MMMM YYYY [at] hh:mm"
-    LONG_DATETIME_WITH_SECONDS = "dddd Do MMMM YYYY [at] hh:mm:ss"
+    LONG_DATETIME = "dddd Do MMMM YYYY [at] hh:mm A"
+    LONG_DATETIME_WITH_SECONDS = "dddd Do MMMM YYYY [at] hh:mm:ss A"
