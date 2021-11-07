@@ -56,6 +56,8 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
 
         await self.edit_controller(error=error)
 
+        self._current = None
+
         if self.is_playing() or self._waiting:
             return
 
@@ -65,7 +67,7 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
         if track.source is slate.obsidian.Source.SPOTIFY:
 
             try:
-                search = await self.search(f"{track.author} - {track.title}", source=slate.obsidian.Source.YOUTUBE, ctx=track.ctx)
+                search = await self.search(f"{track.author} - {track.title}", source=slate.obsidian.Source.YOUTUBE_MUSIC, ctx=track.ctx)
             except exceptions.EmbedError as e:
                 await self.send(embed=e.embed)
             else:
