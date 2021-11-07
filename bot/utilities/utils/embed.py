@@ -24,7 +24,7 @@ def embed(
     title: str | None = None,
     description: str | None = None,
     url: str | None = None,
-    colour: discord.Colour = values.ORANGE,
+    colour: discord.Colour = values.MAIN,
     emoji: str | None = None,
 ) -> discord.Embed:
 

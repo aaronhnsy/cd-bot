@@ -41,7 +41,7 @@ class FieldsPaginator(paginators.BasePaginator):
         author_icon_url: str | None = None,
         title: str | None = None,
         url: str | None = None,
-        colour: discord.Colour = values.ORANGE,
+        colour: discord.Colour = values.MAIN,
     ) -> None:
 
         super().__init__(

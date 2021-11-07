@@ -87,7 +87,7 @@ class Context(commands.Context["CD"]):
         author_icon_url: str | None = None,
         title: str | None = None,
         url: str | None = None,
-        colour: discord.Colour = values.ORANGE,
+        colour: discord.Colour = values.MAIN,
     ) -> paginators.EmbedPaginator:
 
         paginator = paginators.EmbedPaginator(
@@ -137,7 +137,7 @@ class Context(commands.Context["CD"]):
         author_icon_url: str | None = None,
         title: str | None = None,
         url: str | None = None,
-        colour: discord.Colour = values.ORANGE,
+        colour: discord.Colour = values.MAIN,
     ) -> paginators.FieldsPaginator:
 
         paginator = paginators.FieldsPaginator(
