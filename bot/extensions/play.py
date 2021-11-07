@@ -51,7 +51,7 @@ class Play(commands.Cog):
         await ctx.send(embed=utils.embed(colour=values.GREEN, description=f"Joined {ctx.voice_client.voice_channel.mention}."))
 
     @commands.command(name="play", aliases=["p"])
-    async def play(self, ctx: custom.Context, query: str) -> None:
+    async def play(self, ctx: custom.Context, *, query: str) -> None:
         """
         Queues tracks with the given name or url.
 
@@ -83,3 +83,6 @@ class Play(commands.Cog):
 
         async with ctx.channel.typing():
             await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.YOUTUBE)
+
+        if not ctx.voice_client.is_playing():
+            await ctx.voice_client.handle_track_end()
