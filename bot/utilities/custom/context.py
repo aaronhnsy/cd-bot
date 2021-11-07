@@ -11,7 +11,7 @@ from discord.ext import commands
 
 # My stuff
 from core import values
-from utilities import paginators
+from utilities import custom, paginators
 
 
 if TYPE_CHECKING:
@@ -27,6 +27,12 @@ __all__ = (
 
 
 class Context(commands.Context["CD"]):
+
+    # Properties
+
+    @property
+    def voice_client(self) -> custom.Player | None:
+        return self.guild.voice_client if self.guild else None  # type: ignore
 
     # Paginators
 

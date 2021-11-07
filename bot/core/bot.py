@@ -129,6 +129,20 @@ class CD(commands.AutoShardedBot):
         self.first_ready = False
         __log__.info(f"{self.user} is ready.")
 
+        for node in config.NODES:
+            try:
+                await self.slate.create_node(
+                    bot=self,
+                    identifier=node["identifier"],
+                    host=node["host"],
+                    port=node["port"],
+                    password=node["password"],
+                    spotify_client_id=config.SPOTIFY_CLIENT_ID,
+                    spotify_client_secret=config.SPOTIFY_CLIENT_SECRET,
+                )
+            except slate.obsidian.NodeConnectionError:
+                continue
+
     # Logging
 
     @tasks.loop(seconds=3)

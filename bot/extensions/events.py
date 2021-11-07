@@ -10,6 +10,7 @@ from typing import Type
 import discord
 import pendulum
 import prettify_exceptions
+import slate.obsidian
 from discord.ext import commands
 
 # My stuff
@@ -300,3 +301,21 @@ class Events(commands.Cog):
             max_characters=2000
         )
         await self.bot._log_webhooks[enums.LogType.ERROR].send(exception, username=f"{ctx.author}", avatar_url=utils.avatar(ctx.author))
+
+    # Slate events
+
+    @commands.Cog.listener()
+    async def on_obsidian_track_start(self, player: custom.Player, _: slate.obsidian.TrackStart) -> None:
+        await player.handle_track_start()
+
+    @commands.Cog.listener()
+    async def on_obsidian_track_end(self, player: custom.Player, _: slate.obsidian.TrackEnd) -> None:
+        await player.handle_track_end()
+
+    @commands.Cog.listener()
+    async def on_obsidian_track_stuck(self, player: custom.Player, _: slate.obsidian.TrackStuck) -> None:
+        await player.handle_track_error()
+
+    @commands.Cog.listener()
+    async def on_obsidian_track_exception(self, player: custom.Player, _: slate.obsidian.TrackException) -> None:
+        await player.handle_track_error()

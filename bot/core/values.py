@@ -13,7 +13,11 @@ SUPPORT_SERVER_ID = 240958773122957312
 AXEL_ID = 238356301439041536
 OWNER_IDS = {AXEL_ID, 396096412116320258}
 
-EXTENSIONS = ["jishaku", "extensions.events"]
+EXTENSIONS = [
+    "jishaku",
+    "extensions.events",
+    "extensions.play"
+]
 
 PERMISSIONS = discord.Permissions(
     read_messages=True,
@@ -39,7 +43,7 @@ INVITE_LINK_NO_PERMISSIONS = discord.utils.oauth_url(
 SUPPORT_LINK = "https://discord.gg/w9f6NkQbde"
 GITHUB_LINK = "https://github.com/Axelware/CD-bot"
 
-ORANGE = discord.Colour(0xE03616)
+ORANGE = discord.Colour(0x2ECA6D)
 RED = discord.Colour(0xF20035)
 GREEN = discord.Colour(0x16E037)
 

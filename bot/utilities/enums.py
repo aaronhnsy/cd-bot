@@ -44,3 +44,8 @@ class LogType(Enum):
     DM = 0
     GUILD = 1
     ERROR = 2
+
+
+class Filters(Enum):
+    ROTATION = 0
+    NIGHTCORE = 1
