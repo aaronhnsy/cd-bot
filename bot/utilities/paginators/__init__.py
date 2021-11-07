@@ -2,9 +2,9 @@
 from __future__ import annotations
 
 # My stuff
-from utilities.paginators.base import BasePaginator
-from utilities.paginators.embed import EmbedPaginator
-from utilities.paginators.embeds import EmbedsPaginator
-from utilities.paginators.fields import FieldsPaginator
-from utilities.paginators.file import FilePaginator
-from utilities.paginators.text import TextPaginator
+from utilities.paginators.base import *
+from utilities.paginators.embed import *
+from utilities.paginators.embeds import *
+from utilities.paginators.fields import *
+from utilities.paginators.file import *
+from utilities.paginators.text import *
