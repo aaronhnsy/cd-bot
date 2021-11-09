@@ -1,6 +1,9 @@
 # Future
 from __future__ import annotations
 
+# Standard Library
+from typing import Literal
+
 # Packages
 import discord
 import slate
@@ -8,9 +11,8 @@ import slate.obsidian
 from discord.ext import commands
 
 # My stuff
-from core import values
 from core.bot import CD
-from utilities import checks, custom, exceptions, utils
+from utilities import custom, exceptions
 
 
 def setup(bot: CD) -> None:
@@ -22,67 +24,189 @@ class Play(commands.Cog):
     def __init__(self, bot: CD) -> None:
         self.bot: CD = bot
 
-    #
+    def cog_check(self, ctx: commands.Context) -> Literal[True]:
 
-    @commands.command(name="join", aliases=["summon", "connect"])
-    async def join(self, ctx: custom.Context) -> None:
-        """
-        Joins the bot to your voice channel.
-        """
+        if not ctx.guild:
+            raise commands.NoPrivateMessage()
+
+        return True
+
+    @staticmethod
+    async def _check_playable(ctx: custom.Context) -> None:
 
         assert isinstance(ctx.author, discord.Member)
 
-        if ctx.voice_client and ctx.voice_client.is_connected():
-            raise exceptions.EmbedError(
-                description=f"I am already connected to {ctx.voice_client.voice_channel.mention}.",
-            )
+        author_channel = ctx.author.voice and ctx.author.voice.channel
+        bot_channel = ctx.voice_client and ctx.voice_client.voice_channel
 
-        if not ctx.author.voice or not ctx.author.voice.channel:
-            raise exceptions.EmbedError(
-                description="You must be connected to a voice channel to use this command.",
-            )
+        if not author_channel:
+            if bot_channel:
+                raise exceptions.EmbedError(description=f"You must be connected to {bot_channel.mention} to use this command.")
+            raise exceptions.EmbedError(description="You must be connected to a voice channel to use this command.")
 
-        await ctx.author.voice.channel.connect(cls=custom.Player)  # type: ignore
-        assert ctx.voice_client is not None
+        if bot_channel:
+            if bot_channel == author_channel:
+                return
+            raise exceptions.EmbedError(description=f"You must be connected to {bot_channel.mention} to use this command.")
 
+        await author_channel.connect(cls=custom.Player)  # type: ignore
         ctx.voice_client._text_channel = ctx.channel  # type: ignore
-        assert ctx.voice_client.text_channel is not None
 
-        await ctx.send(embed=utils.embed(colour=values.GREEN, description=f"Joined {ctx.voice_client.voice_channel.mention}."))
+    # Play
 
-    @commands.command(name="play", aliases=["p"])
+    @commands.command(name="play")
     async def play(self, ctx: custom.Context, *, query: str) -> None:
-        """
-        Queues tracks with the given name or url.
 
-        **query**: The query to search for tracks with.
-
-        **Flags:**
-        **--music**: Searches [YouTube music](https://music.youtube.com/) for results.
-        **--soundcloud**: Searches [soundcloud](https://soundcloud.com/) for results.
-        **--next**: Puts the track that is found at the start of the queue.
-        **--now**: Skips the current track and plays the track that is found.
-
-        **Usage:**
-        `l-play If I Can't Have You by Shawn Mendes --now`
-        `l-play Señorita by Shawn Mendes --next`
-        `l-play Lost In Japan by Shawn Mendes --soundcloud --now`
-        """
-
-        if (
-            ctx.voice_client is None or ctx.voice_client.is_connected() is False
-        ) and (
-            (command := ctx.bot.get_command("join")) is None
-            or await command.can_run(ctx) is True
-        ):
-            await ctx.invoke(command)  # type: ignore
-
+        await self._check_playable(ctx)
         assert ctx.voice_client is not None
-
-        await checks.is_author_connected().predicate(ctx=ctx)  # type: ignore
 
         async with ctx.channel.typing():
             await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.YOUTUBE)
 
-        if not ctx.voice_client.is_playing():
-            await ctx.voice_client.handle_track_end()
+    @commands.command(name="play-now")
+    async def play_now(self, ctx: custom.Context, *, query: str) -> None:
+
+        await self._check_playable(ctx)
+        assert ctx.voice_client is not None
+
+        async with ctx.channel.typing():
+            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.YOUTUBE, now=True)
+
+    @commands.command(name="play-next")
+    async def play_next(self, ctx: custom.Context, *, query: str) -> None:
+
+        await self._check_playable(ctx)
+        assert ctx.voice_client is not None
+
+        async with ctx.channel.typing():
+            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.YOUTUBE, next=True)
+
+    # Youtube
+
+    @commands.command(name="youtube")
+    async def youtube(self, ctx: custom.Context, *, query: str) -> None:
+        await self.play(ctx, query=query)
+
+    @commands.command(name="youtube-now")
+    async def youtube_now(self, ctx: custom.Context, *, query: str) -> None:
+        await self.play_now(ctx, query=query)
+
+    @commands.command(name="youtube-next")
+    async def youtube_next(self, ctx: custom.Context, *, query: str) -> None:
+        await self.play_next(ctx, query=query)
+
+    # Youtube music
+
+    @commands.command(name="youtube-music")
+    async def youtube_music(self, ctx: custom.Context, *, query: str) -> None:
+
+        await self._check_playable(ctx)
+        assert ctx.voice_client is not None
+
+        async with ctx.channel.typing():
+            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.YOUTUBE_MUSIC)
+
+    @commands.command(name="youtube-music-now")
+    async def youtube_music_now(self, ctx: custom.Context, *, query: str) -> None:
+
+        await self._check_playable(ctx)
+        assert ctx.voice_client is not None
+
+        async with ctx.channel.typing():
+            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.YOUTUBE_MUSIC, now=True)
+
+    @commands.command(name="youtube-music-next")
+    async def youtube_music_next(self, ctx: custom.Context, *, query: str) -> None:
+
+        await self._check_playable(ctx)
+        assert ctx.voice_client is not None
+
+        async with ctx.channel.typing():
+            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.YOUTUBE_MUSIC, next=True)
+
+    # Soundcloud
+
+    @commands.command(name="soundcloud")
+    async def soundcloud(self, ctx: custom.Context, *, query: str) -> None:
+
+        await self._check_playable(ctx)
+        assert ctx.voice_client is not None
+
+        async with ctx.channel.typing():
+            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.SOUNDCLOUD)
+
+    @commands.command(name="soundcloud-now")
+    async def soundcloud_now(self, ctx: custom.Context, *, query: str) -> None:
+
+        await self._check_playable(ctx)
+        assert ctx.voice_client is not None
+
+        async with ctx.channel.typing():
+            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.SOUNDCLOUD, now=True)
+
+    @commands.command(name="soundcloud-next")
+    async def soundcloud_next(self, ctx: custom.Context, *, query: str) -> None:
+
+        await self._check_playable(ctx)
+        assert ctx.voice_client is not None
+
+        async with ctx.channel.typing():
+            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.SOUNDCLOUD, next=True)
+
+    # Local
+
+    @commands.command(name="local", hidden=True)
+    async def local(self, ctx: custom.Context, *, query: str) -> None:
+
+        await self._check_playable(ctx)
+        assert ctx.voice_client is not None
+
+        async with ctx.channel.typing():
+            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.LOCAL)
+
+    @commands.command(name="local-now", hidden=True)
+    async def local_now(self, ctx: custom.Context, *, query: str) -> None:
+
+        await self._check_playable(ctx)
+        assert ctx.voice_client is not None
+
+        async with ctx.channel.typing():
+            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.LOCAL, now=True)
+
+    @commands.command(name="local-next", hidden=True)
+    async def local_next(self, ctx: custom.Context, *, query: str) -> None:
+
+        await self._check_playable(ctx)
+        assert ctx.voice_client is not None
+
+        async with ctx.channel.typing():
+            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.LOCAL, next=True)
+
+    # HTTP
+
+    @commands.command(name="http", hidden=True)
+    async def http(self, ctx: custom.Context, *, query: str) -> None:
+
+        await self._check_playable(ctx)
+        assert ctx.voice_client is not None
+
+        async with ctx.channel.typing():
+            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.NONE)
+
+    @commands.command(name="http-now", hidden=True)
+    async def http_now(self, ctx: custom.Context, *, query: str) -> None:
+
+        await self._check_playable(ctx)
+        assert ctx.voice_client is not None
+
+        async with ctx.channel.typing():
+            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.NONE, now=True)
+
+    @commands.command(name="http-next", hidden=True)
+    async def http_next(self, ctx: custom.Context, *, query: str) -> None:
+
+        await self._check_playable(ctx)
+        assert ctx.voice_client is not None
+
+        async with ctx.channel.typing():
+            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.NONE, next=True)

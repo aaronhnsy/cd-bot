@@ -12,13 +12,14 @@ import yarl
 
 # My stuff
 from core import values
-from utilities import custom, enums, exceptions, utils
+from utilities import custom, exceptions, utils
 
 
 if TYPE_CHECKING:
 
     # My stuff
     from core.bot import CD
+
 
 __all__ = (
     "Player",
@@ -65,6 +66,8 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
         track = await self.queue.get_wait()
 
         if track.source is slate.obsidian.Source.SPOTIFY:
+
+            assert track.ctx is not None
 
             try:
                 search = await self.search(f"{track.author} - {track.title}", source=slate.obsidian.Source.YOUTUBE_MUSIC, ctx=track.ctx)
@@ -163,10 +166,9 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
     async def search(
         self,
         query: str,
-        /,
-        *,
+        /, *,
         source: slate.obsidian.Source,
-        ctx: custom.Context | None,
+        ctx: custom.Context
     ) -> slate.obsidian.Result[custom.Context]:
 
         if (url := yarl.URL(query)) and url.host and url.scheme:
@@ -182,7 +184,7 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
 
         except (slate.obsidian.SearchFailed, slate.HTTPError):
             raise exceptions.EmbedError(
-                description="There was an error while searching for results.",
+                description="There was an error while searching for results, try again.",
             )
 
         return search
@@ -190,34 +192,38 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
     async def queue_search(
         self,
         query: str,
-        /,
-        *,
+        /, *,
         source: slate.obsidian.Source,
         ctx: custom.Context,
-        now: bool = False,
         next: bool = False,
-        choose: bool = False,
+        now: bool = False,
     ) -> None:
 
         result = await self.search(query, source=source, ctx=ctx)
+        position = 0 if (next or now) else None
 
-        if result.search_type in {slate.obsidian.SearchType.TRACK, slate.obsidian.SearchType.SEARCH_RESULT} or isinstance(result.result, list):
-            tracks = [result.tracks[0]]
-            description = f"Added the {result.search_source.value.lower()} track " \
-                          f"[{result.tracks[0].title}]({result.tracks[0].uri}) to the queue."
+        if result.search_type is slate.obsidian.SearchType.SEARCH_RESULT or isinstance(result.result, list):
+            track = result.tracks[0]
+            await ctx.reply(
+                embed=utils.embed(
+                    colour=values.GREEN,
+                    description=f"Added the {result.search_source.value.lower()} track **[{track.title}]({track.uri})** by **{track.author}** to the queue."
+                )
+            )
+            self.queue.put(track, position=position)
 
         else:
             tracks = result.tracks
-            description = f"Added the {result.search_source.value.lower()} {result.search_type.name.lower()} " \
-                          f"[{result.result.name}]({result.result.url}) to the queue."
-
-        await ctx.reply(
-            embed=utils.embed(
-                colour=values.GREEN,
-                description=description
+            await ctx.reply(
+                embed=utils.embed(
+                    colour=values.GREEN,
+                    description=f"Added the {result.search_source.value.lower()} {result.search_type.name.lower()} "
+                                f"**[{result.result.name}]({result.result.url})** to the queue."
+                )
             )
-        )
+            self.queue.extend(tracks, position=position)
 
-        self.queue.extend(tracks, position=0 if (now or next) else None)
         if now:
             await self.stop()
+        elif not self.is_playing():
+            await self.handle_track_end()
