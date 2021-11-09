@@ -26,6 +26,75 @@ __all__ = (
 )
 
 
+class SearchDropdown(discord.ui.Select):
+
+    def __init__(
+        self,
+        *,
+        ctx: custom.Context,
+        result: slate.obsidian.Result[custom.Context],
+        next: bool = False,
+        now: bool = False
+    ) -> None:
+
+        self.ctx: custom.Context = ctx
+        self.result: slate.obsidian.Result[custom.Context] = result
+        self.next: bool = next
+        self.now: bool = now
+
+        super().__init__(
+            placeholder='Choose a track...',
+            options=[
+                discord.SelectOption(
+                    label=track.title,
+                    description=f"by {track.author}",
+                    value=str(index)
+                ) for index, track in enumerate(result.tracks[:25])
+            ]
+        )
+
+    async def callback(self, interaction: discord.Interaction) -> None:
+
+        assert self.view is not None
+        self.view.stop()
+
+        track = self.result.tracks[int(self.values[0])]
+
+        await interaction.response.send_message(
+            embed=utils.embed(
+                colour=values.GREEN,
+                description=f"Added the {self.result.search_source.value.lower()} track "
+                            f"**[{track.title}]({track.uri})** by **{track.author}** to the queue."
+            )
+        )
+        self.ctx.voice_client.queue.put(track, position=0 if (self.next or self.now) else None)
+
+        if self.now:
+            await self.ctx.voice_client.stop()
+        if not self.ctx.voice_client.is_playing():
+            await self.ctx.voice_client.handle_track_end()
+
+
+class SearchView(discord.ui.View):
+
+    def __init__(
+        self,
+        *,
+        ctx: custom.Context,
+        result: slate.obsidian.Result[custom.Context],
+        next: bool = False,
+        now: bool = False
+    ) -> None:
+
+        self.ctx: custom.Context = ctx
+
+        super().__init__()
+        self.add_item(SearchDropdown(ctx=ctx, result=result, next=next, now=now))
+
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        return interaction.user is not None and interaction.user.id == self.ctx.author.id
+
+
 class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
 
     def __init__(self, client: CD, channel: discord.VoiceChannel) -> None:
@@ -227,3 +296,20 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
             await self.stop()
         elif not self.is_playing():
             await self.handle_track_end()
+
+    async def choose_search(
+        self,
+        query: str,
+        /, *,
+        source: slate.obsidian.Source,
+        ctx: custom.Context,
+        next: bool = False,
+        now: bool = False,
+    ) -> None:
+
+        result = await self.search(query, source=source, ctx=ctx)
+
+        view = SearchView(ctx=ctx, result=result, next=next, now=now)
+        message = await ctx.send("Choose a track!", view=view)
+        await view.wait()
+        await message.delete()
