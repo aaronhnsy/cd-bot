@@ -58,6 +58,9 @@ class SearchDropdown(discord.ui.Select):
         assert self.view is not None
         self.view.stop()
 
+        if not self.ctx.voice_client:
+            return
+
         track = self.result.tracks[int(self.values[0])]
 
         await interaction.response.send_message(

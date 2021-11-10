@@ -81,6 +81,8 @@ class Play(commands.Cog):
         async with ctx.channel.typing():
             await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.YOUTUBE, now=True)
 
+    # Search
+
     @commands.command(name="search")
     async def search(self, ctx: custom.Context, *, query: str) -> None:
 
@@ -118,6 +120,8 @@ class Play(commands.Cog):
     @commands.command(name="youtube-now", aliases=["youtube_now", "youtubenow", "ytno"])
     async def youtube_now(self, ctx: custom.Context, *, query: str) -> None:
         await self.play_now(ctx, query=query)
+
+    # Youtube search
 
     @commands.command(name="youtube-search", aliases=["youtube_search", "youtubesearch", "yts"])
     async def youtube_search(self, ctx: custom.Context, *, query: str) -> None:
@@ -159,6 +163,8 @@ class Play(commands.Cog):
 
         async with ctx.channel.typing():
             await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.YOUTUBE_MUSIC, now=True)
+
+    # Youtube music search
 
     @commands.command(name="youtube-music-search", aliases=["youtube_music_search", "youtubemusicsearch", "ytms"])
     async def youtube_music_search(self, ctx: custom.Context, *, query: str) -> None:
@@ -212,6 +218,8 @@ class Play(commands.Cog):
 
         async with ctx.channel.typing():
             await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.SOUNDCLOUD, now=True)
+
+    # Soundcloud search
 
     @commands.command(name="soundcloud-search", aliases=["soundcloud_search", "soundcloudsearch", "scs"])
     async def soundcloud_search(self, ctx: custom.Context, *, query: str) -> None:
