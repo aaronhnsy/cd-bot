@@ -164,7 +164,8 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
         embed = utils.embed(
             title="Now playing:",
             description=f"**[{self.current.title}]({self.current.uri})**\nBy **{self.current.author}**",
-            thumbnail=self.current.thumbnail
+            thumbnail=self.current.thumbnail,
+            colour=values.MAIN,
         )
 
         embed.add_field(

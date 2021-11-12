@@ -4,9 +4,6 @@ from __future__ import annotations
 # Packages
 import discord
 
-# My stuff
-from core import values
-
 
 __all__ = (
     "embed",
@@ -24,11 +21,11 @@ def embed(
     title: str | None = None,
     description: str | None = None,
     url: str | None = None,
-    colour: discord.Colour = values.MAIN,
+    colour: discord.Colour | None = None,
     emoji: str | None = None,
 ) -> discord.Embed:
 
-    e = discord.Embed(colour=colour)
+    e = discord.Embed()
 
     if footer:
         e.set_footer(
@@ -51,8 +48,11 @@ def embed(
     if title:
         e.title = title
     if description:
-        e.description = f"{emoji} {values.ZWSP} {description}" if emoji else description
+        e.description = f"{emoji} \u200b {description}" if emoji else description
     if url:
         e.url = url
+
+    if colour:
+        e.colour = colour
 
     return e

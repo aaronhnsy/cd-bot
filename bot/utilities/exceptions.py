@@ -6,7 +6,6 @@ import discord
 from discord.ext import commands
 
 # My stuff
-from core import values
 from utilities import utils
 
 
@@ -29,10 +28,13 @@ class EmbedError(CDError):
         title: str | None = None,
         description: str | None = None,
         url: str | None = None,
-        colour: discord.Colour = values.RED,
+        colour: discord.Colour | None = None,
         emoji: str | None = None,
         view: discord.ui.View | None = None,
     ) -> None:
+
+        if colour is None:
+            colour = discord.Colour.red()
 
         self.embed: discord.Embed = utils.embed(
             footer_url=footer_url,
