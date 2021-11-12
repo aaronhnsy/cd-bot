@@ -6,7 +6,7 @@ import collections
 import logging
 import time
 import traceback
-from typing import Type
+from typing import Any, Type
 
 # Packages
 import aiohttp
@@ -17,6 +17,7 @@ import mystbin
 import psutil
 import slate.obsidian
 from discord.ext import commands, tasks
+from discord.ext.alternatives import converter_dict
 
 # My stuff
 from core import config, values
@@ -27,6 +28,8 @@ __log__: logging.Logger = logging.getLogger("bot")
 
 
 class CD(commands.AutoShardedBot):
+
+    converters: dict[Type[Any], Type[Any]]
 
     def __init__(self) -> None:
         super().__init__(
@@ -63,6 +66,8 @@ class CD(commands.AutoShardedBot):
         }
         self._log_queue: dict[enums.LogType, list[discord.Embed]] = collections.defaultdict(list)
         self._log_loop.start()
+
+        self.converters |= values.CONVERTERS
 
     # Overridden methods
 

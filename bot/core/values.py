@@ -4,6 +4,9 @@ from __future__ import annotations
 # Packages
 import discord
 
+# My stuff
+from utilities import converters, objects
+
 
 ZWSP = "\u200b"
 NL = "\n"
@@ -16,7 +19,8 @@ OWNER_IDS = {AXEL_ID, 396096412116320258}
 EXTENSIONS = [
     "jishaku",
     "extensions.events",
-    "extensions.play"
+    "extensions.play",
+    "extensions.player"
 ]
 
 PERMISSIONS = discord.Permissions(
@@ -43,9 +47,9 @@ INVITE_LINK_NO_PERMISSIONS = discord.utils.oauth_url(
 SUPPORT_LINK = "https://discord.gg/w9f6NkQbde"
 GITHUB_LINK = "https://github.com/Axelware/CD-bot"
 
-MAIN = discord.Colour(0x2ECA6D)
-RED = discord.Colour(0xF20035)
-GREEN = discord.Colour(0x16E037)
+MAIN = discord.Colour(0xE91E63)
+RED = discord.Colour.red()
+GREEN = discord.Colour.green()
 
 FIRST = "<:previous:855193257633120286>"
 BACKWARD = "<:arrow_left:855193257311076372>"
@@ -55,3 +59,7 @@ LAST = "<:next:855193257419603970>"
 
 CODEBLOCK_START = f"```{NL}"
 CODEBLOCK_END = f"{NL}```"
+
+CONVERTERS = {
+    objects.Time: converters.TimeConverter,
+}
