@@ -20,7 +20,9 @@ EXTENSIONS = [
     "jishaku",
     "extensions.events",
     "extensions.play",
-    "extensions.player"
+    "extensions.player",
+    "extensions.filters",
+    "extensions.information",
 ]
 
 PERMISSIONS = discord.Permissions(

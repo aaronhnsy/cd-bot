@@ -203,4 +203,14 @@ class Player(commands.Cog):
             )
         )
 
-    #
+    # Misc
+
+    @commands.command(name="now-playing", aliases=["now_playing", "nowplaying", "np"])
+    @checks.is_player_playing()
+    @checks.is_player_connected()
+    async def now_playing(self, ctx: custom.Context) -> None:
+        """
+        Shows the current track.
+        """
+
+        await ctx.voice_client.send_controller(ctx.channel)
