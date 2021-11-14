@@ -2,7 +2,8 @@
 from __future__ import annotations
 
 # Standard Library
-from typing import Literal
+import math
+from typing import Literal, Optional
 
 # Packages
 import discord
@@ -213,4 +214,105 @@ class Player(commands.Cog):
         Shows the current track.
         """
 
-        await ctx.voice_client.send_controller(ctx.channel)
+        assert ctx.voice_client is not None
+        await ctx.voice_client.send_controller(ctx.channel)  # type: ignore
+
+    # Skipping
+
+    @commands.command(name="force-skip", aliases=["force_skip", "forceskip", "fs"])
+    @checks.is_player_playing()
+    @checks.is_author_connected()
+    @checks.is_player_connected()
+    async def force_skip(self, ctx: custom.Context, amount: Optional[int]) -> None:
+
+        try:
+            await commands.check_any(  # type: ignore
+                checks.is_owner(),  # type: ignore
+                checks.is_guild_owner(),  # type: ignore
+                checks.has_any_permission(  # type: ignore
+                    manage_channels=True,
+                    manage_roles=True,
+                    manage_guild=True,
+                    kick_members=True,
+                    ban_members=True,
+                    administrator=True,
+                ),
+            ).predicate(ctx=ctx)
+
+        except commands.CheckAnyFailure:
+            raise exceptions.EmbedError(description="You do not have permission to force skip.")
+
+        assert ctx.voice_client is not None
+
+        if amount:
+
+            if 0 <= amount > len(ctx.voice_client.queue) + 1:
+                raise exceptions.EmbedError(
+                    description=f"There are not enough tracks in the queue to skip that many, try again with an amount between "
+                                f"**1** and **{len(ctx.voice_client.queue) + 1}**.",
+                )
+
+            del ctx.voice_client.queue[:amount - 1]
+
+        await ctx.voice_client.stop()
+        await ctx.reply(
+            embed=utils.embed(
+                colour=values.GREEN,
+                description=f"Force skipped **{amount or 1}** track{'s' if (amount or 1) != 1 else ''}."
+            )
+        )
+
+    @commands.command(name="vote-skip", aliases=["vote_skip", "voteskip", "vs", "skip", "s"])
+    @checks.is_player_playing()
+    @checks.is_author_connected()
+    @checks.is_player_connected()
+    async def vote_skip(self, ctx: custom.Context) -> None:
+
+        assert ctx.voice_client is not None
+        assert ctx.voice_client.current is not None
+        assert ctx.voice_client.current.requester is not None
+
+        if ctx.author not in ctx.voice_client.listeners:
+            raise exceptions.EmbedError(description="You can not vote skip as you are currently deafened.")
+
+        async def skip() -> None:
+
+            assert ctx.voice_client is not None
+
+            await ctx.voice_client.stop()
+            await ctx.reply(
+                embed=utils.embed(
+                    colour=values.GREEN,
+                    description="Skipped the current track.")
+            )
+            ctx.voice_client.skip_request_ids.clear()
+
+        if ctx.author.id == ctx.voice_client.current.requester.id:
+            await skip()
+
+        elif ctx.author.id in ctx.voice_client.skip_request_ids:
+
+            ctx.voice_client.skip_request_ids.remove(ctx.author.id)
+            await ctx.reply(
+                embed=utils.embed(
+                    colour=values.GREEN,
+                    description="Removed your vote to skip."
+                )
+            )
+
+        else:
+
+            skips_needed = math.floor(60 * len(ctx.voice_client.listeners) / 100)
+
+            if len(ctx.voice_client.skip_request_ids) + 1 > skips_needed:
+                await skip()
+
+            else:
+                ctx.voice_client.skip_request_ids.add(ctx.author.id)
+                await ctx.reply(
+                    embed=utils.embed(
+                        colour=values.GREEN,
+                        description=f"Added your vote to skip, now at **{len(ctx.voice_client.skip_request_ids)}** out of **{skips_needed}** votes "
+                                    f"needed to skip."
+                    )
+                )

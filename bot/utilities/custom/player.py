@@ -107,6 +107,7 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
         self._controller: discord.Message | None = None
 
         self.queue: slate.Queue[slate.obsidian.Track] = slate.Queue()
+        self.skip_request_ids: set[int] = set()
 
         self._waiting: bool = False
 
