@@ -176,3 +176,21 @@ class Information(commands.Cog):
                             f"● **[Source]({values.GITHUB_LINK})**"
             )
         )
+
+    @commands.command(name="platforms")
+    async def platforms(self, ctx: custom.Context) -> None:
+
+        await ctx.reply(
+            embed=utils.embed(
+                colour=values.MAIN,
+                title=":tools: Platforms",
+                description="● **Youtube** *(Links, Searching)*\n"
+                            "● **Youtube music** *(Links, Searching)*\n"
+                            "● **Spotify** *(Links, Searching)*\n"
+                            "● **Soundcloud** *(Links, Searching)*\n"
+                            "● **Bandcamp** *(Links)*\n"
+                            "● **NicoNico** *(Links)*\n"
+                            "● **Twitch** *(Links)*\n"
+                            "● **Vimeo** *(Links)*\n"
+            )
+        )
