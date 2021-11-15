@@ -13,7 +13,6 @@ from typing import Any, Optional
 # Packages
 import discord
 import humanize
-import pkg_resources
 import psutil
 from discord.ext import commands
 

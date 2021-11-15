@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Literal
 
 # Packages
+import discord
 from discord.ext import commands
 
 # My stuff
@@ -40,44 +41,19 @@ class Queue(commands.Cog):
 
         await ctx.paginate_embed(
             entries=[
-                f"**{index + 1}.** [{track.title}]({track.uri}) | {utils.format_seconds(track.length // 1000)} | {getattr(track.requester, 'mention', None)}"
-                for index, track in enumerate(ctx.voice_client.queue)
+                f"**{index + 1}. [{discord.utils.escape_markdown(track.title)}]({track.uri})** by **{discord.utils.escape_markdown(track.author)}**\n"
+                f"**⤷** {utils.format_seconds(track.length // 1000, friendly=True)} | "
+                f"{track.source.value.title()} | "
+                f"Added by: {getattr(track.requester, 'mention', None)}"
+                for index, track in enumerate(ctx.voice_client.queue._queue)
             ],
-            per_page=10,
-            title="Queue:",
-            header=f"**Tracks:** {len(ctx.voice_client.queue)}\n"
-                   f"**Time:** {utils.format_seconds(sum(track.length for track in ctx.voice_client.queue) // 1000, friendly=True)}\n"
-                   f"**Loop mode:** {ctx.voice_client.queue.loop_mode.name.title()}\n\n",
+            per_page=5,
+            splitter="\n\n",
+            embed_footer=f"{len(ctx.voice_client.queue._queue)} tracks | "
+                         f"{utils.format_seconds(sum(track.length for track in ctx.voice_client.queue._queue) // 1000, friendly=True)} | "
+                         f"Loop mode: {ctx.voice_client.queue.loop_mode.name.title()} | "
+                         f"1 = up next",
         )
-
-    @commands.command(name="queue-detailed", aliases=["queue_detailed", "queuedetailed", "qd"])
-    @checks.is_queue_not_empty()
-    @checks.is_player_connected()
-    async def queue_detailed(self, ctx: custom.Context) -> None:
-
-        assert ctx.voice_client is not None
-
-        entries = []
-
-        for track in ctx.voice_client.queue:
-
-            embed = utils.embed(
-                colour=values.MAIN,
-                title=track.title,
-                url=track.uri,
-                description=f"**Author:** {track.author}\n"
-                            f"**Length:** {utils.format_seconds(round(track.length) // 1000, friendly=True)}\n"
-                            f"**Source:** {track.source.name.title()}\n"
-                            f"**Requester:** {getattr(track.requester, 'mention', None)} `{getattr(track.requester, 'id', None)}`\n"
-                            f"**Is stream:** {track.is_stream()}\n"
-                            f"**Is seekable:** {track.is_seekable()}\n",
-                image=track.thumbnail
-            )
-            entries.append(embed)
-
-        await ctx.paginate_embeds(entries=entries)
-
-    # Queue history
 
     @commands.command(name="queue-history", aliases=["queue_history", "queuehistory", "qh"])
     @checks.is_queue_history_not_empty()
@@ -88,44 +64,21 @@ class Queue(commands.Cog):
 
         await ctx.paginate_embed(
             entries=[
-                f"**{index + 1}.** [{track.title}]({track.uri}) | {utils.format_seconds(track.length // 1000)} | {getattr(track.requester, 'mention', None)}"
-                for index, track in enumerate(ctx.voice_client.queue._history)
+                f"**{index + 1}. [{discord.utils.escape_markdown(track.title)}]({track.uri})** by **{discord.utils.escape_markdown(track.author)}**\n"
+                f"**⤷** {utils.format_seconds(track.length // 1000, friendly=True)} | "
+                f"{track.source.value.title()} | "
+                f"Added by: {getattr(track.requester, 'mention', None)}"
+                for index, track in enumerate(reversed(ctx.voice_client.queue._history))
             ],
-            per_page=10,
-            title="Queue history:",
-            header=f"**Tracks:** {len(ctx.voice_client.queue._history)}\n"
-                   f"**Time:** {utils.format_seconds(sum(track.length for track in ctx.voice_client.queue._history) // 1000, friendly=True)}\n\n",
-            embed_footer=f"1 = most recent | {len(ctx.voice_client.queue._history)} = least recent",
+            per_page=5,
+            splitter="\n\n",
+            embed_footer=f"{len(ctx.voice_client.queue._history)} tracks | "
+                         f"{utils.format_seconds(sum(track.length for track in ctx.voice_client.queue._history) // 1000, friendly=True)} | "
+                         f"Loop mode: {ctx.voice_client.queue.loop_mode.name.title()} | "
+                         f"1 = most recent",
         )
 
-    @commands.command(name="queue-history-detailed", aliases=["queue_history_detailed", "queuehistorydetailed", "qhd"])
-    @checks.is_queue_history_not_empty()
-    @checks.is_player_connected()
-    async def queue_history_detailed(self, ctx: custom.Context) -> None:
-
-        assert ctx.voice_client is not None
-
-        entries = []
-
-        for track in ctx.voice_client.queue._history:
-
-            embed = utils.embed(
-                title=track.title,
-                url=track.uri,
-                description=f"**Author:** {track.author}\n"
-                            f"**Length:** {utils.format_seconds(round(track.length) // 1000, friendly=True)}\n"
-                            f"**Source:** {track.source.name.title()}\n"
-                            f"**Requester:** {getattr(track.requester, 'mention', None)} `{getattr(track.requester, 'id', None)}`\n"
-                            f"**Is stream:** {track.is_stream()}\n"
-                            f"**Is seekable:** {track.is_seekable()}\n",
-                image=track.thumbnail,
-                footer=f"1 = most recent | {len(ctx.voice_client.queue._history)} = least recent"
-            )
-            entries.append(embed)
-
-        await ctx.paginate_embeds(entries=entries)
-
-    # Queue control commands
+    # General
 
     @commands.command(name="clear", aliases=["clr"])
     @checks.is_queue_not_empty()
@@ -193,7 +146,7 @@ class Queue(commands.Cog):
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"The queue has been sorted by**{method}**."
+                description=f"Tracks in the queue have been {'inversely ' if reverse else ''}sorted by **{method}**."
             )
         )
 
@@ -216,7 +169,8 @@ class Queue(commands.Cog):
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"Removed **[{track.title}]({track.uri})** by **{track.author}** from the queue."
+                description=f"Removed **[{discord.utils.escape_markdown(track.title)}]({track.uri})** "
+                            f"by **{discord.utils.escape_markdown(track.author)}** from the queue."
             )
         )
 
@@ -244,6 +198,9 @@ class Queue(commands.Cog):
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"Moved **[{track.title}]({track.uri})** by **{track.author}** from position **{entry_1}** to position **{entry_2}**.",
+                description=f"Moved **[{discord.utils.escape_markdown(track.title)}]({track.uri})** "
+                            f"by **{discord.utils.escape_markdown(track.author)}** from position **{entry_1}** to position **{entry_2}**.",
             )
         )
+
+    # Looping

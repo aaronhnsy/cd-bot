@@ -66,8 +66,8 @@ class SearchDropdown(discord.ui.Select):
         await interaction.response.send_message(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"Added the {self.result.search_source.value.lower()} track "
-                            f"**[{track.title}]({track.uri})** by **{track.author}** to the queue."
+                description=f"Added the {self.result.search_source.value.lower()} track **[{discord.utils.escape_markdown(track.title)}]({track.uri})** "
+                            f"by **{discord.utils.escape_markdown(track.author)}** to the queue."
             )
         )
         self.ctx.voice_client.queue.put(track, position=0 if (self.next or self.now) else None)
@@ -281,7 +281,8 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
             await ctx.reply(
                 embed=utils.embed(
                     colour=values.GREEN,
-                    description=f"Added the {result.search_source.value.lower()} track **[{track.title}]({track.uri})** by **{track.author}** to the queue."
+                    description=f"Added the {result.search_source.value.lower()} track **[{discord.utils.escape_markdown(track.title)}]({track.uri})** by "
+                                f"**{discord.utils.escape_markdown(track.author)}** to the queue."
                 )
             )
             self.queue.put(track, position=position)
