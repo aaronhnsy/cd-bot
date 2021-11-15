@@ -12,7 +12,7 @@ import yarl
 
 # My stuff
 from core import values
-from utilities import custom, exceptions, utils
+from utilities import custom, enums, exceptions, utils
 
 
 if TYPE_CHECKING:
@@ -108,6 +108,7 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
 
         self.queue: slate.Queue[slate.obsidian.Track] = slate.Queue()
         self.skip_request_ids: set[int] = set()
+        self.filters: set[enums.Filter] = set()
 
         self._waiting: bool = False
 
@@ -276,7 +277,7 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
         result = await self.search(query, source=source, ctx=ctx)
         position = 0 if (next or now) else None
 
-        if result.search_type is slate.obsidian.SearchType.SEARCH_RESULT or isinstance(result.result, list):
+        if result.search_type in {slate.obsidian.SearchType.SEARCH_RESULT, slate.obsidian.SearchType.TRACK} or isinstance(result.result, list):
             track = result.tracks[0]
             await ctx.reply(
                 embed=utils.embed(
