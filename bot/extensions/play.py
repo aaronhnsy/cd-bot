@@ -113,11 +113,11 @@ class Play(commands.Cog):
     async def youtube(self, ctx: custom.Context, *, query: str) -> None:
         await self.play(ctx, query=query)
 
-    @commands.command(name="youtube-next", aliases=["youtube_next", "youtubenext", "ytne"])
+    @commands.command(name="youtube-next", aliases=["youtube_next", "youtubenext", "ytne"], hidden=True)
     async def youtube_next(self, ctx: custom.Context, *, query: str) -> None:
         await self.play_next(ctx, query=query)
 
-    @commands.command(name="youtube-now", aliases=["youtube_now", "youtubenow", "ytno"])
+    @commands.command(name="youtube-now", aliases=["youtube_now", "youtubenow", "ytno"], hidden=True)
     async def youtube_now(self, ctx: custom.Context, *, query: str) -> None:
         await self.play_now(ctx, query=query)
 
@@ -146,7 +146,7 @@ class Play(commands.Cog):
         async with ctx.channel.typing():
             await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.YOUTUBE_MUSIC)
 
-    @commands.command(name="youtube-music-next", aliases=["youtube_music_next", "youtubemusicnext", "ytmne"])
+    @commands.command(name="youtube-music-next", aliases=["youtube_music_next", "youtubemusicnext", "ytmne"], hidden=True)
     async def youtube_music_next(self, ctx: custom.Context, *, query: str) -> None:
 
         await self._check_playable(ctx)
@@ -155,7 +155,7 @@ class Play(commands.Cog):
         async with ctx.channel.typing():
             await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.YOUTUBE_MUSIC, next=True)
 
-    @commands.command(name="youtube-music-now", aliases=["youtube_music_now", "youtubemusicnow", "ytmno"])
+    @commands.command(name="youtube-music-now", aliases=["youtube_music_now", "youtubemusicnow", "ytmno"], hidden=True)
     async def youtube_music_now(self, ctx: custom.Context, *, query: str) -> None:
 
         await self._check_playable(ctx)
@@ -201,7 +201,7 @@ class Play(commands.Cog):
         async with ctx.channel.typing():
             await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.SOUNDCLOUD)
 
-    @commands.command(name="soundcloud-next", aliases=["soundcloud_next", "soundcloudnext", "scne"])
+    @commands.command(name="soundcloud-next", aliases=["soundcloud_next", "soundcloudnext", "scne"], hidden=True)
     async def soundcloud_next(self, ctx: custom.Context, *, query: str) -> None:
 
         await self._check_playable(ctx)
@@ -210,7 +210,7 @@ class Play(commands.Cog):
         async with ctx.channel.typing():
             await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.SOUNDCLOUD, next=True)
 
-    @commands.command(name="soundcloud-now", aliases=["soundcloud_now", "soundcloudnow", "scno"])
+    @commands.command(name="soundcloud-now", aliases=["soundcloud_now", "soundcloudnow", "scno"], hidden=True)
     async def soundcloud_now(self, ctx: custom.Context, *, query: str) -> None:
 
         await self._check_playable(ctx)
@@ -248,6 +248,7 @@ class Play(commands.Cog):
     # Local
 
     @commands.command(name="local", aliases=["l"], hidden=True)
+    @commands.is_owner()
     async def local(self, ctx: custom.Context, *, query: str) -> None:
 
         await self._check_playable(ctx)
@@ -257,6 +258,7 @@ class Play(commands.Cog):
             await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.LOCAL)
 
     @commands.command(name="local-next", aliases=["local_next", "localnext", "lne"], hidden=True)
+    @commands.is_owner()
     async def local_next(self, ctx: custom.Context, *, query: str) -> None:
 
         await self._check_playable(ctx)
@@ -266,6 +268,7 @@ class Play(commands.Cog):
             await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.LOCAL, next=True)
 
     @commands.command(name="local-now", aliases=["local_now", "localnow", "lno"],  hidden=True)
+    @commands.is_owner()
     async def local_now(self, ctx: custom.Context, *, query: str) -> None:
 
         await self._check_playable(ctx)
@@ -277,6 +280,7 @@ class Play(commands.Cog):
     # HTTP
 
     @commands.command(name="http", aliases=["h"], hidden=True)
+    @commands.is_owner()
     async def http(self, ctx: custom.Context, *, query: str) -> None:
 
         await self._check_playable(ctx)
@@ -286,6 +290,7 @@ class Play(commands.Cog):
             await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.NONE)
 
     @commands.command(name="http-next", aliases=["http_next", "httpnext", "hne"], hidden=True)
+    @commands.is_owner()
     async def http_next(self, ctx: custom.Context, *, query: str) -> None:
 
         await self._check_playable(ctx)
@@ -295,6 +300,7 @@ class Play(commands.Cog):
             await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.NONE, next=True)
 
     @commands.command(name="http-now", aliases=["http_now", "httpnow", "hno"], hidden=True)
+    @commands.is_owner()
     async def http_now(self, ctx: custom.Context, *, query: str) -> None:
 
         await self._check_playable(ctx)
