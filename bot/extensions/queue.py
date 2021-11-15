@@ -6,6 +6,7 @@ from typing import Literal
 
 # Packages
 import discord
+import slate
 from discord.ext import commands
 
 # My stuff
@@ -204,3 +205,41 @@ class Queue(commands.Cog):
         )
 
     # Looping
+
+    @commands.command(name="loop-current", aliases=["loop_current", "loopcurrent", "loopc", "cloop"])
+    @checks.is_author_connected()
+    @checks.is_player_connected()
+    async def loop_current(self, ctx: custom.Context) -> None:
+
+        assert ctx.voice_client is not None
+
+        if ctx.voice_client.queue.loop_mode != slate.QueueLoopMode.CURRENT:
+            ctx.voice_client.queue.set_loop_mode(slate.QueueLoopMode.CURRENT)
+        else:
+            ctx.voice_client.queue.set_loop_mode(slate.QueueLoopMode.OFF)
+
+        await ctx.reply(
+            embed=utils.embed(
+                colour=values.GREEN,
+                description=f"The queue looping mode is now **{ctx.voice_client.queue.loop_mode.name.title()}**.",
+            )
+        )
+
+    @commands.command(name="loop-queue", aliases=["loop_queue", "loopqueue", "loopq", "qloop", "loop"])
+    @checks.is_author_connected()
+    @checks.is_player_connected()
+    async def loop_queue(self, ctx: custom.Context) -> None:
+
+        assert ctx.voice_client is not None
+
+        if ctx.voice_client.queue.loop_mode != slate.QueueLoopMode.QUEUE:
+            ctx.voice_client.queue.set_loop_mode(slate.QueueLoopMode.QUEUE)
+        else:
+            ctx.voice_client.queue.set_loop_mode(slate.QueueLoopMode.OFF)
+
+        await ctx.reply(
+            embed=utils.embed(
+                colour=values.GREEN,
+                description=f"The queue looping mode is now **{ctx.voice_client.queue.loop_mode.name.title()}**.",
+            )
+        )
