@@ -21,7 +21,7 @@ EXTENSIONS = [
     "extensions.events",
     "extensions.play",
     "extensions.player",
-    "extensions.filters",
+    "extensions.effects",
     "extensions.information",
     "extensions.queue",
 ]

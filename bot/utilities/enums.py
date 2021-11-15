@@ -46,6 +46,9 @@ class LogType(Enum):
     ERROR = 2
 
 
-class Filters(Enum):
+class Filter(Enum):
     ROTATION = 0
     NIGHTCORE = 1
+    MONO = 2
+    LEFT = 3
+    RIGHT = 4
