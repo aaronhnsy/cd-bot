@@ -23,6 +23,7 @@ EXTENSIONS = [
     "extensions.player",
     "extensions.filters",
     "extensions.information",
+    "extensions.queue",
 ]
 
 PERMISSIONS = discord.Permissions(
