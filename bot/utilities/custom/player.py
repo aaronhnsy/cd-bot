@@ -43,34 +43,55 @@ class SearchDropdown(discord.ui.Select):
         self.now: bool = now
 
         super().__init__(
-            placeholder='Choose a track...',
+            placeholder="Choose some tracks...",
+            max_values=min(len(result.tracks), 25),
             options=[
                 discord.SelectOption(
-                    label=track.title,
-                    description=f"by {track.author}",
-                    value=str(index)
+                    label=f"{track.title[:100]}",
+                    value=str(index),
+                    description=f"by {track.author[:95]}",
                 ) for index, track in enumerate(result.tracks[:25])
             ]
         )
 
     async def callback(self, interaction: discord.Interaction) -> None:
 
+        # Finish view.
+
         assert self.view is not None
+
+        self.disabled = True
+        self.placeholder = "Selection done"
+
+        await self.view.message.edit(view=self.view)
         self.view.stop()
+
+        # Put selected tracks in queue.
 
         if not self.ctx.voice_client:
             return
 
-        track = self.result.tracks[int(self.values[0])]
+        tracks = [self.result.tracks[int(index)] for index in self.values]
+        position = 0 if (self.next or self.now) else None
 
-        await interaction.response.send_message(
-            embed=utils.embed(
-                colour=values.GREEN,
-                description=f"Added the {self.result.search_source.value.lower()} track **[{discord.utils.escape_markdown(track.title)}]({track.uri})** "
-                            f"by **{discord.utils.escape_markdown(track.author)}** to the queue."
+        if len(tracks) > 1:
+            await interaction.response.send_message(
+                embed=utils.embed(
+                    colour=values.GREEN,
+                    description="Added selected tracks to the queue."
+                )
             )
-        )
-        self.ctx.voice_client.queue.put(track, position=0 if (self.next or self.now) else None)
+            self.ctx.voice_client.queue.extend(tracks, position=position)
+        else:
+            await interaction.response.send_message(
+                embed=utils.embed(
+                    colour=values.GREEN,
+                    description=f"Added the {self.result.search_source.value.lower()} track "
+                                f"**[{discord.utils.escape_markdown(tracks[0].title)}]({tracks[0].uri})** "
+                                f"by **{discord.utils.escape_markdown(tracks[0].author)}** to the queue."
+                )
+            )
+            self.ctx.voice_client.queue.put(tracks[0], position=position)
 
         if self.now:
             await self.ctx.voice_client.stop()
@@ -89,13 +110,23 @@ class SearchView(discord.ui.View):
         now: bool = False
     ) -> None:
 
-        self.ctx: custom.Context = ctx
+        super().__init__(timeout=60)
 
-        super().__init__()
+        self.ctx: custom.Context = ctx
+        self.message: discord.Message | None = None
+
         self.add_item(SearchDropdown(ctx=ctx, result=result, next=next, now=now))
 
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         return interaction.user is not None and interaction.user.id == self.ctx.author.id
+
+    async def on_timeout(self) -> None:
+
+        self.children[0].disabled = True  # type: ignore
+        self.children[0].placeholder = "Timed out"  # type: ignore
+
+        await self.message.edit(view=self)
+        self.stop()
 
 
 class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
@@ -164,38 +195,29 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
             return
 
         embed = utils.embed(
-            title="Now playing:",
-            description=f"**[{self.current.title}]({self.current.uri})**\nBy **{self.current.author}**",
+            title="Now Playing:",
+            description=f"**[{discord.utils.escape_markdown(self.current.title)}]({self.current.uri})**\n"
+                        f"by **{discord.utils.escape_markdown(self.current.author)}**\n\n"
+                        f"● **Requested by:** {getattr(self.current.requester, 'mention', None)}\n"
+                        f"● **Source:** {self.current.source.value.title()}\n"
+                        f"● **Paused:** {utils.readable_bool(self.paused).title()}\n"
+                        f"● **Filters:** {', '.join([filter.value for filter in self.filters] or [f'N/A'])}\n"
+                        f"● **Position:** {utils.format_seconds(self.position // 1000)} / {utils.format_seconds(self.current.length // 1000)}\n",
             thumbnail=self.current.thumbnail,
             colour=values.MAIN,
         )
 
-        embed.add_field(
-            name="__Player info:__",
-            value=f"**Paused:** {self.paused}\n"
-                  f"**Loop mode:** {self.queue.loop_mode.name.title()}\n"
-                  f"**Queue length:** {len(self.queue)}\n"
-                  f"**Queue time:** {utils.format_seconds(sum(track.length for track in self.queue) // 1000, friendly=True)}\n",
-        )
-        embed.add_field(
-            name="__Track info:__",
-            value=f"**Time:** {utils.format_seconds(self.position // 1000)} / {utils.format_seconds(self.current.length // 1000)}\n"
-                  f"**Is Stream:** {self.current.is_stream()}\n"
-                  f"**Source:** {self.current.source.value.title()}\n"
-                  f"**Requester:** {self.current.requester.mention if self.current.requester else 'N/A'}\n"
-        )
+        if self.queue._queue:
 
-        if not self.queue.is_empty():
+            entries = [
+                f"**{index + 1}. [{discord.utils.escape_markdown(entry.title)}]({entry.uri})**\n"
+                f"**⤷** by **{discord.utils.escape_markdown(entry.author)}** | {utils.format_seconds(entry.length // 1000, friendly=True)}\n"
+                for index, entry in enumerate(self.queue._queue[:3])
+            ]
 
-            entries = [f"**{index + 1}.** [{entry.title}]({entry.uri})" for index, entry in enumerate(list(self.queue)[:3])]
-            if len(self.queue) > 3:
-                entries.append(f"**...**\n**{len(self.queue)}.** [{self.queue[-1].title}]({self.queue[-1].uri})")
-
-            embed.add_field(
-                name="__Up next:__",
-                value="\n".join(entries),
-                inline=False
-            )
+            embed.description += f"\n" \
+                                 f"● **Up next ({len(self.queue)}):**\n" \
+                                 f"{''.join(entries)}"
 
         return await channel.send(embed=embed)
 
@@ -317,6 +339,5 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
         result = await self.search(query, source=source, ctx=ctx)
 
         view = SearchView(ctx=ctx, result=result, next=next, now=now)
-        message = await ctx.send("Choose a track!", view=view)
-        await view.wait()
-        await message.delete()
+        message = await ctx.reply(values.ZWSP, view=view)
+        view.message = message

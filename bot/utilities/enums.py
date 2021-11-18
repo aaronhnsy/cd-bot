@@ -47,8 +47,8 @@ class LogType(Enum):
 
 
 class Filter(Enum):
-    ROTATION = 0
-    NIGHTCORE = 1
-    MONO = 2
-    LEFT = 3
-    RIGHT = 4
+    ROTATION = '8D'
+    NIGHTCORE = "Nightcore"
+    MONO = "Mono"
+    LEFT = "Left-ear"
+    RIGHT = "Right-ear"
