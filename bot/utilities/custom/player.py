@@ -125,7 +125,9 @@ class SearchView(discord.ui.View):
         self.children[0].disabled = True  # type: ignore
         self.children[0].placeholder = "Timed out"  # type: ignore
 
-        await self.message.edit(view=self)
+        if self.message:
+            await self.message.edit(view=self)
+
         self.stop()
 
 
