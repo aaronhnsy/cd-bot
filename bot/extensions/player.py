@@ -219,7 +219,7 @@ class Player(commands.Cog):
 
     # Skipping
 
-    @commands.command(name="force-skip", aliases=["force_skip", "forceskip", "fs"])
+    @commands.command(name="force-skip", aliases=["force_skip", "forceskip", "fs", "skipto"])
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()

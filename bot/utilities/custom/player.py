@@ -177,7 +177,7 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
             assert track.ctx is not None
 
             try:
-                search = await self.search(f"{track.author} - {track.title}", source=slate.obsidian.Source.YOUTUBE_MUSIC, ctx=track.ctx)
+                search = await self.search(f"{track.author} - {track.title}", source=slate.obsidian.Source.YOUTUBE, ctx=track.ctx)
             except exceptions.EmbedError as e:
                 await self.send(embed=e.embed)
             else:

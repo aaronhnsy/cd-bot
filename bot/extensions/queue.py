@@ -81,7 +81,7 @@ class Queue(commands.Cog):
 
     # General
 
-    @commands.command(name="clear", aliases=["clr"])
+    @commands.command(name="clear")
     @checks.is_queue_not_empty()
     @checks.is_author_connected()
     @checks.is_player_connected()
@@ -97,7 +97,7 @@ class Queue(commands.Cog):
             )
         )
 
-    @commands.command(name="shuffle", aliases=["shfl"])
+    @commands.command(name="shuffle")
     @checks.is_queue_not_empty()
     @checks.is_author_connected()
     @checks.is_player_connected()
@@ -201,6 +201,23 @@ class Queue(commands.Cog):
                 colour=values.GREEN,
                 description=f"Moved **[{discord.utils.escape_markdown(track.title)}]({track.uri})** "
                             f"by **{discord.utils.escape_markdown(track.author)}** from position **{entry_1}** to position **{entry_2}**.",
+            )
+        )
+
+    @commands.command(name="remove-duplicates", aliases=["remove_duplicates", "removeduplicates", "deduplicate", "dedupe"])
+    @checks.is_queue_not_empty()
+    @checks.is_author_connected()
+    @checks.is_player_connected()
+    async def remove_duplicates(self, ctx: custom.Context) -> None:
+
+        assert ctx.voice_client is not None
+
+        ctx.voice_client.queue._queue = list({track.identifier: track for track in ctx.voice_client.queue._queue}.values())
+
+        await ctx.reply(
+            embed=utils.embed(
+                colour=values.GREEN,
+                description="Removed all duplicate tracks in the queue.",
             )
         )
 
