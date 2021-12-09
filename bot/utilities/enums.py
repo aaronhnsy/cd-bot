@@ -44,6 +44,7 @@ class LogType(Enum):
     DM = 0
     GUILD = 1
     ERROR = 2
+    COMMAND = 3
 
 
 class Filter(Enum):

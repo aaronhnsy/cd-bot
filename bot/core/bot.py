@@ -60,9 +60,10 @@ class CD(commands.AutoShardedBot):
         self.add_check(checks.bot, call_once=True)  # type: ignore
 
         self._log_webhooks: dict[enums.LogType, discord.Webhook] = {
-            enums.LogType.DM:    discord.Webhook.from_url(session=self.session, url=config.DM_WEBHOOK_URL),
-            enums.LogType.GUILD: discord.Webhook.from_url(session=self.session, url=config.GUILD_WEBHOOK_URL),
-            enums.LogType.ERROR: discord.Webhook.from_url(session=self.session, url=config.ERROR_WEBHOOK_URL)
+            enums.LogType.DM:      discord.Webhook.from_url(session=self.session, url=config.DM_WEBHOOK_URL),
+            enums.LogType.GUILD:   discord.Webhook.from_url(session=self.session, url=config.GUILD_WEBHOOK_URL),
+            enums.LogType.ERROR:   discord.Webhook.from_url(session=self.session, url=config.ERROR_WEBHOOK_URL),
+            enums.LogType.COMMAND: discord.Webhook.from_url(session=self.session, url=config.COMMAND_WEBHOOK_URL),
         }
         self._log_queue: dict[enums.LogType, list[discord.Embed]] = collections.defaultdict(list)
         self._log_loop.start()

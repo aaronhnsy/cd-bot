@@ -116,7 +116,7 @@ class Events(commands.Cog):
         bots_percent = round((bots / total) * 100, 2)
 
         embed = discord.Embed(
-            colour=values.RED,
+            colour=values.GREEN,
             title=f"Joined: **{guild}**",
             description=f"**Owner:** {guild.owner} (`{guild.owner_id}`)\n"
                         f"**Created:** {utils.format_datetime(guild.created_at, format=enums.DatetimeFormat.PARTIAL_LONG_DATETIME)}\n"
