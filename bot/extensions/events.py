@@ -165,7 +165,7 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message) -> None:
 
-        if config.ENV is enums.Environment.PRODUCTION or message.guild or message.is_system() or not message.content:
+        if config.ENV is enums.Environment.DEVELOPMENT or message.guild or message.is_system() or not message.content:
             return
 
         content = await utils.upload_text(self.bot.mystbin, content=message.content, format="txt")
