@@ -267,7 +267,7 @@ class Play(commands.Cog):
         async with ctx.channel.typing():
             await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.LOCAL, next=True)
 
-    @commands.command(name="local-now", aliases=["local_now", "localnow", "lno"],  hidden=True)
+    @commands.command(name="local-now", aliases=["local_now", "localnow", "lno"], hidden=True)
     @commands.is_owner()
     async def local_now(self, ctx: custom.Context, *, query: str) -> None:
 

@@ -25,7 +25,6 @@ def avatar(
     format: ImageFormat | None = None,
     size: int = 1024,
 ) -> str:
-
     return str(person.display_avatar.replace(format=format or ("gif" if person.display_avatar.is_animated() else "png"), size=size))
 
 
@@ -36,7 +35,6 @@ def icon(
     format: ImageFormat | None = None,
     size: int = 1024
 ) -> str | None:
-
     return str(guild.icon.replace(format=format or ("gif" if guild.icon.is_animated() else "png"), size=size)) if guild.icon else None
 
 
@@ -47,7 +45,6 @@ def banner(
     format: ImageFormat | None = None,
     size: int = 1024
 ) -> str | None:
-
     return str(guild.banner.replace(format=format or ("gif" if guild.banner.is_animated() else "png"), size=size)) if guild.banner else None
 
 
@@ -58,5 +55,4 @@ def splash(
     format: ImageFormat | None = None,
     size: int = 1024
 ) -> str | None:
-
     return str(guild.splash.replace(format=format or ("gif" if guild.splash.is_animated() else "png"), size=size)) if guild.splash else None
