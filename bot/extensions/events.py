@@ -115,7 +115,7 @@ class Events(commands.Cog):
         bots = sum(1 for member in guild.members if member.bot)
         bots_percent = round((bots / total) * 100, 2)
 
-        embed = discord.Embed(
+        embed = utils.embed(
             colour=values.GREEN,
             title=f"Joined: **{guild}**",
             description=f"**Owner:** {guild.owner} (`{guild.owner_id}`)\n"
@@ -141,7 +141,7 @@ class Events(commands.Cog):
         bots = sum(1 for member in guild.members if member.bot)
         bots_percent = round((bots / total) * 100, 2)
 
-        embed = discord.Embed(
+        embed = utils.embed(
             colour=values.RED,
             title=f"Left: **{guild}**",
             description=f"**Owner:** {guild.owner} (`{guild.owner_id}`)\n"
@@ -170,7 +170,7 @@ class Events(commands.Cog):
 
         content = await utils.upload_text(self.bot.mystbin, content=message.content, format="txt")
 
-        embed = discord.Embed(
+        embed = utils.embed(
             colour=values.GREEN,
             title=f"**{message.author}**",
             description=f"{content}\n\n"
@@ -284,7 +284,7 @@ class Events(commands.Cog):
         pretty_exception = "".join(prettify_exceptions.DefaultFormatter().format_exception(type(error), error, error.__traceback__))
         __log__.error(f"Traceback:\n{pretty_exception}")
 
-        embed = discord.Embed(
+        embed = utils.embed(
             colour=values.RED,
             description=f"{await utils.upload_text(self.bot.mystbin, content=ctx.message.content, format='python', max_characters=2000)}\n\n"
                         f"{f'**Guild:** {ctx.guild} (`{ctx.guild.id}`){values.NL}' if ctx.guild else ''}"

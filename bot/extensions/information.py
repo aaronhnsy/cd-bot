@@ -48,7 +48,7 @@ class Information(commands.Cog):
         await self.bot.redis.set("ping", "value")
         redis_end = time.perf_counter()
 
-        embed = discord.Embed(
+        embed = utils.embed(
             colour=values.MAIN,
             title=":ping_pong:",
         )
@@ -71,7 +71,7 @@ class Information(commands.Cog):
         java_search = re.search(r'\"(\d+\.\d+).*\"', subprocess.check_output(["java", "-version"], stderr=subprocess.STDOUT).decode())
         java_version = java_search.groups()[0] if java_search else "Unknown"
 
-        embed = discord.Embed(
+        embed = utils.embed(
             colour=values.MAIN,
             title="System stats:",
             description=f"`OS:` {platform.platform()}\n"
