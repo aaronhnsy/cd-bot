@@ -195,7 +195,7 @@ class Information(commands.Cog):
             )
         )
 
-    @commands.group(name="prefix", invoke_withour_command=True)
+    @commands.group(name="prefix", invoke_without_command=True)
     async def _prefix(self, ctx: custom.Context):
 
         if ctx.invoked_subcommand:

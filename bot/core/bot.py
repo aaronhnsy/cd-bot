@@ -6,7 +6,7 @@ import collections
 import logging
 import time
 import traceback
-from typing import TYPE_CHECKING, Annotated, Any, Type
+from typing import TYPE_CHECKING, Any, Type
 
 # Packages
 import aiohttp
@@ -21,18 +21,13 @@ from discord.ext.alternatives import converter_dict as converter_dict
 
 # My stuff
 from core import config, values
-from utilities import checks, custom, enums, objects, utils
-
-
-if TYPE_CHECKING:
-    # Packages
-    from discord import Message
+from utilities import checks, custom, enums, utils
 
 
 __log__: logging.Logger = logging.getLogger("bot")
 
 
-async def get_prefixes(bot: CD, message: Message) -> list[str]:
+async def get_prefixes(bot: CD, message: discord.Message) -> list[str]:
 
     if message.guild:
         custom_prefixes: list[str] = bot._prefixes.get(message.guild.id)

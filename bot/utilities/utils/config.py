@@ -1,3 +1,9 @@
+"""
+This Source Code Form is subject to the terms of the Mozilla Public
+License, v. 2.0. If a copy of the MPL was not distributed with this
+file, You can obtain one at http://mozilla.org/MPL/2.0/.
+"""
+
 # Standard Library
 import asyncio
 import json
@@ -6,15 +12,15 @@ import uuid
 from typing import Any, Callable, Optional, Type, Union
 
 
-__all__ = (
-    "Config",
-)
+__all__ = ("Config",)
+
 
 class _Encoder(json.JSONEncoder):
     def default(self, o: Any) -> Any:
         if isinstance(o, self):  # type: ignore
             return o.to_json()
         return super().default(o)
+
 
 class Config:
     """The "database" object. Internally based on ``json``."""
