@@ -6,7 +6,7 @@ import collections
 import logging
 import time
 import traceback
-from typing import Any, Type
+from typing import TYPE_CHECKING, Annotated, Any, Type
 
 # Packages
 import aiohttp
@@ -21,10 +21,24 @@ from discord.ext.alternatives import converter_dict as converter_dict
 
 # My stuff
 from core import config, values
-from utilities import checks, custom, enums, utils, objects
+from utilities import checks, custom, enums, objects, utils
+
+
+if TYPE_CHECKING:
+    # Packages
+    from discord import Message
 
 
 __log__: logging.Logger = logging.getLogger("bot")
+
+
+async def get_prefixes(bot: CD, message: Message) -> list[str]:
+
+    if message.guild:
+        custom_prefixes: list[str] = bot._prefixes.get(message.guild.id)
+        return commands.when_mentioned_or(*custom_prefixes)(bot, message)
+
+    return commands.when_mentioned_or(*bot.config.PREFIX)(bot, message)
 
 
 class CD(commands.AutoShardedBot):
@@ -38,7 +52,7 @@ class CD(commands.AutoShardedBot):
             allowed_mentions=discord.AllowedMentions(everyone=False, users=True, roles=True, replied_user=False),
             help_command=custom.HelpCommand(),
             intents=discord.Intents.all(),
-            command_prefix=utils.get_prefixes,
+            command_prefix=get_prefixes,  # type: ignore - this is because dpy didnt type sharded stuff properly before dying.
             case_insensitive=True,
             owner_ids=values.OWNER_IDS,
         )
@@ -70,7 +84,7 @@ class CD(commands.AutoShardedBot):
 
         self.converters |= values.CONVERTERS
 
-        self._prefixes: objects.Config = objects.Config("prefixes.json")
+        self._prefixes: utils.Config = utils.Config("prefixes.json")
 
     # Overridden methods
 
@@ -169,4 +183,5 @@ class CD(commands.AutoShardedBot):
 
     @property
     def config(self) -> config:
+
         return __import__("config")

@@ -1,7 +1,10 @@
-from discord.ext import commands
+# Packages
 from discord import utils
+from discord.ext import commands
 
+# My stuff
 from utilities import custom
+
 
 __all__ = (
     "Prefix",

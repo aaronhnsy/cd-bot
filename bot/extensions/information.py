@@ -19,7 +19,7 @@ from discord.ext import commands
 # My stuff
 from core import values
 from core.bot import CD
-from utilities import custom, exceptions, utils, converters
+from utilities import converters, custom, exceptions, utils
 
 
 def setup(bot: CD) -> None:
