@@ -277,6 +277,7 @@ class Player(commands.Cog):
         try:
             await self._try_force_skip(ctx)
             await self.force_skip(ctx, amount=None)
+            return
         except exceptions.EmbedError:
             pass
 
@@ -314,9 +315,9 @@ class Player(commands.Cog):
 
         else:
 
-            skips_needed = math.floor(60 * len(ctx.voice_client.listeners) / 100)
+            skips_needed = math.floor(75 * len(ctx.voice_client.listeners) / 100)
 
-            if len(ctx.voice_client.listeners) < 3 or len(ctx.voice_client.skip_request_ids) + 1 > skips_needed:
+            if len(ctx.voice_client.listeners) < 3 or (len(ctx.voice_client.skip_request_ids) + 1) >= skips_needed:
                 await skip()
 
             else:
