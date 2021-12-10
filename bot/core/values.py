@@ -24,7 +24,6 @@ EXTENSIONS = [
     "extensions.effects",
     "extensions.information",
     "extensions.queue",
-    "extensions.playlists",
 ]
 
 PERMISSIONS = discord.Permissions(
