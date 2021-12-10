@@ -1,5 +1,33 @@
+[tool.poetry]
+name = "CD-Bot"
+version = "0.1.0"
+description = "A general purpose music bot."
+authors = ["Axelware <email@email.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+"discord.py" = {git = "git@github.com:Rapptz/discord.py", rev = "master"}
+aiohttp = "~3.7"
+aioredis = "^2.0.0"
+asyncpg = "^0.25.0"
+"discord-ext-alternatives" = {git = "git@github.com:Ext-Creators/discord-ext-alternatives", rev = "2987112c31de9bada4ee95cee9007a326e496e19"}
+humanize = "^3.12.0"
+jishaku = "^2.3.2"
+"mystbin.py" = "^2.2.0"
+pendulum = "^2.1.2"
+psutil = "^5.8.0"
+pynacl = "^1.4.0"
+rapidfuzz = "^1.8.3"
+setproctitle = "^1.2.2"
+slate = {git = "git@github.com:Axelware/slate", rev = "main"}
+"prettify.py" = {git = "git@github.com:ShineyDev/prettify.py", rev = "main"}
+
+[tool.poetry.dev-dependencies]
+isort = "*"
+
 [tool.isort]
-line_length = 120
+line_length = 125
 multi_line_output = 3
 lines_after_imports = 2
 combine_star = true
@@ -11,3 +39,38 @@ import_heading_stdlib = "Standard Library"
 import_heading_thirdparty = "Packages"
 import_heading_firstparty="My stuff"
 import_heading_localfolder="My stuff"
+
+[tool.pyright]
+include = ["bot"]
+exclude = ["**/node_modules", "**/__pycache__"]
+verboseOutput = false
+pythonVersion = "3.10"
+typeCheckingMode = "basic"
+useLibraryCodeForTypes = true
+strictListInference = true
+strictDictionaryInference = true
+strictSetInference = true
+reportMissingImports = false
+reportMissingModuleSource = "error"
+reportUnusedImport = "none"
+reportUnusedClass = "error"
+reportUnusedFunction = "error"
+reportUnusedVariable = "error"
+reportDuplicateImport = "error"
+reportUntypedFunctionDecorator = "none"
+reportUntypedClassDecorator = "error"
+reportUntypedNamedTuple = "error"
+reportConstantRedefinition = "error"
+reportIncompatibleMethodOverride = "error"
+reportIncompatibleVariableOverride = "error"
+reportOverlappingOverload = "error"
+reportUninitializedInstanceVariable = "error"
+reportMissingTypeArgument = "error"
+reportInvalidTypeVarUse = "error"
+reportCallInDefaultInitializer = "error"
+reportUnnecessaryIsInstance = "error"
+reportUnnecessaryCast = "error"
+reportUnnecessaryComparison = "error"
+reportInvalidStubStatement = "error"
+reportIncompleteStub = "error"
+reportPrivateImportUsage = "none"
