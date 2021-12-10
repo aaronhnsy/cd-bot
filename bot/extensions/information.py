@@ -229,6 +229,10 @@ class Information(commands.Cog):
 
         await ctx.bot._prefixes.put(ctx.guild.id, [prefix])
 
-        embed = utils.embed(title="Prefix updated", description=f"New prefix is {prefix}", footer="You can also mention me as a prefix!")
+        embed = utils.embed(
+            title="Prefix updated",
+            description=f"New prefix is {prefix}",
+            footer="You can also mention me as a prefix!"
+        )
 
         await ctx.send(embed=embed)
