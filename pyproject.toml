@@ -2,29 +2,32 @@
 name = "CD-Bot"
 version = "0.1.0"
 description = "A general purpose music bot."
-authors = ["Axelware <email@email.com>"]
+authors = ["Axel <axelancerr@gmail.com>"]
 license = "MIT"
 
+
 [tool.poetry.dependencies]
-python = "^3.10"
-"discord.py" = {git = "git@github.com:Rapptz/discord.py", rev = "master"}
-aiohttp = "~3.7"
+python = "^3.10.0"
+aiohttp = "~3.7.0"
 aioredis = "^2.0.0"
 asyncpg = "^0.25.0"
-"discord-ext-alternatives" = {git = "git@github.com:Ext-Creators/discord-ext-alternatives", rev = "2987112c31de9bada4ee95cee9007a326e496e19"}
+"discord-ext-alternatives" = { git = "git@github.com:Ext-Creators/discord-ext-alternatives", rev = "2987112c31de9bada4ee95cee9007a326e496e19" }
+"discord.py" = { git = "git@github.com:Rapptz/discord.py", branch = "master" }
 humanize = "^3.12.0"
 jishaku = "^2.3.2"
 "mystbin.py" = "^2.2.0"
 pendulum = "^2.1.2"
+"prettify.py" = { git = "git@github.com:ShineyDev/prettify.py", branch = "main" }
 psutil = "^5.8.0"
 pynacl = "^1.4.0"
 rapidfuzz = "^1.8.3"
 setproctitle = "^1.2.2"
-slate = {git = "git@github.com:Axelware/slate", rev = "main"}
-"prettify.py" = {git = "git@github.com:ShineyDev/prettify.py", rev = "main"}
+slate = { git = "git@github.com:Axelware/slate", branch = "main" }
+
 
 [tool.poetry.dev-dependencies]
 isort = "*"
+
 
 [tool.isort]
 line_length = 125
@@ -33,12 +36,13 @@ lines_after_imports = 2
 combine_star = true
 include_trailing_comma = true
 star_first = true
-known_local_folder=["core", "extensions", "utilities", "typings"]
+known_local_folder = ["core", "extensions", "utilities", "typings"]
 import_heading_future = "Future"
 import_heading_stdlib = "Standard Library"
 import_heading_thirdparty = "Packages"
-import_heading_firstparty="My stuff"
-import_heading_localfolder="My stuff"
+import_heading_firstparty = "My stuff"
+import_heading_localfolder = "My stuff"
+
 
 [tool.pyright]
 include = ["bot"]
