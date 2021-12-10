@@ -219,11 +219,8 @@ class Player(commands.Cog):
 
     # Skipping
 
-    @commands.command(name="force-skip", aliases=["force_skip", "forceskip", "fs", "skipto"])
-    @checks.is_player_playing()
-    @checks.is_author_connected()
-    @checks.is_player_connected()
-    async def force_skip(self, ctx: custom.Context, amount: Optional[int]) -> None:
+    @staticmethod
+    async def _try_force_skip(ctx: custom.Context) -> None:
 
         try:
             await commands.check_any(  # type: ignore
@@ -241,6 +238,14 @@ class Player(commands.Cog):
 
         except commands.CheckAnyFailure:
             raise exceptions.EmbedError(description="You do not have permission to force skip.")
+
+    @commands.command(name="force-skip", aliases=["force_skip", "forceskip", "fs", "skipto"])
+    @checks.is_player_playing()
+    @checks.is_author_connected()
+    @checks.is_player_connected()
+    async def force_skip(self, ctx: custom.Context, amount: Optional[int]) -> None:
+
+        await self._try_force_skip(ctx)
 
         assert ctx.voice_client is not None
 
@@ -261,12 +266,19 @@ class Player(commands.Cog):
                 description=f"Force skipped **{amount or 1}** track{'s' if (amount or 1) != 1 else ''}."
             )
         )
+        ctx.voice_client.skip_request_ids.clear()
 
     @commands.command(name="vote-skip", aliases=["vote_skip", "voteskip", "vs", "skip", "s"])
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def vote_skip(self, ctx: custom.Context) -> None:
+
+        try:
+            await self._try_force_skip(ctx)
+            await self.force_skip(ctx, amount=None)
+        except exceptions.EmbedError:
+            pass
 
         assert ctx.voice_client is not None
         assert ctx.voice_client.current is not None
@@ -304,7 +316,7 @@ class Player(commands.Cog):
 
             skips_needed = math.floor(60 * len(ctx.voice_client.listeners) / 100)
 
-            if len(ctx.voice_client.skip_request_ids) + 1 > skips_needed:
+            if len(ctx.voice_client.listeners) < 3 or len(ctx.voice_client.skip_request_ids) + 1 > skips_needed:
                 await skip()
 
             else:
