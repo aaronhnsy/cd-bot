@@ -19,7 +19,7 @@ from discord.ext import commands
 # My stuff
 from core import values
 from core.bot import CD
-from utilities import custom, exceptions, utils
+from utilities import custom, exceptions, utils, converters
 
 
 def setup(bot: CD) -> None:
@@ -194,3 +194,41 @@ class Information(commands.Cog):
                             "● **Vimeo** *(Links)*\n"
             )
         )
+
+    @commands.group(name="prefix", invoke_withour_command=True)
+    async def _prefix(self, ctx: custom.Context):
+
+        if ctx.invoked_subcommand:
+            return
+
+        prefixes: list[str] = ctx.bot.command_prefix(ctx.bot, ctx.message)
+        # remove the mentions:
+        prefixes = prefixes[2:]
+
+        formatted: str = "\n".join([f"`{prefix}`" for prefix in prefixes])
+
+        embed = utils.embed(description=formatted, footer="You can also mention me as a prefix!")
+
+        await ctx.send(embed=embed)
+
+    @_prefix.command(name="set")
+    @commands.guild_only()
+    async def _prefix_set(self, ctx: custom.Context, *, prefix: converters.Prefix) -> None:
+
+        # guild will never be None
+        assert ctx.guild is not None
+
+        # I don't know if we want multi custom prefixes so I will comment out the section that handles multiple.
+        ## prefixes: list[str] = ctx.bot._prefixes.get(ctx.guild.id)
+        ## prefixes.append(prefix)
+
+        ## await ctx.bot._prefixes.put(ctx.guild.id, prefixes)
+
+        ## embed = utils.embed(title="Prefixes updated", description="\n".join([f"`{prefix}`" for prefix in prefixes]), footer="You can also mention me as a prefix!")
+        ## await ctx.send(embed=embed)
+
+        await ctx.bot._prefixes.put(ctx.guild.id, [prefix])
+
+        embed = utils.embed(title="Prefix updated", description=f"New prefix is {prefix}", footer="You can also mention me as a prefix!")
+
+        await ctx.send(embed=embed)

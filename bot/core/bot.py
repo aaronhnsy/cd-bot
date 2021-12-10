@@ -17,11 +17,11 @@ import mystbin
 import psutil
 import slate.obsidian
 from discord.ext import commands, tasks
-from discord.ext.alternatives import converter_dict
+from discord.ext.alternatives import converter_dict as converter_dict
 
 # My stuff
 from core import config, values
-from utilities import checks, custom, enums, utils
+from utilities import checks, custom, enums, utils, objects
 
 
 __log__: logging.Logger = logging.getLogger("bot")
@@ -38,7 +38,7 @@ class CD(commands.AutoShardedBot):
             allowed_mentions=discord.AllowedMentions(everyone=False, users=True, roles=True, replied_user=False),
             help_command=custom.HelpCommand(),
             intents=discord.Intents.all(),
-            command_prefix=commands.when_mentioned_or(config.PREFIX),
+            command_prefix=utils.get_prefixes,
             case_insensitive=True,
             owner_ids=values.OWNER_IDS,
         )
@@ -69,6 +69,8 @@ class CD(commands.AutoShardedBot):
         self._log_loop.start()
 
         self.converters |= values.CONVERTERS
+
+        self._prefixes: objects.Config = objects.Config("prefixes.json")
 
     # Overridden methods
 
@@ -164,3 +166,7 @@ class CD(commands.AutoShardedBot):
 
     async def log(self, type: enums.LogType, /, *, embed: discord.Embed) -> None:
         self._log_queue[type].append(embed)
+
+    @property
+    def config(self) -> config:
+        return __import__("config")
