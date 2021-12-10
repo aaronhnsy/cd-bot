@@ -7,11 +7,11 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-"discord.py" = {git = "git@github.com:Rapptz/discord.py.git", rev = "master"}
+"discord.py" = {git = "git@github.com:Rapptz/discord.py", rev = "master"}
 aiohttp = "~3.7"
 aioredis = "^2.0.0"
 asyncpg = "^0.25.0"
-"discord-ext-alternatives" = {git = "git@github.com:Ext-Creators/discord-ext-alternatives.git", rev = "2987112c31de9bada4ee95cee9007a326e496e19"}
+"discord-ext-alternatives" = {git = "git@github.com:Ext-Creators/discord-ext-alternatives", rev = "2987112c31de9bada4ee95cee9007a326e496e19"}
 humanize = "^3.12.0"
 jishaku = "^2.3.2"
 "mystbin.py" = "^2.2.0"
@@ -20,8 +20,8 @@ psutil = "^5.8.0"
 pynacl = "^1.4.0"
 rapidfuzz = "^1.8.3"
 setproctitle = "^1.2.2"
-slate = {git = "git@github.com:Axelware/slate.git", rev = "main"}
-"prettify.py" = {git = "git@github.com:ShineyDev/prettify.py.git", rev = "main"}
+slate = {git = "git@github.com:Axelware/slate", rev = "main"}
+"prettify.py" = {git = "git@github.com:ShineyDev/prettify.py", rev = "main"}
 
 [tool.poetry.dev-dependencies]
 isort = "*"
