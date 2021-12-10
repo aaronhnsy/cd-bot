@@ -1,3 +1,5 @@
+# Future
+from __future__ import annotations
+
 # My stuff
-from .time import *
-from bot.utilities.objects.config import *
+from utilities.objects.time import *

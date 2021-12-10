@@ -1,4 +1,7 @@
+# Future
+from __future__ import annotations
+
 # My stuff
-from context import *
-from help import *
-from player import *
+from utilities.custom.context import *
+from utilities.custom.help import *
+from utilities.custom.player import *

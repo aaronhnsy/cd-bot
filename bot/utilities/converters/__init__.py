@@ -1,3 +1,5 @@
+# Future
+from __future__ import annotations
+
 # My stuff
-from .time import *
-from prefix import *
+from utilities.converters.time import *
