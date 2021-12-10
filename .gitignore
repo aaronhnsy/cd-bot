@@ -8,4 +8,4 @@ venv/
 build/
 .idea/
 
-config.py
+bot/core/config.py
