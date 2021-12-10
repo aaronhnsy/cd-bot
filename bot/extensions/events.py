@@ -302,6 +302,24 @@ class Events(commands.Cog):
         )
         await self.bot._log_webhooks[enums.LogType.ERROR].send(exception, username=f"{ctx.author}", avatar_url=utils.avatar(ctx.author))
 
+    # Command logging
+
+    @commands.Cog.listener()
+    async def on_command(self, ctx: custom.Context) -> None:
+
+        assert ctx.command is not None
+
+        embed = utils.embed(
+            colour=values.GREEN,
+            title=f"{ctx.prefix}{ctx.command.qualified_name}",
+            description=f"{await utils.upload_text(self.bot.mystbin, content=ctx.message.content, format='python', max_characters=2000)}\n\n"
+                        f"{f'**Guild:** {ctx.guild} (`{ctx.guild.id}`){values.NL}' if ctx.guild else ''}"
+                        f"**Channel:** {ctx.channel} (`{ctx.channel.id}`)\n"
+                        f"**Author:** {ctx.author} (`{ctx.author.id}`)\n"
+                        f"**Time:** {utils.format_datetime(pendulum.now(tz='UTC'), format=enums.DatetimeFormat.PARTIAL_LONG_DATETIME)}",
+        )
+        await self.bot._log_webhooks[enums.LogType.COMMAND].send(embed=embed, username=f"{ctx.author}", avatar_url=utils.avatar(ctx.author))
+
     # Slate events
 
     @commands.Cog.listener()
