@@ -6,7 +6,7 @@ import collections
 import logging
 import time
 import traceback
-from typing import TYPE_CHECKING, Any, Type
+from typing import Any, Type
 
 # Packages
 import aiohttp
@@ -17,6 +17,7 @@ import mystbin
 import psutil
 import slate.obsidian
 from discord.ext import commands, tasks
+# noinspection PyUnresolvedReferences
 from discord.ext.alternatives import converter_dict as converter_dict
 
 # My stuff
@@ -25,15 +26,6 @@ from utilities import checks, custom, enums, utils
 
 
 __log__: logging.Logger = logging.getLogger("bot")
-
-
-async def get_prefixes(bot: CD, message: discord.Message) -> list[str]:
-
-    if message.guild:
-        custom_prefixes: list[str] = bot._prefixes.get(message.guild.id)
-        return commands.when_mentioned_or(*custom_prefixes)(bot, message)
-
-    return commands.when_mentioned_or(*bot.config.PREFIX)(bot, message)
 
 
 class CD(commands.AutoShardedBot):
@@ -47,7 +39,7 @@ class CD(commands.AutoShardedBot):
             allowed_mentions=discord.AllowedMentions(everyone=False, users=True, roles=True, replied_user=False),
             help_command=custom.HelpCommand(),
             intents=discord.Intents.all(),
-            command_prefix=get_prefixes,  # type: ignore - this is because dpy didnt type sharded stuff properly before dying.
+            command_prefix=self.get_prefix,
             case_insensitive=True,
             owner_ids=values.OWNER_IDS,
         )
@@ -85,6 +77,14 @@ class CD(commands.AutoShardedBot):
 
     async def get_context(self, message: discord.Message, *, cls: Type[commands.Context] = custom.Context) -> commands.Context:
         return await super().get_context(message=message, cls=cls)
+
+    async def get_prefix(self, message: discord.Message) -> list[str]:
+
+        if not message.guild:
+            return commands.when_mentioned_or(config.PREFIX)(self, message)
+
+        prefix: str = self._prefixes.get(message.guild.id, config.PREFIX)
+        return commands.when_mentioned_or(prefix)(self, message)
 
     async def is_owner(self, user: discord.User | discord.Member) -> bool:
         return user.id in values.OWNER_IDS
@@ -173,10 +173,17 @@ class CD(commands.AutoShardedBot):
             embeds = [queue.pop(0) for _ in range(min(10, len(queue)))]
             await self._log_webhooks[type].send(embeds=embeds)
 
-    async def log(self, type: enums.LogType, /, *, embed: discord.Embed) -> None:
+    async def log(
+        self,
+        type: enums.LogType,
+        /,
+        *,
+        embed: discord.Embed
+    ) -> None:
         self._log_queue[type].append(embed)
 
-    @property
-    def config(self) -> config:
+    # Config
 
+    @property
+    def config(self) -> Any:
         return __import__("config")

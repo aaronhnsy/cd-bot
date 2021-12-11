@@ -1,31 +1,22 @@
 # Future
 from __future__ import annotations
 
-# Standard Library
-from typing import TYPE_CHECKING
-
 # My stuff
 from utilities.enums import Environment
 
 
-if TYPE_CHECKING:
-    # Standard Library
-    from enum import Enum
-
-ENV: Enum = Environment.DEVELOPMENT
+ENV: Environment = Environment.DEVELOPMENT
 
 TOKEN: str = ""
-PREFIX: list[str] = ["cb "] if ENV is Environment.DEVELOPMENT else ["cd "]
+PREFIX: str = "cb " if ENV is Environment.DEVELOPMENT else "cd "
 
+REDIS: str = "redis://PASSWORD@IP:PORT/4"
 POSTGRESQL: dict[str, str] = {
     "host":     "",
     "user":     "",
     "database": "",
     "password": "",
 }
-
-REDIS: str = "redis://PASSWORD@IP:PORT/4"
-
 NODES: list[dict[str, str]] = [
     {
         "host":       "",
