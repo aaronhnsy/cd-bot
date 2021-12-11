@@ -250,7 +250,11 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
             else:
                 description = f"Finished playing **[{old.title}]({old.uri})** by **{old.author}**."
 
-        await self._controller.edit(embed=utils.embed(colour=colour, description=description))
+        try:
+            await self._controller.edit(embed=utils.embed(colour=colour, description=description))
+        except discord.HTTPException:
+            pass
+
         self._controller = None
 
     # Misc
