@@ -34,11 +34,11 @@ class Settings(commands.Cog):
     @commands.group(name="prefix", invoke_without_command=True)
     async def _prefix(self, ctx: custom.Context) -> None:
 
-        prefix = ctx.bot._prefixes.get(ctx.guild.id, config.PREFIX)
+        assert ctx.guild is not None
 
         embed = utils.embed(
             colour=values.MAIN,
-            description=f"My prefix is `{prefix}`.",
+            description=f"My prefix is `{ctx.bot._prefixes.get(ctx.guild.id, config.PREFIX)}`.",
             footer="You can also mention me to use my commands!"
         )
         await ctx.send(embed=embed)
