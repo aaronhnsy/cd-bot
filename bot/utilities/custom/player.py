@@ -2,9 +2,11 @@
 from __future__ import annotations
 
 # Standard Library
+import asyncio
 from typing import TYPE_CHECKING
 
 # Packages
+import async_timeout
 import discord
 import slate
 import slate.obsidian
@@ -170,7 +172,23 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
             return
 
         self._waiting = True
-        track = await self.queue.get_wait()
+        track = None
+
+        try:
+            with async_timeout.timeout(180):
+                track = await self.queue.get_wait()
+        except asyncio.TimeoutError:
+            await self.disconnect()
+
+
+            await self.send(
+                    embed=utils.embed(
+                        colour=values.RED,
+                        description=f"Nothing was added to the queue for 3 minutes, cya next time!"
+                    ),
+                    delete_after=7.0
+                )
+            return
 
         if track.source is slate.obsidian.Source.SPOTIFY:
 
