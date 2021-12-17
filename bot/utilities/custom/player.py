@@ -172,7 +172,6 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
             return
 
         self._waiting = True
-        track = None
 
         try:
             with async_timeout.timeout(180):

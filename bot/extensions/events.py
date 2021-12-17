@@ -11,7 +11,6 @@ import discord
 import pendulum
 import prettify_exceptions
 import slate.obsidian
-from async_timeout import asyncio
 from discord.ext import commands
 
 # My stuff
