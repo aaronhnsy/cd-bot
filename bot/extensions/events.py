@@ -320,6 +320,19 @@ class Events(commands.Cog):
         )
         await self.bot._log_webhooks[enums.LogType.COMMAND].send(embed=embed, username=f"{ctx.author}", avatar_url=utils.avatar(ctx.author))
 
+    @commands.Cog.listener("on_voice_state_update")
+    async def voice_client_cleanup(self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState) -> None:
+
+        assert self.bot.user is not None
+        if member.id != self.bot.user.id:
+            return
+
+        if before.channel and not after.channel:
+            if before.channel.guild.voice_client:
+                # Clean up forced DC's
+                await before.channel.guild.voice_client.disconnect(force=True)
+                return
+
     # Slate events
 
     @commands.Cog.listener()
