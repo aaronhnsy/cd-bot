@@ -20,7 +20,7 @@ __all__ = (
 T = TypeVar("T")
 
 
-def has_any_permission(**permissions) -> Callable[[T], T]:
+def has_any_permission(**permissions: bool) -> Callable[[T], T]:
 
     if invalid := set(permissions) - set(discord.Permissions.VALID_FLAGS):
         raise TypeError(f"Invalid permission(s): {', '.join(invalid)}")

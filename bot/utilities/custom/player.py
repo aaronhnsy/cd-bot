@@ -3,7 +3,7 @@ from __future__ import annotations
 
 # Standard Library
 import asyncio
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 # Packages
 import async_timeout
@@ -28,7 +28,39 @@ __all__ = (
 )
 
 
-class SearchDropdown(discord.ui.Select):
+class SearchView(discord.ui.View):
+
+    def __init__(
+        self,
+        *,
+        ctx: custom.Context,
+        result: slate.obsidian.Result[custom.Context],
+        next: bool = False,
+        now: bool = False
+    ) -> None:
+
+        super().__init__(timeout=60)
+
+        self.ctx: custom.Context = ctx
+        self.message: discord.Message | None = None
+
+        self.add_item(SearchDropdown(ctx=ctx, result=result, next=next, now=now))
+
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        return interaction.user is not None and interaction.user.id == self.ctx.author.id
+
+    async def on_timeout(self) -> None:
+
+        self.children[0].disabled = True  # type: ignore
+        self.children[0].placeholder = "Timed out"  # type: ignore
+
+        if self.message:
+            await self.message.edit(view=self)
+
+        self.stop()
+
+
+class SearchDropdown(discord.ui.Select[SearchView]):
 
     def __init__(
         self,
@@ -65,7 +97,9 @@ class SearchDropdown(discord.ui.Select):
         self.disabled = True
         self.placeholder = "Selection done"
 
-        await self.view.message.edit(view=self.view)
+        if self.view.message:
+            await self.view.message.edit(view=self.view)
+
         self.view.stop()
 
         # Put selected tracks in queue.
@@ -101,38 +135,6 @@ class SearchDropdown(discord.ui.Select):
             await self.ctx.voice_client.handle_track_end()
 
 
-class SearchView(discord.ui.View):
-
-    def __init__(
-        self,
-        *,
-        ctx: custom.Context,
-        result: slate.obsidian.Result[custom.Context],
-        next: bool = False,
-        now: bool = False
-    ) -> None:
-
-        super().__init__(timeout=60)
-
-        self.ctx: custom.Context = ctx
-        self.message: discord.Message | None = None
-
-        self.add_item(SearchDropdown(ctx=ctx, result=result, next=next, now=now))
-
-    async def interaction_check(self, interaction: discord.Interaction) -> bool:
-        return interaction.user is not None and interaction.user.id == self.ctx.author.id
-
-    async def on_timeout(self) -> None:
-
-        self.children[0].disabled = True  # type: ignore
-        self.children[0].placeholder = "Timed out"  # type: ignore
-
-        if self.message:
-            await self.message.edit(view=self)
-
-        self.stop()
-
-
 class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
 
     def __init__(self, client: CD, channel: discord.VoiceChannel) -> None:
@@ -141,7 +143,7 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
         self._text_channel: discord.TextChannel | None = None
         self._controller: discord.Message | None = None
 
-        self.queue: slate.Queue[slate.obsidian.Track] = slate.Queue()
+        self.queue: slate.Queue[slate.obsidian.Track[custom.Context]] = slate.Queue()
         self.skip_request_ids: set[int] = set()
         self.filters: set[enums.Filter] = set()
 
@@ -178,15 +180,12 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
                 track = await self.queue.get_wait()
         except asyncio.TimeoutError:
             await self.disconnect()
-
-
             await self.send(
                     embed=utils.embed(
                         colour=values.RED,
-                        description=f"Nothing was added to the queue for 3 minutes, cya next time!"
-                    ),
-                    delete_after=7.0
-                )
+                        description="Nothing was added to the queue for 3 minutes, cya next time!"
+                    )
+            )
             return
 
         if track.source is slate.obsidian.Source.SPOTIFY:
@@ -276,7 +275,7 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
 
     # Misc
 
-    async def send(self, *args, **kwargs) -> None:
+    async def send(self, *args: Any, **kwargs: Any) -> None:
 
         if not self.text_channel:
             return

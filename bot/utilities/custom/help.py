@@ -1,6 +1,9 @@
 # Future
 from __future__ import annotations
 
+# Standard Library
+from typing import Any
+
 # Packages
 from discord.ext import commands
 
@@ -12,6 +15,9 @@ from utilities import custom, exceptions, utils
 __all__ = (
     "HelpCommand",
 )
+
+Command = commands.Command[commands.Cog, Any, Any]
+Group = commands.Group[commands.Cog, Any, Any]
 
 
 class HelpCommand(commands.HelpCommand):
@@ -30,9 +36,9 @@ class HelpCommand(commands.HelpCommand):
 
     def filter_command_list(
         self,
-        command_list: list[commands.Command | commands.Group],
+        command_list: list[Command | Group],
         /,
-    ) -> list[commands.Command | commands.Group]:
+    ) -> list[Command | Group]:
 
         return [
             command for command in command_list
@@ -43,9 +49,9 @@ class HelpCommand(commands.HelpCommand):
 
     #
 
-    async def send_bot_help(self, mapping: dict[commands.Cog | None, commands.Command]) -> None:
+    async def send_bot_help(self, mapping: dict[commands.Cog | None, Command]) -> None:
 
-        entries = []
+        entries: list[tuple[str, str]] = []
 
         for cog in sorted(self.context.bot.cogs.values(), key=lambda c: len(self.filter_command_list(list(c.walk_commands()))), reverse=True):
 
@@ -91,7 +97,7 @@ class HelpCommand(commands.HelpCommand):
             embed_footer=f"Total commands: {len(cog_commands)}"
         )
 
-    async def send_group_help(self, group: commands.Group) -> None:
+    async def send_group_help(self, group: Group) -> None:
 
         if not (group_commands := self.filter_command_list(list(group.walk_commands()))):
             raise exceptions.EmbedError(description=f"**{group.qualified_name}** has no available subcommands.")
@@ -111,7 +117,7 @@ class HelpCommand(commands.HelpCommand):
             embed_footer=f"Total subcommands: {len(group_commands)}"
         )
 
-    async def send_command_help(self, command: commands.Command) -> None:
+    async def send_command_help(self, command: Command) -> None:
 
         aliases = f"**Aliases:** {'/'.join(command.aliases)}\n\n" if command.aliases else ""
 
@@ -127,7 +133,7 @@ class HelpCommand(commands.HelpCommand):
     def command_not_found(self, string: str) -> str:
         return f"There are no commands or categories with the name **{string}**."
 
-    def subcommand_not_found(self, command: commands.Command | commands.Group, string: str) -> str:
+    def subcommand_not_found(self, command: Command | Group, string: str) -> str:
 
         if isinstance(command, commands.Group):
             return f"The command **{command.qualified_name}** has no sub-commands called **{string}**."

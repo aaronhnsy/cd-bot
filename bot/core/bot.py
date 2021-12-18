@@ -46,13 +46,13 @@ class CD(commands.AutoShardedBot):
         self._BotBase__cogs = commands.core._CaseInsensitiveDict()
 
         self.session: aiohttp.ClientSession = aiohttp.ClientSession()
-        self.socket_stats: collections.Counter = collections.Counter()
+        self.socket_stats: collections.Counter[str] = collections.Counter()
         self.process: psutil.Process = psutil.Process()
 
         self.db: asyncpg.Pool = utils.MISSING
         self.redis: aioredis.Redis = utils.MISSING
 
-        self.slate: slate.obsidian.NodePool[CD, custom.Context, slate.obsidian.Player] = slate.obsidian.NodePool()
+        self.slate: slate.obsidian.NodePool[CD, custom.Context, custom.Player] = slate.obsidian.NodePool()
         self.mystbin: mystbin.Client = mystbin.Client(session=self.session)
 
         self.first_ready: bool = True
@@ -75,7 +75,7 @@ class CD(commands.AutoShardedBot):
 
     # Overridden methods
 
-    async def get_context(self, message: discord.Message, *, cls: Type[commands.Context] = custom.Context) -> commands.Context:
+    async def get_context(self, message: discord.Message, *, cls: Type[commands.Context[CD]] = custom.Context) -> commands.Context[CD]:
         return await super().get_context(message=message, cls=cls)
 
     async def get_prefix(self, message: discord.Message) -> list[str]:

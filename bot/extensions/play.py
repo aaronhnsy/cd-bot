@@ -24,7 +24,7 @@ class Play(commands.Cog):
     def __init__(self, bot: CD) -> None:
         self.bot: CD = bot
 
-    def cog_check(self, ctx: commands.Context) -> Literal[True]:
+    def cog_check(self, ctx: commands.Context[CD]) -> Literal[True]:
 
         if not ctx.guild:
             raise commands.NoPrivateMessage()

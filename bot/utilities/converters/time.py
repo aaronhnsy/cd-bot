@@ -3,12 +3,18 @@ from __future__ import annotations
 
 # Standard Library
 import re
+from typing import TYPE_CHECKING
 
 # Packages
 from discord.ext import commands
 
 # My stuff
 from utilities import exceptions, objects
+
+
+if TYPE_CHECKING:
+    # My stuff
+    from core.bot import CD
 
 
 __all__ = (
@@ -39,7 +45,7 @@ $
 
 class TimeConverter(commands.Converter[objects.Time]):
 
-    async def convert(self, ctx: commands.Context, argument: str) -> objects.Time:
+    async def convert(self, ctx: commands.Context[CD], argument: str) -> objects.Time:
 
         if (match := COLON_FORMAT_REGEX.match(argument)) or (match := HUMAN_FORMAT_REGEX.match(argument)):
 

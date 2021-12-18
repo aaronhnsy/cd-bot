@@ -1,12 +1,20 @@
 # Future
 from __future__ import annotations
 
+# Standard Library
+from typing import TYPE_CHECKING
+
 # Packages
 from discord.ext import commands
 
 # My stuff
 from core import config, values
 from utilities import exceptions
+
+
+if TYPE_CHECKING:
+    # My stuff
+    from core.bot import CD
 
 
 __all__ = (
@@ -16,7 +24,7 @@ __all__ = (
 
 class Prefix(commands.Converter[str]):
 
-    async def convert(self, ctx: commands.Context, argument: str) -> str:
+    async def convert(self, ctx: commands.Context[CD], argument: str) -> str:
 
         if not (argument := (await commands.clean_content(escape_markdown=True).convert(ctx=ctx, argument=argument)).lstrip()):
             raise exceptions.EmbedError(

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 # Standard Library
 import functools
+import io
 
 # My stuff
 from utilities import custom, paginators, utils
@@ -19,7 +20,7 @@ class FilePaginator(paginators.BasePaginator):
         self,
         *,
         ctx: custom.Context,
-        entries: list[functools.partial],
+        entries: list[functools.partial[bytes | io.BytesIO]],
         timeout: int = 300,
         edit_message: bool = True,
         delete_message: bool = False,

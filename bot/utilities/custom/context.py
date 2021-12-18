@@ -3,6 +3,7 @@ from __future__ import annotations
 
 # Standard Library
 import functools
+import io
 from typing import TYPE_CHECKING, Any
 
 # Packages
@@ -189,7 +190,7 @@ class Context(commands.Context["CD"]):
     async def paginate_file(
         self,
         *,
-        entries: list[functools.partial],
+        entries: list[functools.partial[bytes | io.BytesIO]],
         timeout: int = 300,
         edit_message: bool = True,
         delete_message: bool = True,
@@ -210,7 +211,7 @@ class Context(commands.Context["CD"]):
 
     # Misc
 
-    async def dm(self, *args, **kwargs) -> discord.Message | None:
+    async def dm(self, *args: Any, **kwargs: Any) -> discord.Message | None:
 
         try:
             return await self.author.send(*args, **kwargs)

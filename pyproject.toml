@@ -49,35 +49,13 @@ import_heading_localfolder = "My stuff"
 
 [tool.pyright]
 include = ["bot"]
-exclude = ["**/node_modules", "**/__pycache__"]
 verboseOutput = false
 pythonVersion = "3.10"
 typeCheckingMode = "basic"
 useLibraryCodeForTypes = true
+
 strictListInference = true
 strictDictionaryInference = true
 strictSetInference = true
 reportMissingImports = false
-reportMissingModuleSource = "error"
-reportUnusedImport = "none"
-reportUnusedClass = "error"
-reportUnusedFunction = "error"
-reportUnusedVariable = "error"
-reportDuplicateImport = "error"
-reportUntypedFunctionDecorator = "none"
-reportUntypedClassDecorator = "error"
-reportUntypedNamedTuple = "error"
-reportConstantRedefinition = "error"
-reportIncompatibleMethodOverride = "error"
-reportIncompatibleVariableOverride = "error"
-reportOverlappingOverload = "error"
-reportUninitializedInstanceVariable = "error"
-reportMissingTypeArgument = "error"
-reportInvalidTypeVarUse = "error"
-reportCallInDefaultInitializer = "error"
-reportUnnecessaryIsInstance = "error"
-reportUnnecessaryCast = "error"
-reportUnnecessaryComparison = "error"
-reportInvalidStubStatement = "error"
-reportIncompleteStub = "error"
-reportPrivateImportUsage = "none"
+reportPrivateImportUsage = false

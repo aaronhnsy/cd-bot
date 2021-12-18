@@ -12,7 +12,7 @@ import asyncio
 import json
 import os
 import uuid
-from typing import Any, Callable, Optional, Type, Union
+from typing import Any, Callable, Type
 
 
 __all__ = (
@@ -20,47 +20,53 @@ __all__ = (
 )
 
 
-class _Encoder(json.JSONEncoder):
+class Encoder(json.JSONEncoder):
 
     def default(self, o: Any) -> Any:
+
         if isinstance(o, self):  # type: ignore
             return o.to_json()  # type: ignore
+
         return super().default(o)
 
 
 class Config:
 
-    def __init__(self, name: str, **options) -> None:
+    def __init__(
+        self,
+        name: str,
+        object_hook: Callable[..., dict[str, Any]] | None = None,
+        encoder: Type[json.JSONEncoder] | None = None,
+        loop: asyncio.AbstractEventLoop | None = None,
+        hook: Callable[..., dict[str, Any]] | None = None,
+        load_later: bool = False,
+    ) -> None:
 
         self.name: str = name
-        self.object_hook: Optional[Callable[..., dict[str, Any]]] = options.pop("object_hook", None)
-        self.encoder: Optional[Type[json.JSONEncoder]] = options.pop("encoder", None)
-        self._db: Union[dict[str, Any], Any] = None
+        self.object_hook: Callable[..., dict[str, Any]] | None = object_hook
+        self.encoder: Type[json.JSONEncoder] | None = encoder
+        self.loop: asyncio.AbstractEventLoop = loop or asyncio.get_event_loop()
 
-        try:
-            hook: Callable[..., dict[str, Any]] = options.pop("hook")
-        except KeyError:
-            pass
-        else:
+        if hook:
             self.object_hook = hook.from_json  # type: ignore
-            self.encoder = _Encoder
+            self.encoder = Encoder
 
-        self.loop: asyncio.AbstractEventLoop = options.pop("loop", asyncio.get_event_loop())
-        self.lock: asyncio.Lock = asyncio.Lock()
-
-        if options.pop("load_later", False):
-            self.loop.create_task(self.load())
+        if load_later:
+            asyncio.create_task(self.load())
         else:
             self._load_from_file()
 
+        self.db: dict[str, Any] | Any = None
+        self.lock: asyncio.Lock = asyncio.Lock()
+
     def __contains__(self, item: Any) -> bool:
-        return str(item) in self._db
+        return str(item) in self.db
 
     def __getitem__(self, item: Any) -> Any:
-        return self._db[str(item)]
+        return self.db[str(item)]
 
     def __len__(self) -> int:
-        return len(self._db)
+        return len(self.db)
 
     #
 
@@ -68,9 +74,9 @@ class Config:
 
         try:
             with open(self.name, "r") as f:
-                self._db = json.load(f, object_hook=self.object_hook)
+                self.db = json.load(f, object_hook=self.object_hook)
         except FileNotFoundError:
-            self._db = {}
+            self.db = {}
 
     async def load(self) -> None:
 
@@ -82,7 +88,7 @@ class Config:
         temp = "%s-%s.tmp" % (uuid.uuid4(), self.name)
         with open(temp, "w", encoding="utf-8") as tmp:
             json.dump(
-                self._db.copy(),
+                self.db.copy(),
                 tmp,
                 cls=self.encoder,
                 separators=(",", ":"),
@@ -100,15 +106,15 @@ class Config:
     #
 
     def all(self) -> dict[str, Any]:
-        return self._db
+        return self.db
 
-    def get(self, key: Any, *args) -> Any:
-        return self._db.get(str(key), *args)
+    def get(self, key: Any, *args: Any) -> Any:
+        return self.db.get(str(key), *args)
 
-    async def put(self, key: Any, value: Any, *_) -> None:
-        self._db[str(key)] = value
+    async def put(self, key: Any, value: Any, *_: Any) -> None:
+        self.db[str(key)] = value
         await self.save()
 
     async def remove(self, key: Any) -> None:
-        del self._db[str(key)]
+        del self.db[str(key)]
         await self.save()

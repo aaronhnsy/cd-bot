@@ -33,13 +33,13 @@ class PaginatorButtons(discord.ui.View):
         self.stop()
         await self.paginator.stop()
 
-    async def on_error(self, error: Exception, item: discord.ui.Item, interaction: discord.Interaction) -> None:
+    async def on_error(self, error: Exception, item: discord.ui.Item[PaginatorButtons], interaction: discord.Interaction) -> None:
         return
 
     # Buttons
 
     @discord.ui.button(emoji=values.FIRST)
-    async def first(self, _: discord.ui.Button, interaction: discord.Interaction) -> None:
+    async def first(self, _: discord.ui.Button[PaginatorButtons], interaction: discord.Interaction) -> None:
 
         await interaction.response.defer()
 
@@ -49,7 +49,7 @@ class PaginatorButtons(discord.ui.View):
         await self.paginator.change_page(page=0)
 
     @discord.ui.button(emoji=values.BACKWARD)
-    async def backward(self, _: discord.ui.Button, interaction: discord.Interaction) -> None:
+    async def backward(self, _: discord.ui.Button[PaginatorButtons], interaction: discord.Interaction) -> None:
 
         await interaction.response.defer()
 
@@ -59,11 +59,11 @@ class PaginatorButtons(discord.ui.View):
         await self.paginator.change_page(page=self.paginator.page - 1)
 
     @discord.ui.button()
-    async def page_label(self, _: discord.ui.Button, interaction: discord.Interaction) -> None:
+    async def page_label(self, _: discord.ui.Button[PaginatorButtons], interaction: discord.Interaction) -> None:
         await interaction.response.defer()
 
     @discord.ui.button(emoji=values.FORWARD)
-    async def forward(self, _: discord.ui.Button, interaction: discord.Interaction) -> None:
+    async def forward(self, _: discord.ui.Button[PaginatorButtons], interaction: discord.Interaction) -> None:
 
         await interaction.response.defer()
 
@@ -73,7 +73,7 @@ class PaginatorButtons(discord.ui.View):
         await self.paginator.change_page(page=self.paginator.page + 1)
 
     @discord.ui.button(emoji=values.LAST)
-    async def last(self, _: discord.ui.Button, interaction: discord.Interaction) -> None:
+    async def last(self, _: discord.ui.Button[PaginatorButtons], interaction: discord.Interaction) -> None:
 
         await interaction.response.defer()
 
@@ -83,7 +83,7 @@ class PaginatorButtons(discord.ui.View):
         await self.paginator.change_page(page=len(self.paginator.pages) - 1)
 
     @discord.ui.button(emoji=values.STOP)
-    async def _stop(self, _: discord.ui.Button, interaction: discord.Interaction) -> None:
+    async def _stop(self, _: discord.ui.Button[PaginatorButtons], interaction: discord.Interaction) -> None:
 
         await interaction.response.defer()
 
