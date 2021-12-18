@@ -32,41 +32,37 @@ class Encoder(json.JSONEncoder):
 
 class Config:
 
-    def __init__(
-        self,
-        name: str,
-        object_hook: Callable[..., dict[str, Any]] | None = None,
-        encoder: Type[json.JSONEncoder] | None = None,
-        loop: asyncio.AbstractEventLoop | None = None,
-        hook: Callable[..., dict[str, Any]] | None = None,
-        load_later: bool = False,
-    ) -> None:
+    def __init__(self, name: str, **options: Any) -> None:
 
         self.name: str = name
-        self.object_hook: Callable[..., dict[str, Any]] | None = object_hook
-        self.encoder: Type[json.JSONEncoder] | None = encoder
-        self.loop: asyncio.AbstractEventLoop = loop or asyncio.get_event_loop()
+        self.object_hook: Callable[..., dict[str, Any]] | None = options.pop("object_hook", None)
+        self.encoder: Type[json.JSONEncoder] | None = options.pop("encoder", None)
+        self._db: dict[str, Any] | Any = None
 
-        if hook:
+        try:
+            hook: Callable[..., dict[str, Any]] = options.pop("hook")
+        except KeyError:
+            pass
+        else:
             self.object_hook = hook.from_json  # type: ignore
             self.encoder = Encoder
 
-        if load_later:
-            asyncio.create_task(self.load())
+        self.loop: asyncio.AbstractEventLoop = options.pop("loop", asyncio.get_event_loop())
+        self.lock: asyncio.Lock = asyncio.Lock()
+
+        if options.pop("load_later", False):
+            self.loop.create_task(self.load())
         else:
             self._load_from_file()
 
-        self.db: dict[str, Any] | Any = None
-        self.lock: asyncio.Lock = asyncio.Lock()
-
     def __contains__(self, item: Any) -> bool:
-        return str(item) in self.db
+        return str(item) in self._db
 
     def __getitem__(self, item: Any) -> Any:
-        return self.db[str(item)]
+        return self._db[str(item)]
 
     def __len__(self) -> int:
-        return len(self.db)
+        return len(self._db)
 
     #
 
@@ -74,9 +70,9 @@ class Config:
 
         try:
             with open(self.name, "r") as f:
-                self.db = json.load(f, object_hook=self.object_hook)
+                self._db = json.load(f, object_hook=self.object_hook)
         except FileNotFoundError:
-            self.db = {}
+            self._db = {}
 
     async def load(self) -> None:
 
@@ -86,16 +82,16 @@ class Config:
     def _dump(self) -> None:
 
         temp = "%s-%s.tmp" % (uuid.uuid4(), self.name)
-        with open(temp, "w", encoding="utf-8") as tmp:
+
+        with open(temp, "w", encoding="utf-8") as file:
             json.dump(
-                self.db.copy(),
-                tmp,
+                self._db.copy(),
+                file,
                 cls=self.encoder,
                 separators=(",", ":"),
                 indent=4,
             )
 
-        # atomically move the file
         os.replace(temp, self.name)
 
     async def save(self) -> None:
@@ -106,15 +102,15 @@ class Config:
     #
 
     def all(self) -> dict[str, Any]:
-        return self.db
+        return self._db
 
     def get(self, key: Any, *args: Any) -> Any:
-        return self.db.get(str(key), *args)
+        return self._db.get(str(key), *args)
 
     async def put(self, key: Any, value: Any, *_: Any) -> None:
-        self.db[str(key)] = value
+        self._db[str(key)] = value
         await self.save()
 
     async def remove(self, key: Any) -> None:
-        del self.db[str(key)]
+        del self._db[str(key)]
         await self.save()
