@@ -329,3 +329,83 @@ class Player(commands.Cog):
                                     f"needed to skip."
                     )
                 )
+
+    # Lyrics
+
+    @commands.command(name="lyrics")
+    async def lyrics(self, ctx: custom.Context, *, query: Optional[str]) -> None:
+
+        def get_spotify_query() -> str | None:
+
+            assert isinstance(ctx.author, discord.Member)
+
+            if not (activity := discord.utils.find(lambda x: isinstance(x, discord.Spotify), ctx.author.activities)):
+                return None
+
+            assert isinstance(activity, discord.Spotify)
+            return f"{activity.artists[0]} - {activity.title}"
+
+        def get_player_query() -> str | None:
+
+            if not ctx.voice_client or ctx.voice_client.is_playing() is False:
+                return None
+
+            assert ctx.voice_client.current is not None
+            return f"{ctx.voice_client.current.author} - {ctx.voice_client.current.title}"
+
+        match query:
+            case "spotify":
+                if not (query := get_spotify_query()):
+                    raise exceptions.EmbedError(
+                        colour=values.RED,
+                        description="You don't have an active spotify status.",
+                    )
+            case "player":
+                if not (query := get_player_query()):
+                    raise exceptions.EmbedError(
+                        colour=values.RED,
+                        description="I am not playing any tracks.",
+                    )
+            case _:
+                if query is None and not (query := get_spotify_query()) and not (query := get_player_query()):
+                    raise exceptions.EmbedError(
+                        colour=values.RED,
+                        description="You didn't specify a search query.",
+                    )
+
+        async with self.bot.session.get(
+                url="https://evan.lol/lyrics/search/top",
+                params={"q": query},
+        ) as response:
+
+            match response.status:
+                case 200:
+                    data = await response.json()
+                case 404:
+                    raise exceptions.EmbedError(
+                        colour=values.RED,
+                        description=f"No lyrics were found for **{query}**.",
+                    )
+                case _:
+                    raise exceptions.EmbedError(
+                        colour=values.RED,
+                        description=f"Lyrics are unavailable right now, please try again later."
+                    )
+
+        entries = []
+
+        for line in data["lyrics"].split("\n\n"):
+
+            if len(entries) == 0 or len(entries[-1]) > 750 or len(entries[-1]) + len(line) > 750 or entries[-1].count("\n") > 20:
+                entries.append(line)
+            else:
+                entries[-1] += f"\n\n{line}"
+
+        await ctx.paginate_embed(
+            entries=entries,
+            per_page=1,
+            title=data["name"],
+            url=f"https://open.spotify.com/track/{data['id']}",
+            header=f"by: **{', '.join([artist['name'] for artist in data['artists']] or ['Unknown Artist'])}**\n\n",
+            thumbnail=icon["url"] if (icon := data["album"].get("icon")) else None,
+        )
