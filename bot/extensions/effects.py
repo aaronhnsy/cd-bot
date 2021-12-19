@@ -19,6 +19,9 @@ def setup(bot: CD) -> None:
 
 
 class Effects(commands.Cog):
+    """
+    Toggle and control different audio effects.
+    """
 
     def __init__(self, bot: CD) -> None:
         self.bot: CD = bot
@@ -36,6 +39,11 @@ class Effects(commands.Cog):
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def _8d(self, ctx: custom.Context) -> None:
+        """
+        Toggles the 8D audio effect.
+
+        This effect makes the audio sound like it's rotating around your head.
+        """
 
         assert ctx.voice_client is not None
 
@@ -63,6 +71,11 @@ class Effects(commands.Cog):
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def night_core(self, ctx: custom.Context) -> None:
+        """
+        Toggles the nightcore audio effect.
+
+        This effect slightly increases the speed and pitch of the audio.
+        """
 
         assert ctx.voice_client is not None
 
@@ -90,6 +103,13 @@ class Effects(commands.Cog):
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def mono(self, ctx: custom.Context) -> None:
+        """
+        Toggles the mono audio effect.
+
+        This effect makes the left and right audio channels play the same thing.
+
+        **Note:** Enabling this effect will disable the left and right ear effects.
+        """
 
         assert ctx.voice_client is not None
 
@@ -125,6 +145,13 @@ class Effects(commands.Cog):
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def left_ear(self, ctx: custom.Context) -> None:
+        """
+        Toggles the left ear audio effect.
+
+        This effect makes the audio only come out of your left headphone/speaker/earbud.
+
+        **Note:** Enabling this effect will disable the mono and right ear effects.
+        """
 
         assert ctx.voice_client is not None
 
@@ -160,6 +187,13 @@ class Effects(commands.Cog):
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def right_ear(self, ctx: custom.Context) -> None:
+        """
+        Toggles the right ear audio effect.
+
+        This effect makes the audio only come out of your right headphone/speaker/earbud.
+
+        **Note:** Enabling this effect will disable the mono and left ear effects.
+        """
 
         assert ctx.voice_client is not None
 
@@ -195,6 +229,9 @@ class Effects(commands.Cog):
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def reset(self, ctx: custom.Context) -> None:
+        """
+        Disables all audio effects.
+        """
 
         assert ctx.voice_client is not None
 

@@ -20,6 +20,9 @@ def setup(bot: CD) -> None:
 
 
 class Play(commands.Cog):
+    """
+    Various platform-specific play commands.
+    """
 
     def __init__(self, bot: CD) -> None:
         self.bot: CD = bot
@@ -56,6 +59,11 @@ class Play(commands.Cog):
 
     @commands.command(name="play", aliases=["p"])
     async def play(self, ctx: custom.Context, *, query: str) -> None:
+        """
+        Adds a track to the queue.
+
+        `query`: Can be a URL, search query or track name.
+        """
 
         await self._check_playable(ctx)
         assert ctx.voice_client is not None
@@ -65,6 +73,11 @@ class Play(commands.Cog):
 
     @commands.command(name="play-next", aliases=["play_next", "playnext", "pne"])
     async def play_next(self, ctx: custom.Context, *, query: str) -> None:
+        """
+        Adds a track to the start of the queue.
+
+        `query`: Can be a URL, search query or track name.
+        """
 
         await self._check_playable(ctx)
         assert ctx.voice_client is not None
@@ -74,6 +87,11 @@ class Play(commands.Cog):
 
     @commands.command(name="play-now", aliases=["play_now", "playnow", "pno"])
     async def play_now(self, ctx: custom.Context, *, query: str) -> None:
+        """
+        Skips the current track and plays the specified track.
+
+        `query`: Can be a URL, search query or track name.
+        """
 
         await self._check_playable(ctx)
         assert ctx.voice_client is not None
@@ -85,6 +103,11 @@ class Play(commands.Cog):
 
     @commands.command(name="search")
     async def search(self, ctx: custom.Context, *, query: str) -> None:
+        """
+        Allows you to select a track from a search result.
+
+        `query`: Can be a URL, search query or track name.
+        """
 
         await self._check_playable(ctx)
         assert ctx.voice_client is not None
@@ -111,6 +134,12 @@ class Play(commands.Cog):
 
     @commands.command(name="youtube", aliases=["yt"])
     async def youtube(self, ctx: custom.Context, *, query: str) -> None:
+        """
+        Adds a track from Youtube to the queue.
+
+        `query`: Can be a URL, search query or track name.
+        """
+
         await self.play(ctx, query=query)
 
     @commands.command(name="youtube-next", aliases=["youtube_next", "youtubenext", "ytne"], hidden=True)
@@ -125,6 +154,12 @@ class Play(commands.Cog):
 
     @commands.command(name="youtube-search", aliases=["youtube_search", "youtubesearch", "yts"])
     async def youtube_search(self, ctx: custom.Context, *, query: str) -> None:
+        """
+        Allows you to select a track from a Youtube search result.
+
+        `query`: Can be a URL, search query or track name.
+        """
+
         await self.search(ctx, query=query)
 
     @commands.command(name="youtube-search-next", aliases=["youtube_search_next", "youtubesearchnext", "ytsne"], hidden=True)
@@ -139,6 +174,11 @@ class Play(commands.Cog):
 
     @commands.command(name="youtube-music", aliases=["youtube_music", "youtubemusic", "ytm"])
     async def youtube_music(self, ctx: custom.Context, *, query: str) -> None:
+        """
+        Adds a track from Youtube Music to the queue.
+
+        `query`: Can be a URL, search query or track name.
+        """
 
         await self._check_playable(ctx)
         assert ctx.voice_client is not None
@@ -168,6 +208,11 @@ class Play(commands.Cog):
 
     @commands.command(name="youtube-music-search", aliases=["youtube_music_search", "youtubemusicsearch", "ytms"])
     async def youtube_music_search(self, ctx: custom.Context, *, query: str) -> None:
+        """
+        Allows you to select a track from a Youtube Music search result.
+
+        `query`: Can be a URL, search query or track name.
+        """
 
         await self._check_playable(ctx)
         assert ctx.voice_client is not None
@@ -194,6 +239,11 @@ class Play(commands.Cog):
 
     @commands.command(name="soundcloud", aliases=["sc"])
     async def soundcloud(self, ctx: custom.Context, *, query: str) -> None:
+        """
+        Adds a track from Soundcloud to the queue.
+
+        `query`: Can be a URL, search query or track name.
+        """
 
         await self._check_playable(ctx)
         assert ctx.voice_client is not None
@@ -223,6 +273,11 @@ class Play(commands.Cog):
 
     @commands.command(name="soundcloud-search", aliases=["soundcloud_search", "soundcloudsearch", "scs"])
     async def soundcloud_search(self, ctx: custom.Context, *, query: str) -> None:
+        """
+        Allows you to select a track from a Soundcloud search result.
+
+        `query`: Can be a URL, search query or track name.
+        """
 
         await self._check_playable(ctx)
         assert ctx.voice_client is not None

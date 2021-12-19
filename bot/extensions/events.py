@@ -324,14 +324,12 @@ class Events(commands.Cog):
     async def voice_client_cleanup(self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState) -> None:
 
         assert self.bot.user is not None
+
         if member.id != self.bot.user.id:
             return
 
-        if before.channel and not after.channel:
-            if before.channel.guild.voice_client:
-                # Clean up forced DC's
-                await before.channel.guild.voice_client.disconnect(force=True)
-                return
+        if before.channel is not None and after.channel is None and before.channel.guild.voice_client is not None:
+            await before.channel.guild.voice_client.disconnect(force=True)
 
     # Slate events
 

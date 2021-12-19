@@ -26,6 +26,9 @@ def setup(bot: CD) -> None:
 
 
 class Information(commands.Cog):
+    """
+    Information about the bot.
+    """
 
     def __init__(self, bot: CD) -> None:
         self.bot: CD = bot
@@ -34,6 +37,9 @@ class Information(commands.Cog):
 
     @commands.command(name="ping")
     async def ping(self, ctx: custom.Context) -> None:
+        """
+        Get the bots ping.
+        """
 
         typing_start = time.perf_counter()
         await ctx.trigger_typing()
@@ -62,6 +68,9 @@ class Information(commands.Cog):
 
     @commands.command(name="system", aliases=["sys"])
     async def system(self, ctx: custom.Context) -> None:
+        """
+        See the bots system information.
+        """
 
         cpu_freq: Any = psutil.cpu_freq()
         memory_info = psutil.virtual_memory()
@@ -113,6 +122,9 @@ class Information(commands.Cog):
 
     @commands.command(name="source", aliases=["src"])
     async def source(self, ctx: custom.Context, *, command: Optional[str]) -> None:
+        """
+        Get a link to the source code for a command.
+        """
 
         if not command:
             await ctx.reply(
@@ -142,6 +154,9 @@ class Information(commands.Cog):
 
     @commands.command(name="invite", aliases=["inv"])
     async def invite(self, ctx: custom.Context) -> None:
+        """
+        Get an invite link for the bot.
+        """
 
         await ctx.reply(
             embed=utils.embed(
@@ -153,6 +168,9 @@ class Information(commands.Cog):
 
     @commands.command(name="support", aliases=["discord"])
     async def support(self, ctx: custom.Context) -> None:
+        """
+        Join the bots support server.
+        """
 
         await ctx.reply(
             embed=utils.embed(
@@ -164,6 +182,9 @@ class Information(commands.Cog):
 
     @commands.command(name="links")
     async def links(self, ctx: custom.Context) -> None:
+        """
+        Get various links for the bot.
+        """
 
         await ctx.reply(
             embed=utils.embed(
@@ -178,6 +199,9 @@ class Information(commands.Cog):
 
     @commands.command(name="platforms")
     async def platforms(self, ctx: custom.Context) -> None:
+        """
+        Get a list of platforms the bot can play tracks from.
+        """
 
         await ctx.reply(
             embed=utils.embed(

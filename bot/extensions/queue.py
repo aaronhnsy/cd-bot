@@ -20,6 +20,9 @@ def setup(bot: CD) -> None:
 
 
 class Queue(commands.Cog):
+    """
+    Commands for managing the queue.
+    """
 
     def __init__(self, bot: CD) -> None:
         self.bot: CD = bot
@@ -37,6 +40,9 @@ class Queue(commands.Cog):
     @checks.is_queue_not_empty()
     @checks.is_player_connected()
     async def queue(self, ctx: custom.Context) -> None:
+        """
+        Shows the queue.
+        """
 
         assert ctx.voice_client is not None
 
@@ -60,6 +66,9 @@ class Queue(commands.Cog):
     @checks.is_queue_history_not_empty()
     @checks.is_player_connected()
     async def queue_history(self, ctx: custom.Context) -> None:
+        """
+        Shows the queue history.
+        """
 
         assert ctx.voice_client is not None
 
@@ -86,6 +95,9 @@ class Queue(commands.Cog):
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def clear(self, ctx: custom.Context) -> None:
+        """
+        Clears the queue.
+        """
 
         assert ctx.voice_client is not None
 
@@ -102,6 +114,9 @@ class Queue(commands.Cog):
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def shuffle(self, ctx: custom.Context) -> None:
+        """
+        Shuffles the queue.
+        """
 
         assert ctx.voice_client is not None
 
@@ -118,6 +133,9 @@ class Queue(commands.Cog):
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def reverse(self, ctx: custom.Context) -> None:
+        """
+        Reverses the queue.
+        """
 
         assert ctx.voice_client is not None
 
@@ -134,6 +152,17 @@ class Queue(commands.Cog):
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def sort(self, ctx: custom.Context, method: Literal["title", "length", "author"], reverse: bool = False) -> None:
+        """
+        Sorts the queue.
+
+        `method`: The method to sort by.
+        `reverse`: Whether to reverse the order.
+
+        `method` can be one of:
+        - `title`
+        - `length`
+        - `author`
+        """
 
         assert ctx.voice_client is not None
 
@@ -156,6 +185,11 @@ class Queue(commands.Cog):
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def remove(self, ctx: custom.Context, entry: int = 0) -> None:
+        """
+        Removes a track from the queue.
+
+        `entry`: The index of the track to remove.
+        """
 
         assert ctx.voice_client is not None
 
@@ -180,6 +214,12 @@ class Queue(commands.Cog):
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def move(self, ctx: custom.Context, entry_1: int = 0, entry_2: int = 0) -> None:
+        """
+        Moves a track in the queue.
+
+        `entry_1`: The index of the track to move.
+        `entry_2`: The index to move the track to.
+        """
 
         assert ctx.voice_client is not None
 
@@ -209,6 +249,9 @@ class Queue(commands.Cog):
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def remove_duplicates(self, ctx: custom.Context) -> None:
+        """
+        Removes duplicate tracks from the queue.
+        """
 
         assert ctx.voice_client is not None
 
@@ -227,6 +270,9 @@ class Queue(commands.Cog):
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def loop_current(self, ctx: custom.Context) -> None:
+        """
+        Loops the current track.
+        """
 
         assert ctx.voice_client is not None
 
@@ -246,6 +292,9 @@ class Queue(commands.Cog):
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def loop_queue(self, ctx: custom.Context) -> None:
+        """
+        Loops the entire queue.
+        """
 
         assert ctx.voice_client is not None
 

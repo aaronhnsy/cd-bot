@@ -18,6 +18,9 @@ def setup(bot: CD) -> None:
 
 
 class Settings(commands.Cog):
+    """
+    Change the bots settings.
+    """
 
     def __init__(self, bot: CD) -> None:
         self.bot: CD = bot
@@ -33,18 +36,24 @@ class Settings(commands.Cog):
 
     @commands.group(name="prefix", invoke_without_command=True)
     async def _prefix(self, ctx: custom.Context) -> None:
+        """
+        See the current prefix for this server.
+        """
 
         assert ctx.guild is not None
 
         embed = utils.embed(
             colour=values.MAIN,
-            description=f"My prefix is `{ctx.bot._prefixes.get(ctx.guild.id, config.PREFIX)}`.",
+            description=f"My prefix is `{ctx.bot._prefixes.get(ctx.guild.id, config.PREFIX)}`",
             footer="You can also mention me to use my commands!"
         )
         await ctx.send(embed=embed)
 
     @_prefix.command(name="set")
     async def _prefix_set(self, ctx: custom.Context, prefix: converters.Prefix) -> None:
+        """
+        Set the prefix for this server.
+        """
 
         assert ctx.guild is not None
 

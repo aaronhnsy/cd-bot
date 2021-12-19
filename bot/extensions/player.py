@@ -20,6 +20,9 @@ def setup(bot: CD) -> None:
 
 
 class Player(commands.Cog):
+    """
+    Commands for controlling the player.
+    """
 
     def __init__(self, bot: CD) -> None:
         self.bot: CD = bot
@@ -35,6 +38,9 @@ class Player(commands.Cog):
 
     @commands.command(name="join", aliases=["j", "connect", "summon"])
     async def join(self, ctx: custom.Context) -> None:
+        """
+        Connects the bot to your voice channel.
+        """
 
         assert isinstance(ctx.author, discord.Member)
 
@@ -59,6 +65,9 @@ class Player(commands.Cog):
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def disconnect(self, ctx: custom.Context) -> None:
+        """
+        Disconnects the bot from your voice channel.
+        """
 
         assert ctx.voice_client is not None
 
@@ -75,6 +84,9 @@ class Player(commands.Cog):
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def pause(self, ctx: custom.Context) -> None:
+        """
+        Pauses the current track.
+        """
 
         assert ctx.voice_client is not None
 
@@ -88,6 +100,9 @@ class Player(commands.Cog):
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def resume(self, ctx: custom.Context) -> None:
+        """
+        Resumes the current track.
+        """
 
         assert ctx.voice_client is not None
 
@@ -105,6 +120,23 @@ class Player(commands.Cog):
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def seek(self, ctx: custom.Context, *, time: objects.Time) -> None:
+        """
+        Seeks to time in the current track.
+
+        `time`: The time to seek to.
+
+        The `time` argument supports the following formats:
+        - `ss`
+        - `mm:ss`
+        - `hh:mm:ss`
+        - `1m30s`
+        - `1h30m`
+        - `1h30m30s`
+        - `1 hour 30 minutes 30 seconds`
+        - `1 hour, 30 minutes, 30 seconds`
+        - `1 hour and 30 minutes and 30 seconds`
+        - etc, most permutations of these will work.
+        """
 
         assert ctx.voice_client is not None
         assert ctx.voice_client.current is not None
@@ -132,6 +164,23 @@ class Player(commands.Cog):
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def fast_forward(self, ctx: custom.Context, *, time: objects.Time) -> None:
+        """
+        Fast-forwards the current track by an amount of time.
+
+        `time`: The amount of time to fast-forward by.
+
+        The `time` argument supports the following formats:
+        - `ss`
+        - `mm:ss`
+        - `hh:mm:ss`
+        - `1m30s`
+        - `1h30m`
+        - `1h30m30s`
+        - `1 hour 30 minutes 30 seconds`
+        - `1 hour, 30 minutes, 30 seconds`
+        - `1 hour and 30 minutes and 30 seconds`
+        - etc, most permutations of these will work.
+        """
 
         assert ctx.voice_client is not None
         assert ctx.voice_client.current is not None
@@ -162,6 +211,23 @@ class Player(commands.Cog):
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def rewind(self, ctx: custom.Context, *, time: objects.Time) -> None:
+        """
+        Rewinds the current track by an amount of time.
+
+        `time`: The amount of time to rewind by.
+
+        The `time` argument supports the following formats:
+        - `ss`
+        - `mm:ss`
+        - `hh:mm:ss`
+        - `1m30s`
+        - `1h30m`
+        - `1h30m30s`
+        - `1 hour 30 minutes 30 seconds`
+        - `1 hour, 30 minutes, 30 seconds`
+        - `1 hour and 30 minutes and 30 seconds`
+        - etc, most permutations of these will work.
+        """
 
         assert ctx.voice_client is not None
         assert ctx.voice_client.current is not None
@@ -191,6 +257,9 @@ class Player(commands.Cog):
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def replay(self, ctx: custom.Context) -> None:
+        """
+        Replays the current track.
+        """
 
         assert ctx.voice_client is not None
         assert ctx.voice_client.current is not None
@@ -244,6 +313,16 @@ class Player(commands.Cog):
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def force_skip(self, ctx: custom.Context, amount: Optional[int]) -> None:
+        """
+        Force skips the current track.
+
+        `amount`: The amount of tracks to skip.
+
+        You can only use this command if you meet one of the following requirements:
+        - You are the owner of the bot.
+        - You are the owner of the server.
+        - You have the `Manage Channels`, `Manage Roles`, `Manage Guild`, `Kick Members`, `Ban Members`, or `Administrator` permission.
+        """
 
         await self._try_force_skip(ctx)
 
@@ -273,6 +352,14 @@ class Player(commands.Cog):
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def vote_skip(self, ctx: custom.Context) -> None:
+        """
+        Starts a vote-skip for the current track.
+
+        If you meet any of the following, the track will be force skipped:
+        - You are the owner of the bot.
+        - You are the owner of the server.
+        - You have the `Manage Channels`, `Manage Roles`, `Manage Guild`, `Kick Members`, `Ban Members`, or `Administrator` permission.
+        """
 
         try:
             await self._try_force_skip(ctx)
@@ -334,6 +421,14 @@ class Player(commands.Cog):
 
     @commands.command(name="lyrics")
     async def lyrics(self, ctx: custom.Context, *, query: Optional[str]) -> None:
+        """
+        Searches for lyrics.
+
+        `query`: The query to search for lyrics with.
+
+        If `query` matches `spotify`, the lyric search will be performed with your current spotify track, if you are currently listening to one.
+        If `query` matches `player`, the lyric search will be performed with the players current track, if there is one.
+        """
 
         def get_spotify_query() -> str | None:
 
