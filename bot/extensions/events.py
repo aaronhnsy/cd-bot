@@ -328,7 +328,11 @@ class Events(commands.Cog):
         if member.id != self.bot.user.id:
             return
 
-        if before.channel is not None and after.channel is None and before.channel.guild.voice_client is not None:
+        if (
+                before.channel is not None and
+                after.channel is None and
+                before.channel.guild.voice_client is not None
+        ):
             await before.channel.guild.voice_client.disconnect(force=True)
 
     # Slate events
@@ -343,8 +347,8 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_obsidian_track_stuck(self, player: custom.Player, _: slate.obsidian.TrackStuck) -> None:
-        await player.handle_track_error()
+        await player.handle_track_end(error=True)
 
     @commands.Cog.listener()
     async def on_obsidian_track_exception(self, player: custom.Player, _: slate.obsidian.TrackException) -> None:
-        await player.handle_track_error()
+        await player.handle_track_end(error=True)

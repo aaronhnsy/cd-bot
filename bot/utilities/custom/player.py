@@ -202,9 +202,6 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
         await self.play(track)
         self._waiting = False
 
-    async def handle_track_error(self) -> None:
-        await self.handle_track_end(error=True)
-
     # Control
 
     async def send_controller(self, channel: discord.TextChannel | None, /) -> discord.Message | None:
@@ -267,7 +264,12 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
                 description = f"Finished playing **[{old.title}]({old.uri})** by **{old.author}**."
 
         try:
-            await self._controller.edit(embed=utils.embed(colour=colour, description=description))
+            await self._controller.edit(
+                embed=utils.embed(
+                    colour=colour,
+                    description=description
+                )
+            )
         except discord.HTTPException:
             pass
 
