@@ -155,13 +155,19 @@ class Queue(commands.Cog):
         """
         Sorts the queue.
 
-        `method`: The method to sort by.
-        `reverse`: Whether to reverse the order.
-
-        `method` can be one of:
+        **Arguments:**
+        `method`: The method to sort by, can be one of the following:
         - `title`
         - `length`
         - `author`
+
+        `reverse`: Whether to reverse the order, can be one of the following:
+        - `true`
+        - `false`
+        - `on`
+        - `off`
+        - `yes`
+        - `no`
         """
 
         assert ctx.voice_client is not None
@@ -188,6 +194,7 @@ class Queue(commands.Cog):
         """
         Removes a track from the queue.
 
+        **Arguments:**
         `entry`: The index of the track to remove.
         """
 
@@ -217,6 +224,7 @@ class Queue(commands.Cog):
         """
         Moves a track in the queue.
 
+        **Arguments:**
         `entry_1`: The index of the track to move.
         `entry_2`: The index to move the track to.
         """

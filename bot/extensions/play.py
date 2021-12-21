@@ -62,6 +62,7 @@ class Play(commands.Cog):
         """
         Adds a track to the queue.
 
+        **Arguments:**
         `query`: Can be a URL, search query or track name.
         """
 
@@ -76,6 +77,7 @@ class Play(commands.Cog):
         """
         Adds a track to the start of the queue.
 
+        **Arguments:**
         `query`: Can be a URL, search query or track name.
         """
 
@@ -90,6 +92,7 @@ class Play(commands.Cog):
         """
         Skips the current track and plays the specified track.
 
+        **Arguments:**
         `query`: Can be a URL, search query or track name.
         """
 
@@ -106,6 +109,7 @@ class Play(commands.Cog):
         """
         Allows you to select a track from a search result.
 
+        **Arguments:**
         `query`: Can be a URL, search query or track name.
         """
 
@@ -137,6 +141,7 @@ class Play(commands.Cog):
         """
         Adds a track from Youtube to the queue.
 
+        **Arguments:**
         `query`: Can be a URL, search query or track name.
         """
 
@@ -157,6 +162,7 @@ class Play(commands.Cog):
         """
         Allows you to select a track from a Youtube search result.
 
+        **Arguments:**
         `query`: Can be a URL, search query or track name.
         """
 
@@ -177,6 +183,7 @@ class Play(commands.Cog):
         """
         Adds a track from Youtube Music to the queue.
 
+        **Arguments:**
         `query`: Can be a URL, search query or track name.
         """
 
@@ -211,6 +218,7 @@ class Play(commands.Cog):
         """
         Allows you to select a track from a Youtube Music search result.
 
+        **Arguments:**
         `query`: Can be a URL, search query or track name.
         """
 
@@ -242,6 +250,7 @@ class Play(commands.Cog):
         """
         Adds a track from Soundcloud to the queue.
 
+        **Arguments:**
         `query`: Can be a URL, search query or track name.
         """
 
@@ -276,6 +285,7 @@ class Play(commands.Cog):
         """
         Allows you to select a track from a Soundcloud search result.
 
+        **Arguments:**
         `query`: Can be a URL, search query or track name.
         """
 

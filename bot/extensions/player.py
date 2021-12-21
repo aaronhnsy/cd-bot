@@ -123,12 +123,12 @@ class Player(commands.Cog):
         """
         Seeks to time in the current track.
 
-        `time`: The time to seek to.
-
-        The `time` argument supports the following formats:
+        **Arguments:**
+        `time`: The time to seek to, this can be in any of the following formats:
         - `ss`
         - `mm:ss`
         - `hh:mm:ss`
+        - `30s`
         - `1m30s`
         - `1h30m`
         - `1h30m30s`
@@ -167,12 +167,12 @@ class Player(commands.Cog):
         """
         Fast-forwards the current track by an amount of time.
 
-        `time`: The amount of time to fast-forward by.
-
-        The `time` argument supports the following formats:
+        **Arguments:**
+        `time`: The amount of time to fast-forward by, this can be in any of the following formats:
         - `ss`
         - `mm:ss`
         - `hh:mm:ss`
+        - `30s`
         - `1m30s`
         - `1h30m`
         - `1h30m30s`
@@ -214,12 +214,12 @@ class Player(commands.Cog):
         """
         Rewinds the current track by an amount of time.
 
-        `time`: The amount of time to rewind by.
-
-        The `time` argument supports the following formats:
+        **Arguments:**
+        `time`: The amount of time to rewind by, this can be in any of the following formats:
         - `ss`
         - `mm:ss`
         - `hh:mm:ss`
+        - `30s`
         - `1m30s`
         - `1h30m`
         - `1h30m30s`
@@ -316,6 +316,7 @@ class Player(commands.Cog):
         """
         Force skips the current track.
 
+        **Arguments:**
         `amount`: The amount of tracks to skip.
 
         You can only use this command if you meet one of the following requirements:
@@ -424,6 +425,7 @@ class Player(commands.Cog):
         """
         Searches for lyrics.
 
+        **Arguments:**
         `query`: The query to search for lyrics with.
 
         If `query` matches `spotify`, the lyric search will be performed with your current spotify track, if you are currently listening to one.

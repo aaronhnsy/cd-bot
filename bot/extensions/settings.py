@@ -37,30 +37,55 @@ class Settings(commands.Cog):
     @commands.group(name="prefix", invoke_without_command=True)
     async def _prefix(self, ctx: custom.Context) -> None:
         """
-        See the current prefix for this server.
+        Shows the bots prefix.
         """
 
         assert ctx.guild is not None
 
-        embed = utils.embed(
-            colour=values.MAIN,
-            description=f"My prefix is `{ctx.bot._prefixes.get(ctx.guild.id, config.PREFIX)}`",
-            footer="You can also mention me to use my commands!"
+        prefix = ctx.bot._prefixes.get(ctx.guild.id, config.PREFIX)
+        await ctx.send(
+            embed=utils.embed(
+                colour=values.MAIN,
+                description=f"My prefix is `{prefix}`",
+                footer="You can also mention me to use my commands!"
+            )
         )
-        await ctx.send(embed=embed)
 
     @_prefix.command(name="set")
     async def _prefix_set(self, ctx: custom.Context, prefix: converters.Prefix) -> None:
         """
-        Set the prefix for this server.
+        Sets the bots prefix.
+
+        **Arguments:**
+        `prefix`: The prefix to set, surround with quotes if it contains spaces.
+
+        **Example:**
+        - `cd prefix set !` - allows you to use `!help`
+        - `cd prefix set "music "` - allows you to use `music help`
         """
 
         assert ctx.guild is not None
 
         await ctx.bot._prefixes.put(ctx.guild.id, prefix)
-
-        embed = utils.embed(
-            colour=values.MAIN,
-            description=f"Set my prefix for this server to `{prefix}`.",
+        await ctx.send(
+            embed=utils.embed(
+                colour=values.MAIN,
+                description=f"Set my prefix to `{prefix}`.",
+            )
         )
-        await ctx.send(embed=embed)
+
+    @_prefix.command(name="reset")
+    async def _prefix_reset(self, ctx: custom.Context) -> None:
+        """
+        Resets the bots prefix.
+        """
+
+        assert ctx.guild is not None
+
+        await ctx.bot._prefixes.remove(ctx.guild.id)
+        await ctx.send(
+            embed=utils.embed(
+                colour=values.MAIN,
+                description=f"Reset my prefix, it is now `{config.PREFIX}`",
+            )
+        )

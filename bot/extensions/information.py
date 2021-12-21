@@ -124,6 +124,9 @@ class Information(commands.Cog):
     async def source(self, ctx: custom.Context, *, command: Optional[str]) -> None:
         """
         Get a link to the source code for a command.
+
+        **Arguments:**
+        `command`: The command to get the source code for.
         """
 
         if not command:
