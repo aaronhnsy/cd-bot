@@ -291,22 +291,28 @@ class Player(commands.Cog):
     @staticmethod
     async def _try_force_skip(ctx: custom.Context) -> None:
 
-        try:
-            await commands.check_any(  # type: ignore
-                checks.is_owner(),  # type: ignore
-                checks.is_guild_owner(),  # type: ignore
-                checks.has_any_permission(  # type: ignore
-                    manage_channels=True,
-                    manage_roles=True,
-                    manage_guild=True,
-                    kick_members=True,
-                    ban_members=True,
-                    administrator=True,
-                ),
-            ).predicate(ctx=ctx)
+        c = [
+            checks.is_owner(),
+            checks.is_guild_owner(),
+            checks.has_any_permission(
+                manage_channels=True,
+                manage_roles=True,
+                manage_guild=True,
+                kick_members=True,
+                ban_members=True,
+                administrator=True,
+            ),
+        ]
+        if (role := ctx.bot.dj_roles.get(ctx.guild.id)) is not None:
+            c.append(commands.has_role(role))
 
-        except commands.CheckAnyFailure:
-            raise exceptions.EmbedError(description="You do not have permission to force skip.")
+        try:
+            await commands.check_any(*c).predicate(ctx=ctx)  # type: ignore
+        except (commands.CheckAnyFailure, commands.MissingRole):
+            raise exceptions.EmbedError(
+                colour=values.RED,
+                description="You do not have permission to force skip."
+            )
 
     @commands.command(name="force-skip", aliases=["force_skip", "forceskip", "fs", "skipto"])
     @checks.is_player_playing()
@@ -319,10 +325,12 @@ class Player(commands.Cog):
         **Arguments:**
         `amount`: The amount of tracks to skip.
 
+        **Note:**
         You can only use this command if you meet one of the following requirements:
         - You are the owner of the bot.
         - You are the owner of the server.
         - You have the `Manage Channels`, `Manage Roles`, `Manage Guild`, `Kick Members`, `Ban Members`, or `Administrator` permission.
+        - You have the current serves DJ role.
         """
 
         await self._try_force_skip(ctx)

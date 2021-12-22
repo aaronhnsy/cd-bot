@@ -71,7 +71,8 @@ class CD(commands.AutoShardedBot):
 
         self.converters |= values.CONVERTERS
 
-        self._prefixes: utils.Config = utils.Config("prefixes.json")
+        self.prefixes: utils.Config = utils.Config("prefixes.json")
+        self.dj_roles: utils.Config = utils.Config("dj_roles.json")
 
     # Overridden methods
 
@@ -83,7 +84,7 @@ class CD(commands.AutoShardedBot):
         if not message.guild:
             return commands.when_mentioned_or(config.PREFIX)(self, message)
 
-        prefix: str = self._prefixes.get(message.guild.id, config.PREFIX)
+        prefix: str = self.prefixes.get(message.guild.id, config.PREFIX)
         return commands.when_mentioned_or(prefix)(self, message)
 
     async def is_owner(self, user: discord.User | discord.Member) -> bool:

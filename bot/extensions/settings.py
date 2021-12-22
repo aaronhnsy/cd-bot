@@ -5,12 +5,13 @@ from __future__ import annotations
 from typing import Literal
 
 # Packages
+import discord
 from discord.ext import commands
 
 # My stuff
 from core import config, values
 from core.bot import CD
-from utilities import converters, custom, utils
+from utilities import checks, converters, custom, exceptions, utils
 
 
 def setup(bot: CD) -> None:
@@ -32,7 +33,33 @@ class Settings(commands.Cog):
 
         return True
 
-    #
+    @staticmethod
+    async def _is_mod(
+        ctx: custom.Context,
+        message: str
+    ) -> None:
+
+        try:
+            await commands.check_any(  # type: ignore
+                checks.is_owner(),  # type: ignore
+                checks.is_guild_owner(),  # type: ignore
+                checks.has_any_permission(  # type: ignore
+                    manage_channels=True,
+                    manage_roles=True,
+                    manage_guild=True,
+                    kick_members=True,
+                    ban_members=True,
+                    administrator=True,
+                ),
+            ).predicate(ctx=ctx)
+
+        except commands.CheckAnyFailure:
+            raise exceptions.EmbedError(
+                colour=values.RED,
+                description=message
+            )
+
+    # Prefix
 
     @commands.group(name="prefix", invoke_without_command=True)
     async def _prefix(self, ctx: custom.Context) -> None:
@@ -42,7 +69,7 @@ class Settings(commands.Cog):
 
         assert ctx.guild is not None
 
-        prefix = ctx.bot._prefixes.get(ctx.guild.id, config.PREFIX)
+        prefix = ctx.bot.prefixes.get(ctx.guild.id, config.PREFIX)
         await ctx.send(
             embed=utils.embed(
                 colour=values.MAIN,
@@ -62,11 +89,19 @@ class Settings(commands.Cog):
         **Example:**
         - `cd prefix set !` - allows you to use `!help`
         - `cd prefix set "music "` - allows you to use `music help`
+
+        **Note:**
+        You can only use this command if you meet one of the following requirements:
+        - You are the owner of the bot.
+        - You are the owner of the server.
+        - You have the `Manage Channels`, `Manage Roles`, `Manage Guild`, `Kick Members`, `Ban Members`, or `Administrator` permission.
         """
 
         assert ctx.guild is not None
 
-        await ctx.bot._prefixes.put(ctx.guild.id, prefix)
+        await self._is_mod(ctx, "You don't have permission to change this servers prefix.")
+
+        await ctx.bot.prefixes.put(ctx.guild.id, prefix)
         await ctx.send(
             embed=utils.embed(
                 colour=values.MAIN,
@@ -78,14 +113,104 @@ class Settings(commands.Cog):
     async def _prefix_reset(self, ctx: custom.Context) -> None:
         """
         Resets the bots prefix.
+
+        **Note:**
+        You can only use this command if you meet one of the following requirements:
+        - You are the owner of the bot.
+        - You are the owner of the server.
+        - You have the `Manage Channels`, `Manage Roles`, `Manage Guild`, `Kick Members`, `Ban Members`, or `Administrator` permission.
         """
 
         assert ctx.guild is not None
 
-        await ctx.bot._prefixes.remove(ctx.guild.id)
+        await self._is_mod(ctx, "You don't have permission to change this servers prefix.")
+
+        await ctx.bot.prefixes.remove(ctx.guild.id)
         await ctx.send(
             embed=utils.embed(
                 colour=values.MAIN,
                 description=f"Reset my prefix, it is now `{config.PREFIX}`",
+            )
+        )
+
+    # DJ role
+
+    @commands.group(name="dj", invoke_without_command=True)
+    async def _dj(self, ctx: custom.Context) -> None:
+        """
+        Shows this servers DJ role.
+        """
+
+        assert ctx.guild is not None
+
+        role_id = ctx.bot.dj_roles.get(ctx.guild.id)
+        if not role_id:
+            raise exceptions.EmbedError(
+                colour=values.RED,
+                description="This server has no DJ role set.",
+            )
+
+        role = ctx.guild.get_role(role_id)
+        if not role:
+            raise exceptions.EmbedError(
+                colour=values.RED,
+                description="This servers DJ role has been deleted, please set a new one.",
+            )
+
+        await ctx.send(
+            embed=utils.embed(
+                colour=values.MAIN,
+                description=f"This servers DJ role is {role.mention}.",
+            )
+        )
+
+    @_dj.command(name="set")
+    async def _dj_set(self, ctx: custom.Context, *, role: discord.Role) -> None:
+        """
+        Sets this servers DJ role.
+
+        **Arguments:**
+        `role`: The role to set as the DJ role, can be a mention, id, or name.
+
+        **Note:**
+        You can only use this command if you meet one of the following requirements:
+        - You are the owner of the bot.
+        - You are the owner of the server.
+        - You have the `Manage Channels`, `Manage Roles`, `Manage Guild`, `Kick Members`, `Ban Members`, or `Administrator` permission.
+        """
+
+        assert ctx.guild is not None
+
+        await self._is_mod(ctx, "You don't have permission to change this servers DJ role.")
+
+        await ctx.bot.dj_roles.put(ctx.guild.id, role.id)
+        await ctx.send(
+            embed=utils.embed(
+                colour=values.MAIN,
+                description=f"Set this severs DJ role to {role.mention}.",
+            )
+        )
+
+    @_dj.command(name="reset")
+    async def _dj_reset(self, ctx: custom.Context) -> None:
+        """
+        Resets this servers DJ role.
+
+        **Note:**
+        You can only use this command if you meet one of the following requirements:
+        - You are the owner of the bot.
+        - You are the owner of the server.
+        - You have the `Manage Channels`, `Manage Roles`, `Manage Guild`, `Kick Members`, `Ban Members`, or `Administrator` permission.
+        """
+
+        assert ctx.guild is not None
+
+        await self._is_mod(ctx, "You don't have permission to change this servers DJ role.")
+
+        await ctx.bot.dj_roles.remove(ctx.guild.id)
+        await ctx.send(
+            embed=utils.embed(
+                colour=values.MAIN,
+                description="Removed this servers DJ role.",
             )
         )

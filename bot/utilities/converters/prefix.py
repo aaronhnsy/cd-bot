@@ -40,7 +40,7 @@ class Prefix(commands.Converter[str]):
 
         assert ctx.guild is not None
 
-        prefix: str = ctx.bot._prefixes.get(ctx.guild.id, config.PREFIX)
+        prefix: str = ctx.bot.prefixes.get(ctx.guild.id, config.PREFIX)
         if argument == prefix:
             raise exceptions.EmbedError(
                 colour=values.RED,

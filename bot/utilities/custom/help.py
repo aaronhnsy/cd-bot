@@ -73,7 +73,7 @@ class HelpCommand(commands.HelpCommand):
 
         await self.context.paginate_fields(
             entries=entries,
-            per_page=5,
+            per_page=8,
             title=f"{self.context.bot.user.name if self.context.bot.user else 'CD'} - Commands",
             embed_footer=f"Total commands: {len(self.filter_command_list(list(self.context.bot.walk_commands())))}",
             thumbnail=utils.avatar(self.context.bot.user) if self.context.bot.user else None,
