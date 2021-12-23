@@ -75,7 +75,7 @@ def format_seconds(
 
     days, hours, minutes, seconds = round(day), round(hour), round(minute), round(second)
 
-    if friendly is True:
-        return f"{f'{days}d ' if not days == 0 else ''}{f'{hours}h ' if not hours == 0 or not days == 0 else ''}{minutes}m {seconds}s"
+    if friendly:
+        return f"{f'{days}d ' if days != 0 else ''}{f'{hours}h ' if hours != 0 or days != 0 else ''}{minutes}m {seconds}s"
 
-    return f"{f'{days:02d}:' if not days == 0 else ''}{f'{hours:02d}:' if not hours == 0 or not days == 0 else ''}{minutes:02d}:{seconds:02d}"
+    return f"{f'{days:02d}:' if days != 0 else ''}{f'{hours:02d}:' if hours != 0 or days != 0 else ''}{minutes:02d}:{seconds:02d}"
