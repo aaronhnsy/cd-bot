@@ -291,6 +291,8 @@ class Player(commands.Cog):
     @staticmethod
     async def _try_force_skip(ctx: custom.Context) -> None:
 
+        assert ctx.guild is not None
+
         c = [
             checks.is_owner(),
             checks.is_guild_owner(),
