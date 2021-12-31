@@ -194,10 +194,16 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
 
             try:
                 search = await self.search(track.isrc or f"{track.author} - {track.title}", source=slate.obsidian.Source.YOUTUBE, ctx=track.ctx)
-            except exceptions.EmbedError as e:
-                await self.send(embed=e.embed)
-            else:
-                track = search.tracks[0]
+            except exceptions.EmbedError:
+                try:
+                    search = await self.search(f"{track.author} - {track.title}", source=slate.obsidian.Source.YOUTUBE, ctx=track.ctx)
+                except exceptions.EmbedError as e:
+                    self._waiting = False
+                    await self.send(embed=e.embed)
+                    await self.handle_track_end()
+                    return
+
+            track = search.tracks[0]
 
         await self.play(track)
         self._waiting = False
