@@ -23,6 +23,7 @@ class EmbedsPaginator(paginators.BasePaginator):
         *,
         ctx: custom.Context,
         entries: list[Any],
+        start_page: int = 0,
         timeout: int = 300,
         edit_message: bool = False,
         delete_message: bool = False,
@@ -32,6 +33,7 @@ class EmbedsPaginator(paginators.BasePaginator):
             ctx=ctx,
             entries=entries,
             per_page=1,
+            start_page=start_page,
             timeout=timeout,
             edit_message=edit_message,
             delete_message=delete_message,
@@ -40,5 +42,7 @@ class EmbedsPaginator(paginators.BasePaginator):
 
         self.embed: discord.Embed | None = None
 
-    async def set_page(self, page: int) -> None:
-        self.embed = self.pages[page]
+    #
+
+    async def _update_page(self) -> None:
+        self.embed = self.pages[self.page]

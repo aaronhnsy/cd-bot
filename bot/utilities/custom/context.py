@@ -42,6 +42,7 @@ class Context(commands.Context["CD"]):
         *,
         entries: list[Any],
         per_page: int,
+        start_page: int = 0,
         timeout: int = 300,
         edit_message: bool = True,
         delete_message: bool = False,
@@ -55,6 +56,7 @@ class Context(commands.Context["CD"]):
             ctx=self,
             entries=entries,
             per_page=per_page,
+            start_page=start_page,
             timeout=timeout,
             edit_message=edit_message,
             delete_message=delete_message,
@@ -63,7 +65,7 @@ class Context(commands.Context["CD"]):
             header=header,
             footer=footer,
         )
-        await paginator.paginate()
+        await paginator.start()
 
         return paginator
 
@@ -72,6 +74,7 @@ class Context(commands.Context["CD"]):
         *,
         entries: list[Any],
         per_page: int,
+        start_page: int = 0,
         timeout: int = 300,
         edit_message: bool = True,
         delete_message: bool = False,
@@ -95,6 +98,7 @@ class Context(commands.Context["CD"]):
             ctx=self,
             entries=entries,
             per_page=per_page,
+            start_page=start_page,
             timeout=timeout,
             edit_message=edit_message,
             delete_message=delete_message,
@@ -113,7 +117,7 @@ class Context(commands.Context["CD"]):
             url=url,
             colour=colour,
         )
-        await paginator.paginate()
+        await paginator.start()
 
         return paginator
 
@@ -122,6 +126,7 @@ class Context(commands.Context["CD"]):
         *,
         entries: list[tuple[Any, Any]],
         per_page: int,
+        start_page: int = 0,
         timeout: int = 300,
         edit_message: bool = True,
         delete_message: bool = False,
@@ -145,6 +150,7 @@ class Context(commands.Context["CD"]):
             ctx=self,
             entries=entries,
             per_page=per_page,
+            start_page=start_page,
             timeout=timeout,
             edit_message=edit_message,
             delete_message=delete_message,
@@ -163,7 +169,7 @@ class Context(commands.Context["CD"]):
             url=url,
             colour=colour,
         )
-        await paginator.paginate()
+        await paginator.start()
 
         return paginator
 
@@ -171,6 +177,7 @@ class Context(commands.Context["CD"]):
         self,
         *,
         entries: list[discord.Embed],
+        start_page: int = 0,
         timeout: int = 300,
         edit_message: bool = True,
         delete_message: bool = True,
@@ -179,11 +186,12 @@ class Context(commands.Context["CD"]):
         paginator = paginators.EmbedsPaginator(
             ctx=self,
             entries=entries,
+            start_page=start_page,
             timeout=timeout,
             edit_message=edit_message,
             delete_message=delete_message,
         )
-        await paginator.paginate()
+        await paginator.start()
 
         return paginator
 
@@ -191,6 +199,7 @@ class Context(commands.Context["CD"]):
         self,
         *,
         entries: list[functools.partial[bytes | io.BytesIO]],
+        start_page: int = 0,
         timeout: int = 300,
         edit_message: bool = True,
         delete_message: bool = True,
@@ -200,12 +209,13 @@ class Context(commands.Context["CD"]):
         paginator = paginators.FilePaginator(
             ctx=self,
             entries=entries,
+            start_page=start_page,
             timeout=timeout,
             edit_message=edit_message,
             delete_message=delete_message,
             header=header
         )
-        await paginator.paginate()
+        await paginator.start()
 
         return paginator
 

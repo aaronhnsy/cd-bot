@@ -21,6 +21,7 @@ class FilePaginator(paginators.BasePaginator):
         *,
         ctx: custom.Context,
         entries: list[functools.partial[bytes | io.BytesIO]],
+        start_page: int = 0,
         timeout: int = 300,
         edit_message: bool = True,
         delete_message: bool = False,
@@ -31,6 +32,7 @@ class FilePaginator(paginators.BasePaginator):
             ctx=ctx,
             entries=entries,
             per_page=1,
+            start_page=start_page,
             timeout=timeout,
             edit_message=edit_message,
             delete_message=delete_message,
@@ -38,9 +40,11 @@ class FilePaginator(paginators.BasePaginator):
 
         self.header: str = header or ""
 
-    async def set_page(self, page: int) -> None:
+    #
 
-        buffer = await self.entries[page]()
+    async def _update_page(self) -> None:
+
+        buffer = await self.entries[self.page]()
         url = await utils.upload_file(self.ctx.bot.session, file=buffer, format="png")
         buffer.close()
 

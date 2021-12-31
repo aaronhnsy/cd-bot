@@ -25,6 +25,7 @@ class FieldsPaginator(paginators.BasePaginator):
         ctx: custom.Context,
         entries: list[tuple[Any, Any]],
         per_page: int,
+        start_page: int = 0,
         timeout: int = 300,
         edit_message: bool = True,
         delete_message: bool = False,
@@ -48,6 +49,7 @@ class FieldsPaginator(paginators.BasePaginator):
             ctx=ctx,
             entries=entries,
             per_page=per_page,
+            start_page=start_page,
             timeout=timeout,
             edit_message=edit_message,
             delete_message=delete_message,
@@ -87,11 +89,13 @@ class FieldsPaginator(paginators.BasePaginator):
             colour=colour,
         )
 
-    async def set_page(self, page: int) -> None:
+    #
+
+    async def _update_page(self) -> None:
 
         self.embed.description = f"{self.CODEBLOCK_START}{self.header}{self.footer}{self.CODEBLOCK_END}"
 
         self.embed.clear_fields()
 
-        for name, value in self.pages[page]:
+        for name, value in self.pages[self.page]:
             self.embed.add_field(name=name, value=value, inline=False)

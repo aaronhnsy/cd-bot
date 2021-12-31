@@ -21,10 +21,15 @@ __all__ = (
 
 class PaginatorButtons(discord.ui.View):
 
-    def __init__(self, *, paginator: BasePaginator) -> None:
+    def __init__(self, paginator: BasePaginator) -> None:
         super().__init__(timeout=paginator.timeout)
 
         self.paginator: BasePaginator = paginator
+
+    # ABC Methods
+
+    async def on_error(self, error: Exception, item: discord.ui.Item[PaginatorButtons], interaction: discord.Interaction) -> None:
+        return
 
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         return interaction.user is not None and interaction.user.id in {*values.OWNER_IDS, self.paginator.ctx.author.id}
@@ -33,54 +38,35 @@ class PaginatorButtons(discord.ui.View):
         self.stop()
         await self.paginator.stop()
 
-    async def on_error(self, error: Exception, item: discord.ui.Item[PaginatorButtons], interaction: discord.Interaction) -> None:
-        return
-
     # Buttons
 
     @discord.ui.button(emoji=values.FIRST)
-    async def first(self, _: discord.ui.Button[PaginatorButtons], interaction: discord.Interaction) -> None:
+    async def _first(self, _: discord.ui.Button[PaginatorButtons], interaction: discord.Interaction) -> None:
 
         await interaction.response.defer()
-
-        if not self.paginator.message or self.paginator.page == 0:
-            return
-
-        await self.paginator.change_page(page=0)
+        await self.paginator._change_page(page=0)
 
     @discord.ui.button(emoji=values.BACKWARD)
-    async def backward(self, _: discord.ui.Button[PaginatorButtons], interaction: discord.Interaction) -> None:
+    async def _backward(self, _: discord.ui.Button[PaginatorButtons], interaction: discord.Interaction) -> None:
 
         await interaction.response.defer()
-
-        if not self.paginator.message or self.paginator.page == 0:
-            return
-
-        await self.paginator.change_page(page=self.paginator.page - 1)
+        await self.paginator._change_page(page=self.paginator.page - 1)
 
     @discord.ui.button()
-    async def page_label(self, _: discord.ui.Button[PaginatorButtons], interaction: discord.Interaction) -> None:
+    async def _label(self, _: discord.ui.Button[PaginatorButtons], interaction: discord.Interaction) -> None:
         await interaction.response.defer()
 
     @discord.ui.button(emoji=values.FORWARD)
-    async def forward(self, _: discord.ui.Button[PaginatorButtons], interaction: discord.Interaction) -> None:
+    async def _forward(self, _: discord.ui.Button[PaginatorButtons], interaction: discord.Interaction) -> None:
 
         await interaction.response.defer()
-
-        if not self.paginator.message or self.paginator.page == len(self.paginator.pages) - 1:
-            return
-
-        await self.paginator.change_page(page=self.paginator.page + 1)
+        await self.paginator._change_page(page=self.paginator.page + 1)
 
     @discord.ui.button(emoji=values.LAST)
-    async def last(self, _: discord.ui.Button[PaginatorButtons], interaction: discord.Interaction) -> None:
+    async def _last(self, _: discord.ui.Button[PaginatorButtons], interaction: discord.Interaction) -> None:
 
         await interaction.response.defer()
-
-        if not self.paginator.message or self.paginator.page == len(self.paginator.pages) - 1:
-            return
-
-        await self.paginator.change_page(page=len(self.paginator.pages) - 1)
+        await self.paginator._change_page(page=len(self.paginator.pages) - 1)
 
     @discord.ui.button(emoji=values.STOP)
     async def _stop(self, _: discord.ui.Button[PaginatorButtons], interaction: discord.Interaction) -> None:
@@ -99,6 +85,7 @@ class BasePaginator(abc.ABC):
         ctx: custom.Context,
         entries: list[Any],
         per_page: int,
+        start_page: int = 0,
         timeout: int = 300,
         edit_message: bool = True,
         delete_message: bool = False,
@@ -110,6 +97,7 @@ class BasePaginator(abc.ABC):
         self.ctx: custom.Context = ctx
         self.entries: list[Any] = entries
         self.per_page: int = per_page
+        self.start_page: int = start_page
         self.timeout: int = timeout
         self.edit_message: bool = edit_message
         self.delete_message: bool = delete_message
@@ -117,10 +105,12 @@ class BasePaginator(abc.ABC):
         self.splitter: str = splitter
         self.join_pages: bool = join_pages
 
-        self.message: discord.Message | None = None
         self.view: PaginatorButtons = PaginatorButtons(paginator=self)
+        self.message: discord.Message | None = None
+        self.embed: discord.Embed | None = None
+        self.content: str | None = None
 
-        self.page: int = 0
+        self.page: int = start_page
 
         if self.per_page > 1:
             self.pages: list[Any] = [
@@ -133,28 +123,40 @@ class BasePaginator(abc.ABC):
         self.CODEBLOCK_START: str = values.CODEBLOCK_START if self.codeblock else ""
         self.CODEBLOCK_END: str = values.CODEBLOCK_END if self.codeblock else ""
 
-        self.embed: discord.Embed | None = None
-        self.content: str | None = None
+    #
 
     @abc.abstractmethod
-    async def set_page(self, page: int) -> None:
+    async def _update_page(self) -> None:
         raise NotImplementedError
 
-    async def change_page(self, page: int) -> None:
+    def _update_buttons(self) -> None:
+
+        self.view._label.label = f"{self.page + 1}/{len(self.pages)}"
+
+        if self.page == 0:
+            self.view._first.disabled, self.view._backward.disabled = True, True
+        else:
+            self.view._first.disabled, self.view._backward.disabled = False, False
+        if self.page == len(self.pages) - 1:
+            self.view._forward.disabled, self.view._last.disabled = True, True
+        else:
+            self.view._forward.disabled, self.view._last.disabled = False, False
+
+    async def _change_page(self, page: int) -> None:
 
         self.page = page
-        self.view.page_label.label = f"{page + 1}/{len(self.pages)}"
 
-        await self.set_page(self.page)
+        await self._update_page()
+        self._update_buttons()
 
         if self.message:
             await self.message.edit(content=self.content, embed=self.embed, view=self.view)
 
-    async def paginate(self) -> None:
+    #
 
-        self.view.page_label.label = f"{self.page + 1}/{len(self.pages)}"
+    async def start(self) -> None:
 
-        await self.set_page(self.page)
+        await self._change_page(page=self.page)
         self.message = await self.ctx.reply(content=self.content, embed=self.embed, view=self.view)
 
     async def stop(self) -> None:
