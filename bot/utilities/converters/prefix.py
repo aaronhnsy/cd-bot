@@ -8,8 +8,8 @@ from typing import TYPE_CHECKING
 from discord.ext import commands
 
 # My stuff
-from core import config, values
-from utilities import exceptions
+from core import values
+from utilities import exceptions, objects
 
 
 if TYPE_CHECKING:
@@ -18,13 +18,13 @@ if TYPE_CHECKING:
 
 
 __all__ = (
-    "Prefix",
+    "PrefixConverter",
 )
 
 
-class Prefix(commands.Converter[str]):
+class PrefixConverter(commands.Converter[objects.FakePrefixConverter]):
 
-    async def convert(self, ctx: commands.Context[CD], argument: str) -> str:
+    async def convert(self, ctx: commands.Context[CD], argument: str) -> objects.FakePrefixConverter:
 
         if not (argument := (await commands.clean_content(escape_markdown=True).convert(ctx=ctx, argument=argument)).lstrip()):
             raise exceptions.EmbedError(
@@ -39,12 +39,12 @@ class Prefix(commands.Converter[str]):
             )
 
         assert ctx.guild is not None
+        guild_config = await ctx.bot.config.get_guild_config(ctx.guild.id)
 
-        prefix: str = ctx.bot.prefixes.get(ctx.guild.id, config.PREFIX)
-        if argument == prefix:
+        if argument == guild_config.prefix:
             raise exceptions.EmbedError(
                 colour=values.RED,
                 description="Your prefix can not be the same as the current prefix."
             )
 
-        return argument
+        return objects.FakePrefixConverter(argument)

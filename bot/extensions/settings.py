@@ -11,7 +11,7 @@ from discord.ext import commands
 # My stuff
 from core import config, values
 from core.bot import CD
-from utilities import checks, converters, custom, exceptions, utils
+from utilities import checks, custom, exceptions, objects, utils
 
 
 def setup(bot: CD) -> None:
@@ -69,17 +69,18 @@ class Settings(commands.Cog):
 
         assert ctx.guild is not None
 
-        prefix = ctx.bot.prefixes.get(ctx.guild.id, config.PREFIX)
+        guild_config = await self.bot.config.get_guild_config(ctx.guild.id)
+
         await ctx.send(
             embed=utils.embed(
                 colour=values.MAIN,
-                description=f"My prefix is `{prefix}`",
+                description=f"My prefix is `{guild_config.prefix or config.PREFIX}`",
                 footer="You can also mention me to use my commands!"
             )
         )
 
     @_prefix.command(name="set")
-    async def _prefix_set(self, ctx: custom.Context, prefix: converters.Prefix) -> None:
+    async def _prefix_set(self, ctx: custom.Context, prefix: objects.FakePrefixConverter) -> None:
         """
         Sets the bots prefix.
 
@@ -101,11 +102,13 @@ class Settings(commands.Cog):
 
         await self._is_mod(ctx, "You don't have permission to change this servers prefix.")
 
-        await ctx.bot.prefixes.put(ctx.guild.id, prefix)
+        guild_config = await self.bot.config.get_guild_config(ctx.guild.id)
+        await guild_config.set_prefix(prefix.prefix)
+
         await ctx.send(
             embed=utils.embed(
                 colour=values.MAIN,
-                description=f"Set my prefix to `{prefix}`.",
+                description=f"Set my prefix to `{prefix.prefix}`.",
             )
         )
 
@@ -125,11 +128,19 @@ class Settings(commands.Cog):
 
         await self._is_mod(ctx, "You don't have permission to change this servers prefix.")
 
-        await ctx.bot.prefixes.remove(ctx.guild.id)
+        guild_config = await self.bot.config.get_guild_config(ctx.guild.id)
+        if not guild_config.dj_role_id:
+            raise exceptions.EmbedError(
+                colour=values.RED,
+                description="This server has not set a custom prefix.",
+            )
+
+        await guild_config.set_prefix(None)
+
         await ctx.send(
             embed=utils.embed(
                 colour=values.MAIN,
-                description=f"Reset my prefix, it is now `{config.PREFIX}`",
+                description=f"Reset my prefix to `{config.PREFIX}`",
             )
         )
 
@@ -143,14 +154,15 @@ class Settings(commands.Cog):
 
         assert ctx.guild is not None
 
-        role_id = ctx.bot.dj_roles.get(ctx.guild.id)
-        if not role_id:
+        guild_config = await self.bot.config.get_guild_config(ctx.guild.id)
+
+        if not guild_config.dj_role_id:
             raise exceptions.EmbedError(
                 colour=values.RED,
                 description="This server has no DJ role set.",
             )
 
-        role = ctx.guild.get_role(role_id)
+        role = ctx.guild.get_role(guild_config.dj_role_id)
         if not role:
             raise exceptions.EmbedError(
                 colour=values.RED,
@@ -183,7 +195,9 @@ class Settings(commands.Cog):
 
         await self._is_mod(ctx, "You don't have permission to change this servers DJ role.")
 
-        await ctx.bot.dj_roles.put(ctx.guild.id, role.id)
+        guild_config = await self.bot.config.get_guild_config(ctx.guild.id)
+        await guild_config.set_dj_role_id(role.id)
+
         await ctx.send(
             embed=utils.embed(
                 colour=values.MAIN,
@@ -207,7 +221,15 @@ class Settings(commands.Cog):
 
         await self._is_mod(ctx, "You don't have permission to change this servers DJ role.")
 
-        await ctx.bot.dj_roles.remove(ctx.guild.id)
+        guild_config = await self.bot.config.get_guild_config(ctx.guild.id)
+        if not guild_config.dj_role_id:
+            raise exceptions.EmbedError(
+                colour=values.RED,
+                description="This server has no DJ role set.",
+            )
+
+        await guild_config.set_dj_role_id(None)
+
         await ctx.send(
             embed=utils.embed(
                 colour=values.MAIN,

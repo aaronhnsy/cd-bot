@@ -60,19 +60,18 @@ class CD(commands.AutoShardedBot):
 
         self.add_check(checks.bot, call_once=True)  # type: ignore
 
-        self._log_webhooks: dict[enums.LogType, discord.Webhook] = {
+        self.log_webhooks: dict[enums.LogType, discord.Webhook] = {
             enums.LogType.DM:      discord.Webhook.from_url(session=self.session, url=config.DM_WEBHOOK_URL),
             enums.LogType.GUILD:   discord.Webhook.from_url(session=self.session, url=config.GUILD_WEBHOOK_URL),
             enums.LogType.ERROR:   discord.Webhook.from_url(session=self.session, url=config.ERROR_WEBHOOK_URL),
             enums.LogType.COMMAND: discord.Webhook.from_url(session=self.session, url=config.COMMAND_WEBHOOK_URL),
         }
-        self._log_queue: dict[enums.LogType, list[discord.Embed]] = collections.defaultdict(list)
-        self._log_loop.start()
+        self.log_queue: dict[enums.LogType, list[discord.Embed]] = collections.defaultdict(list)
+        self.log_loop.start()
 
         self.converters |= values.CONVERTERS
 
-        self.prefixes: utils.Config = utils.Config("prefixes.json")
-        self.dj_roles: utils.Config = utils.Config("dj_roles.json")
+        self.config: utils.Config = utils.Config(self)
 
     # Overridden methods
 
@@ -84,8 +83,8 @@ class CD(commands.AutoShardedBot):
         if not message.guild:
             return commands.when_mentioned_or(config.PREFIX)(self, message)
 
-        prefix: str = self.prefixes.get(message.guild.id, config.PREFIX)
-        return commands.when_mentioned_or(prefix)(self, message)
+        guild_config = await self.config.get_guild_config(message.guild.id)
+        return commands.when_mentioned_or(guild_config.prefix or config.PREFIX)(self, message)
 
     async def is_owner(self, user: discord.User | discord.Member) -> bool:
         return user.id in values.OWNER_IDS
@@ -164,27 +163,14 @@ class CD(commands.AutoShardedBot):
     # Logging
 
     @tasks.loop(seconds=3)
-    async def _log_loop(self) -> None:
+    async def log_loop(self) -> None:
 
-        for type, queue in self._log_queue.items():
+        for type, queue in self.log_queue.items():
 
-            if not queue:
+            if not (embeds := [queue.pop(0) for _ in range(min(10, len(queue)))]):
                 continue
 
-            embeds = [queue.pop(0) for _ in range(min(10, len(queue)))]
-            await self._log_webhooks[type].send(embeds=embeds)
+            await self.log_webhooks[type].send(embeds=embeds)
 
-    async def log(
-        self,
-        type: enums.LogType,
-        /,
-        *,
-        embed: discord.Embed
-    ) -> None:
-        self._log_queue[type].append(embed)
-
-    # Config
-
-    @property
-    def config(self) -> Any:
-        return __import__("config")
+    async def log(self, type: enums.LogType, /, *, embed: discord.Embed) -> None:
+        self.log_queue[type].append(embed)

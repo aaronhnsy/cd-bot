@@ -66,5 +66,6 @@ CODEBLOCK_START = f"```{NL}"
 CODEBLOCK_END = f"{NL}```"
 
 CONVERTERS = {
-    objects.Time: converters.TimeConverter,
+    objects.FakeTimeConverter: converters.TimeConverter,
+    objects.FakePrefixConverter: converters.PrefixConverter,
 }

@@ -292,7 +292,7 @@ class Events(commands.Cog):
                         f"**Author:** {ctx.author} (`{ctx.author.id}`)\n"
                         f"**Time:** {utils.format_datetime(pendulum.now(tz='UTC'), format=enums.DatetimeFormat.PARTIAL_LONG_DATETIME)}",
         )
-        await self.bot._log_webhooks[enums.LogType.ERROR].send(embed=embed, username=f"{ctx.author}", avatar_url=utils.avatar(ctx.author))
+        await self.bot.log_webhooks[enums.LogType.ERROR].send(embed=embed, username=f"{ctx.author}", avatar_url=utils.avatar(ctx.author))
 
         exception = await utils.upload_text(
             self.bot.mystbin,
@@ -300,7 +300,7 @@ class Events(commands.Cog):
             format="python",
             max_characters=2000
         )
-        await self.bot._log_webhooks[enums.LogType.ERROR].send(exception, username=f"{ctx.author}", avatar_url=utils.avatar(ctx.author))
+        await self.bot.log_webhooks[enums.LogType.ERROR].send(exception, username=f"{ctx.author}", avatar_url=utils.avatar(ctx.author))
 
     # Command logging
 
@@ -318,7 +318,7 @@ class Events(commands.Cog):
                         f"**Author:** {ctx.author} (`{ctx.author.id}`)\n"
                         f"**Time:** {utils.format_datetime(pendulum.now(tz='UTC'), format=enums.DatetimeFormat.PARTIAL_LONG_DATETIME)}",
         )
-        await self.bot._log_webhooks[enums.LogType.COMMAND].send(embed=embed, username=f"{ctx.author}", avatar_url=utils.avatar(ctx.author))
+        await self.bot.log_webhooks[enums.LogType.COMMAND].send(embed=embed, username=f"{ctx.author}", avatar_url=utils.avatar(ctx.author))
 
     @commands.Cog.listener("on_voice_state_update")
     async def voice_client_cleanup(self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState) -> None:

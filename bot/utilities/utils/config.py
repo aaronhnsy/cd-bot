@@ -1,18 +1,17 @@
-"""
-This Source Code Form is subject to the terms of the Mozilla Public
-Licence, v. 2.0. If a copy of the MPL was not distributed with this
-file, You can obtain one at http://mozilla.org/MPL/2.0/.
-"""
-
 # Future
 from __future__ import annotations
 
 # Standard Library
-import asyncio
-import json
-import os
-import uuid
-from typing import Any, Callable, Type
+import logging
+from typing import TYPE_CHECKING
+
+# My stuff
+from utilities import objects
+
+
+if TYPE_CHECKING:
+    # My stuff
+    from core.bot import CD
 
 
 __all__ = (
@@ -20,97 +19,51 @@ __all__ = (
 )
 
 
-class Encoder(json.JSONEncoder):
-
-    def default(self, o: Any) -> Any:
-
-        if isinstance(o, self):  # type: ignore
-            return o.to_json()  # type: ignore
-
-        return super().default(o)
+__log__: logging.Logger = logging.getLogger("utilities.utils.config")
 
 
 class Config:
 
-    def __init__(self, name: str, **options: Any) -> None:
+    def __init__(self, bot: CD) -> None:
+        self.bot: CD = bot
 
-        self.name: str = name
-        self.object_hook: Callable[..., dict[str, Any]] | None = options.pop("object_hook", None)
-        self.encoder: Type[json.JSONEncoder] | None = options.pop("encoder", None)
-        self._db: dict[str, Any] | Any = None
+        self.guild_configs: dict[int, objects.GuildConfig] = {}
+        self.user_configs: dict[int, objects.UserConfig] = {}
 
-        try:
-            hook: Callable[..., dict[str, Any]] = options.pop("hook")
-        except KeyError:
-            pass
-        else:
-            self.object_hook = hook.from_json  # type: ignore
-            self.encoder = Encoder
+    # Guild configs
 
-        self.loop: asyncio.AbstractEventLoop = options.pop("loop", asyncio.get_event_loop())
-        self.lock: asyncio.Lock = asyncio.Lock()
+    async def fetch_guild_config(self, guild_id: int) -> objects.GuildConfig:
 
-        if options.pop("load_later", False):
-            self.loop.create_task(self.load())
-        else:
-            self._load_from_file()
+        data = await self.bot.db.fetchrow(
+            "INSERT INTO guilds (id) values ($1) ON CONFLICT (id) DO UPDATE SET id = excluded.id RETURNING *",
+            guild_id
+        )
+        self.guild_configs[guild_id] = objects.GuildConfig(bot=self.bot, data=data)
 
-    def __contains__(self, item: Any) -> bool:
-        return str(item) in self._db
+        return self.guild_configs[guild_id]
 
-    def __getitem__(self, item: Any) -> Any:
-        return self._db[str(item)]
+    async def get_guild_config(self, guild_id: int) -> objects.GuildConfig:
 
-    def __len__(self) -> int:
-        return len(self._db)
+        if not (guild_config := self.guild_configs.get(guild_id)):
+            guild_config = await self.fetch_guild_config(guild_id)
 
-    #
+        return guild_config
 
-    def _load_from_file(self) -> None:
+    # User configs
 
-        try:
-            with open(self.name, "r") as f:
-                self._db = json.load(f, object_hook=self.object_hook)
-        except FileNotFoundError:
-            self._db = {}
+    async def fetch_user_config(self, user_id: int) -> objects.UserConfig:
 
-    async def load(self) -> None:
+        data = await self.bot.db.fetchrow(
+            "INSERT INTO users (id) values ($1) ON CONFLICT (id) DO UPDATE SET id = excluded.id RETURNING *",
+            user_id
+        )
+        self.user_configs[user_id] = objects.UserConfig(bot=self.bot, data=data)
 
-        async with self.lock:
-            await self.loop.run_in_executor(None, self._load_from_file)
+        return self.user_configs[user_id]
 
-    def _dump(self) -> None:
+    async def get_user_config(self, user_id: int) -> objects.UserConfig:
 
-        temp = "%s-%s.tmp" % (uuid.uuid4(), self.name)
+        if not (user_config := self.user_configs.get(user_id)):
+            user_config = await self.fetch_user_config(user_id)
 
-        with open(temp, "w", encoding="utf-8") as file:
-            json.dump(
-                self._db.copy(),
-                file,
-                cls=self.encoder,
-                separators=(",", ":"),
-                indent=4,
-            )
-
-        os.replace(temp, self.name)
-
-    async def save(self) -> None:
-
-        async with self.lock:
-            await self.loop.run_in_executor(None, self._dump)
-
-    #
-
-    def all(self) -> dict[str, Any]:
-        return self._db
-
-    def get(self, key: Any, *args: Any) -> Any:
-        return self._db.get(str(key), *args)
-
-    async def put(self, key: Any, value: Any, *_: Any) -> None:
-        self._db[str(key)] = value
-        await self.save()
-
-    async def remove(self, key: Any) -> None:
-        del self._db[str(key)]
-        await self.save()
+        return user_config

@@ -7,7 +7,10 @@ from discord.enums import Enum
 
 __all__ = (
     "Environment",
-    "DatetimeFormat"
+    "DatetimeFormat",
+    "LogType",
+    "Filter",
+    "EmbedSize"
 )
 
 
@@ -48,8 +51,14 @@ class LogType(Enum):
 
 
 class Filter(Enum):
-    ROTATION = '8D'
+    ROTATION = "8D"
     NIGHTCORE = "Nightcore"
     MONO = "Mono"
     LEFT = "Left-ear"
     RIGHT = "Right-ear"
+
+
+class EmbedSize(Enum):
+    LARGE = 0
+    MEDIUM = 1
+    SMALL = 2

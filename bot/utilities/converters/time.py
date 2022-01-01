@@ -43,9 +43,9 @@ $
 """, flags=re.VERBOSE)
 
 
-class TimeConverter(commands.Converter[objects.Time]):
+class TimeConverter(commands.Converter[objects.FakeTimeConverter]):
 
-    async def convert(self, ctx: commands.Context[CD], argument: str) -> objects.Time:
+    async def convert(self, ctx: commands.Context[CD], argument: str) -> objects.FakeTimeConverter:
 
         if (match := COLON_FORMAT_REGEX.match(argument)) or (match := HUMAN_FORMAT_REGEX.match(argument)):
 
@@ -65,4 +65,4 @@ class TimeConverter(commands.Converter[objects.Time]):
             except ValueError:
                 raise exceptions.EmbedError(description="That time format was not recognized.")
 
-        return objects.Time(seconds)
+        return objects.FakeTimeConverter(seconds)

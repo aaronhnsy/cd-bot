@@ -119,7 +119,7 @@ class Player(commands.Cog):
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def seek(self, ctx: custom.Context, *, time: objects.Time) -> None:
+    async def seek(self, ctx: custom.Context, *, time: objects.FakeTimeConverter) -> None:
         """
         Seeks to time in the current track.
 
@@ -163,7 +163,7 @@ class Player(commands.Cog):
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def fast_forward(self, ctx: custom.Context, *, time: objects.Time) -> None:
+    async def fast_forward(self, ctx: custom.Context, *, time: objects.FakeTimeConverter) -> None:
         """
         Fast-forwards the current track by an amount of time.
 
@@ -210,7 +210,7 @@ class Player(commands.Cog):
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def rewind(self, ctx: custom.Context, *, time: objects.Time) -> None:
+    async def rewind(self, ctx: custom.Context, *, time: objects.FakeTimeConverter) -> None:
         """
         Rewinds the current track by an amount of time.
 
@@ -305,8 +305,10 @@ class Player(commands.Cog):
                 administrator=True,
             ),
         ]
-        if (role := ctx.bot.dj_roles.get(ctx.guild.id)) is not None:
-            c.append(commands.has_role(role))
+
+        guild_config = await ctx.bot.config.get_guild_config(ctx.guild.id)
+        if guild_config.dj_role_id:
+            c.append(commands.has_role(guild_config.dj_role_id))
 
         try:
             await commands.check_any(*c).predicate(ctx=ctx)  # type: ignore
