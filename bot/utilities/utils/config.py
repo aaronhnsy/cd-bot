@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 # Standard Library
-import logging
 from typing import TYPE_CHECKING
 
 # My stuff
@@ -17,9 +16,6 @@ if TYPE_CHECKING:
 __all__ = (
     "Config",
 )
-
-
-__log__: logging.Logger = logging.getLogger("utilities.utils.config")
 
 
 class Config:

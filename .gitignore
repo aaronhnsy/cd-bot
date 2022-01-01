@@ -9,5 +9,3 @@ build/
 .idea/
 
 bot/core/config.py
-prefixes.json
-dj_roles.json
