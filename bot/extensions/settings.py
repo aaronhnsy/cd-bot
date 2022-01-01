@@ -68,14 +68,12 @@ class Settings(commands.Cog):
         """
 
         assert ctx.guild is not None
-
         guild_config = await self.bot.config.get_guild_config(ctx.guild.id)
 
         await ctx.send(
             embed=utils.embed(
                 colour=values.MAIN,
-                description=f"My prefix is `{guild_config.prefix or config.PREFIX}`",
-                footer="You can also mention me to use my commands!"
+                description=f"My prefix in this server is `{guild_config.prefix or config.PREFIX}`",
             )
         )
 
@@ -85,7 +83,7 @@ class Settings(commands.Cog):
         Sets the bots prefix.
 
         **Arguments:**
-        `prefix`: The prefix to set, surround with quotes if it contains spaces.
+        `prefix`: The prefix to set, surround it with quotes if you want it to contain spaces.
 
         **Example:**
         - `cd prefix set !` - allows you to use `!help`
@@ -98,17 +96,17 @@ class Settings(commands.Cog):
         - You have the `Manage Channels`, `Manage Roles`, `Manage Guild`, `Kick Members`, `Ban Members`, or `Administrator` permission.
         """
 
-        assert ctx.guild is not None
-
         await self._is_mod(ctx, "You don't have permission to change this servers prefix.")
 
+        assert ctx.guild is not None
         guild_config = await self.bot.config.get_guild_config(ctx.guild.id)
+
         await guild_config.set_prefix(prefix.prefix)
 
         await ctx.send(
             embed=utils.embed(
-                colour=values.MAIN,
-                description=f"Set my prefix to `{prefix.prefix}`.",
+                colour=values.GREEN,
+                description=f"Set this servers prefix to `{prefix.prefix}`",
             )
         )
 
@@ -124,12 +122,12 @@ class Settings(commands.Cog):
         - You have the `Manage Channels`, `Manage Roles`, `Manage Guild`, `Kick Members`, `Ban Members`, or `Administrator` permission.
         """
 
-        assert ctx.guild is not None
-
         await self._is_mod(ctx, "You don't have permission to change this servers prefix.")
 
+        assert ctx.guild is not None
         guild_config = await self.bot.config.get_guild_config(ctx.guild.id)
-        if not guild_config.dj_role_id:
+
+        if not guild_config.prefix:
             raise exceptions.EmbedError(
                 colour=values.RED,
                 description="This server has not set a custom prefix.",
@@ -139,8 +137,8 @@ class Settings(commands.Cog):
 
         await ctx.send(
             embed=utils.embed(
-                colour=values.MAIN,
-                description=f"Reset my prefix to `{config.PREFIX}`",
+                colour=values.GREEN,
+                description=f"Reset this servers prefix to `{config.PREFIX}`",
             )
         )
 
@@ -153,20 +151,19 @@ class Settings(commands.Cog):
         """
 
         assert ctx.guild is not None
-
         guild_config = await self.bot.config.get_guild_config(ctx.guild.id)
 
         if not guild_config.dj_role_id:
             raise exceptions.EmbedError(
                 colour=values.RED,
-                description="This server has no DJ role set.",
+                description="This server has not set a DJ role.",
             )
 
-        role = ctx.guild.get_role(guild_config.dj_role_id)
-        if not role:
+        if not (role := ctx.guild.get_role(guild_config.dj_role_id)):
+            await guild_config.set_dj_role_id(None)
             raise exceptions.EmbedError(
                 colour=values.RED,
-                description="This servers DJ role has been deleted, please set a new one.",
+                description="This servers DJ role was deleted, please set a new one.",
             )
 
         await ctx.send(
@@ -191,16 +188,16 @@ class Settings(commands.Cog):
         - You have the `Manage Channels`, `Manage Roles`, `Manage Guild`, `Kick Members`, `Ban Members`, or `Administrator` permission.
         """
 
-        assert ctx.guild is not None
-
         await self._is_mod(ctx, "You don't have permission to change this servers DJ role.")
 
+        assert ctx.guild is not None
         guild_config = await self.bot.config.get_guild_config(ctx.guild.id)
+
         await guild_config.set_dj_role_id(role.id)
 
         await ctx.send(
             embed=utils.embed(
-                colour=values.MAIN,
+                colour=values.GREEN,
                 description=f"Set this severs DJ role to {role.mention}.",
             )
         )
@@ -217,22 +214,22 @@ class Settings(commands.Cog):
         - You have the `Manage Channels`, `Manage Roles`, `Manage Guild`, `Kick Members`, `Ban Members`, or `Administrator` permission.
         """
 
-        assert ctx.guild is not None
-
         await self._is_mod(ctx, "You don't have permission to change this servers DJ role.")
 
+        assert ctx.guild is not None
         guild_config = await self.bot.config.get_guild_config(ctx.guild.id)
+
         if not guild_config.dj_role_id:
             raise exceptions.EmbedError(
                 colour=values.RED,
-                description="This server has no DJ role set.",
+                description="This server has not set a DJ role.",
             )
 
         await guild_config.set_dj_role_id(None)
 
         await ctx.send(
             embed=utils.embed(
-                colour=values.MAIN,
-                description="Removed this servers DJ role.",
+                colour=values.GREEN,
+                description="Reset this servers DJ role.",
             )
         )
