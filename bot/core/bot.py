@@ -30,7 +30,7 @@ __log__: logging.Logger = logging.getLogger("bot")
 
 class CD(commands.AutoShardedBot):
 
-    converters: dict[Type[Any], Type[Any]]
+    converters: dict[Any, Any]
 
     def __init__(self) -> None:
         super().__init__(

@@ -1,11 +1,14 @@
 # Future
 from __future__ import annotations
 
+# Standard Library
+from typing import Any
+
 # Packages
 import discord
 
 # My stuff
-from utilities import converters, objects
+from utilities import converters, enums, objects
 
 
 ZWSP = "\u200b"
@@ -66,6 +69,7 @@ CODEBLOCK_START = f"```{NL}"
 CODEBLOCK_END = f"{NL}```"
 
 CONVERTERS = {
-    objects.FakeTimeConverter: converters.TimeConverter,
+    objects.FakeTimeConverter:   converters.TimeConverter,
     objects.FakePrefixConverter: converters.PrefixConverter,
+    enums.EmbedSize:             converters.EnumConverter(enums.EmbedSize, "Embed size"),
 }
