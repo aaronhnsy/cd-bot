@@ -11,7 +11,7 @@ from discord.ext import commands
 # My stuff
 from core import config, values
 from core.bot import CD
-from utilities import checks, custom, exceptions, objects, utils
+from utilities import checks, custom, enums, exceptions, objects, utils
 
 
 def setup(bot: CD) -> None:
@@ -231,5 +231,80 @@ class Settings(commands.Cog):
             embed=utils.embed(
                 colour=values.GREEN,
                 description="Reset this servers DJ role.",
+            )
+        )
+
+    # Embed size
+
+    # DJ role
+
+    @commands.group(name="embed-size", aliases=["embed_size", "embedsize", "es"], invoke_without_command=True)
+    async def _embed_size(self, ctx: custom.Context) -> None:
+        """
+        Shows this servers embed size
+        """
+
+        assert ctx.guild is not None
+        guild_config = await self.bot.config.get_guild_config(ctx.guild.id)
+
+        await ctx.send(
+            embed=utils.embed(
+                colour=values.MAIN,
+                description=f"This servers embed size is `{guild_config.embed_size.name.title()}`.",
+            )
+        )
+
+    @_embed_size.command(name="set")
+    async def _embed_size_set(self, ctx: custom.Context, *, embed_size: enums.EmbedSize) -> None:
+        """
+        Sets this servers embed size.
+
+        **Arguments:**
+        `embed_size`: The embed size to set, can be `large`, `medium`, or `small`.
+
+        **Note:**
+        You can only use this command if you meet one of the following requirements:
+        - You are the owner of the bot.
+        - You are the owner of the server.
+        - You have the `Manage Channels`, `Manage Roles`, `Manage Guild`, `Kick Members`, `Ban Members`, or `Administrator` permission.
+        """
+
+        await self._is_mod(ctx, "You don't have permission to change this servers embed size.")
+
+        assert ctx.guild is not None
+        guild_config = await self.bot.config.get_guild_config(ctx.guild.id)
+
+        await guild_config.set_embed_size(embed_size)
+
+        await ctx.send(
+            embed=utils.embed(
+                colour=values.GREEN,
+                description=f"Set this severs embed size to `{embed_size.name.title()}`.",
+            )
+        )
+
+    @_embed_size.command(name="reset")
+    async def _embed_size_reset(self, ctx: custom.Context) -> None:
+        """
+        Resets this servers embed size.
+
+        **Note:**
+        You can only use this command if you meet one of the following requirements:
+        - You are the owner of the bot.
+        - You are the owner of the server.
+        - You have the `Manage Channels`, `Manage Roles`, `Manage Guild`, `Kick Members`, `Ban Members`, or `Administrator` permission.
+        """
+
+        await self._is_mod(ctx, "You don't have permission to change this servers embed size.")
+
+        assert ctx.guild is not None
+        guild_config = await self.bot.config.get_guild_config(ctx.guild.id)
+
+        await guild_config.set_embed_size(enums.EmbedSize.LARGE)
+
+        await ctx.send(
+            embed=utils.embed(
+                colour=values.GREEN,
+                description=f"Reset this servers embed size back to `{guild_config.embed_size.name.title()}`.",
             )
         )
