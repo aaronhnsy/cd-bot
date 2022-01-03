@@ -291,9 +291,7 @@ class Player(commands.Cog):
     @staticmethod
     async def _try_force_skip(ctx: custom.Context) -> None:
 
-        assert ctx.guild is not None
-
-        c = [
+        _checks = [
             checks.is_owner(),
             checks.is_guild_owner(),
             checks.has_any_permission(
@@ -306,12 +304,17 @@ class Player(commands.Cog):
             ),
         ]
 
+        assert ctx.guild is not None
         guild_config = await ctx.bot.config.get_guild_config(ctx.guild.id)
+
         if guild_config.dj_role_id:
-            c.append(commands.has_role(guild_config.dj_role_id))
+            if role := ctx.guild.get_role(guild_config.dj_role_id):
+                _checks.append(commands.has_role(role.id))
+            else:
+                await guild_config.set_dj_role_id(None)
 
         try:
-            await commands.check_any(*c).predicate(ctx=ctx)  # type: ignore
+            await commands.check_any(*_checks).predicate(ctx=ctx)  # type: ignore
         except (commands.CheckAnyFailure, commands.MissingRole):
             raise exceptions.EmbedError(
                 colour=values.RED,
@@ -327,14 +330,14 @@ class Player(commands.Cog):
         Force skips the current track.
 
         **Arguments:**
-        `amount`: The amount of tracks to skip.
+        `amount`: An optional amount of tracks to skip, defaults to 1.
 
         **Note:**
         You can only use this command if you meet one of the following requirements:
         - You are the owner of the bot.
         - You are the owner of the server.
         - You have the `Manage Channels`, `Manage Roles`, `Manage Guild`, `Kick Members`, `Ban Members`, or `Administrator` permission.
-        - You have the current serves DJ role.
+        - You have the servers DJ role.
         """
 
         await self._try_force_skip(ctx)
