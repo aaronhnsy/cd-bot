@@ -121,12 +121,12 @@ class HelpCommand(commands.HelpCommand):
 
         aliases = f"**Aliases:** {'/'.join(command.aliases)}\n\n" if command.aliases else ""
 
-        embed = utils.embed(
-            title=f"{command.qualified_name} {' '.join([f'[{name}]' for name in command.clean_params.keys()])}",
-            description=f"{aliases}{command.help or 'No help provided for this command.'}"
+        await self.context.send(
+            embed=utils.embed(
+                title=f"{command.qualified_name} {' '.join([f'[{name}]' for name in command.clean_params.keys()])}",
+                description=f"{aliases}{command.help or 'No help provided for this command.'}"
+            )
         )
-
-        await self.context.send(embed=embed)
 
     #
 

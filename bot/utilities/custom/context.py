@@ -221,7 +221,7 @@ class Context(commands.Context["CD"]):
 
     # Misc
 
-    async def dm(self, *args: Any, **kwargs: Any) -> discord.Message | None:
+    async def try_dm(self, *args: Any, **kwargs: Any) -> discord.Message | None:
 
         try:
             return await self.author.send(*args, **kwargs)
