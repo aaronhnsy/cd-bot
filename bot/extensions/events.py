@@ -245,7 +245,7 @@ class Events(commands.Cog):
 
     async def _send_exception(self, ctx: custom.Context, exception: str) -> None:
 
-        guild_url = f"https://canary.discord.com/channels/{ctx.guild.id}"
+        guild_url = f"https://canary.discord.com/channels/{ctx.guild.id}" if ctx.guild else None
         channel_url = f"https://canary.discord.com/channels/{ctx.guild.id if ctx.guild else '@me'}/{ctx.channel.id}"
         user_url = f"https://canary.discord.com/users/{ctx.author.id}"
 
@@ -326,7 +326,7 @@ class Events(commands.Cog):
         else:
 
             exception = "".join(traceback.format_exception(type(error), error, error.__traceback__))
-            __log__.error(f"Error running command '{ctx.command.qualified_name}':\n{exception}")
+            __log__.error(f"Error running command '{ctx.command.qualified_name if ctx.command else 'Unknown'}':\n{exception}")
 
             await self._send_friendly_error(ctx)
             await self._send_exception(ctx, exception)
