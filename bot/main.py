@@ -10,12 +10,13 @@ import os
 import sys
 from collections.abc import Generator
 
-# Packages
-import setproctitle
-
 # My stuff
 from core import bot, config
 
+
+os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
+os.environ["JISHAKU_HIDE"] = "True"
+os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
 
 RESET = "\u001b[0m"
 BOLD = "\u001b[1m"
@@ -83,12 +84,6 @@ def logger() -> Generator[None, None, None]:
 
 
 if __name__ == "__main__":
-
-    os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
-    os.environ["JISHAKU_HIDE"] = "True"
-    os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
-
-    setproctitle.setproctitle("CD-bot")
 
     try:
         # Packages
