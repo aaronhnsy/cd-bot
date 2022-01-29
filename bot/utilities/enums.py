@@ -20,6 +20,8 @@ class Environment(Enum):
 
 
 class DatetimeFormat(Enum):
+
+    # Dates
     FULL_LONG_DATE = "dddd [the] Do [of] MMMM YYYY"
     PARTIAL_LONG_DATE = "dddd Do [of] MMMM YYYY"
     LONG_DATE = "dddd Do MMMM YYYY"
@@ -30,17 +32,19 @@ class DatetimeFormat(Enum):
     FULL_COMPUTER_DATE = "YYYY/MM/DD"
     PARTIAL_COMPUTER_DATE = "YY/M/D"
 
-    FULL_TIME = "hh:mm:ss"
-    PARTIAL_TIME = "hh:mm"
+    # Times
+    FULL_TIME = "hh:mm:ss A"
+    PARTIAL_TIME = "hh:mm A"
 
+    # Dates and times
     FULL_LONG_DATETIME = "dddd [the] Do [of] MMMM YYYY [at] hh:mm A"
     FULL_LONG_DATETIME_WITH_SECONDS = "dddd [the] Do [of] MMMM YYYY [at] hh:mm:ss A"
 
     PARTIAL_LONG_DATETIME = "dddd Do [of] MMMM YYYY [at] hh:mm A"
     PARTIAL_LONG_DATETIME_WITH_SECONDS = "dddd Do [of] MMMM YYYY [at] hh:mm:ss A"
 
-    LONG_DATETIME = "dddd Do MMMM YYYY [at] hh:mm A"
-    LONG_DATETIME_WITH_SECONDS = "dddd Do MMMM YYYY [at] hh:mm:ss A"
+    SHORT_DATETIME = "dddd Do MMMM YYYY [at] hh:mm A"
+    SHORT_DATETIME_WITH_SECONDS = "dddd Do MMMM YYYY [at] hh:mm:ss A"
 
 
 class LogType(Enum):
