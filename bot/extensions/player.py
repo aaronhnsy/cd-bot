@@ -51,7 +51,7 @@ class Player(commands.Cog):
             raise exceptions.EmbedError(description=f"I am already connected to {ctx.voice_client.voice_channel.mention}.")
 
         await ctx.author.voice.channel.connect(cls=custom.Player)  # type: ignore
-        ctx.voice_client._text_channel = ctx.channel  # type: ignore
+        ctx.voice_client.text_channel = ctx.channel  # type: ignore
 
         assert ctx.voice_client is not None
         await ctx.send(

@@ -53,7 +53,7 @@ class Play(commands.Cog):
             raise exceptions.EmbedError(description=f"You must be connected to {bot_channel.mention} to use this command.")
 
         await author_channel.connect(cls=custom.Player)  # type: ignore
-        ctx.voice_client._text_channel = ctx.channel  # type: ignore
+        ctx.voice_client.text_channel = ctx.channel  # type: ignore
 
     # Play
 
@@ -85,7 +85,7 @@ class Play(commands.Cog):
         assert ctx.voice_client is not None
 
         async with ctx.channel.typing():
-            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.YOUTUBE, next=True)
+            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.YOUTUBE, play_next=True)
 
     @commands.command(name="play-now", aliases=["play_now", "playnow", "pno"])
     async def play_now(self, ctx: custom.Context, *, query: str) -> None:
@@ -100,7 +100,7 @@ class Play(commands.Cog):
         assert ctx.voice_client is not None
 
         async with ctx.channel.typing():
-            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.YOUTUBE, now=True)
+            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.YOUTUBE, play_now=True)
 
     # Search
 
@@ -116,7 +116,7 @@ class Play(commands.Cog):
         await self._check_playable(ctx)
         assert ctx.voice_client is not None
 
-        await ctx.voice_client.choose_search(query, source=slate.obsidian.Source.YOUTUBE, ctx=ctx)
+        await ctx.voice_client.queue_search(query, source=slate.obsidian.Source.YOUTUBE, ctx=ctx, search_select=True)
 
     @commands.command(name="search-next", aliases=["search_next", "searchnext", "sne"], hidden=True)
     async def search_next(self, ctx: custom.Context, *, query: str) -> None:
@@ -124,7 +124,7 @@ class Play(commands.Cog):
         await self._check_playable(ctx)
         assert ctx.voice_client is not None
 
-        await ctx.voice_client.choose_search(query, source=slate.obsidian.Source.YOUTUBE, ctx=ctx, next=True)
+        await ctx.voice_client.queue_search(query, source=slate.obsidian.Source.YOUTUBE, ctx=ctx, search_select=True, play_next=True)
 
     @commands.command(name="search-now", aliases=["search_now", "searchnow", "sno"], hidden=True)
     async def search_now(self, ctx: custom.Context, *, query: str) -> None:
@@ -132,7 +132,7 @@ class Play(commands.Cog):
         await self._check_playable(ctx)
         assert ctx.voice_client is not None
 
-        await ctx.voice_client.choose_search(query, source=slate.obsidian.Source.YOUTUBE, ctx=ctx, now=True)
+        await ctx.voice_client.queue_search(query, source=slate.obsidian.Source.YOUTUBE, ctx=ctx, search_select=True, play_now=True)
 
     # Youtube
 
@@ -200,7 +200,7 @@ class Play(commands.Cog):
         assert ctx.voice_client is not None
 
         async with ctx.channel.typing():
-            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.YOUTUBE_MUSIC, next=True)
+            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.YOUTUBE_MUSIC, play_next=True)
 
     @commands.command(name="youtube-music-now", aliases=["youtube_music_now", "youtubemusicnow", "ytmno"], hidden=True)
     async def youtube_music_now(self, ctx: custom.Context, *, query: str) -> None:
@@ -209,7 +209,7 @@ class Play(commands.Cog):
         assert ctx.voice_client is not None
 
         async with ctx.channel.typing():
-            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.YOUTUBE_MUSIC, now=True)
+            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.YOUTUBE_MUSIC, play_now=True)
 
     # Youtube music search
 
@@ -225,7 +225,7 @@ class Play(commands.Cog):
         await self._check_playable(ctx)
         assert ctx.voice_client is not None
 
-        await ctx.voice_client.choose_search(query, source=slate.obsidian.Source.YOUTUBE_MUSIC, ctx=ctx)
+        await ctx.voice_client.queue_search(query, source=slate.obsidian.Source.YOUTUBE_MUSIC, ctx=ctx, search_select=True)
 
     @commands.command(name="youtube-music-search-next", aliases=["youtube_music_search_next", "youtubemusicsearchnext", "ytmsne"], hidden=True)
     async def youtube_music_search_next(self, ctx: custom.Context, *, query: str) -> None:
@@ -233,7 +233,7 @@ class Play(commands.Cog):
         await self._check_playable(ctx)
         assert ctx.voice_client is not None
 
-        await ctx.voice_client.choose_search(query, source=slate.obsidian.Source.YOUTUBE_MUSIC, ctx=ctx, next=True)
+        await ctx.voice_client.queue_search(query, source=slate.obsidian.Source.YOUTUBE_MUSIC, ctx=ctx, search_select=True, play_next=True)
 
     @commands.command(name="youtube-music-search-now", aliases=["youtube_music_search_now", "youtubemusicsearchnow", "ytmsno"], hidden=True)
     async def youtube_music_search_now(self, ctx: custom.Context, *, query: str) -> None:
@@ -241,7 +241,7 @@ class Play(commands.Cog):
         await self._check_playable(ctx)
         assert ctx.voice_client is not None
 
-        await ctx.voice_client.choose_search(query, source=slate.obsidian.Source.YOUTUBE_MUSIC, ctx=ctx, now=True)
+        await ctx.voice_client.queue_search(query, source=slate.obsidian.Source.YOUTUBE_MUSIC, ctx=ctx, search_select=True, play_now=True)
 
     # Soundcloud
 
@@ -267,7 +267,7 @@ class Play(commands.Cog):
         assert ctx.voice_client is not None
 
         async with ctx.channel.typing():
-            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.SOUNDCLOUD, next=True)
+            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.SOUNDCLOUD, play_next=True)
 
     @commands.command(name="soundcloud-now", aliases=["soundcloud_now", "soundcloudnow", "scno"], hidden=True)
     async def soundcloud_now(self, ctx: custom.Context, *, query: str) -> None:
@@ -276,7 +276,7 @@ class Play(commands.Cog):
         assert ctx.voice_client is not None
 
         async with ctx.channel.typing():
-            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.SOUNDCLOUD, now=True)
+            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.SOUNDCLOUD, play_now=True)
 
     # Soundcloud search
 
@@ -292,7 +292,7 @@ class Play(commands.Cog):
         await self._check_playable(ctx)
         assert ctx.voice_client is not None
 
-        await ctx.voice_client.choose_search(query, source=slate.obsidian.Source.SOUNDCLOUD, ctx=ctx)
+        await ctx.voice_client.queue_search(query, source=slate.obsidian.Source.SOUNDCLOUD, ctx=ctx, search_select=True)
 
     @commands.command(name="soundcloud-search-next", aliases=["soundcloud_search_next", "soundcloudsearchnext", "scsne"], hidden=True)
     async def soundcloud_search_next(self, ctx: custom.Context, *, query: str) -> None:
@@ -300,7 +300,7 @@ class Play(commands.Cog):
         await self._check_playable(ctx)
         assert ctx.voice_client is not None
 
-        await ctx.voice_client.choose_search(query, source=slate.obsidian.Source.SOUNDCLOUD, ctx=ctx, next=True)
+        await ctx.voice_client.queue_search(query, source=slate.obsidian.Source.SOUNDCLOUD, ctx=ctx, search_select=True, play_next=True)
 
     @commands.command(name="soundcloud-search-now", aliases=["soundcloud_search_now", "soundcloudsearchnow", "scsno"], hidden=True)
     async def soundcloud_search_now(self, ctx: custom.Context, *, query: str) -> None:
@@ -308,7 +308,7 @@ class Play(commands.Cog):
         await self._check_playable(ctx)
         assert ctx.voice_client is not None
 
-        await ctx.voice_client.choose_search(query, source=slate.obsidian.Source.SOUNDCLOUD, ctx=ctx, now=True)
+        await ctx.voice_client.queue_search(query, source=slate.obsidian.Source.SOUNDCLOUD, ctx=ctx, search_select=True, play_now=True)
 
     # Local
 
@@ -330,7 +330,7 @@ class Play(commands.Cog):
         assert ctx.voice_client is not None
 
         async with ctx.channel.typing():
-            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.LOCAL, next=True)
+            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.LOCAL, play_next=True)
 
     @commands.command(name="local-now", aliases=["local_now", "localnow", "lno"], hidden=True)
     @commands.is_owner()
@@ -340,7 +340,7 @@ class Play(commands.Cog):
         assert ctx.voice_client is not None
 
         async with ctx.channel.typing():
-            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.LOCAL, now=True)
+            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.LOCAL, play_now=True)
 
     # HTTP
 
@@ -362,7 +362,7 @@ class Play(commands.Cog):
         assert ctx.voice_client is not None
 
         async with ctx.channel.typing():
-            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.NONE, next=True)
+            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.NONE, play_next=True)
 
     @commands.command(name="http-now", aliases=["http_now", "httpnow", "hno"], hidden=True)
     @commands.is_owner()
@@ -372,4 +372,4 @@ class Play(commands.Cog):
         assert ctx.voice_client is not None
 
         async with ctx.channel.typing():
-            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.NONE, now=True)
+            await ctx.voice_client.queue_search(query, ctx=ctx, source=slate.obsidian.Source.NONE, play_now=True)
