@@ -92,104 +92,47 @@ class Events(commands.Cog):
     def __init__(self, bot: CD) -> None:
         self.bot: CD = bot
 
-    # Bot events
+    @staticmethod
+    async def _build_command_information_embed(ctx: custom.Context, colour: discord.Colour) -> discord.Embed:
 
-    @commands.Cog.listener()
-    async def on_socket_event_type(self, event_type: str) -> None:
-        self.bot.socket_stats[event_type] += 1
+        assert ctx.command is not None
 
-    @commands.Cog.listener()
-    async def on_message_edit(self, before: discord.Message, after: discord.Message) -> None:
+        if ctx.guild:
+            channel_url = utils.guild_channel_url(ctx.guild.id, ctx.channel.id)
+            guild_info = f"**● [Guild:]({utils.guild_url(ctx.guild.id)})**\n" \
+                         f"{values.NQSP * 2}**● Name:** {ctx.guild}\n" \
+                         f"{values.NQSP * 2}**● ID:** `{ctx.guild.id}`\n"
+        else:
+            channel_url = utils.dm_channel_url(ctx.author.id)
+            guild_info = ""
 
-        if before.content == after.content:
-            return
+        now = ctx.message.created_at or pendulum.now(tz="UTC")
 
-        await self.bot.process_commands(after)
-
-    # Guild logging
-
-    @commands.Cog.listener()
-    async def on_guild_join(self, guild: discord.Guild) -> None:
-
-        total = len(guild.members)
-        bots = sum(1 for member in guild.members if member.bot)
-        bots_percent = round((bots / total) * 100, 2)
-
-        __log__.info(f"Joined a guild. {guild.name} ({guild.id}) | Members: {len(guild.members)} | Bots: {bots} ({bots_percent}%)")
-        await self.bot.log(
-            enums.LogType.GUILD,
-            embed=utils.embed(
-                colour=values.GREEN,
-                title=f"Joined: **{guild}**",
-                description=f"**Owner:** {guild.owner} (`{guild.owner_id}`)\n"
-                            f"**Created:** {utils.format_datetime(guild.created_at, format=enums.DatetimeFormat.PARTIAL_LONG_DATETIME)}\n"
-                            f"**Joined:** {utils.format_datetime(guild.me.joined_at, format=enums.DatetimeFormat.PARTIAL_LONG_DATETIME) if guild.me.joined_at else None}\n"
-                            f"**Members:** {total}\n"
-                            f"**Bots:** {bots} `{bots_percent}%`\n",
-                thumbnail=utils.icon(guild),
-                footer=f"ID: {guild.id}",
-            )
+        return utils.embed(
+            colour=colour,
+            title=f"{ctx.prefix}{ctx.command.qualified_name}",
+            description=f"{await utils.upload_text(ctx.bot.mystbin, content=ctx.message.content, format='txt', max_characters=1000)}\n\n"
+                        f"{guild_info}"
+                        f"**● [Channel:]({channel_url})**\n"
+                        f"{values.NQSP * 2}**● Name:** {ctx.channel}\n"
+                        f"{values.NQSP * 2}**● ID:** `{ctx.channel.id}`\n"
+                        f"**● [User:]({utils.user_url(ctx.author.id)})**\n"
+                        f"{values.NQSP * 2}**● Name:** {ctx.author}\n"
+                        f"{values.NQSP * 2}**● ID:** `{ctx.author.id}`\n"
+                        f"**● [Message:]({ctx.message.jump_url})**\n"
+                        f"{values.NQSP * 2}**● ID:** `{ctx.message.id}`\n"
+                        f"{values.NQSP * 2}**● Command:** {ctx.command.qualified_name}\n"
+                        f"{values.NQSP * 2}**● Date:** {utils.format_datetime(now, format=enums.DatetimeFormat.FULL_LONG_DATE)}\n"
+                        f"{values.NQSP * 2}**● Time:** {utils.format_datetime(now, format=enums.DatetimeFormat.FULL_TIME)}\n\n",
+            thumbnail=utils.avatar(ctx.author),
         )
-
-    @commands.Cog.listener()
-    async def on_guild_remove(self, guild: discord.Guild) -> None:
-
-        total = len(guild.members)
-        bots = sum(1 for member in guild.members if member.bot)
-        bots_percent = round((bots / total) * 100, 2)
-
-        __log__.info(f"Left a guild. {guild.name} ({guild.id}) | Members: {len(guild.members)} | Bots: {bots} ({bots_percent}%)")
-        await self.bot.log(
-            enums.LogType.GUILD,
-            embed=utils.embed(
-                colour=values.RED,
-                title=f"Left: **{guild}**",
-                description=f"**Owner:** {guild.owner} (`{guild.owner_id}`)\n"
-                            f"**Created:** {utils.format_datetime(guild.created_at, format=enums.DatetimeFormat.PARTIAL_LONG_DATETIME)}\n"
-                            f"**Joined:** {utils.format_datetime(guild.me.joined_at, format=enums.DatetimeFormat.PARTIAL_LONG_DATETIME) if guild.me.joined_at else None}\n"
-                            f"**Members:** {total}\n"
-                            f"**Bots:** {bots} `{bots_percent}%`\n",
-                thumbnail=utils.icon(guild),
-                footer=f"ID: {guild.id}",
-            )
-        )
-
-    # DM logging
-
-    @commands.Cog.listener()
-    async def on_message(self, message: discord.Message) -> None:
-
-        if config.ENV is enums.Environment.DEVELOPMENT or message.guild or message.is_system() or not message.content:
-            return
-
-        content = await utils.upload_text(self.bot.mystbin, content=message.content, format="txt")
-
-        await self.bot.log(
-            enums.LogType.DM,
-            embed=utils.embed(
-                colour=values.GREEN,
-                title=f"**{message.author}**",
-                description=f"{content}\n\n"
-                            f"**Author:** {message.author} (`{message.author.id}`)\n"
-                            f"**Created:** {utils.format_datetime(message.created_at, format=enums.DatetimeFormat.PARTIAL_LONG_DATETIME)}\n"
-                            f"**Jump:** [Click here]({message.jump_url})",
-                thumbnail=utils.avatar(message.author),
-                footer=f"ID: {message.id}",
-            )
-        )
-
-    # Error logging
 
     @staticmethod
     def _get_error_message(ctx: custom.Context, error: commands.CommandError) -> str | None:
-
         # sourcery no-metrics
 
         if message := ERRORS.get(type(error)):
             return message
-
-        elif isinstance(error, commands.ConversionError):
-            message = "TODO"
 
         elif isinstance(error, commands.BadLiteralArgument):
             message = f"The **{error.param.name}** argument must exactly match one of the following:\n" \
@@ -229,72 +172,109 @@ class Events(commands.Cog):
 
         return message
 
-    @staticmethod
-    async def _send_friendly_error(ctx: custom.Context) -> None:
+    # Utility events
 
-        view = discord.ui.View()
-        view.add_item(discord.ui.Button(label="Support server", url=values.SUPPORT_LINK))
+    @commands.Cog.listener("on_socket_event_type")
+    async def _increment_socket_event_counter(self, event_type: str) -> None:
+        self.bot.socket_stats[event_type] += 1
 
-        await ctx.reply(
+    @commands.Cog.listener("on_message_edit")
+    async def _handle_command_invoke_on_message_edit(self, before: discord.Message, after: discord.Message) -> None:
+
+        if before.content == after.content:
+            return
+
+        await self.bot.process_commands(after)
+
+    # Logging
+
+    @commands.Cog.listener("on_message")
+    async def _log_dm(self, message: discord.Message) -> None:
+
+        if config.ENV is enums.Environment.DEVELOPMENT or message.guild or message.is_system() or not message.content:
+            return
+
+        content = await utils.upload_text(self.bot.mystbin, content=message.content, format="txt")
+
+        await self.bot.log(
+            enums.LogType.DM,
+            embed=utils.embed(
+                colour=values.GREEN,
+                title=f"**{message.author}**",
+                description=f"{content}\n\n"
+                            f"**Author:** {message.author} (`{message.author.id}`)\n"
+                            f"**Created:** {utils.format_datetime(message.created_at, format=enums.DatetimeFormat.PARTIAL_LONG_DATETIME)}\n"
+                            f"**Jump:** [Click here]({message.jump_url})",
+                thumbnail=utils.avatar(message.author),
+                footer=f"ID: {message.id}",
+            )
+        )
+
+    @commands.Cog.listener("on_guild_join")
+    async def _log_guild_join(self, guild: discord.Guild) -> None:
+
+        total = len(guild.members)
+        bots = sum(1 for member in guild.members if member.bot)
+        bots_percent = round((bots / total) * 100, 2)
+
+        __log__.info(f"Joined a guild. {guild.name} ({guild.id}) | Members: {len(guild.members)} | Bots: {bots} ({bots_percent}%)")
+        await self.bot.log(
+            enums.LogType.GUILD,
+            embed=utils.embed(
+                colour=values.GREEN,
+                title=f"Joined: **{guild}**",
+                description=f"**Owner:** {guild.owner} (`{guild.owner_id}`)\n"
+                            f"**Created:** {utils.format_datetime(guild.created_at, format=enums.DatetimeFormat.PARTIAL_LONG_DATETIME)}\n"
+                            f"**Joined:** {utils.format_datetime(guild.me.joined_at, format=enums.DatetimeFormat.PARTIAL_LONG_DATETIME) if guild.me.joined_at else None}\n"
+                            f"**Members:** {total}\n"
+                            f"**Bots:** {bots} `{bots_percent}%`\n",
+                thumbnail=utils.icon(guild),
+                footer=f"ID: {guild.id}",
+            )
+        )
+
+    @commands.Cog.listener("on_guild_remove")
+    async def _log_guild_remove(self, guild: discord.Guild) -> None:
+
+        total = len(guild.members)
+        bots = sum(1 for member in guild.members if member.bot)
+        bots_percent = round((bots / total) * 100, 2)
+
+        __log__.info(f"Left a guild. {guild.name} ({guild.id}) | Members: {len(guild.members)} | Bots: {bots} ({bots_percent}%)")
+
+        await self.bot.log(
+            enums.LogType.GUILD,
             embed=utils.embed(
                 colour=values.RED,
-                description="Something went wrong!",
-            ),
-            view=view
+                title=f"Left: **{guild}**",
+                description=f"**Owner:** {guild.owner} (`{guild.owner_id}`)\n"
+                            f"**Created:** {utils.format_datetime(guild.created_at, format=enums.DatetimeFormat.PARTIAL_LONG_DATETIME)}\n"
+                            f"**Joined:** {utils.format_datetime(guild.me.joined_at, format=enums.DatetimeFormat.PARTIAL_LONG_DATETIME) if guild.me.joined_at else None}\n"
+                            f"**Members:** {total}\n"
+                            f"**Bots:** {bots} `{bots_percent}%`\n",
+                thumbnail=utils.icon(guild),
+                footer=f"ID: {guild.id}",
+            )
         )
 
-    async def _send_exception(self, ctx: custom.Context, exception: str) -> None:
+    @commands.Cog.listener("on_command_completion")
+    async def _log_command_use(self, ctx: custom.Context) -> None:
 
-        guild_url = f"https://canary.discord.com/channels/{ctx.guild.id}" if ctx.guild else None
-        channel_url = f"https://canary.discord.com/channels/{ctx.guild.id if ctx.guild else '@me'}/{ctx.channel.id}"
-        user_url = f"https://canary.discord.com/users/{ctx.author.id}"
-
-        guild_info = f"**● [Guild:]({guild_url})**\n" \
-                     f"{values.NQSP * 2}**● Name:** {ctx.guild}\n" \
-                     f"{values.NQSP * 2}**● ID:** `{ctx.guild.id}`\n" \
-            if ctx.guild else ""
-
-        webhook_avatar = utils.icon(ctx.guild) if ctx.guild else utils.avatar(ctx.author)
-        webhook_username = f"{ctx.guild or ctx.author}"
-
-        await self.bot.log_webhooks[enums.LogType.ERROR].send(
-            embed=utils.embed(
-                colour=values.RED,
-                description=f"{await utils.upload_text(self.bot.mystbin, content=ctx.message.content, format='python', max_characters=1000)}\n\n"
-                            f"{guild_info}"
-                            f"**● [Channel:]({channel_url})**\n"
-                            f"{values.NQSP * 2}**● Name:** {ctx.channel}\n"
-                            f"{values.NQSP * 2}**● ID:** `{ctx.channel.id}`\n"
-                            f"**● [User:]({user_url})**\n"
-                            f"{values.NQSP * 2}**● Name:** {ctx.author}\n"
-                            f"{values.NQSP * 2}**● ID:** `{ctx.author.id}`\n"
-                            f"**● [Message:]({ctx.message.jump_url})**\n"
-                            f"{values.NQSP * 2}**● ID:** `{ctx.message.id}`\n"
-                            f"{values.NQSP * 2}**● Command:** {ctx.command.qualified_name if ctx.command else 'Unknown'}\n"
-                            f"{values.NQSP * 2}**● When:** {utils.format_datetime(pendulum.now(tz='UTC'), format=enums.DatetimeFormat.PARTIAL_LONG_DATETIME)}\n\n",
-                thumbnail=utils.avatar(ctx.author),
-            ),
-            username=webhook_username,
-            avatar_url=webhook_avatar,
+        await self.bot.log_webhooks[enums.LogType.COMMAND].send(
+            embed=await self._build_command_information_embed(ctx, colour=values.GREEN),
+            username=f"{ctx.guild or ctx.author}",
+            avatar_url=utils.icon(ctx.guild) if ctx.guild else utils.avatar(ctx.author),
         )
 
-        await self.bot.log_webhooks[enums.LogType.ERROR].send(
-            content=await utils.upload_text(
-                self.bot.mystbin,
-                content=f"```py\n{exception}\n```" if len(exception) < 2000 else exception,
-                format="python",
-                max_characters=2000
-            ),
-            username=webhook_username,
-            avatar_url=webhook_avatar,
-        )
-
-    @commands.Cog.listener()
-    async def on_command_error(self, ctx: custom.Context, error: commands.CommandError) -> None:
+    @commands.Cog.listener("on_command_error")
+    async def _log_command_error(self, ctx: custom.Context, error: commands.CommandError) -> None:
 
         error = getattr(error, "original", error)
 
-        if isinstance(error, commands.CommandNotFound):
+        if isinstance(error, exceptions.EmbedError):
+            await ctx.reply(embed=error.embed)
+
+        elif isinstance(error, commands.CommandNotFound):
             await ctx.message.add_reaction(values.STOP)
             if self.bot.user:
                 await asyncio.sleep(3)
@@ -304,56 +284,61 @@ class Events(commands.Cog):
             await ctx.try_dm(
                 embed=utils.embed(
                     colour=values.RED,
-                    description=f"I need the following permissions to run this command:\n"
-                                f"```diff\n"
-                                f"{values.NL.join([f'- {permission}' for permission in error.missing_permissions])}\n"
-                                f"```"
+                    description=f"I need the following permissions to run that command:\n"
+                                f"{utils.codeblock(values.NL.join([f'- {permission}' for permission in error.missing_permissions]), language='diff')}"
                 )
             )
-
-        elif isinstance(error, exceptions.EmbedError):
-            await ctx.reply(embed=error.embed)
 
         elif message := self._get_error_message(ctx, error):
             await ctx.reply(
                 embed=utils.embed(
                     colour=values.RED,
                     description=message.format(error=error),
-                    footer=f"Use '{ctx.prefix}help {ctx.command.qualified_name}' for more info." if ctx.command else None,
+                    footer=f"Use '{ctx.prefix}help {ctx.command.qualified_name if ctx.command else 'Unknown'}' for more info.",
                 )
             )
 
         else:
 
+            # Format exception and log to console.
+
             exception = "".join(traceback.format_exception(type(error), error, error.__traceback__))
             __log__.error(f"Error running command '{ctx.command.qualified_name if ctx.command else 'Unknown'}':\n{exception}")
 
-            await self._send_friendly_error(ctx)
-            await self._send_exception(ctx, exception)
+            # Send friendly error message to user.
 
-    # Command logging
+            view = discord.ui.View()
+            view.add_item(discord.ui.Button(label="Support server", url=values.SUPPORT_LINK))
 
-    @commands.Cog.listener()
-    async def on_command(self, ctx: custom.Context) -> None:
+            await ctx.reply(
+                embed=utils.embed(
+                    colour=values.RED,
+                    description="Something went wrong!",
+                ),
+                view=view
+            )
 
-        assert ctx.command is not None
+            # Log error to webhook.
 
-        await self.bot.log_webhooks[enums.LogType.COMMAND].send(
-            embed=utils.embed(
-                colour=values.GREEN,
-                title=f"{ctx.prefix}{ctx.command.qualified_name}",
-                description=f"{await utils.upload_text(self.bot.mystbin, content=ctx.message.content, format='python', max_characters=2000)}\n\n"
-                            f"{f'**Guild:** {ctx.guild} (`{ctx.guild.id}`){values.NL}' if ctx.guild else ''}"
-                            f"**Channel:** {ctx.channel} (`{ctx.channel.id}`)\n"
-                            f"**Author:** {ctx.author} (`{ctx.author.id}`)\n"
-                            f"**Time:** {utils.format_datetime(pendulum.now(tz='UTC'), format=enums.DatetimeFormat.PARTIAL_LONG_DATETIME)}",
-            ),
-            username=f"{ctx.author}",
-            avatar_url=utils.avatar(ctx.author)
-        )
+            webhook_username = f"{ctx.guild or ctx.author}"
+            webhook_avatar = utils.icon(ctx.guild) if ctx.guild else utils.avatar(ctx.author)
+
+            await self.bot.log_webhooks[enums.LogType.ERROR].send(
+                await utils.upload_text(
+                    self.bot.mystbin,
+                    content=utils.codeblock(exception, max_characters=2000),
+                    format="python",
+                    max_characters=2000
+                ),
+                embed=await self._build_command_information_embed(ctx, colour=values.RED),
+                username=webhook_username,
+                avatar_url=webhook_avatar,
+            )
+
+    # Voice events
 
     @commands.Cog.listener("on_voice_state_update")
-    async def voice_client_cleanup(self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState) -> None:
+    async def _handle_voice_client_disconnect(self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState) -> None:
 
         assert self.bot.user is not None
 
@@ -367,20 +352,18 @@ class Events(commands.Cog):
         ):
             await before.channel.guild.voice_client.disconnect(force=True)
 
-    # Slate events
-
-    @commands.Cog.listener()
-    async def on_obsidian_track_start(self, player: custom.Player, _: slate.obsidian.TrackStart) -> None:
+    @commands.Cog.listener("on_obsidian_track_start")
+    async def _handle_track_start(self, player: custom.Player, _: slate.obsidian.TrackStart) -> None:
         await player.handle_track_start()
 
-    @commands.Cog.listener()
-    async def on_obsidian_track_end(self, player: custom.Player, _: slate.obsidian.TrackEnd) -> None:
+    @commands.Cog.listener("on_obsidian_track_end")
+    async def _handle_track_end(self, player: custom.Player, _: slate.obsidian.TrackEnd) -> None:
         await player.handle_track_end()
 
-    @commands.Cog.listener()
-    async def on_obsidian_track_stuck(self, player: custom.Player, _: slate.obsidian.TrackStuck) -> None:
+    @commands.Cog.listener("on_obsidian_track_stuck")
+    async def _handle_track_stuck(self, player: custom.Player, _: slate.obsidian.TrackStuck) -> None:
         await player.handle_track_end(error=True)
 
-    @commands.Cog.listener()
-    async def on_obsidian_track_exception(self, player: custom.Player, _: slate.obsidian.TrackException) -> None:
+    @commands.Cog.listener("on_obsidian_track_exception")
+    async def _handle_track_exception(self, player: custom.Player, _: slate.obsidian.TrackException) -> None:
         await player.handle_track_end(error=True)
