@@ -23,12 +23,13 @@ from discord.ext.alternatives import converter_dict as converter_dict
 # My stuff
 from core import config, values
 from utilities import checks, custom, enums, utils
+from utilities.utils import slash
 
 
 __log__: logging.Logger = logging.getLogger("bot")
 
 
-class CD(commands.AutoShardedBot):
+class CD(slash.Bot):
 
     converters: dict[Any, Any]
 

@@ -27,6 +27,8 @@ EXTENSIONS = [
     "extensions.queue",
     "extensions.settings",
     "extensions.reload",
+    "extensions.slash.play",
+    "extensions.slash.player",
 ]
 
 PERMISSIONS = discord.Permissions(

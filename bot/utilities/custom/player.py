@@ -15,6 +15,7 @@ import yarl
 # My stuff
 from core import values
 from utilities import custom, enums, exceptions, utils
+from utilities.utils import slash
 
 
 if TYPE_CHECKING:
@@ -35,14 +36,14 @@ class SearchView(discord.ui.View):
     def __init__(
         self,
         *,
-        ctx: custom.Context,
+        ctx: custom.Context | slash.Context[CD, Any],
         result: slate.obsidian.Result[custom.Context],
         play_next: bool = False,
         play_now: bool = False
     ) -> None:
         super().__init__(timeout=60)
 
-        self.ctx: custom.Context = ctx
+        self.ctx: custom.Context | slash.Context[CD, Any] = ctx
         self.result: slate.obsidian.Result[custom.Context] = result
         self.play_next: bool = play_next
         self.play_now: bool = play_now
@@ -281,14 +282,14 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
         query: str,
         /, *,
         source: slate.obsidian.Source,
-        ctx: custom.Context
+        ctx: custom.Context | slash.Context[CD, Any]
     ) -> slate.obsidian.Result[custom.Context]:
 
         if (url := yarl.URL(query)) and url.host and url.scheme:
             source = slate.obsidian.Source.NONE
 
         try:
-            result = await self._node.search(query, source=source, ctx=ctx)
+            result = await self._node.search(query, source=source, ctx=ctx)  # type: ignore
         except slate.obsidian.NoResultsFound as error:
             raise exceptions.EmbedError(
                 colour=values.RED,
@@ -307,7 +308,7 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
         query: str,
         /, *,
         source: slate.obsidian.Source,
-        ctx: custom.Context,
+        ctx: custom.Context | slash.Context[CD, Any],
         search_select: bool = False,
         play_next: bool = False,
         play_now: bool = False,
@@ -347,7 +348,7 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
                 )
                 self.queue.extend(tracks, position=position)
 
+            if self.is_playing() is False:
+                await self.handle_track_end()
             if play_now:
                 await self.stop()
-            elif not self.is_playing():
-                await self.handle_track_end()
