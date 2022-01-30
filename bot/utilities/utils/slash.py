@@ -2,17 +2,20 @@
 from __future__ import annotations
 
 # Standard Library
+import functools
 import inspect
-import traceback
+import io
 from collections import defaultdict
 from typing import (
     Any,
     Awaitable,
     Callable,
     ClassVar,
+    Concatenate,
     Coroutine,
     Generic,
     Literal,
+    ParamSpec,
     Type,
     TypeVar,
     Union,
@@ -23,13 +26,14 @@ from typing import (
 
 # Packages
 import discord
+import discord.ext.commands._types
 import discord.state
 from discord.ext import commands
 from discord.utils import MISSING
-from typing_extensions import Concatenate, ParamSpec
 
 # My stuff
-from utilities import custom, exceptions
+from core import values
+from utilities import custom, paginators
 
 
 BotT = TypeVar("BotT", bound="Bot")
@@ -216,6 +220,7 @@ class Context(Generic[BotT, CogT]):
         self.bot: BotT = bot
         self.command: Command[CogT] = command
         self.interaction: discord.Interaction = interaction
+        self.prefix = "Slash command: "
 
     @overload
     def send(
@@ -293,8 +298,8 @@ class Context(Generic[BotT, CogT]):
         return self.interaction.guild  # type: ignore
 
     @property
-    def message(self) -> discord.Message:
-        return self.interaction.message  # type: ignore
+    def message(self) -> discord.Message | None:
+        return self.interaction._original_message  # type: ignore
 
     @property
     def channel(self) -> discord.interactions.InteractionChannel:
@@ -308,6 +313,202 @@ class Context(Generic[BotT, CogT]):
     def voice_client(self) -> custom.Player | None:
         return self.guild.voice_client if self.guild else None  # type: ignore
 
+    # Paginators
+
+    async def paginate_text(
+        self,
+        *,
+        entries: list[Any],
+        per_page: int,
+        start_page: int = 0,
+        timeout: int = 300,
+        edit_message: bool = True,
+        delete_message: bool = False,
+        codeblock: bool = False,
+        splitter: str = "\n",
+        header: str | None = None,
+        footer: str | None = None,
+    ) -> paginators.TextPaginator:
+
+        paginator = paginators.TextPaginator(
+            ctx=self,
+            entries=entries,
+            per_page=per_page,
+            start_page=start_page,
+            timeout=timeout,
+            edit_message=edit_message,
+            delete_message=delete_message,
+            codeblock=codeblock,
+            splitter=splitter,
+            header=header,
+            footer=footer,
+        )
+        await paginator.start()
+
+        return paginator
+
+    async def paginate_embed(
+        self,
+        *,
+        entries: list[Any],
+        per_page: int,
+        start_page: int = 0,
+        timeout: int = 300,
+        edit_message: bool = True,
+        delete_message: bool = False,
+        codeblock: bool = False,
+        splitter: str = "\n",
+        header: str | None = None,
+        footer: str | None = None,
+        embed_footer: str | None = None,
+        embed_footer_url: str | None = None,
+        image: str | None = None,
+        thumbnail: str | None = None,
+        author: str | None = None,
+        author_url: str | None = None,
+        author_icon_url: str | None = None,
+        title: str | None = None,
+        url: str | None = None,
+        colour: discord.Colour = values.MAIN,
+    ) -> paginators.EmbedPaginator:
+
+        paginator = paginators.EmbedPaginator(
+            ctx=self,
+            entries=entries,
+            per_page=per_page,
+            start_page=start_page,
+            timeout=timeout,
+            edit_message=edit_message,
+            delete_message=delete_message,
+            codeblock=codeblock,
+            splitter=splitter,
+            header=header,
+            footer=footer,
+            embed_footer=embed_footer,
+            embed_footer_url=embed_footer_url,
+            image=image,
+            thumbnail=thumbnail,
+            author=author,
+            author_url=author_url,
+            author_icon_url=author_icon_url,
+            title=title,
+            url=url,
+            colour=colour,
+        )
+        await paginator.start()
+
+        return paginator
+
+    async def paginate_fields(
+        self,
+        *,
+        entries: list[tuple[Any, Any]],
+        per_page: int,
+        start_page: int = 0,
+        timeout: int = 300,
+        edit_message: bool = True,
+        delete_message: bool = False,
+        codeblock: bool = False,
+        splitter: str = "\n",
+        header: str | None = None,
+        footer: str | None = None,
+        embed_footer: str | None = None,
+        embed_footer_url: str | None = None,
+        image: str | None = None,
+        thumbnail: str | None = None,
+        author: str | None = None,
+        author_url: str | None = None,
+        author_icon_url: str | None = None,
+        title: str | None = None,
+        url: str | None = None,
+        colour: discord.Colour = values.MAIN,
+    ) -> paginators.FieldsPaginator:
+
+        paginator = paginators.FieldsPaginator(
+            ctx=self,
+            entries=entries,
+            per_page=per_page,
+            start_page=start_page,
+            timeout=timeout,
+            edit_message=edit_message,
+            delete_message=delete_message,
+            codeblock=codeblock,
+            splitter=splitter,
+            header=header,
+            footer=footer,
+            embed_footer=embed_footer,
+            embed_footer_url=embed_footer_url,
+            image=image,
+            thumbnail=thumbnail,
+            author=author,
+            author_url=author_url,
+            author_icon_url=author_icon_url,
+            title=title,
+            url=url,
+            colour=colour,
+        )
+        await paginator.start()
+
+        return paginator
+
+    async def paginate_embeds(
+        self,
+        *,
+        entries: list[discord.Embed],
+        start_page: int = 0,
+        timeout: int = 300,
+        edit_message: bool = True,
+        delete_message: bool = True,
+    ) -> paginators.EmbedsPaginator:
+
+        paginator = paginators.EmbedsPaginator(
+            ctx=self,
+            entries=entries,
+            start_page=start_page,
+            timeout=timeout,
+            edit_message=edit_message,
+            delete_message=delete_message,
+        )
+        await paginator.start()
+
+        return paginator
+
+    async def paginate_file(
+        self,
+        *,
+        entries: list[functools.partial[bytes | io.BytesIO]],
+        start_page: int = 0,
+        timeout: int = 300,
+        edit_message: bool = True,
+        delete_message: bool = True,
+        header: str | None = None
+    ) -> paginators.FilePaginator:
+
+        paginator = paginators.FilePaginator(
+            ctx=self,
+            entries=entries,
+            start_page=start_page,
+            timeout=timeout,
+            edit_message=edit_message,
+            delete_message=delete_message,
+            header=header
+        )
+        await paginator.start()
+
+        return paginator
+
+    # Misc
+
+    async def try_dm(self, *args: Any, **kwargs: Any) -> discord.Message | None:
+
+        try:
+            return await self.author.send(*args, **kwargs)
+        except (discord.HTTPException, discord.Forbidden):
+            try:
+                return await self.reply(*args, **kwargs)
+            except (discord.HTTPException, discord.Forbidden):
+                return None
+
 
 class Command(Generic[CogT]):
 
@@ -315,6 +516,7 @@ class Command(Generic[CogT]):
     func: Callable
     name: str
     guild_id: int | None
+    checks: list[commands._types.Check]  # type: ignore
 
     def _build_command_payload(self) -> dict[str, Any]:
         raise NotImplementedError
@@ -323,7 +525,38 @@ class Command(Generic[CogT]):
         raise NotImplementedError
 
     async def invoke(self, context: Context[BotT, CogT], **params) -> None:
+
+        if not await self.can_run(context):
+            raise commands.CheckFailure(f"The check functions for command {self.name} failed.")
+
         await self.func(self.cog, context, **params)
+
+    async def can_run(self, ctx: Context[BotT, CogT]) -> bool:
+
+        original = ctx.command
+        ctx.command = self
+
+        try:
+            if not await ctx.bot.can_run(ctx):  # type: ignore
+                raise commands.CheckFailure(f"The global check functions for command {self.name} failed.")
+
+            cog = self.cog
+            if cog is not None:
+                local_check = ApplicationCog._get_overridden_method(cog.cog_check)
+                if local_check is not None:
+                    ret = await discord.utils.maybe_coroutine(local_check, ctx)
+                    if not ret:
+                        return False
+
+            predicates = self.checks
+            if not predicates:
+                # since we have no checks, then we just return True.
+                return True
+
+            return await discord.utils.async_all(predicate(ctx) for predicate in predicates)  # type: ignore
+
+        finally:
+            ctx.command = original
 
 
 class SlashCommand(Command[CogT]):
@@ -334,6 +567,7 @@ class SlashCommand(Command[CogT]):
         self.cog: CogT
 
         self.name: str = kwargs.get("name", func.__name__)
+        self.qualified_name: str = self.name
 
         self.description: str = kwargs.get("description") or func.__doc__ or "No description provided"
 
@@ -341,6 +575,13 @@ class SlashCommand(Command[CogT]):
 
         self.parameters: dict[str, inspect.Parameter] = self._build_parameters()
         self._parameter_descriptions: dict[str, str] = defaultdict(lambda: "No description provided")
+
+        try:
+            checks = func.__commands_checks__  # type: ignore
+        except AttributeError:
+            checks = kwargs.get("checks", [])
+
+        self.checks: list[commands._types.Check] = checks  # type: ignore
 
     def _build_arguments(self, interaction: Any, state: discord.state.ConnectionState) -> dict[str, Any]:
 
@@ -549,6 +790,4 @@ class ApplicationCog(commands.Cog, Generic[BotT]):
         try:
             await command.invoke(ctx, **params)
         except Exception as error:
-            traceback.print_exception(type(error), error, error.__traceback__)
-            if isinstance(error, exceptions.EmbedError):
-                await ctx.send(embed=error.embed)
+            self.bot.dispatch("command_error", ctx, error)
