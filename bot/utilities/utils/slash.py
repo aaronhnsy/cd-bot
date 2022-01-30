@@ -32,9 +32,9 @@ from typing_extensions import Concatenate, ParamSpec
 from utilities import custom, exceptions
 
 
-BotT = TypeVar("BotT", bound='Bot')
-CtxT = TypeVar("CtxT", bound='Context')
-CogT = TypeVar("CogT", bound='ApplicationCog')
+BotT = TypeVar("BotT", bound="Bot")
+CtxT = TypeVar("CtxT", bound="Context")
+CogT = TypeVar("CogT", bound="ApplicationCog")
 NumT = int | float
 
 CmdP = ParamSpec("CmdP")
@@ -139,11 +139,11 @@ class _RangeMeta(type):
 
 class Range(metaclass=_RangeMeta):
 
-    def __init__(self, min: NumT | None, max: NumT):
+    def __init__(self, min: NumT | None, max: NumT) -> None:
         if min is not None and min >= max:
             raise ValueError("`min` value must be lower than `max`")
-        self.min = min
-        self.max = max
+        self.min: NumT | None = min
+        self.max: NumT = max
 
 
 class Bot(commands.Bot):
@@ -168,14 +168,14 @@ class Bot(commands.Bot):
                 if c:
                     return c
 
-    async def delete_all_commands(self, guild_id: int | None = None):
+    async def delete_all_commands(self, guild_id: int | None = None) -> None:
 
         if guild_id is not None:
             await self.http.bulk_upsert_guild_commands(self.application_id, guild_id, [])
         else:
             await self.http.bulk_upsert_global_commands(self.application_id, [])
 
-    async def delete_command(self, id: int, *, guild_id: int | None = None):
+    async def delete_command(self, id: int, *, guild_id: int | None = None) -> None:
 
         if guild_id is not None:
             await self.http.delete_guild_command(self.application_id, guild_id, id)
@@ -213,9 +213,9 @@ class Bot(commands.Bot):
 class Context(Generic[BotT, CogT]):
 
     def __init__(self, bot: BotT, command: Command[CogT], interaction: discord.Interaction):
-        self.bot = bot
-        self.command = command
-        self.interaction = interaction
+        self.bot: BotT = bot
+        self.command: Command[CogT] = command
+        self.interaction: discord.Interaction = interaction
 
     @overload
     def send(
@@ -328,9 +328,9 @@ class Command(Generic[CogT]):
 
 class SlashCommand(Command[CogT]):
 
-    def __init__(self, func: CmdT, **kwargs):
+    def __init__(self, func: CmdT, **kwargs) -> None:
 
-        self.func = func
+        self.func: CmdT = func
         self.cog: CogT
 
         self.name: str = kwargs.get("name", func.__name__)
@@ -339,22 +339,22 @@ class SlashCommand(Command[CogT]):
 
         self.guild_id: int | None = kwargs.get("guild_id")
 
-        self.parameters = self._build_parameters()
+        self.parameters: dict[str, inspect.Parameter] = self._build_parameters()
         self._parameter_descriptions: dict[str, str] = defaultdict(lambda: "No description provided")
 
-    def _build_arguments(self, interaction, state) -> dict[str, Any]:
+    def _build_arguments(self, interaction: Any, state: discord.state.ConnectionState) -> dict[str, Any]:
 
-        if 'options' not in interaction.data:
+        if "options" not in interaction.data:
             return {}
 
-        resolved = _parse_resolved_data(interaction, interaction.data.get('resolved'), state)
+        resolved = _parse_resolved_data(interaction, interaction.data.get("resolved"), state)
         result = {}
-        for option in interaction.data['options']:
-            value = option['value']
-            if option['type'] in (6, 7, 8):
+        for option in interaction.data["options"]:
+            value = option["value"]
+            if option["type"] in (6, 7, 8):
                 value = resolved[int(value)]
 
-            result[option['name']] = value
+            result[option["name"]] = value
         return result
 
     def _build_parameters(self) -> dict[str, inspect.Parameter]:
@@ -374,7 +374,7 @@ class SlashCommand(Command[CogT]):
 
     def _build_descriptions(self) -> None:
 
-        if not hasattr(self.func, '_param_desc_'):
+        if not hasattr(self.func, "_param_desc_"):
             return
 
         for k, v in self.func._param_desc_.items():  # type: ignore
@@ -418,16 +418,16 @@ class SlashCommand(Command[CogT]):
 
                 typ = command_type_map[real_t]
                 option: dict[str, Any] = {
-                    'type':        typ,
-                    'name':        name,
-                    'description': self._parameter_descriptions[name]
+                    "type":        typ,
+                    "name":        name,
+                    "description": self._parameter_descriptions[name]
                 }
                 if param.default is param.empty:
-                    option['required'] = True
+                    option["required"] = True
 
                 if isinstance(ann, Range):
-                    option['max_value'] = ann.max
-                    option['min_value'] = ann.min
+                    option["max_value"] = ann.max
+                    option["min_value"] = ann.min
 
                 elif get_origin(ann) is Union:
                     args = get_args(ann)
@@ -437,42 +437,43 @@ class SlashCommand(Command[CogT]):
 
                     if len(args) != 3:
                         filtered = [channel_filter[i] for i in args]
-                        option['channel_types'] = filtered
+                        option["channel_types"] = filtered
 
                 elif get_origin(ann) is Literal:
                     arguments = ann.__args__
-                    option['choices'] = [{'name': str(a), 'value': a} for a in arguments]
+                    option["choices"] = [{"name": str(a), "value": a} for a in arguments]
 
                 elif issubclass(ann, discord.abc.GuildChannel):
-                    option['channel_types'] = [channel_filter[ann]]
+                    option["channel_types"] = [channel_filter[ann]]
 
                 options.append(option)
-            options.sort(key=lambda f: not f.get('required'))
-            payload['options'] = options
+            options.sort(key=lambda f: not f.get("required"))
+            payload["options"] = options
         return payload
 
 
 class ContextMenuCommand(Command[CogT]):
+
     _type: ClassVar[int]
 
-    def __init__(self, func: CtxMnT, **kwargs):
-        self.func = func
-        self.guild_id: int | None = kwargs.get('guild_id', None)
-        self.name: str = kwargs.get('name', func.__name__)
+    def __init__(self, func: CtxMnT, **kwargs) -> None:
+        self.func: CtxMnT = func
+        self.guild_id: int | None = kwargs.get("guild_id", None)
+        self.name: str = kwargs.get("name", func.__name__)
 
     def _build_command_payload(self) -> dict[str, Any]:
         payload = {
-            'name': self.name,
-            'type': self._type
+            "name": self.name,
+            "type": self._type
         }
         if self.guild_id is not None:
-            payload['guild_id'] = self.guild_id
+            payload["guild_id"] = self.guild_id
         return payload
 
     def _build_arguments(self, interaction: discord.Interaction, state: discord.state.ConnectionState) -> dict[str, Any]:
-        resolved = _parse_resolved_data(interaction, interaction.data.get('resolved'), state)  # type: ignore
-        value = resolved[int(interaction.data['target_id'])]  # type: ignore
-        return {'target': value}
+        resolved = _parse_resolved_data(interaction, interaction.data.get("resolved"), state)  # type: ignore
+        value = resolved[int(interaction.data["target_id"])]  # type: ignore
+        return {"target": value}
 
     async def invoke(self, context: Context[BotT, CogT], **params) -> None:
         await self.func(self.cog, context, *params.values())
@@ -495,30 +496,30 @@ def _parse_resolved_data(interaction: discord.Interaction, data: dict[str, Any],
 
     resolved = {}
 
-    resolved_users = data.get('users')
+    resolved_users = data.get("users")
     if resolved_users:
-        resolved_members = data['members']
+        resolved_members = data["members"]
         for id, d in resolved_users.items():
             member_data = resolved_members[id]
-            member_data['user'] = d
+            member_data["user"] = d
             member = discord.Member(data=member_data, guild=interaction.guild, state=state)
             resolved[int(id)] = member
 
-    resolved_channels = data.get('channels')
+    resolved_channels = data.get("channels")
     if resolved_channels:
         for id, d in resolved_channels.items():
-            d['position'] = None
-            cls, _ = discord.channel._guild_channel_factory(d['type'])
+            d["position"] = None
+            cls, _ = discord.channel._guild_channel_factory(d["type"])
             channel = cls(state=state, guild=interaction.guild, data=d)
             resolved[int(id)] = channel
 
-    resolved_messages = data.get('messages')
+    resolved_messages = data.get("messages")
     if resolved_messages:
         for id, d in resolved_messages.items():
             msg = discord.Message(state=state, channel=interaction.channel, data=d)  # type: ignore
             resolved[int(id)] = msg
 
-    resolved_roles = data.get('roles')
+    resolved_roles = data.get("roles")
     if resolved_roles:
         for id, d in resolved_roles.items():
             role = discord.Role(guild=interaction.guild, state=state, data=d)
@@ -529,12 +530,12 @@ def _parse_resolved_data(interaction: discord.Interaction, data: dict[str, Any],
 
 class ApplicationCog(commands.Cog, Generic[BotT]):
 
-    def __init__(self, bot: BotT):
+    def __init__(self, bot: BotT) -> None:
         self.bot: BotT = bot
         self._commands: dict[str, Command] = {}
 
     @commands.Cog.listener("on_interaction")
-    async def _internal_interaction_handler(self, interaction: discord.Interaction):
+    async def _internal_interaction_handler(self, interaction: discord.Interaction) -> None:
 
         if interaction.type is not discord.InteractionType.application_command:
             return

@@ -52,7 +52,7 @@ def format_difference(
     datetime: dt.datetime | pendulum.DateTime,
     /,
     *,
-    suppress: Sequence[str] = ('seconds',)
+    suppress: Sequence[str] = ("seconds",)
 ) -> str:
 
     datetime = convert_datetime(datetime)
