@@ -60,7 +60,7 @@ CHANNEL_TYPE_FILTER: dict[Type[discord.abc.GuildChannel], int] = {
 
 def _parse_resolved_data(interaction: discord.Interaction, state: discord.state.ConnectionState) -> dict[int, Any]:
 
-    if not (data := interaction.data.get("resolved")):
+    if not (data := interaction.data.get("resolved")):  # type: ignore
         return {}
 
     assert interaction.guild
@@ -135,10 +135,10 @@ class ApplicationCommand(abc.ABC):
         )):
             return False
 
-        if checks := self.checks:
-            return await discord.utils.async_all(check(ctx) for check in checks)  # type: ignore
+        if not (predicates := self.checks):
+            return True
 
-        return True
+        return await discord.utils.async_all(predicate(ctx) for predicate in predicates)  # type: ignore
 
 
 class SlashCommand(ApplicationCommand):
@@ -239,13 +239,13 @@ class SlashCommand(ApplicationCommand):
 
     def _build_arguments(self, interaction: discord.Interaction, state: discord.state.ConnectionState) -> dict[str, Any]:
 
-        if "options" not in interaction.data:
+        if "options" not in interaction.data:  # type: ignore
             return {}
 
         resolved = _parse_resolved_data(interaction, state)
         result = {}
 
-        for option in interaction.data["options"]:
+        for option in interaction.data["options"]:  # type: ignore
             value = option["value"]  # type: ignore
 
             if option["type"] in (6, 7, 8):
