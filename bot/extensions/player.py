@@ -12,7 +12,7 @@ from discord.ext import commands
 # My stuff
 from core import values
 from core.bot import CD
-from utilities import checks, custom, exceptions, objects, utils
+from utilities import checks, custom, exceptions, objects, paginators, utils
 
 
 def setup(bot: CD) -> None:
@@ -513,7 +513,8 @@ class Player(commands.Cog):
             else:
                 entries[-1] += f"\n\n{line}"
 
-        await ctx.paginate_embed(
+        paginator = paginators.EmbedPaginator(
+            ctx=ctx,
             entries=entries,
             per_page=1,
             title=data["name"],
@@ -521,3 +522,4 @@ class Player(commands.Cog):
             header=f"by: **{', '.join([artist['name'] for artist in data['artists']] or ['Unknown Artist'])}**\n\n",
             thumbnail=icon["url"] if (icon := data["album"].get("icon")) else None,
         )
+        await paginator.start()

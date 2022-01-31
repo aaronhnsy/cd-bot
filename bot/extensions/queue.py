@@ -12,7 +12,7 @@ from discord.ext import commands
 # My stuff
 from core import values
 from core.bot import CD
-from utilities import checks, custom, exceptions, utils
+from utilities import checks, custom, exceptions, paginators, utils
 
 
 def setup(bot: CD) -> None:
@@ -46,7 +46,8 @@ class Queue(commands.Cog):
 
         assert ctx.voice_client is not None
 
-        await ctx.paginate_embed(
+        paginator = paginators.EmbedPaginator(
+            ctx=ctx,
             entries=[
                 f"**{index + 1}. [{discord.utils.escape_markdown(track.title)}]({track.uri})** by **{discord.utils.escape_markdown(track.author)}**\n"
                 f"**⤷** {utils.format_seconds(track.length // 1000, friendly=True)} | "
@@ -61,6 +62,7 @@ class Queue(commands.Cog):
                          f"Loop mode: {ctx.voice_client.queue.loop_mode.name.title()} | "
                          f"1 = up next",
         )
+        await paginator.start()
 
     @commands.command(name="queue-history", aliases=["queue_history", "queuehistory", "qh"])
     @checks.is_queue_history_not_empty()
@@ -72,7 +74,8 @@ class Queue(commands.Cog):
 
         assert ctx.voice_client is not None
 
-        await ctx.paginate_embed(
+        paginator = paginators.EmbedPaginator(
+            ctx=ctx,
             entries=[
                 f"**{index + 1}. [{discord.utils.escape_markdown(track.title)}]({track.uri})** by **{discord.utils.escape_markdown(track.author)}**\n"
                 f"**⤷** {utils.format_seconds(track.length // 1000, friendly=True)} | "
@@ -87,6 +90,7 @@ class Queue(commands.Cog):
                          f"Loop mode: {ctx.voice_client.queue.loop_mode.name.title()} | "
                          f"1 = most recent",
         )
+        await paginator.start()
 
     # General
 
