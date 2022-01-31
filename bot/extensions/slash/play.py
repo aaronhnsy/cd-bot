@@ -22,16 +22,25 @@ class SlashPlay(slash.ApplicationCog):
         author_voice_channel = ctx.author.voice and ctx.author.voice.channel
         bot_voice_channel = ctx.voice_client and ctx.voice_client.voice_channel
 
-        if not author_voice_channel:
-            if bot_voice_channel:
-                raise exceptions.EmbedError(description=f"You must be connected to {bot_voice_channel.mention} to use this command.")
-            raise exceptions.EmbedError(description="You must be connected to a voice channel to use this command.")
+        # If the user and the bot are in the same
+        # channel, return because we don't need to
+        # do anything.
+        if author_voice_channel and bot_voice_channel and author_voice_channel == bot_voice_channel:
+            return
 
-        if bot_voice_channel:
-            if bot_voice_channel == author_voice_channel:
-                return
+        # If the user is not in a voice channel but
+        # the bot is OR they are both in a voice
+        # channel but not the same one, tell the
+        # user to join the bots channel.
+        if not author_voice_channel and bot_voice_channel or author_voice_channel and bot_voice_channel:
             raise exceptions.EmbedError(description=f"You must be connected to {bot_voice_channel.mention} to use this command.")
 
+        # If the user is not in a voice channel, tell
+        # them to join one.
+        if not author_voice_channel:
+            raise exceptions.EmbedError(description="You must be connected to a voice channel to use this command.")
+
+        # Join the users voice channel.
         await author_voice_channel.connect(cls=custom.Player)  # type: ignore
         ctx.voice_client.text_channel = ctx.channel  # type: ignore
 
