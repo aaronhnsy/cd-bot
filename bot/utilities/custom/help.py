@@ -9,7 +9,7 @@ from discord.ext import commands
 
 # My stuff
 from core import values
-from utilities import custom, exceptions, utils
+from utilities import custom, exceptions, paginators, utils
 
 
 __all__ = (
@@ -71,20 +71,23 @@ class HelpCommand(commands.HelpCommand):
         if not entries:
             raise exceptions.EmbedError(description="There are no loaded categories.")
 
-        await self.context.paginate_fields(
+        paginator = paginators.FieldsPaginator(
+            ctx=self.context,
             entries=entries,
             per_page=8,
             title=f"{self.context.bot.user.name if self.context.bot.user else 'CD'} - Commands",
             embed_footer=f"Total commands: {len(self.filter_command_list(list(self.context.bot.walk_commands())))}",
             thumbnail=utils.avatar(self.context.bot.user) if self.context.bot.user else None,
         )
+        await paginator.start()
 
     async def send_cog_help(self, cog: commands.Cog) -> None:
 
         if not (cog_commands := self.filter_command_list(list(cog.walk_commands()))):
             raise exceptions.EmbedError(description=f"**{cog.qualified_name}** has no available commands.")
 
-        await self.context.paginate_fields(
+        paginator = paginators.FieldsPaginator(
+            ctx=self.context,
             entries=[
                 (
                     f"● {command.qualified_name} {' '.join([f'[{name}]' for name in command.clean_params.keys()])}",
@@ -96,6 +99,7 @@ class HelpCommand(commands.HelpCommand):
             header=f"{cog.description or 'No description provided for this category.'}\n",
             embed_footer=f"Total commands: {len(cog_commands)}"
         )
+        await paginator.start()
 
     async def send_group_help(self, group: Group) -> None:
 
@@ -104,7 +108,8 @@ class HelpCommand(commands.HelpCommand):
 
         aliases = f"**Aliases:** {'/'.join(group.aliases)}\n\n" if group.aliases else ""
 
-        await self.context.paginate_fields(
+        paginator = paginators.FieldsPaginator(
+            ctx=self.context,
             entries=[
                 (
                     f"● {command.qualified_name} {' '.join([f'[{name}]' for name in command.clean_params.keys()])}",
@@ -116,6 +121,7 @@ class HelpCommand(commands.HelpCommand):
             header=f"{aliases}{group.help or 'No help provided for this group command.'}\n\n**Subcommands:**\n",
             embed_footer=f"Total subcommands: {len(group_commands)}"
         )
+        await paginator.start()
 
     async def send_command_help(self, command: Command) -> None:
 

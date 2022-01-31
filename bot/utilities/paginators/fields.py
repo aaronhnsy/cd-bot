@@ -9,7 +9,7 @@ import discord
 
 # My stuff
 from core import values
-from utilities import custom, paginators, utils
+from utilities import custom, paginators, slash, utils
 
 
 __all__ = (
@@ -22,7 +22,7 @@ class FieldsPaginator(paginators.BasePaginator):
     def __init__(
         self,
         *,
-        ctx: custom.Context,
+        ctx: custom.Context | slash.ApplicationContext,
         entries: list[tuple[Any, Any]],
         per_page: int,
         start_page: int = 0,

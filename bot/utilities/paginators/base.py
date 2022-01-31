@@ -10,7 +10,7 @@ import discord
 
 # My stuff
 from core import values
-from utilities import custom
+from utilities import custom, slash
 
 
 __all__ = (
@@ -82,7 +82,7 @@ class BasePaginator(abc.ABC):
     def __init__(
         self,
         *,
-        ctx: custom.Context,
+        ctx: custom.Context | slash.ApplicationContext,
         entries: list[Any],
         per_page: int,
         start_page: int = 0,
@@ -94,7 +94,7 @@ class BasePaginator(abc.ABC):
         join_pages: bool = True,
     ) -> None:
 
-        self.ctx: custom.Context = ctx
+        self.ctx: custom.Context | slash.ApplicationContext = ctx
         self.entries: list[Any] = entries
         self.per_page: int = per_page
         self.start_page: int = start_page

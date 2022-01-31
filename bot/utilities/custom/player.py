@@ -14,8 +14,7 @@ import yarl
 
 # My stuff
 from core import values
-from utilities import custom, enums, exceptions, utils
-from utilities.utils import slash
+from utilities import custom, enums, exceptions, slash, utils
 
 
 if TYPE_CHECKING:
@@ -36,14 +35,14 @@ class SearchView(discord.ui.View):
     def __init__(
         self,
         *,
-        ctx: custom.Context | slash.Context[CD, Any],
+        ctx: custom.Context | slash.ApplicationContext,
         result: slate.obsidian.Result[custom.Context],
         play_next: bool = False,
         play_now: bool = False
     ) -> None:
         super().__init__(timeout=60)
 
-        self.ctx: custom.Context | slash.Context[CD, Any] = ctx
+        self.ctx: custom.Context | slash.ApplicationContext = ctx
         self.result: slate.obsidian.Result[custom.Context] = result
         self.play_next: bool = play_next
         self.play_now: bool = play_now
@@ -282,7 +281,7 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
         query: str,
         /, *,
         source: slate.obsidian.Source,
-        ctx: custom.Context | slash.Context[CD, Any]
+        ctx: custom.Context | slash.ApplicationContext
     ) -> slate.obsidian.Result[custom.Context]:
 
         if (url := yarl.URL(query)) and url.host and url.scheme:
@@ -308,7 +307,7 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
         query: str,
         /, *,
         source: slate.obsidian.Source,
-        ctx: custom.Context | slash.Context[CD, Any],
+        ctx: custom.Context | slash.ApplicationContext,
         search_select: bool = False,
         play_next: bool = False,
         play_now: bool = False,

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 # Standard Library
 import collections
+import inspect
 import logging
 import time
 import traceback
@@ -22,16 +23,16 @@ from discord.ext.alternatives import converter_dict as converter_dict
 
 # My stuff
 from core import config, values
-from utilities import checks, custom, enums, utils
-from utilities.utils import slash
+from utilities import checks, custom, enums, slash, utils
 
 
 __log__: logging.Logger = logging.getLogger("bot")
 
 
-class CD(slash.Bot):
+class CD(commands.AutoShardedBot):
 
     converters: dict[Any, Any]
+    application_id: int
 
     def __init__(self) -> None:
         super().__init__(
@@ -49,17 +50,15 @@ class CD(slash.Bot):
         self.session: aiohttp.ClientSession = aiohttp.ClientSession()
         self.socket_stats: collections.Counter[str] = collections.Counter()
         self.process: psutil.Process = psutil.Process()
+        self.slate: slate.obsidian.NodePool[CD, custom.Context, custom.Player] = slate.obsidian.NodePool()
+        self.mystbin: mystbin.Client = mystbin.Client(session=self.session)
+        self.config: utils.Config = utils.Config(self)
 
         self.db: asyncpg.Pool = utils.MISSING
         self.redis: aioredis.Redis = utils.MISSING
 
-        self.slate: slate.obsidian.NodePool[CD, custom.Context, custom.Player] = slate.obsidian.NodePool()
-        self.mystbin: mystbin.Client = mystbin.Client(session=self.session)
-
         self.first_ready: bool = True
         self.start_time: float = time.time()
-
-        self.add_check(checks.bot, call_once=True)  # type: ignore
 
         self.log_webhooks: dict[enums.LogType, discord.Webhook] = {
             enums.LogType.DM:      discord.Webhook.from_url(session=self.session, url=config.DM_WEBHOOK_URL),
@@ -68,11 +67,12 @@ class CD(slash.Bot):
             enums.LogType.COMMAND: discord.Webhook.from_url(session=self.session, url=config.COMMAND_WEBHOOK_URL),
         }
         self.log_queue: dict[enums.LogType, list[discord.Embed]] = collections.defaultdict(list)
-        self.log_loop.start()
+
+        self.application_commands: dict[str, slash.ApplicationCommand] = {}
 
         self.converters |= values.CONVERTERS
-
-        self.config: utils.Config = utils.Config(self)
+        self.add_check(checks.bot, call_once=True)  # type: ignore
+        self.log_loop.start()
 
     # Overridden methods
 
@@ -124,7 +124,14 @@ class CD(slash.Bot):
             except commands.ExtensionFailed as error:
                 __log__.warning(f"[EXTENSIONS] Failed - {extension} - Reason: {traceback.print_exception(type(error), error, error.__traceback__)}")
 
-        await super().start(token=token, reconnect=reconnect)
+        await self.login(token)
+
+        app_info = await self.application_info()
+        self._connection.application_id = app_info.id
+
+        await self.sync_application_commands()
+
+        await self.connect(reconnect=reconnect)
 
     async def close(self) -> None:
 
@@ -175,3 +182,44 @@ class CD(slash.Bot):
 
     async def log(self, type: enums.LogType, /, *, embed: discord.Embed) -> None:
         self.log_queue[type].append(embed)
+
+    # Slash commands
+
+    def get_application_command(self, name: str) -> slash.ApplicationCommand | None:
+        return self.application_commands.get(name)
+
+    async def sync_application_commands(self) -> None:
+
+        payloads = collections.defaultdict(list)
+
+        for cog in self.cogs.values():
+
+            if not isinstance(cog, slash.ApplicationCog):
+                continue
+
+            cog_commands = inspect.getmembers(cog, lambda member: isinstance(member, slash.ApplicationCommand))
+
+            for _, command in cog_commands:
+                command.cog = cog
+                self.application_commands[command.name] = command
+                payloads[command.guild_id].append(command._build_payload())
+
+        if global_commands := payloads.pop(None, []):
+            await self.http.bulk_upsert_global_commands(self.application_id, global_commands)
+
+        for guild_id, payload in payloads.items():
+            await self.http.bulk_upsert_guild_commands(self.application_id, guild_id, payload)
+
+    async def delete_all_application_commands(self, guild_id: int | None = None) -> None:
+
+        if not guild_id:
+            await self.http.bulk_upsert_global_commands(self.application_id, [])
+        else:
+            await self.http.bulk_upsert_guild_commands(self.application_id, guild_id, [])
+
+    async def delete_application_command(self, id: int, *, guild_id: int | None = None) -> None:
+
+        if not guild_id:
+            await self.http.delete_global_command(self.application_id, id)
+        else:
+            await self.http.delete_guild_command(self.application_id, guild_id, id)

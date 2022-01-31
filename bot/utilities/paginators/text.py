@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 # My stuff
-from utilities import custom, paginators
+from utilities import custom, paginators, slash
 
 
 __all__ = (
@@ -18,7 +18,7 @@ class TextPaginator(paginators.BasePaginator):
     def __init__(
         self,
         *,
-        ctx: custom.Context,
+        ctx: custom.Context | slash.ApplicationContext,
         entries: list[Any],
         per_page: int,
         start_page: int = 0,

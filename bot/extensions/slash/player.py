@@ -11,20 +11,19 @@ from discord.ext import commands
 # My stuff
 from core import values
 from core.bot import CD
-from utilities import checks, custom, exceptions, utils
-from utilities.utils import slash
+from utilities import checks, converters, custom, exceptions, paginators, slash, utils
 
 
 def setup(bot: CD) -> None:
     bot.add_cog(SlashPlayer(bot))
 
 
-class SlashPlayer(slash.ApplicationCog[CD]):
+class SlashPlayer(slash.ApplicationCog):
 
     # Connecting
 
-    @slash.slash_command(name="join", guild_id=855169856454131712)
-    async def join(self, ctx: slash.Context[CD, SlashPlayer]) -> None:
+    @slash.slash_command(name="join", guild_id=240958773122957312)
+    async def join(self, ctx: slash.ApplicationContext) -> None:
 
         assert isinstance(ctx.author, discord.Member)
 
@@ -45,10 +44,10 @@ class SlashPlayer(slash.ApplicationCog[CD]):
             )
         )
 
-    @slash.slash_command(name="disconnect", guild_id=855169856454131712)
+    @slash.slash_command(name="disconnect", guild_id=240958773122957312)
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def disconnect(self, ctx: slash.Context[CD, SlashPlayer]) -> None:
+    async def disconnect(self, ctx: slash.ApplicationContext) -> None:
 
         assert ctx.voice_client is not None
 
@@ -61,10 +60,10 @@ class SlashPlayer(slash.ApplicationCog[CD]):
 
     # Pausing
 
-    @slash.slash_command(name="pause", guild_id=855169856454131712)
+    @slash.slash_command(name="pause", guild_id=240958773122957312)
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def pause(self, ctx: slash.Context[CD, SlashPlayer]) -> None:
+    async def pause(self, ctx: slash.ApplicationContext) -> None:
 
         assert ctx.voice_client is not None
 
@@ -74,10 +73,10 @@ class SlashPlayer(slash.ApplicationCog[CD]):
         await ctx.voice_client.set_pause(True)
         await ctx.reply(embed=utils.embed(colour=values.GREEN, description="The player is now **paused**."))
 
-    @slash.slash_command(name="resume", guild_id=855169856454131712)
+    @slash.slash_command(name="resume", guild_id=240958773122957312)
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def resume(self, ctx: slash.Context[CD, SlashPlayer]) -> None:
+    async def resume(self, ctx: slash.ApplicationContext) -> None:
 
         assert ctx.voice_client is not None
 
@@ -89,16 +88,17 @@ class SlashPlayer(slash.ApplicationCog[CD]):
 
     # Seeking
 
-    @slash.slash_command(name="seek", guild_id=855169856454131712)
+    @slash.slash_command(name="seek", guild_id=240958773122957312)
     @checks.is_track_seekable()
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def seek(self, ctx: slash.Context[CD, SlashPlayer], *, time: int) -> None:
+    async def seek(self, ctx: slash.ApplicationContext, time: str) -> None:
 
         assert ctx.voice_client is not None
         assert ctx.voice_client.current is not None
 
+        time = await converters.TimeConverter().convert(ctx, str(time))  # type: ignore
         milliseconds = time.seconds * 1000
 
         if 0 < milliseconds > ctx.voice_client.current.length:
@@ -116,16 +116,17 @@ class SlashPlayer(slash.ApplicationCog[CD]):
             )
         )
 
-    @slash.slash_command(name="fast-forward", guild_id=855169856454131712)
+    @slash.slash_command(name="fast-forward", guild_id=240958773122957312)
     @checks.is_track_seekable()
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def fast_forward(self, ctx: slash.Context[CD, SlashPlayer], *, time: int) -> None:
+    async def fast_forward(self, ctx: slash.ApplicationContext, time: str) -> None:
 
         assert ctx.voice_client is not None
         assert ctx.voice_client.current is not None
 
+        time = await converters.TimeConverter().convert(ctx, str(time))  # type: ignore
         milliseconds = time.seconds * 1000
         position = ctx.voice_client.position
         remaining = ctx.voice_client.current.length - position
@@ -146,16 +147,17 @@ class SlashPlayer(slash.ApplicationCog[CD]):
             )
         )
 
-    @slash.slash_command(name="rewind", guild_id=855169856454131712)
+    @slash.slash_command(name="rewind", guild_id=240958773122957312)
     @checks.is_track_seekable()
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def rewind(self, ctx: slash.Context[CD, SlashPlayer], *, time: int) -> None:
+    async def rewind(self, ctx: slash.ApplicationContext, time: str) -> None:
 
         assert ctx.voice_client is not None
         assert ctx.voice_client.current is not None
 
+        time = await converters.TimeConverter().convert(ctx, str(time))  # type: ignore
         milliseconds = time.seconds * 1000
         position = ctx.voice_client.position
 
@@ -175,12 +177,12 @@ class SlashPlayer(slash.ApplicationCog[CD]):
             )
         )
 
-    @slash.slash_command(name="replay", guild_id=855169856454131712)
+    @slash.slash_command(name="replay", guild_id=240958773122957312)
     @checks.is_track_seekable()
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def replay(self, ctx: slash.Context[CD, SlashPlayer]) -> None:
+    async def replay(self, ctx: slash.ApplicationContext) -> None:
 
         assert ctx.voice_client is not None
         assert ctx.voice_client.current is not None
@@ -196,10 +198,10 @@ class SlashPlayer(slash.ApplicationCog[CD]):
 
     # Misc
 
-    @slash.slash_command(name="now-playing", guild_id=855169856454131712)
+    @slash.slash_command(name="now-playing", guild_id=240958773122957312)
     @checks.is_player_playing()
     @checks.is_player_connected()
-    async def now_playing(self, ctx: slash.Context[CD, SlashPlayer]) -> None:
+    async def now_playing(self, ctx: slash.ApplicationContext) -> None:
 
         assert ctx.voice_client is not None
         await ctx.voice_client.send_controller(ctx.channel)  # type: ignore
@@ -209,7 +211,7 @@ class SlashPlayer(slash.ApplicationCog[CD]):
     # Skipping
 
     @staticmethod
-    async def _try_force_skip(ctx: slash.Context[CD, SlashPlayer]) -> None:
+    async def _try_force_skip(ctx: slash.ApplicationContext) -> None:
 
         _checks = [
             checks.is_owner(),
@@ -241,11 +243,11 @@ class SlashPlayer(slash.ApplicationCog[CD]):
                 description="You do not have permission to force skip."
             )
 
-    @slash.slash_command(name="force-skip", guild_id=855169856454131712)
+    @slash.slash_command(name="force-skip", guild_id=240958773122957312)
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def force_skip(self, ctx: slash.Context[CD, SlashPlayer], amount: int = 0) -> None:
+    async def force_skip(self, ctx: slash.ApplicationContext, amount: int = 0) -> None:
 
         await self._try_force_skip(ctx)
 
@@ -270,15 +272,15 @@ class SlashPlayer(slash.ApplicationCog[CD]):
         )
         ctx.voice_client.skip_request_ids.clear()
 
-    @slash.slash_command(name="vote-skip", guild_id=855169856454131712)
+    @slash.slash_command(name="skip", guild_id=240958773122957312)
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def vote_skip(self, ctx: slash.Context[CD, SlashPlayer]) -> None:
+    async def skip(self, ctx: slash.ApplicationContext) -> None:
 
         try:
             await self._try_force_skip(ctx)
-            await self.force_skip(ctx, amount=None)
+            await self.force_skip.invoke(ctx, amount=None)
             return
         except exceptions.EmbedError:
             pass
@@ -334,18 +336,8 @@ class SlashPlayer(slash.ApplicationCog[CD]):
 
     # Lyrics
 
-    @slash.slash_command(name="lyrics", guild_id=855169856454131712)
-    async def lyrics(self, ctx: slash.Context[CD, SlashPlayer], *, query: str = "") -> None:
-
-        def get_spotify_query() -> str:
-
-            assert isinstance(ctx.author, discord.Member)
-
-            if not (activity := discord.utils.find(lambda x: isinstance(x, discord.Spotify), ctx.author.activities)):
-                return ""
-
-            assert isinstance(activity, discord.Spotify)
-            return f"{activity.artists[0]} - {activity.title}"
+    @slash.slash_command(name="lyrics", guild_id=240958773122957312)
+    async def lyrics(self, ctx: slash.ApplicationContext, *, query: str = "") -> None:
 
         def get_player_query() -> str:
 
@@ -356,12 +348,6 @@ class SlashPlayer(slash.ApplicationCog[CD]):
             return f"{ctx.voice_client.current.author} - {ctx.voice_client.current.title}"
 
         match query:
-            case "spotify":
-                if not (query := get_spotify_query()):
-                    raise exceptions.EmbedError(
-                        colour=values.RED,
-                        description="You don't have an active spotify status.",
-                    )
             case "player":
                 if not (query := get_player_query()):
                     raise exceptions.EmbedError(
@@ -369,7 +355,7 @@ class SlashPlayer(slash.ApplicationCog[CD]):
                         description="I am not playing any tracks.",
                     )
             case _:
-                if not query and not (query := get_spotify_query()) and not (query := get_player_query()):
+                if not query and not (query := get_player_query()):
                     raise exceptions.EmbedError(
                         colour=values.RED,
                         description="You didn't specify a search query.",
@@ -403,7 +389,8 @@ class SlashPlayer(slash.ApplicationCog[CD]):
             else:
                 entries[-1] += f"\n\n{line}"
 
-        await ctx.paginate_embed(
+        paginator = paginators.EmbedPaginator(
+            ctx=ctx,
             entries=entries,
             per_page=1,
             title=data["name"],
@@ -411,3 +398,4 @@ class SlashPlayer(slash.ApplicationCog[CD]):
             header=f"by: **{', '.join([artist['name'] for artist in data['artists']] or ['Unknown Artist'])}**\n\n",
             thumbnail=icon["url"] if (icon := data["album"].get("icon")) else None,
         )
+        await paginator.start()
