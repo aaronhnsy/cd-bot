@@ -33,13 +33,13 @@ class ApplicationContext:
     @overload
     def send(
         self,
-        content: str = utils.MISSING,
+        content: str | None = ...,
         *,
-        embed: discord.Embed = utils.MISSING,
-        ephemeral: bool = utils.MISSING,
-        tts: bool = utils.MISSING,
-        view: discord.ui.View = utils.MISSING,
-        file: discord.File = utils.MISSING
+        tts: bool = ...,
+        embed: discord.Embed = ...,
+        file: discord.File = ...,
+        view: discord.ui.View = ...,
+        ephemeral: bool = ...,
     ) -> Coroutine[Any, Any, discord.InteractionMessage | discord.WebhookMessage]:
         ...
 
@@ -48,11 +48,11 @@ class ApplicationContext:
         self,
         content: str = utils.MISSING,
         *,
-        embed: discord.Embed = utils.MISSING,
-        ephemeral: bool = utils.MISSING,
-        tts: bool = utils.MISSING,
-        view: discord.ui.View = utils.MISSING,
-        files: list[discord.File] = utils.MISSING
+        tts: bool = ...,
+        embed: discord.Embed = ...,
+        files: list[discord.File] = ...,
+        view: discord.ui.View = ...,
+        ephemeral: bool = ...,
     ) -> Coroutine[Any, Any, discord.InteractionMessage | discord.WebhookMessage]:
         ...
 
@@ -61,11 +61,11 @@ class ApplicationContext:
         self,
         content: str = utils.MISSING,
         *,
-        embeds: list[discord.Embed] = utils.MISSING,
-        ephemeral: bool = utils.MISSING,
-        tts: bool = utils.MISSING,
-        view: discord.ui.View = utils.MISSING,
-        file: discord.File = utils.MISSING
+        tts: bool = ...,
+        embeds: list[discord.Embed] = ...,
+        file: discord.File = ...,
+        view: discord.ui.View = ...,
+        ephemeral: bool = ...,
     ) -> Coroutine[Any, Any, discord.InteractionMessage | discord.WebhookMessage]:
         ...
 
@@ -74,27 +74,27 @@ class ApplicationContext:
         self,
         content: str = utils.MISSING,
         *,
-        embeds: list[discord.Embed] = utils.MISSING,
-        ephemeral: bool = utils.MISSING,
-        tts: bool = utils.MISSING,
-        view: discord.ui.View = utils.MISSING,
-        files: list[discord.File] = utils.MISSING
+        tts: bool = ...,
+        embeds: list[discord.Embed] = ...,
+        files: list[discord.File] = ...,
+        view: discord.ui.View = ...,
+        ephemeral: bool = ...,
     ) -> Coroutine[Any, Any, discord.InteractionMessage | discord.WebhookMessage]:
         ...
 
-    async def send(self, content=utils.MISSING, **kwargs) -> discord.InteractionMessage | discord.WebhookMessage:
+    async def send(self, content=None, **kwargs) -> discord.InteractionMessage | discord.WebhookMessage:
 
         if self.interaction.response.is_done():
             return await self.interaction.followup.send(content, wait=True, **kwargs)
 
-        await self.interaction.response.send_message(content or None, **kwargs)
+        await self.interaction.response.send_message(content, **kwargs)
         return await self.interaction.original_message()
+
+    async def reply(self, content: str | None = None, **kwargs) -> discord.InteractionMessage | discord.WebhookMessage:
+        return await self.send(content, **kwargs)
 
     async def defer(self, *, ephemeral: bool = False) -> None:
         await self.interaction.response.defer(ephemeral=ephemeral)
-
-    async def reply(self, content=utils.MISSING, **kwargs) -> discord.InteractionMessage | discord.WebhookMessage:
-        return await self.send(content, **kwargs)
 
     @property
     def cog(self) -> ApplicationCog:
