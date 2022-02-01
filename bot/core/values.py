@@ -29,6 +29,7 @@ EXTENSIONS = [
     "extensions.reload",
     "extensions.slash.play",
     "extensions.slash.player",
+    "extensions.slash.effects",
 ]
 
 PERMISSIONS = discord.Permissions(

@@ -11,7 +11,7 @@ from discord.ext import commands
 # My stuff
 from core import values
 from core.bot import CD
-from utilities import checks, converters, custom, exceptions, paginators, slash, utils
+from utilities import checks, converters, custom, exceptions, slash, utils
 
 
 def setup(bot: CD) -> None:
