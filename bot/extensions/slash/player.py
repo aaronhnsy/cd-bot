@@ -98,13 +98,13 @@ class SlashPlayer(slash.ApplicationCog):
         assert ctx.voice_client is not None
         assert ctx.voice_client.current is not None
 
-        time = await converters.TimeConverter().convert(ctx, str(time))  # type: ignore
-        milliseconds = time.seconds * 1000
+        converter = await converters.TimeConverter().convert(ctx, str(time))  # type: ignore
+        milliseconds = converter.seconds * 1000
 
         if 0 < milliseconds > ctx.voice_client.current.length:
             raise exceptions.EmbedError(
-                description=f"That is not a valid amount of time, please choose a time between "
-                            f"**0s** and **{utils.format_seconds(ctx.voice_client.current.length // 1000, friendly=True)}**.",
+                description=f"**{time}** is not a valid position. The track is only "
+                            f"**{utils.format_seconds(ctx.voice_client.current.length // 1000, friendly=True)}** long.",
             )
 
         await ctx.voice_client.set_position(milliseconds)
@@ -126,15 +126,15 @@ class SlashPlayer(slash.ApplicationCog):
         assert ctx.voice_client is not None
         assert ctx.voice_client.current is not None
 
-        time = await converters.TimeConverter().convert(ctx, str(time))  # type: ignore
-        milliseconds = time.seconds * 1000
+        converter = await converters.TimeConverter().convert(ctx, str(time))  # type: ignore
+        milliseconds = converter.seconds * 1000
         position = ctx.voice_client.position
         remaining = ctx.voice_client.current.length - position
 
         if milliseconds >= remaining:
             raise exceptions.EmbedError(
-                description=f"That was too much time to seek forward, try seeking forward an amount less than "
-                            f"**{utils.format_seconds(remaining // 1000, friendly=True)}**.",
+                description=f"**{time}** is too much time to seek forward, the current track only has "
+                            f"**{utils.format_seconds(remaining // 1000, friendly=True)}** remaining.",
             )
 
         await ctx.voice_client.set_position(position + milliseconds)
@@ -142,7 +142,7 @@ class SlashPlayer(slash.ApplicationCog):
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"Seeking forward **{utils.format_seconds(time.seconds, friendly=True)}**, the players position is now "
+                description=f"Seeking forward **{utils.format_seconds(converter.seconds, friendly=True)}**, the players position is now "
                             f"**{utils.format_seconds(ctx.voice_client.position // 1000, friendly=True)}**."
             )
         )
@@ -157,14 +157,14 @@ class SlashPlayer(slash.ApplicationCog):
         assert ctx.voice_client is not None
         assert ctx.voice_client.current is not None
 
-        time = await converters.TimeConverter().convert(ctx, str(time))  # type: ignore
-        milliseconds = time.seconds * 1000
+        converter = await converters.TimeConverter().convert(ctx, str(time))  # type: ignore
+        milliseconds = converter.seconds * 1000
         position = ctx.voice_client.position
 
         if milliseconds >= position:
             raise exceptions.EmbedError(
-                description=f"That was too much time to seek backward, try seeking backward an amount less than "
-                            f"**{utils.format_seconds(position // 1000, friendly=True)}**."
+                description=f"**{time}** is too much time to seek backward, only "
+                            f"**{utils.format_seconds(position // 1000, friendly=True)}** of the current track has passed."
             )
 
         await ctx.voice_client.set_position(position - milliseconds)
@@ -172,7 +172,7 @@ class SlashPlayer(slash.ApplicationCog):
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"Seeking backward **{utils.format_seconds(time.seconds, friendly=True)}**, the players position is now "
+                description=f"Seeking backward **{utils.format_seconds(converter.seconds, friendly=True)}**, the players position is now "
                             f"**{utils.format_seconds(ctx.voice_client.position // 1000, friendly=True)}**."
             )
         )
@@ -188,7 +188,6 @@ class SlashPlayer(slash.ApplicationCog):
         assert ctx.voice_client.current is not None
 
         await ctx.voice_client.set_position(0)
-
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
@@ -204,9 +203,9 @@ class SlashPlayer(slash.ApplicationCog):
     async def now_playing(self, ctx: slash.ApplicationContext) -> None:
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.send_controller(ctx.channel)  # type: ignore
 
         await ctx.defer()
+        await ctx.voice_client.send_controller(ctx.channel)  # type: ignore
 
     # Skipping
 
