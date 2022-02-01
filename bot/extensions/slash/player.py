@@ -195,7 +195,7 @@ class SlashPlayer(slash.ApplicationCog):
             )
         )
 
-    # Misc
+    # Now playing
 
     @slash.slash_command(name="now-playing", guild_id=240958773122957312)
     @checks.is_player_playing()
@@ -210,7 +210,7 @@ class SlashPlayer(slash.ApplicationCog):
     # Skipping
 
     @staticmethod
-    async def _try_force_skip(ctx: slash.ApplicationContext) -> None:
+    async def _check_force_skip_permissions(ctx: slash.ApplicationContext) -> None:
 
         _checks = [
             checks.is_owner(),
@@ -248,27 +248,25 @@ class SlashPlayer(slash.ApplicationCog):
     @checks.is_player_connected()
     async def force_skip(self, ctx: slash.ApplicationContext, amount: int = 0) -> None:
 
-        await self._try_force_skip(ctx)
+        await self._check_force_skip_permissions(ctx)
 
         assert ctx.voice_client is not None
 
         if amount:
-
             if 0 <= amount > len(ctx.voice_client.queue) + 1:
                 raise exceptions.EmbedError(
-                    description=f"There are not enough tracks in the queue to skip that many, try again with an amount between "
-                                f"**1** and **{len(ctx.voice_client.queue) + 1}**.",
+                    description=f"There are only **{len(ctx.voice_client.queue) + 1}** tracks in the queue."
                 )
-
             del ctx.voice_client.queue[:amount - 1]
 
         await ctx.voice_client.stop()
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"Force skipped **{amount or 1}** track{'s' if (amount or 1) != 1 else ''}."
+                description=f"Skipped **{amount or 1}** track{'s' if (amount or 1) != 1 else ''}."
             )
         )
+
         ctx.voice_client.skip_request_ids.clear()
 
     @slash.slash_command(name="skip", guild_id=240958773122957312)
@@ -278,8 +276,8 @@ class SlashPlayer(slash.ApplicationCog):
     async def skip(self, ctx: slash.ApplicationContext) -> None:
 
         try:
-            await self._try_force_skip(ctx)
-            await self.force_skip.invoke(ctx, amount=None)
+            await self._check_force_skip_permissions(ctx)
+            await self.force_skip.invoke(ctx, amount=0)
             return
         except exceptions.EmbedError:
             pass
@@ -289,7 +287,7 @@ class SlashPlayer(slash.ApplicationCog):
         assert ctx.voice_client.current.requester is not None
 
         if ctx.author not in ctx.voice_client.listeners:
-            raise exceptions.EmbedError(description="You can not vote skip as you are currently deafened.")
+            raise exceptions.EmbedError(description="You can not vote to skip as you are currently deafened.")
 
         async def skip() -> None:
 
@@ -312,7 +310,7 @@ class SlashPlayer(slash.ApplicationCog):
             await ctx.reply(
                 embed=utils.embed(
                     colour=values.GREEN,
-                    description="Removed your vote to skip."
+                    description="**Removed** your vote to skip."
                 )
             )
 
@@ -328,73 +326,6 @@ class SlashPlayer(slash.ApplicationCog):
                 await ctx.reply(
                     embed=utils.embed(
                         colour=values.GREEN,
-                        description=f"Added your vote to skip, now at **{len(ctx.voice_client.skip_request_ids)}** out of **{skips_needed}** votes "
-                                    f"needed to skip."
+                        description=f"**Added** your vote to skip, now at **{len(ctx.voice_client.skip_request_ids)}** out of **{skips_needed}** votes."
                     )
                 )
-
-    # Lyrics
-
-    @slash.slash_command(name="lyrics", guild_id=240958773122957312)
-    async def lyrics(self, ctx: slash.ApplicationContext, *, query: str = "") -> None:
-
-        def get_player_query() -> str:
-
-            if not ctx.voice_client or ctx.voice_client.is_playing() is False:
-                return ""
-
-            assert ctx.voice_client.current is not None
-            return f"{ctx.voice_client.current.author} - {ctx.voice_client.current.title}"
-
-        match query:
-            case "player":
-                if not (query := get_player_query()):
-                    raise exceptions.EmbedError(
-                        colour=values.RED,
-                        description="I am not playing any tracks.",
-                    )
-            case _:
-                if not query and not (query := get_player_query()):
-                    raise exceptions.EmbedError(
-                        colour=values.RED,
-                        description="You didn't specify a search query.",
-                    )
-
-        async with self.bot.session.get(
-                url="https://evan.lol/lyrics/search/top",
-                params={"q": query},
-        ) as response:
-
-            match response.status:
-                case 200:
-                    data = await response.json()
-                case 404:
-                    raise exceptions.EmbedError(
-                        colour=values.RED,
-                        description=f"No lyrics were found for **{query}**.",
-                    )
-                case _:
-                    raise exceptions.EmbedError(
-                        colour=values.RED,
-                        description=f"Lyrics are unavailable right now, please try again later."
-                    )
-
-        entries = []
-
-        for line in data["lyrics"].split("\n\n"):
-
-            if len(entries) == 0 or len(entries[-1]) > 750 or len(entries[-1]) + len(line) > 750 or entries[-1].count("\n") > 20:
-                entries.append(line)
-            else:
-                entries[-1] += f"\n\n{line}"
-
-        paginator = paginators.EmbedPaginator(
-            ctx=ctx,
-            entries=entries,
-            per_page=1,
-            title=data["name"],
-            url=f"https://open.spotify.com/track/{data['id']}",
-            header=f"by: **{', '.join([artist['name'] for artist in data['artists']] or ['Unknown Artist'])}**\n\n",
-            thumbnail=icon["url"] if (icon := data["album"].get("icon")) else None,
-        )
-        await paginator.start()
