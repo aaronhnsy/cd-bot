@@ -29,13 +29,13 @@ class PrefixConverter(commands.Converter[objects.FakePrefixConverter]):
         if not (argument := (await commands.clean_content(escape_markdown=True).convert(ctx=ctx, argument=argument)).lstrip()):
             raise exceptions.EmbedError(
                 colour=values.RED,
-                description="You must provide a prefix."
+                description="you must provide a prefix."
             )
 
         if len(argument) > 50:
             raise exceptions.EmbedError(
                 colour=values.RED,
-                description="Your prefix must be 50 characters or less."
+                description="your prefix must be 50 characters or less."
             )
 
         assert ctx.guild is not None
@@ -44,7 +44,7 @@ class PrefixConverter(commands.Converter[objects.FakePrefixConverter]):
         if argument == guild_config.prefix:
             raise exceptions.EmbedError(
                 colour=values.RED,
-                description="Your prefix can not be the same as the current prefix."
+                description="your prefix can not be the same as the current prefix."
             )
 
         return objects.FakePrefixConverter(argument)

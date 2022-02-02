@@ -44,13 +44,13 @@ class Play(commands.Cog):
 
         if not author_voice_channel:
             if bot_voice_channel:
-                raise exceptions.EmbedError(description=f"You must be connected to {bot_voice_channel.mention} to use this command.")
-            raise exceptions.EmbedError(description="You must be connected to a voice channel to use this command.")
+                raise exceptions.EmbedError(description=f"you must be connected to {bot_voice_channel.mention} to use this command.")
+            raise exceptions.EmbedError(description="you must be connected to a voice channel to use this command.")
 
         if bot_voice_channel:
             if bot_voice_channel == author_voice_channel:
                 return
-            raise exceptions.EmbedError(description=f"You must be connected to {bot_voice_channel.mention} to use this command.")
+            raise exceptions.EmbedError(description=f"you must be connected to {bot_voice_channel.mention} to use this command.")
 
         await author_voice_channel.connect(cls=custom.Player)  # type: ignore
         ctx.voice_client.text_channel = ctx.channel  # type: ignore

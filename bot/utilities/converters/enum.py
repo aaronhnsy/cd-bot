@@ -37,9 +37,9 @@ class EnumConverter(Generic[EnumType], commands.Converter[EnumType]):
         if enum := getattr(self.enum, argument.replace(" ", "_").upper(), None):
             return enum
 
-        options = [f"- `{option}`" for option in [repeat_type.name.replace("_", " ").lower() for repeat_type in self.enum]]
+        options = [f"- **{option}**" for option in [repeat_type.name.replace("_", " ").lower() for repeat_type in self.enum]]
 
         raise exceptions.EmbedError(
             colour=values.RED,
-            description=f"{self.name} must be one of:\n{values.NL.join(options)}",
+            description=f"**{self.name}** must be one of:\n{values.NL.join(options)}",
         )

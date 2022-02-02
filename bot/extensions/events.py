@@ -308,12 +308,12 @@ class Events(commands.Cog):
             # Send friendly error message to user.
 
             view = discord.ui.View()
-            view.add_item(discord.ui.Button(label="Support server", url=values.SUPPORT_LINK))
+            view.add_item(discord.ui.Button(label="support server", url=values.SUPPORT_LINK))
 
             await ctx.reply(
                 embed=utils.embed(
                     colour=values.RED,
-                    description="Something went wrong!",
+                    description="something went wrong!",
                 ),
                 view=view
             )

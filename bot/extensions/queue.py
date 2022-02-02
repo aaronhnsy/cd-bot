@@ -49,7 +49,7 @@ class Queue(commands.Cog):
         paginator = paginators.EmbedPaginator(
             ctx=ctx,
             entries=[
-                f"**{index + 1}. [{discord.utils.escape_markdown(track.title)}]({track.uri})** by **{discord.utils.escape_markdown(track.author)}**\n"
+                f"**{index + 1}. [{discord.utils.escape_markdown(track.title)}]({track.uri})** by **{discord.utils.escape_markdown(track.author or 'Unknown')}**\n"
                 f"**⤷** {utils.format_seconds(track.length // 1000, friendly=True)} | "
                 f"{track.source.value.title()} | "
                 f"Added by: {getattr(track.requester, 'mention', None)}"
@@ -77,7 +77,7 @@ class Queue(commands.Cog):
         paginator = paginators.EmbedPaginator(
             ctx=ctx,
             entries=[
-                f"**{index + 1}. [{discord.utils.escape_markdown(track.title)}]({track.uri})** by **{discord.utils.escape_markdown(track.author)}**\n"
+                f"**{index + 1}. [{discord.utils.escape_markdown(track.title)}]({track.uri})** by **{discord.utils.escape_markdown(track.author or 'Unknown')}**\n"
                 f"**⤷** {utils.format_seconds(track.length // 1000, friendly=True)} | "
                 f"{track.source.value.title()} | "
                 f"Added by: {getattr(track.requester, 'mention', None)}"
@@ -216,7 +216,7 @@ class Queue(commands.Cog):
             embed=utils.embed(
                 colour=values.GREEN,
                 description=f"Removed **[{discord.utils.escape_markdown(track.title)}]({track.uri})** "
-                            f"by **{discord.utils.escape_markdown(track.author)}** from the queue."
+                            f"by **{discord.utils.escape_markdown(track.author or 'Unknown')}** from the queue."
             )
         )
 
@@ -252,7 +252,7 @@ class Queue(commands.Cog):
             embed=utils.embed(
                 colour=values.GREEN,
                 description=f"Moved **[{discord.utils.escape_markdown(track.title)}]({track.uri})** "
-                            f"by **{discord.utils.escape_markdown(track.author)}** from position **{entry_1}** to position **{entry_2}**.",
+                            f"by **{discord.utils.escape_markdown(track.author or 'Unknown')}** from position **{entry_1}** to position **{entry_2}**.",
             )
         )
 

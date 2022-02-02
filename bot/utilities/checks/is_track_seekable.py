@@ -24,7 +24,7 @@ def is_track_seekable() -> Callable[[T], T]:
     async def predicate(ctx: custom.Context) -> Literal[True]:
 
         if not ctx.voice_client or not ctx.voice_client.current or not ctx.voice_client.current.is_seekable():
-            raise exceptions.EmbedError(description="The current track is not seekable.")
+            raise exceptions.EmbedError(description="the current track is not seekable.")
 
         return True
 

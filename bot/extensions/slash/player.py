@@ -28,10 +28,10 @@ class SlashPlayer(slash.ApplicationCog):
         assert isinstance(ctx.author, discord.Member)
 
         if not ctx.author.voice or not ctx.author.voice.channel:
-            raise exceptions.EmbedError(description="You must be connected to a voice channel to use this command.")
+            raise exceptions.EmbedError(description="you must be connected to a voice channel to use this command.")
 
         if ctx.voice_client and ctx.voice_client.voice_channel:
-            raise exceptions.EmbedError(description=f"I am already connected to {ctx.voice_client.voice_channel.mention}.")
+            raise exceptions.EmbedError(description=f"i am already connected to {ctx.voice_client.voice_channel.mention}.")
 
         await ctx.author.voice.channel.connect(cls=custom.Player)  # type: ignore
         ctx.voice_client.text_channel = ctx.channel  # type: ignore
@@ -40,7 +40,7 @@ class SlashPlayer(slash.ApplicationCog):
         await ctx.send(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"Joined {ctx.voice_client.voice_channel.mention}."
+                description=f"joined {ctx.voice_client.voice_channel.mention}."
             )
         )
 
@@ -54,7 +54,7 @@ class SlashPlayer(slash.ApplicationCog):
         await ctx.send(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"Left {ctx.voice_client.voice_channel.mention}.")
+                description=f"left {ctx.voice_client.voice_channel.mention}.")
         )
         await ctx.voice_client.disconnect()
 
@@ -68,10 +68,15 @@ class SlashPlayer(slash.ApplicationCog):
         assert ctx.voice_client is not None
 
         if ctx.voice_client.paused is True:
-            raise exceptions.EmbedError(description="The played is already paused.")
+            raise exceptions.EmbedError(description="the current track is already paused.")
 
         await ctx.voice_client.set_pause(True)
-        await ctx.reply(embed=utils.embed(colour=values.GREEN, description="The player is now **paused**."))
+        await ctx.reply(
+            embed=utils.embed(
+                colour=values.GREEN,
+                description="**paused** the current track."
+            )
+        )
 
     @slash.slash_command(name="resume", guild_id=240958773122957312)
     @checks.is_author_connected()
@@ -81,10 +86,15 @@ class SlashPlayer(slash.ApplicationCog):
         assert ctx.voice_client is not None
 
         if ctx.voice_client.paused is False:
-            raise exceptions.EmbedError(description="The player is not paused.")
+            raise exceptions.EmbedError(description="the current track is already playing.")
 
         await ctx.voice_client.set_pause(False)
-        await ctx.reply(embed=utils.embed(colour=values.GREEN, description="The player is now **resumed**."))
+        await ctx.reply(
+            embed=utils.embed(
+                colour=values.GREEN,
+                description="**resumed** the current track."
+            )
+        )
 
     # Seeking
 
@@ -112,7 +122,7 @@ class SlashPlayer(slash.ApplicationCog):
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"The players position is now **{utils.format_seconds(ctx.voice_client.position // 1000, friendly=True)}**."
+                description=f"set the players position to **{utils.format_seconds(ctx.voice_client.position // 1000, friendly=True)}**."
             )
         )
 
@@ -142,7 +152,7 @@ class SlashPlayer(slash.ApplicationCog):
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"Seeking forward **{utils.format_seconds(converter.seconds, friendly=True)}**, the players position is now "
+                description=f"seeking forward **{utils.format_seconds(converter.seconds, friendly=True)}**, the players position is now "
                             f"**{utils.format_seconds(ctx.voice_client.position // 1000, friendly=True)}**."
             )
         )
@@ -172,7 +182,7 @@ class SlashPlayer(slash.ApplicationCog):
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"Seeking backward **{utils.format_seconds(converter.seconds, friendly=True)}**, the players position is now "
+                description=f"seeking backward **{utils.format_seconds(converter.seconds, friendly=True)}**, the players position is now "
                             f"**{utils.format_seconds(ctx.voice_client.position // 1000, friendly=True)}**."
             )
         )
@@ -191,7 +201,7 @@ class SlashPlayer(slash.ApplicationCog):
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"Replaying **[{ctx.voice_client.current.title}]({ctx.voice_client.current.uri})** by **{ctx.voice_client.current.author}**."
+                description=f"replaying **[{ctx.voice_client.current.title}]({ctx.voice_client.current.uri})** by **{ctx.voice_client.current.author}**."
             )
         )
 
@@ -239,7 +249,7 @@ class SlashPlayer(slash.ApplicationCog):
         except (commands.CheckAnyFailure, commands.MissingRole):
             raise exceptions.EmbedError(
                 colour=values.RED,
-                description="You do not have permission to force skip."
+                description="you don't have permission to force skip."
             )
 
     @slash.slash_command(name="force-skip", guild_id=240958773122957312)
@@ -255,7 +265,8 @@ class SlashPlayer(slash.ApplicationCog):
         if amount:
             if 0 <= amount > len(ctx.voice_client.queue) + 1:
                 raise exceptions.EmbedError(
-                    description=f"There are only **{len(ctx.voice_client.queue) + 1}** tracks in the queue."
+                    description=f"**{amount}** is not a valid amount of tracks to skip, there are only"
+                                f"**{len(ctx.voice_client.queue) + 1}** tracks in the queue."
                 )
             del ctx.voice_client.queue[:amount - 1]
 
@@ -263,7 +274,7 @@ class SlashPlayer(slash.ApplicationCog):
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"Skipped **{amount or 1}** track{'s' if (amount or 1) != 1 else ''}."
+                description=f"skipped **{amount or 1}** track{'s' if (amount or 1) != 1 else ''}."
             )
         )
 
@@ -287,7 +298,7 @@ class SlashPlayer(slash.ApplicationCog):
         assert ctx.voice_client.current.requester is not None
 
         if ctx.author not in ctx.voice_client.listeners:
-            raise exceptions.EmbedError(description="You can not vote to skip as you are currently deafened.")
+            raise exceptions.EmbedError(description="you can't vote to skip as you are currently deafened.")
 
         async def skip() -> None:
 
@@ -297,7 +308,7 @@ class SlashPlayer(slash.ApplicationCog):
             await ctx.reply(
                 embed=utils.embed(
                     colour=values.GREEN,
-                    description="Skipped the current track.")
+                    description="**skipped** the current track.")
             )
             ctx.voice_client.skip_request_ids.clear()
 
@@ -310,7 +321,7 @@ class SlashPlayer(slash.ApplicationCog):
             await ctx.reply(
                 embed=utils.embed(
                     colour=values.GREEN,
-                    description="**Removed** your vote to skip."
+                    description="**removed** your vote to skip."
                 )
             )
 
@@ -326,6 +337,6 @@ class SlashPlayer(slash.ApplicationCog):
                 await ctx.reply(
                     embed=utils.embed(
                         colour=values.GREEN,
-                        description=f"**Added** your vote to skip, now at **{len(ctx.voice_client.skip_request_ids)}** out of **{skips_needed}** votes."
+                        description=f"**added** your vote to skip, now at **{len(ctx.voice_client.skip_request_ids)}** out of **{skips_needed}** votes."
                     )
                 )

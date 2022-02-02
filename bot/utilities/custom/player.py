@@ -51,13 +51,13 @@ class SearchView(discord.ui.View):
 
         self.add_item(
             SearchSelect(
-                placeholder="Choose some tracks:",
+                placeholder="choose some tracks:",
                 max_values=len(self.tracks),
                 options=[
                     discord.SelectOption(
                         label=f"{track.title[:100]}",
                         value=f"{index}",
-                        description=f"by {track.author[:95]}"
+                        description=f"by {(track.author or 'Unknown')[:95]}"
                     ) for index, track in enumerate(self.tracks)
                 ]
             )
@@ -71,7 +71,7 @@ class SearchView(discord.ui.View):
         return interaction.user is not None and interaction.user.id == self.ctx.author.id
 
     async def on_timeout(self) -> None:
-        await self._stop_view(placeholder="Timed out.")
+        await self._stop_view(placeholder="timed out.")
 
     # Misc
 
@@ -92,7 +92,7 @@ class SearchSelect(discord.ui.Select[SearchView]):
     async def callback(self, interaction: discord.Interaction) -> None:
 
         assert self.view is not None
-        await self.view._stop_view(placeholder="Tracks selected.")
+        await self.view._stop_view(placeholder="tracks selection over.")
 
         # Put selected tracks in queue.
 
@@ -106,7 +106,7 @@ class SearchSelect(discord.ui.Select[SearchView]):
             await interaction.response.send_message(
                 embed=utils.embed(
                     colour=values.GREEN,
-                    description="Added selected tracks to the queue."
+                    description="**added** the selected tracks to the queue."
                 )
             )
             self.view.ctx.voice_client.queue.extend(tracks, position=position)
@@ -114,7 +114,7 @@ class SearchSelect(discord.ui.Select[SearchView]):
             await interaction.response.send_message(
                 embed=utils.embed(
                     colour=values.GREEN,
-                    description=f"Added the {self.view.result.search_source.value.lower()} track "
+                    description=f"**added** the **{self.view.result.search_source.value.lower()}** track "
                                 f"**[{discord.utils.escape_markdown(tracks[0].title)}]({tracks[0].uri})** "
                                 f"by **{discord.utils.escape_markdown(tracks[0].author)}** to the queue."
                 )
@@ -167,7 +167,7 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
             await self.send(
                     embed=utils.embed(
                         colour=values.RED,
-                        description="Nothing was added to the queue for 3 minutes, cya next time!"
+                        description="nothing was added to the queue for three minutes, cya later."
                     )
             )
             return
@@ -238,9 +238,9 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
             try:
                 old = self.queue._history[-1]
             except IndexError:
-                description = "Something went wrong while playing a track."
+                description = "something went wrong while playing a track."
             else:
-                description = f"Something went wrong while playing **[{old.title}]({old.uri})** by **{old.author}**."
+                description = f"something went wrong while playing **[{old.title}]({old.uri})** by **{old.author}**."
 
         else:
 
@@ -249,9 +249,9 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
             try:
                 old = self.queue._history[-1]
             except IndexError:
-                description = "Finished playing track."
+                description = "finished playing track."
             else:
-                description = f"Finished playing **[{old.title}]({old.uri})** by **{old.author}**."
+                description = f"finished playing **[{old.title}]({old.uri})** by **{old.author}**."
 
         try:
             await self._controller.edit(
@@ -292,12 +292,12 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
         except slate.obsidian.NoResultsFound as error:
             raise exceptions.EmbedError(
                 colour=values.RED,
-                description=f"No {error.search_source.value.lower().replace('_', ' ')} {error.search_type.value}s were found for your search.",
+                description=f"no **{error.search_source.value.lower().replace('_', ' ')}** {error.search_type.value}s were found for your search.",
             )
         except (slate.obsidian.SearchFailed, slate.HTTPError):
             raise exceptions.EmbedError(
                 colour=values.RED,
-                description="There was an error while searching for results, try again later.",
+                description="there was an error while searching for results, try again later.",
             )
 
         return result
@@ -330,8 +330,8 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
                 await ctx.reply(
                     embed=utils.embed(
                         colour=values.GREEN,
-                        description=f"Added the {result.search_source.value.lower()} track **[{discord.utils.escape_markdown(track.title)}]({track.uri})** by "
-                                    f"**{discord.utils.escape_markdown(track.author)}** to the queue."
+                        description=f"**added** the **{result.search_source.value.lower()}** track **[{discord.utils.escape_markdown(track.title)}]({track.uri})** by "
+                                    f"**{discord.utils.escape_markdown(track.author or 'Unknown')}** to the queue."
                     )
                 )
                 self.queue.put(track, position=position)
@@ -341,7 +341,7 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
                 await ctx.reply(
                     embed=utils.embed(
                         colour=values.GREEN,
-                        description=f"Added the {result.search_source.value.lower()} {result.search_type.name.lower()} "
+                        description=f"**added** the **{result.search_source.value.lower()}** {result.search_type.name.lower()} "
                                     f"**[{result.result.name}]({result.result.url})** to the queue."
                     )
                 )

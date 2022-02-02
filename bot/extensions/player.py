@@ -45,10 +45,10 @@ class Player(commands.Cog):
         assert isinstance(ctx.author, discord.Member)
 
         if not ctx.author.voice or not ctx.author.voice.channel:
-            raise exceptions.EmbedError(description="You must be connected to a voice channel to use this command.")
+            raise exceptions.EmbedError(description="you must be connected to a voice channel to use this command.")
 
         if ctx.voice_client and ctx.voice_client.voice_channel:
-            raise exceptions.EmbedError(description=f"I am already connected to {ctx.voice_client.voice_channel.mention}.")
+            raise exceptions.EmbedError(description=f"i am already connected to {ctx.voice_client.voice_channel.mention}.")
 
         await ctx.author.voice.channel.connect(cls=custom.Player)  # type: ignore
         ctx.voice_client.text_channel = ctx.channel  # type: ignore
@@ -91,10 +91,15 @@ class Player(commands.Cog):
         assert ctx.voice_client is not None
 
         if ctx.voice_client.paused is True:
-            raise exceptions.EmbedError(description="The played is already paused.")
+            raise exceptions.EmbedError(description="the current track is already paused.")
 
         await ctx.voice_client.set_pause(True)
-        await ctx.reply(embed=utils.embed(colour=values.GREEN, description="The player is now **paused**."))
+        await ctx.reply(
+            embed=utils.embed(
+                colour=values.GREEN,
+                description="**paused** the current track."
+            )
+        )
 
     @commands.command(name="resume", aliases=["unpause", "continue"])
     @checks.is_author_connected()
@@ -107,10 +112,15 @@ class Player(commands.Cog):
         assert ctx.voice_client is not None
 
         if ctx.voice_client.paused is False:
-            raise exceptions.EmbedError(description="The player is not paused.")
+            raise exceptions.EmbedError(description="the current track is already playing.")
 
         await ctx.voice_client.set_pause(False)
-        await ctx.reply(embed=utils.embed(colour=values.GREEN, description="The player is now **resumed**."))
+        await ctx.reply(
+            embed=utils.embed(
+                colour=values.GREEN,
+                description="**resumed** the current track."
+            )
+        )
 
     # Seeking
 
@@ -318,7 +328,7 @@ class Player(commands.Cog):
         except (commands.CheckAnyFailure, commands.MissingRole):
             raise exceptions.EmbedError(
                 colour=values.RED,
-                description="You do not have permission to force skip."
+                description="you don't have permission to force skip."
             )
 
     @commands.command(name="force-skip", aliases=["force_skip", "forceskip", "fs", "skipto"])
@@ -389,7 +399,7 @@ class Player(commands.Cog):
         assert ctx.voice_client.current.requester is not None
 
         if ctx.author not in ctx.voice_client.listeners:
-            raise exceptions.EmbedError(description="You can not vote skip as you are currently deafened.")
+            raise exceptions.EmbedError(description="you can not vote skip as you are currently deafened.")
 
         async def skip() -> None:
 
