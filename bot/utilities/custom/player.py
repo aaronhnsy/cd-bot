@@ -141,7 +141,7 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
 
         self.queue: slate.Queue[slate.obsidian.Track[custom.Context]] = slate.Queue()
         self.skip_request_ids: set[int] = set()
-        self.filters: set[enums.Filter] = set()
+        self.effects: set[enums.Effect] = set()
 
     # Events
 
@@ -206,7 +206,7 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
                         f"● **Requested by:** {getattr(self.current.requester, 'mention', None)}\n"
                         f"● **Source:** {self.current.source.value.title()}\n"
                         f"● **Paused:** {utils.readable_bool(self.paused).title()}\n"
-                        f"● **Filters:** {', '.join([filter.value for filter in self.filters] or ['N/A'])}\n"
+                        f"● **Effects:** {', '.join([effect.value for effect in self.effects] or ['N/A'])}\n"
                         f"● **Position:** {utils.format_seconds(self.position // 1000)} / {utils.format_seconds(self.current.length // 1000)}\n",
             thumbnail=self.current.artwork_url or "https://dummyimage.com/1280x720/000/ffffff.png&text=no+thumbnail+:(",
             colour=values.MAIN,

@@ -9,7 +9,7 @@ __all__ = (
     "Environment",
     "DatetimeFormat",
     "LogType",
-    "Filter",
+    "Effect",
     "EmbedSize"
 )
 
@@ -54,12 +54,12 @@ class LogType(Enum):
     COMMAND = 3
 
 
-class Filter(Enum):
-    ROTATION = "8D"
-    NIGHTCORE = "Nightcore"
-    MONO = "Mono"
-    LEFT = "Left-ear"
-    RIGHT = "Right-ear"
+class Effect(Enum):
+    ROTATION = "8d"
+    NIGHTCORE = "nightcore"
+    MONO = "mono"
+    LEFT_EAR = "left-ear"
+    RIGHT_EAR = "right-ear"
 
 
 class EmbedSize(Enum):

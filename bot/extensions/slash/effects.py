@@ -16,177 +16,66 @@ def setup(bot: CD) -> None:
 
 class SlashEffects(slash.ApplicationCog):
 
-    @slash.slash_command(name="8d", guild_id=240958773122957312)
-    @checks.is_author_connected()
-    @checks.is_player_connected()
-    async def _8d(self, ctx: slash.ApplicationContext) -> None:
+    EFFECT_MAP: dict[enums.Effect, dict[str, slate.obsidian.BaseFilter]] = {
+        enums.Effect.ROTATION:  {"rotation": slate.obsidian.Rotation(rotation_hertz=0.5)},
+        enums.Effect.NIGHTCORE: {"timescale": slate.obsidian.Timescale(speed=1.12, pitch=1.12)},
+    }
 
-        assert ctx.voice_client is not None
+    INVERSE_EFFECT_MAP: dict[enums.Effect, dict[str, slate.obsidian.BaseFilter]] = {
+        enums.Effect.ROTATION:  {"rotation": slate.obsidian.Rotation()},
+        enums.Effect.NIGHTCORE: {"timescale": slate.obsidian.Timescale()},
+    }
 
-        if enums.Filter.ROTATION in ctx.voice_client.filters:
-            ctx.voice_client.filters.remove(enums.Filter.ROTATION)
-            await ctx.voice_client.set_filter(slate.obsidian.Filter(ctx.voice_client.filter, rotation=slate.obsidian.Rotation()))
-            await ctx.reply(
-                embed=utils.embed(
-                    colour=values.GREEN,
-                    description="**Disabled** the **8d** audio effect."
-                )
-            )
+    async def _toggle_effect(self, ctx: slash.ApplicationContext, effect: enums.Effect) -> None:
 
+        assert ctx.voice_client
+
+        if effect in ctx.voice_client.effects:
+            description = f"**disabled** the **{effect.value}** audio effect."
+            ctx.voice_client.effects.remove(effect)
+            await ctx.voice_client.set_filter(slate.obsidian.Filter(ctx.voice_client.filter, **self.INVERSE_EFFECT_MAP[effect]))
         else:
-            ctx.voice_client.filters.add(enums.Filter.ROTATION)
-            await ctx.voice_client.set_filter(slate.obsidian.Filter(ctx.voice_client.filter, rotation=slate.obsidian.Rotation(rotation_hertz=0.5)))
-            await ctx.reply(
-                embed=utils.embed(
-                    colour=values.GREEN,
-                    description="**Enabled** the **8d** audio effect."
-                )
+            description = f"**enabled** the **{effect.value}** audio effect."
+            ctx.voice_client.effects.add(effect)
+            await ctx.voice_client.set_filter(slate.obsidian.Filter(ctx.voice_client.filter, **self.EFFECT_MAP[effect]))
+
+        await ctx.reply(
+            embed=utils.embed(
+                colour=values.GREEN,
+                description=description
             )
+        )
 
-    @slash.slash_command(name="night-core", guild_id=240958773122957312)
-    @checks.is_author_connected()
-    @checks.is_player_connected()
-    async def night_core(self, ctx: slash.ApplicationContext) -> None:
+    @staticmethod
+    async def _reset_effects(ctx: slash.ApplicationContext) -> None:
 
-        assert ctx.voice_client is not None
+        assert ctx.voice_client
 
-        if enums.Filter.NIGHTCORE in ctx.voice_client.filters:
-            ctx.voice_client.filters.remove(enums.Filter.NIGHTCORE)
-            await ctx.voice_client.set_filter(slate.obsidian.Filter(ctx.voice_client.filter, timescale=slate.obsidian.Timescale()))
-            await ctx.reply(
-                embed=utils.embed(
-                    colour=values.GREEN,
-                    description="**Disabled** the **nightcore** audio effect."
-                )
-            )
-
-        else:
-            ctx.voice_client.filters.add(enums.Filter.NIGHTCORE)
-            await ctx.voice_client.set_filter(slate.obsidian.Filter(ctx.voice_client.filter, timescale=slate.obsidian.Timescale(speed=1.12, pitch=1.12)))
-            await ctx.reply(
-                embed=utils.embed(
-                    colour=values.GREEN,
-                    description="**Enabled** the **nightcore** audio effect."
-                )
-            )
-
-    @slash.slash_command(name="mono", guild_id=240958773122957312)
-    @checks.is_author_connected()
-    @checks.is_player_connected()
-    async def mono(self, ctx: slash.ApplicationContext) -> None:
-
-        assert ctx.voice_client is not None
-
-        if enums.Filter.MONO in ctx.voice_client.filters:
-            ctx.voice_client.filters.remove(enums.Filter.MONO)
-            await ctx.voice_client.set_filter(slate.obsidian.Filter(ctx.voice_client.filter, channel_mix=slate.obsidian.ChannelMix()))
-            await ctx.reply(
-                embed=utils.embed(
-                    colour=values.GREEN,
-                    description="**Disabled** the **mono** audio effect."
-                )
-            )
-
-        else:
-
-            ctx.voice_client.filters.add(enums.Filter.MONO)
-            await ctx.voice_client.set_filter(
-                slate.obsidian.Filter(ctx.voice_client.filter, channel_mix=slate.obsidian.ChannelMix(left_to_right=1, right_to_left=1))
-            )
-            await ctx.reply(
-                embed=utils.embed(
-                    colour=values.GREEN,
-                    description="**Enabled** the **mono** audio effect."
-                )
-            )
-
-            if enums.Filter.LEFT in ctx.voice_client.filters:
-                ctx.voice_client.filters.remove(enums.Filter.LEFT)
-            if enums.Filter.RIGHT in ctx.voice_client.filters:
-                ctx.voice_client.filters.remove(enums.Filter.RIGHT)
-
-    @slash.slash_command(name="left-ear", guild_id=240958773122957312)
-    @checks.is_author_connected()
-    @checks.is_player_connected()
-    async def left_ear(self, ctx: slash.ApplicationContext) -> None:
-
-        assert ctx.voice_client is not None
-
-        if enums.Filter.LEFT in ctx.voice_client.filters:
-            ctx.voice_client.filters.remove(enums.Filter.LEFT)
-            await ctx.voice_client.set_filter(slate.obsidian.Filter(ctx.voice_client.filter, channel_mix=slate.obsidian.ChannelMix()))
-            await ctx.reply(
-                embed=utils.embed(
-                    colour=values.GREEN,
-                    description="**Disabled** the **left-ear** audio effect."
-                )
-            )
-
-        else:
-
-            ctx.voice_client.filters.add(enums.Filter.LEFT)
-            await ctx.voice_client.set_filter(
-                slate.obsidian.Filter(ctx.voice_client.filter, channel_mix=slate.obsidian.ChannelMix(right_to_right=0, right_to_left=1))
-            )
-            await ctx.reply(
-                embed=utils.embed(
-                    colour=values.GREEN,
-                    description="**Enabled** the **left-ear** audio effect."
-                )
-            )
-
-            if enums.Filter.MONO in ctx.voice_client.filters:
-                ctx.voice_client.filters.remove(enums.Filter.MONO)
-            if enums.Filter.RIGHT in ctx.voice_client.filters:
-                ctx.voice_client.filters.remove(enums.Filter.RIGHT)
-
-    @slash.slash_command(name="right-ear", guild_id=240958773122957312)
-    @checks.is_author_connected()
-    @checks.is_player_connected()
-    async def right_ear(self, ctx: slash.ApplicationContext) -> None:
-
-        assert ctx.voice_client is not None
-
-        if enums.Filter.RIGHT in ctx.voice_client.filters:
-            ctx.voice_client.filters.remove(enums.Filter.RIGHT)
-            await ctx.voice_client.set_filter(slate.obsidian.Filter(ctx.voice_client.filter, channel_mix=slate.obsidian.ChannelMix()))
-            await ctx.reply(
-                embed=utils.embed(
-                    colour=values.GREEN,
-                    description="**Disabled** the **right-ear** audio effect."
-                )
-            )
-
-        else:
-
-            ctx.voice_client.filters.add(enums.Filter.RIGHT)
-            await ctx.voice_client.set_filter(
-                slate.obsidian.Filter(ctx.voice_client.filter, channel_mix=slate.obsidian.ChannelMix(left_to_left=0, left_to_right=1))
-            )
-            await ctx.reply(
-                embed=utils.embed(
-                    colour=values.GREEN,
-                    description="**Enabled** the **right-ear** audio effect."
-                )
-            )
-
-            if enums.Filter.LEFT in ctx.voice_client.filters:
-                ctx.voice_client.filters.remove(enums.Filter.LEFT)
-            if enums.Filter.MONO in ctx.voice_client.filters:
-                ctx.voice_client.filters.remove(enums.Filter.MONO)
-
-    @slash.slash_command(name="reset", guild_id=240958773122957312)
-    @checks.is_author_connected()
-    @checks.is_player_connected()
-    async def reset(self, ctx: slash.ApplicationContext) -> None:
-
-        assert ctx.voice_client is not None
-
-        ctx.voice_client.filters.clear()
+        ctx.voice_client.effects.clear()
         await ctx.voice_client.set_filter(slate.obsidian.Filter())
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description="**Disabled** all audio effects."
+                description="**disabled** all audio effects."
             )
         )
+
+    # Commands
+
+    @slash.slash_command(name="8d", guild_id=240958773122957312)
+    @checks.is_author_connected()
+    @checks.is_player_connected()
+    async def _8d(self, ctx: slash.ApplicationContext) -> None:
+        await self._toggle_effect(ctx, enums.Effect.ROTATION)
+
+    @slash.slash_command(name="nightcore", guild_id=240958773122957312)
+    @checks.is_author_connected()
+    @checks.is_player_connected()
+    async def night_core(self, ctx: slash.ApplicationContext) -> None:
+        await self._toggle_effect(ctx, enums.Effect.NIGHTCORE)
+
+    @slash.slash_command(name="reset-effects", guild_id=240958773122957312)
+    @checks.is_author_connected()
+    @checks.is_player_connected()
+    async def reset_effects(self, ctx: slash.ApplicationContext) -> None:
+        await self._reset_effects(ctx)
