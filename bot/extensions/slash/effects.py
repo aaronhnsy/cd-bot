@@ -62,19 +62,19 @@ class SlashEffects(slash.ApplicationCog):
 
     # Commands
 
-    @slash.slash_command(name="8d", guild_id=240958773122957312)
+    @slash.slash_command(name="8d")
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def _8d(self, ctx: slash.ApplicationContext) -> None:
         await self._toggle_effect(ctx, enums.Effect.ROTATION)
 
-    @slash.slash_command(name="nightcore", guild_id=240958773122957312)
+    @slash.slash_command(name="nightcore")
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def night_core(self, ctx: slash.ApplicationContext) -> None:
         await self._toggle_effect(ctx, enums.Effect.NIGHTCORE)
 
-    @slash.slash_command(name="reset-effects", guild_id=240958773122957312)
+    @slash.slash_command(name="reset-effects")
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def reset_effects(self, ctx: slash.ApplicationContext) -> None:

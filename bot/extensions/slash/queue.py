@@ -22,7 +22,7 @@ class SlashQueue(slash.ApplicationCog):
 
     # Queue
 
-    @slash.slash_command(name="queue", guild_id=240958773122957312)
+    @slash.slash_command(name="queue")
     @checks.is_queue_not_empty()
     @checks.is_player_connected()
     async def queue(self, ctx: slash.ApplicationContext) -> None:
@@ -47,7 +47,7 @@ class SlashQueue(slash.ApplicationCog):
         )
         await paginator.start()
 
-    @slash.slash_command(name="queue-history", guild_id=240958773122957312)
+    @slash.slash_command(name="queue-history")
     @checks.is_queue_history_not_empty()
     @checks.is_player_connected()
     async def queue_history(self, ctx: slash.ApplicationContext) -> None:
@@ -74,7 +74,7 @@ class SlashQueue(slash.ApplicationCog):
 
     # General
 
-    @slash.slash_command(name="clear-queue", guild_id=240958773122957312)
+    @slash.slash_command(name="clear-queue")
     @checks.is_queue_not_empty()
     @checks.is_author_connected()
     @checks.is_player_connected()
@@ -90,7 +90,7 @@ class SlashQueue(slash.ApplicationCog):
             )
         )
 
-    @slash.slash_command(name="shuffle-queue", guild_id=240958773122957312)
+    @slash.slash_command(name="shuffle-queue")
     @checks.is_queue_not_empty()
     @checks.is_author_connected()
     @checks.is_player_connected()
@@ -106,7 +106,7 @@ class SlashQueue(slash.ApplicationCog):
             )
         )
 
-    @slash.slash_command(name="reverse-queue", guild_id=240958773122957312)
+    @slash.slash_command(name="reverse-queue")
     @checks.is_queue_not_empty()
     @checks.is_author_connected()
     @checks.is_player_connected()
@@ -122,7 +122,7 @@ class SlashQueue(slash.ApplicationCog):
             )
         )
 
-    @slash.slash_command(name="sort-queue", guild_id=240958773122957312)
+    @slash.slash_command(name="sort-queue")
     @checks.is_queue_not_empty()
     @checks.is_author_connected()
     @checks.is_player_connected()
@@ -144,7 +144,7 @@ class SlashQueue(slash.ApplicationCog):
             )
         )
 
-    @slash.slash_command(name="remove-entry", guild_id=240958773122957312)
+    @slash.slash_command(name="remove-entry")
     @checks.is_queue_not_empty()
     @checks.is_author_connected()
     @checks.is_player_connected()
@@ -169,7 +169,7 @@ class SlashQueue(slash.ApplicationCog):
             )
         )
 
-    @slash.slash_command(name="move-entry", guild_id=240958773122957312)
+    @slash.slash_command(name="move-entry")
     @checks.is_queue_not_empty()
     @checks.is_author_connected()
     @checks.is_player_connected()
@@ -200,7 +200,7 @@ class SlashQueue(slash.ApplicationCog):
             )
         )
 
-    @slash.slash_command(name="delete-duplicates", guild_id=240958773122957312)
+    @slash.slash_command(name="delete-duplicates")
     @checks.is_queue_not_empty()
     @checks.is_author_connected()
     @checks.is_player_connected()
@@ -218,7 +218,7 @@ class SlashQueue(slash.ApplicationCog):
 
     # Looping
 
-    @slash.slash_command(name="loop-current", guild_id=240958773122957312)
+    @slash.slash_command(name="loop-current")
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def loop_current(self, ctx: slash.ApplicationContext) -> None:
@@ -237,7 +237,7 @@ class SlashQueue(slash.ApplicationCog):
             )
         )
 
-    @slash.slash_command(name="loop-queue", guild_id=240958773122957312)
+    @slash.slash_command(name="loop-queue")
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def loop_queue(self, ctx: slash.ApplicationContext) -> None:

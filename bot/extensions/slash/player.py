@@ -22,7 +22,7 @@ class SlashPlayer(slash.ApplicationCog):
 
     # Connecting
 
-    @slash.slash_command(name="join", guild_id=240958773122957312)
+    @slash.slash_command(name="join")
     async def join(self, ctx: slash.ApplicationContext) -> None:
 
         assert isinstance(ctx.author, discord.Member)
@@ -44,7 +44,7 @@ class SlashPlayer(slash.ApplicationCog):
             )
         )
 
-    @slash.slash_command(name="disconnect", guild_id=240958773122957312)
+    @slash.slash_command(name="disconnect")
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def disconnect(self, ctx: slash.ApplicationContext) -> None:
@@ -60,7 +60,7 @@ class SlashPlayer(slash.ApplicationCog):
 
     # Pausing
 
-    @slash.slash_command(name="pause", guild_id=240958773122957312)
+    @slash.slash_command(name="pause")
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def pause(self, ctx: slash.ApplicationContext) -> None:
@@ -78,7 +78,7 @@ class SlashPlayer(slash.ApplicationCog):
             )
         )
 
-    @slash.slash_command(name="resume", guild_id=240958773122957312)
+    @slash.slash_command(name="resume")
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def resume(self, ctx: slash.ApplicationContext) -> None:
@@ -98,7 +98,7 @@ class SlashPlayer(slash.ApplicationCog):
 
     # Seeking
 
-    @slash.slash_command(name="seek", guild_id=240958773122957312)
+    @slash.slash_command(name="seek")
     @checks.is_track_seekable()
     @checks.is_player_playing()
     @checks.is_author_connected()
@@ -126,7 +126,7 @@ class SlashPlayer(slash.ApplicationCog):
             )
         )
 
-    @slash.slash_command(name="fast-forward", guild_id=240958773122957312)
+    @slash.slash_command(name="fast-forward")
     @checks.is_track_seekable()
     @checks.is_player_playing()
     @checks.is_author_connected()
@@ -157,7 +157,7 @@ class SlashPlayer(slash.ApplicationCog):
             )
         )
 
-    @slash.slash_command(name="rewind", guild_id=240958773122957312)
+    @slash.slash_command(name="rewind")
     @checks.is_track_seekable()
     @checks.is_player_playing()
     @checks.is_author_connected()
@@ -187,7 +187,7 @@ class SlashPlayer(slash.ApplicationCog):
             )
         )
 
-    @slash.slash_command(name="replay", guild_id=240958773122957312)
+    @slash.slash_command(name="replay")
     @checks.is_track_seekable()
     @checks.is_player_playing()
     @checks.is_author_connected()
@@ -207,7 +207,7 @@ class SlashPlayer(slash.ApplicationCog):
 
     # Now playing
 
-    @slash.slash_command(name="now-playing", guild_id=240958773122957312)
+    @slash.slash_command(name="now-playing")
     @checks.is_player_playing()
     @checks.is_player_connected()
     async def now_playing(self, ctx: slash.ApplicationContext) -> None:
@@ -252,7 +252,7 @@ class SlashPlayer(slash.ApplicationCog):
                 description="you don't have permission to force skip."
             )
 
-    @slash.slash_command(name="force-skip", guild_id=240958773122957312)
+    @slash.slash_command(name="force-skip")
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()
@@ -280,7 +280,7 @@ class SlashPlayer(slash.ApplicationCog):
 
         ctx.voice_client.skip_request_ids.clear()
 
-    @slash.slash_command(name="skip", guild_id=240958773122957312)
+    @slash.slash_command(name="skip")
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()

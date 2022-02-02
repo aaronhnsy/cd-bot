@@ -46,7 +46,7 @@ class SlashPlay(slash.ApplicationCog):
 
     # Play
 
-    @slash.slash_command(name="play", guild_id=240958773122957312)
+    @slash.slash_command(name="play")
     async def play(self, ctx: slash.ApplicationContext, next: bool = False, now: bool = False, *, query: str) -> None:
 
         await self._ensure_connected(ctx)
@@ -54,7 +54,7 @@ class SlashPlay(slash.ApplicationCog):
         assert ctx.voice_client is not None
         await ctx.voice_client.queue_search(query, source=slate.obsidian.Source.YOUTUBE, ctx=ctx, play_next=next, play_now=now)
 
-    @slash.slash_command(name="search", guild_id=240958773122957312)
+    @slash.slash_command(name="search")
     async def search(self, ctx: slash.ApplicationContext, next: bool = False, now: bool = False, *, query: str) -> None:
 
         await self._ensure_connected(ctx)
@@ -64,7 +64,7 @@ class SlashPlay(slash.ApplicationCog):
 
     # Youtube music
 
-    @slash.slash_command(name="youtube-music", guild_id=240958773122957312)
+    @slash.slash_command(name="youtube-music")
     async def youtube_music(self, ctx: slash.ApplicationContext, next: bool = False, now: bool = False, *, query: str) -> None:
 
         await self._ensure_connected(ctx)
@@ -72,7 +72,7 @@ class SlashPlay(slash.ApplicationCog):
         assert ctx.voice_client is not None
         await ctx.voice_client.queue_search(query, source=slate.obsidian.Source.YOUTUBE_MUSIC, ctx=ctx, play_next=next, play_now=now)
 
-    @slash.slash_command(name="youtube-music-search", guild_id=240958773122957312)
+    @slash.slash_command(name="youtube-music-search")
     async def youtube_music_search(self, ctx: slash.ApplicationContext, next: bool = False, now: bool = False, *, query: str) -> None:
 
         await self._ensure_connected(ctx)
@@ -82,7 +82,7 @@ class SlashPlay(slash.ApplicationCog):
 
     # Soundcloud
 
-    @slash.slash_command(name="soundcloud", guild_id=240958773122957312)
+    @slash.slash_command(name="soundcloud")
     async def soundcloud(self, ctx: slash.ApplicationContext, next: bool = False, now: bool = False, *, query: str) -> None:
 
         await self._ensure_connected(ctx)
@@ -90,7 +90,7 @@ class SlashPlay(slash.ApplicationCog):
         assert ctx.voice_client is not None
         await ctx.voice_client.queue_search(query, source=slate.obsidian.Source.SOUNDCLOUD, ctx=ctx, play_next=next, play_now=now)
 
-    @slash.slash_command(name="soundcloud-search", guild_id=240958773122957312)
+    @slash.slash_command(name="soundcloud-search")
     async def soundcloud_search(self, ctx: slash.ApplicationContext, next: bool = False, now: bool = False, *, query: str) -> None:
 
         await self._ensure_connected(ctx)
@@ -100,7 +100,7 @@ class SlashPlay(slash.ApplicationCog):
 
     # Local
 
-    @slash.slash_command(name="local", guild_id=240958773122957312)
+    @slash.slash_command(name="local")
     async def local(self, ctx: slash.ApplicationContext, next: bool = False, now: bool = False, *, query: str) -> None:
 
         await self._ensure_connected(ctx)
@@ -110,7 +110,7 @@ class SlashPlay(slash.ApplicationCog):
 
     # HTTP
 
-    @slash.slash_command(name="http", guild_id=240958773122957312)
+    @slash.slash_command(name="http")
     async def http(self, ctx: slash.ApplicationContext, next: bool = False, now: bool = False, *, query: str) -> None:
 
         await self._ensure_connected(ctx)
