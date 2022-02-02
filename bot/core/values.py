@@ -19,17 +19,19 @@ OWNER_IDS = {AXEL_ID}
 
 EXTENSIONS = [
     "jishaku",
+    "extensions.effects",
     "extensions.events",
+    "extensions.information",
     "extensions.play",
     "extensions.player",
-    "extensions.effects",
-    "extensions.information",
     "extensions.queue",
-    "extensions.settings",
     "extensions.reload",
+    "extensions.settings",
+
+    "extensions.slash.effects",
     "extensions.slash.play",
     "extensions.slash.player",
-    "extensions.slash.effects",
+    "extensions.slash.queue",
 ]
 
 PERMISSIONS = discord.Permissions(

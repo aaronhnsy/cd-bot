@@ -202,7 +202,7 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
         embed = utils.embed(
             title="Now Playing:",
             description=f"**[{discord.utils.escape_markdown(self.current.title)}]({self.current.uri})**\n"
-                        f"by **{discord.utils.escape_markdown(self.current.author)}**\n\n"
+                        f"by **{discord.utils.escape_markdown(self.current.author or 'Unknown')}**\n\n"
                         f"● **Requested by:** {getattr(self.current.requester, 'mention', None)}\n"
                         f"● **Source:** {self.current.source.value.title()}\n"
                         f"● **Paused:** {utils.readable_bool(self.paused).title()}\n"
