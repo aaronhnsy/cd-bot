@@ -52,7 +52,7 @@ class Play(commands.Cog):
                 return
             raise exceptions.EmbedError(description=f"you must be connected to {bot_voice_channel.mention} to use this command.")
 
-        await author_voice_channel.connect(cls=custom.Player)  # type: ignore
+        await author_voice_channel.connect(cls=custom.Player(text_channel=ctx.channel))  # type: ignore
         ctx.voice_client.text_channel = ctx.channel  # type: ignore
 
     # Play

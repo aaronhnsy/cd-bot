@@ -10,7 +10,8 @@ __all__ = (
     "DatetimeFormat",
     "LogType",
     "Effect",
-    "EmbedSize"
+    "EmbedSize",
+    "TrackEndReason",
 )
 
 
@@ -66,3 +67,9 @@ class EmbedSize(Enum):
     LARGE = 0
     MEDIUM = 1
     SMALL = 2
+
+
+class TrackEndReason(Enum):
+    NORMAL = 0
+    STUCK = 1
+    EXCEPTION = 2

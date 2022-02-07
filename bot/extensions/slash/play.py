@@ -41,7 +41,7 @@ class SlashPlay(slash.ApplicationCog):
             raise exceptions.EmbedError(description="you must be connected to a voice channel to use this command.")
 
         # Join the users voice channel.
-        await author_voice_channel.connect(cls=custom.Player)  # type: ignore
+        await author_voice_channel.connect(cls=custom.Player(text_channel=ctx.channel))  # type: ignore
         ctx.voice_client.text_channel = ctx.channel  # type: ignore
 
     # Play

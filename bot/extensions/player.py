@@ -50,7 +50,7 @@ class Player(commands.Cog):
         if ctx.voice_client and ctx.voice_client.voice_channel:
             raise exceptions.EmbedError(description=f"i am already connected to {ctx.voice_client.voice_channel.mention}.")
 
-        await ctx.author.voice.channel.connect(cls=custom.Player)  # type: ignore
+        await ctx.author.voice.channel.connect(cls=custom.Player(text_channel=ctx.channel))  # type: ignore
         ctx.voice_client.text_channel = ctx.channel  # type: ignore
 
         assert ctx.voice_client is not None
@@ -294,7 +294,9 @@ class Player(commands.Cog):
         """
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.send_controller(ctx.channel)  # type: ignore
+
+        embed = await ctx.voice_client.controller.build_embed()
+        await ctx.send(embed=embed)
 
     # Skipping
 

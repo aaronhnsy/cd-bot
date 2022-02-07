@@ -307,8 +307,8 @@ class Events(commands.Cog):
 
             # Send friendly error message to user.
 
-            view = discord.ui.View()
-            view.add_item(discord.ui.Button(label="support server", url=values.SUPPORT_LINK))
+            view = discord.ui.View(timeout=None)
+            view.add_item(discord.ui.Button(label="Support Server", url=values.SUPPORT_LINK))
 
             await ctx.reply(
                 embed=utils.embed(
@@ -358,15 +358,15 @@ class Events(commands.Cog):
 
     @commands.Cog.listener("on_obsidian_track_end")
     async def _handle_track_end(self, player: custom.Player, _: slate.obsidian.TrackEnd) -> None:
-        await player.handle_track_end()
+        await player.handle_track_end(enums.TrackEndReason.NORMAL)
 
     @commands.Cog.listener("on_obsidian_track_stuck")
     async def _handle_track_stuck(self, player: custom.Player, _: slate.obsidian.TrackStuck) -> None:
-        await player.handle_track_end(error=True)
+        await player.handle_track_end(enums.TrackEndReason.STUCK)
 
     @commands.Cog.listener("on_obsidian_track_exception")
     async def _handle_track_exception(self, player: custom.Player, _: slate.obsidian.TrackException) -> None:
-        await player.handle_track_end(error=True)
+        await player.handle_track_end(enums.TrackEndReason.EXCEPTION)
 
     # Application commands
 
