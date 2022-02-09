@@ -1,30 +1,31 @@
 [tool.poetry]
-name = "CD-Bot"
-version = "0.1.0"
+name = "CD-bot"
+version = "0.0.1"
 description = "A general purpose music bot."
-authors = ["Axel <axelancerr@gmail.com>"]
 license = "MIT"
+authors = ["Axel <axelancerr@gmail.com>"]
+readme = "README.md"
 
 
 [tool.poetry.dependencies]
-python = "~3.10.0"
+python = "^3.10.0"
 
-aiohttp = "~3.7.4"
-aioredis = "~2.0.1"
-asyncpg = "~0.25.0"
-humanize = "~3.13.1"
-jishaku = "~2.3.2"
-pendulum = "~2.1.2"
-psutil = "~5.9.0"
-pynacl = "~1.5.0"
-rapidfuzz = "~1.9.1"
-wheel = "^0.37.1"
-"mystbin.py" = "~2.2.0"
+aiohttp         = "~3.7.0"
+aioredis        = "~2.0.0"
+asyncpg         = "~0.25.0"
+humanize        = "~3.14.0"
+jishaku         = "~2.3.0"
+pendulum        = "~2.1.0"
+psutil          = "~5.9.0"
+pynacl          = "~1.5.0"
+rapidfuzz       = "~2.0.0"
+wheel           = "^0.37.0"
+"mystbin.py"    = "~2.2.0"
 
-slate = { git = "git@github.com:Axelware/slate", branch = "main" }
-"pretty" = { git = "git@github.com:ShineyDev/pretty", branch = "main" }
-"discord.py" = { git = "git@github.com:Rapptz/discord.py", branch = "master" }
-"discord-ext-alternatives" = { git = "git@github.com:Ext-Creators/discord-ext-alternatives", rev = "2987112c31de9bada4ee95cee9007a326e496e19" }
+slate                       = { git = "git@github.com:Axelware/slate", branch = "main" }
+"pretty"                    = { git = "git@github.com:ShineyDev/pretty", branch = "main" }
+"discord.py"                = { git = "git@github.com:Rapptz/discord.py", branch = "master" }
+"discord-ext-alternatives"  = { git = "git@github.com:Ext-Creators/discord-ext-alternatives", rev = "2987112c31de9bada4ee95cee9007a326e496e19" }
 
 
 [tool.poetry.dev-dependencies]
