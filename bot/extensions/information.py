@@ -73,7 +73,7 @@ class Information(commands.Cog):
         """
 
         cpu_freq: Any = psutil.cpu_freq()
-        memory_info = psutil.virtual_memory()
+        memory_info: Any = psutil.virtual_memory()
         disk_usage = psutil.disk_usage("/")
 
         java_search = re.search(r'\"(\d+\.\d+).*\"', subprocess.check_output(["java", "-version"], stderr=subprocess.STDOUT).decode())
@@ -144,7 +144,7 @@ class Information(commands.Cog):
             filename: str = str(inspect.getsourcefile(source))
 
         else:
-            if (obj := self.bot.get_command(command.replace(".", ""))) is None:
+            if (obj := self.bot.get_command(command.replace(".", ""))) is None:  # type: ignore
                 raise exceptions.EmbedError(description="i couldn't find that command.")
 
             source = obj.callback.__code__

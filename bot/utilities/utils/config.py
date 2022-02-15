@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 # Standard Library
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 # My stuff
 from utilities import objects
@@ -30,7 +30,7 @@ class Config:
 
     async def fetch_guild_config(self, guild_id: int) -> objects.GuildConfig:
 
-        data = await self.bot.db.fetchrow(
+        data: dict[str, Any] = await self.bot.db.fetchrow(
             "INSERT INTO guilds (id) values ($1) ON CONFLICT (id) DO UPDATE SET id = excluded.id RETURNING *",
             guild_id
         )
@@ -49,7 +49,7 @@ class Config:
 
     async def fetch_user_config(self, user_id: int) -> objects.UserConfig:
 
-        data = await self.bot.db.fetchrow(
+        data: dict[str, Any] = await self.bot.db.fetchrow(
             "INSERT INTO users (id) values ($1) ON CONFLICT (id) DO UPDATE SET id = excluded.id RETURNING *",
             user_id
         )

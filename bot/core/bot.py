@@ -14,6 +14,7 @@ import aiohttp
 import aioredis
 import asyncpg
 import discord
+import discord.types.interactions
 import mystbin
 import psutil
 import slate
@@ -32,7 +33,7 @@ __log__: logging.Logger = logging.getLogger("bot")
 class CD(commands.AutoShardedBot):
 
     converters: dict[Any, Any]
-    application_id: int
+    application_id: int  # type: ignore
 
     def __init__(self) -> None:
         super().__init__(
@@ -104,7 +105,7 @@ class CD(commands.AutoShardedBot):
 
         try:
             __log__.debug("[REDIS] Attempting connection.")
-            redis = aioredis.from_url(url=config.REDIS, decode_responses=True, retry_on_timeout=True)
+            redis: aioredis.Redis = aioredis.from_url(url=config.REDIS, decode_responses=True, retry_on_timeout=True)
             await redis.ping()
         except (aioredis.ConnectionError, aioredis.ResponseError) as e:
             __log__.critical(f"[REDIS] Error while connecting.\n{e}\n")
@@ -191,7 +192,7 @@ class CD(commands.AutoShardedBot):
 
     async def sync_application_commands(self) -> None:
 
-        payloads = collections.defaultdict(list)
+        payloads: collections.defaultdict[int | None, list[discord.types.interactions.EditApplicationCommand]] = collections.defaultdict(list)
 
         for cog in self.cogs.values():
 
@@ -209,6 +210,7 @@ class CD(commands.AutoShardedBot):
             await self.http.bulk_upsert_global_commands(self.application_id, global_commands)
 
         for guild_id, payload in payloads.items():
+            assert guild_id is not None
             await self.http.bulk_upsert_guild_commands(self.application_id, guild_id, payload)
 
     async def delete_all_application_commands(self, guild_id: int | None = None) -> None:

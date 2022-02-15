@@ -22,11 +22,10 @@ __all__ = (
 
 
 def convert_datetime(
-    datetime: dt.datetime | pendulum.DateTime,
-    /
+    datetime: dt.datetime | pendulum.DateTime, /
 ) -> pendulum.DateTime:
 
-    datetime.replace(microsecond=0)
+    datetime.replace(microsecond=0)  # type: ignore
 
     if type(datetime) is dt.datetime and datetime.tzinfo == dt.timezone.utc:
         datetime = datetime.replace(tzinfo=None)
@@ -35,37 +34,30 @@ def convert_datetime(
 
 
 def format_datetime(
-    datetime: dt.datetime | pendulum.DateTime | pendulum.Date | pendulum.Time,
-    /,
-    *,
-    format: enums.DatetimeFormat,
+    datetime: dt.datetime | pendulum.DateTime | pendulum.Date | pendulum.Time, /,
+    *, format: enums.DatetimeFormat,
 ) -> str:
 
     if isinstance(datetime, dt.datetime):
         datetime = convert_datetime(datetime)
 
-    # noinspection PyUnresolvedReferences
-    return datetime.format(format.value)
+    return datetime.format(format.value)  # type: ignore
 
 
 def format_difference(
-    datetime: dt.datetime | pendulum.DateTime,
-    /,
-    *,
-    suppress: Sequence[str] = ("seconds",)
+    datetime: dt.datetime | pendulum.DateTime, /,
+    *, suppress: Sequence[str] = ("seconds",)
 ) -> str:
 
     datetime = convert_datetime(datetime)
-    now: pendulum.DateTime = pendulum.now(tz=datetime.timezone).replace(microsecond=0)  # type: ignore
+    now = pendulum.now(tz=datetime.timezone).replace(microsecond=0)  # type: ignore
 
-    return humanize.precisedelta(now.diff(datetime), format="%0.0f", suppress=suppress)
+    return humanize.precisedelta(now.diff(datetime), format="%0.0f", suppress=suppress)  # type: ignore
 
 
 def format_seconds(
-    seconds: float,
-    /,
-    *,
-    friendly: bool = False
+    seconds: float, /,
+    *, friendly: bool = False
 ) -> str:
 
     seconds = round(seconds)

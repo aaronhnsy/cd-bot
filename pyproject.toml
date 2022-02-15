@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "CD-bot"
-version = "0.0.1"
+name        = "CD-bot"
+version     = "0.0.1"
 description = "A general purpose music bot."
-license = "MIT"
-authors = ["Axel <axelancerr@gmail.com>"]
-readme = "README.md"
+license     = "MIT"
+authors     = ["Axel <axelancerr@gmail.com>"]
+readme      = "README.md"
 
 
 [tool.poetry.dependencies]
@@ -39,7 +39,7 @@ lines_after_imports         = 2
 combine_star                = true
 include_trailing_comma      = true
 star_first                  = true
-known_local_folder          = ["core", "extensions", "utilities", "typings"]
+known_local_folder          = ["core", "extensions", "utilities"]
 import_heading_future       = "Future"
 import_heading_stdlib       = "Standard Library"
 import_heading_thirdparty   = "Packages"
@@ -49,13 +49,16 @@ import_heading_localfolder  = "My stuff"
 
 [tool.pyright]
 include                 = ["bot"]
+exclude                 = ["**/slash"]
 verboseOutput           = false
 pythonVersion           = "3.10"
-typeCheckingMode        = "basic"
+typeCheckingMode        = "strict"
 useLibraryCodeForTypes  = true
 
-strictListInference         = true
-strictDictionaryInference   = true
-strictSetInference          = true
-reportMissingImports        = false
-reportPrivateImportUsage    = false
+reportMissingTypeStubs = false
+reportPrivateImportUsage = false
+reportPrivateUsage = false
+reportUnknownMemberType = false
+reportFunctionMemberAccess = false
+reportUnknownArgumentType = false
+reportImportCycles = false
