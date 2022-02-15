@@ -16,7 +16,7 @@ import asyncpg
 import discord
 import mystbin
 import psutil
-import slate.obsidian
+import slate
 from discord.ext import commands, tasks
 # noinspection PyUnresolvedReferences
 from discord.ext.alternatives import converter_dict as converter_dict
@@ -50,7 +50,7 @@ class CD(commands.AutoShardedBot):
         self.session: aiohttp.ClientSession = aiohttp.ClientSession()
         self.socket_stats: collections.Counter[str] = collections.Counter()
         self.process: psutil.Process = psutil.Process()
-        self.slate: slate.obsidian.NodePool[CD, custom.Context, custom.Player] = slate.obsidian.NodePool()
+        self.slate: slate.Pool[CD, custom.Context, custom.Player] = slate.Pool()
         self.mystbin: mystbin.Client = mystbin.Client(session=self.session)
         self.config: utils.Config = utils.Config(self)
 
@@ -157,6 +157,7 @@ class CD(commands.AutoShardedBot):
         for node in config.NODES:
             try:
                 await self.slate.create_node(
+                    slate.Provider.LAVALINK,
                     bot=self,
                     identifier=node["identifier"],
                     host=node["host"],
@@ -165,7 +166,7 @@ class CD(commands.AutoShardedBot):
                     spotify_client_id=config.SPOTIFY_CLIENT_ID,
                     spotify_client_secret=config.SPOTIFY_CLIENT_SECRET,
                 )
-            except slate.obsidian.NodeConnectionError:
+            except slate.NodeConnectionError:
                 continue
 
     # Logging

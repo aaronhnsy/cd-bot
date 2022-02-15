@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 # Packages
-import slate.obsidian
+import slate
 
 # My stuff
 from core import values
@@ -16,14 +16,14 @@ def setup(bot: CD) -> None:
 
 class SlashEffects(slash.ApplicationCog):
 
-    EFFECT_MAP: dict[enums.Effect, dict[str, slate.obsidian.BaseFilter]] = {
-        enums.Effect.ROTATION:  {"rotation": slate.obsidian.Rotation(rotation_hertz=0.5)},
-        enums.Effect.NIGHTCORE: {"timescale": slate.obsidian.Timescale(speed=1.12, pitch=1.12)},
+    EFFECT_MAP: dict[enums.Effect, dict[str, slate.BaseFilter]] = {
+        enums.Effect.ROTATION:  {"rotation": slate.Rotation(rotation_hertz=0.5)},
+        enums.Effect.NIGHTCORE: {"timescale": slate.Timescale(speed=1.12, pitch=1.12)},
     }
 
-    INVERSE_EFFECT_MAP: dict[enums.Effect, dict[str, slate.obsidian.BaseFilter]] = {
-        enums.Effect.ROTATION:  {"rotation": slate.obsidian.Rotation()},
-        enums.Effect.NIGHTCORE: {"timescale": slate.obsidian.Timescale()},
+    INVERSE_EFFECT_MAP: dict[enums.Effect, dict[str, slate.BaseFilter]] = {
+        enums.Effect.ROTATION:  {"rotation": slate.Rotation()},
+        enums.Effect.NIGHTCORE: {"timescale": slate.Timescale()},
     }
 
     async def _toggle_effect(self, ctx: slash.ApplicationContext, effect: enums.Effect) -> None:
@@ -33,11 +33,11 @@ class SlashEffects(slash.ApplicationCog):
         if effect in ctx.voice_client.effects:
             description = f"**disabled** the **{effect.value}** audio effect."
             ctx.voice_client.effects.remove(effect)
-            await ctx.voice_client.set_filter(slate.obsidian.Filter(ctx.voice_client.filter, **self.INVERSE_EFFECT_MAP[effect]))
+            await ctx.voice_client.set_filter(slate.Filter(ctx.voice_client.filter, **self.INVERSE_EFFECT_MAP[effect]))
         else:
             description = f"**enabled** the **{effect.value}** audio effect."
             ctx.voice_client.effects.add(effect)
-            await ctx.voice_client.set_filter(slate.obsidian.Filter(ctx.voice_client.filter, **self.EFFECT_MAP[effect]))
+            await ctx.voice_client.set_filter(slate.Filter(ctx.voice_client.filter, **self.EFFECT_MAP[effect]))
 
         await ctx.reply(
             embed=utils.embed(
@@ -52,7 +52,7 @@ class SlashEffects(slash.ApplicationCog):
         assert ctx.voice_client
 
         ctx.voice_client.effects.clear()
-        await ctx.voice_client.set_filter(slate.obsidian.Filter())
+        await ctx.voice_client.set_filter(slate.Filter())
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,

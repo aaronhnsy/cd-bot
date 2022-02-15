@@ -3,7 +3,6 @@ from __future__ import annotations
 
 # Packages
 import slate
-import slate.obsidian
 
 # My stuff
 from core.bot import CD
@@ -52,7 +51,7 @@ class SlashPlay(slash.ApplicationCog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.obsidian.Source.YOUTUBE, ctx=ctx, play_next=next, play_now=now)
+        await ctx.voice_client.queue_search(query, source=slate.Source.YOUTUBE, ctx=ctx, play_next=next, play_now=now)
 
     @slash.slash_command(name="search")
     async def search(self, ctx: slash.ApplicationContext, next: bool = False, now: bool = False, *, query: str) -> None:
@@ -60,7 +59,7 @@ class SlashPlay(slash.ApplicationCog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.obsidian.Source.YOUTUBE, ctx=ctx, search_select=True, play_next=next, play_now=now)
+        await ctx.voice_client.queue_search(query, source=slate.Source.YOUTUBE, ctx=ctx, search_select=True, play_next=next, play_now=now)
 
     # Youtube music
 
@@ -70,7 +69,7 @@ class SlashPlay(slash.ApplicationCog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.obsidian.Source.YOUTUBE_MUSIC, ctx=ctx, play_next=next, play_now=now)
+        await ctx.voice_client.queue_search(query, source=slate.Source.YOUTUBE_MUSIC, ctx=ctx, play_next=next, play_now=now)
 
     @slash.slash_command(name="youtube-music-search")
     async def youtube_music_search(self, ctx: slash.ApplicationContext, next: bool = False, now: bool = False, *, query: str) -> None:
@@ -78,7 +77,7 @@ class SlashPlay(slash.ApplicationCog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.obsidian.Source.YOUTUBE_MUSIC, ctx=ctx, search_select=True, play_next=next, play_now=now)
+        await ctx.voice_client.queue_search(query, source=slate.Source.YOUTUBE_MUSIC, ctx=ctx, search_select=True, play_next=next, play_now=now)
 
     # Soundcloud
 
@@ -88,7 +87,7 @@ class SlashPlay(slash.ApplicationCog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.obsidian.Source.SOUNDCLOUD, ctx=ctx, play_next=next, play_now=now)
+        await ctx.voice_client.queue_search(query, source=slate.Source.SOUNDCLOUD, ctx=ctx, play_next=next, play_now=now)
 
     @slash.slash_command(name="soundcloud-search")
     async def soundcloud_search(self, ctx: slash.ApplicationContext, next: bool = False, now: bool = False, *, query: str) -> None:
@@ -96,7 +95,7 @@ class SlashPlay(slash.ApplicationCog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.obsidian.Source.SOUNDCLOUD, ctx=ctx, search_select=True, play_next=next, play_now=now)
+        await ctx.voice_client.queue_search(query, source=slate.Source.SOUNDCLOUD, ctx=ctx, search_select=True, play_next=next, play_now=now)
 
     # Local
 
@@ -106,7 +105,7 @@ class SlashPlay(slash.ApplicationCog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.obsidian.Source.LOCAL, ctx=ctx, play_next=next, play_now=now)
+        await ctx.voice_client.queue_search(query, source=slate.Source.LOCAL, ctx=ctx, play_next=next, play_now=now)
 
     # HTTP
 
@@ -116,4 +115,4 @@ class SlashPlay(slash.ApplicationCog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.obsidian.Source.HTTP, ctx=ctx, play_next=next, play_now=now)
+        await ctx.voice_client.queue_search(query, source=slate.Source.HTTP, ctx=ctx, play_next=next, play_now=now)

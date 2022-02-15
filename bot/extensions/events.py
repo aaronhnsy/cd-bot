@@ -10,7 +10,7 @@ from typing import Any, Type
 # Packages
 import discord
 import pendulum
-import slate.obsidian
+import slate
 from discord.ext import commands
 
 # My stuff
@@ -352,20 +352,20 @@ class Events(commands.Cog):
         ):
             await before.channel.guild.voice_client.disconnect(force=True)
 
-    @commands.Cog.listener("on_obsidian_track_start")
-    async def _handle_track_start(self, player: custom.Player, _: slate.obsidian.TrackStart) -> None:
+    @commands.Cog.listener("on_slate_track_start")
+    async def _handle_track_start(self, player: custom.Player, _: slate.TrackStart) -> None:
         await player.handle_track_start()
 
-    @commands.Cog.listener("on_obsidian_track_end")
-    async def _handle_track_end(self, player: custom.Player, _: slate.obsidian.TrackEnd) -> None:
+    @commands.Cog.listener("on_slate_track_end")
+    async def _handle_track_end(self, player: custom.Player, _: slate.TrackEnd) -> None:
         await player.handle_track_end(enums.TrackEndReason.NORMAL)
 
-    @commands.Cog.listener("on_obsidian_track_stuck")
-    async def _handle_track_stuck(self, player: custom.Player, _: slate.obsidian.TrackStuck) -> None:
+    @commands.Cog.listener("on_slate_track_stuck")
+    async def _handle_track_stuck(self, player: custom.Player, _: slate.TrackStuck) -> None:
         await player.handle_track_end(enums.TrackEndReason.STUCK)
 
-    @commands.Cog.listener("on_obsidian_track_exception")
-    async def _handle_track_exception(self, player: custom.Player, _: slate.obsidian.TrackException) -> None:
+    @commands.Cog.listener("on_slate_track_exception")
+    async def _handle_track_exception(self, player: custom.Player, _: slate.TrackException) -> None:
         await player.handle_track_end(enums.TrackEndReason.EXCEPTION)
 
     # Application commands

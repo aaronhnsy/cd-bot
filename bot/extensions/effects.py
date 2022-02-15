@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Literal
 
 # Packages
-import slate.obsidian
+import slate
 from discord.ext import commands
 
 # My stuff
@@ -49,7 +49,7 @@ class Effects(commands.Cog):
 
         if enums.Effect.ROTATION in ctx.voice_client.effects:
             ctx.voice_client.effects.remove(enums.Effect.ROTATION)
-            await ctx.voice_client.set_filter(slate.obsidian.Filter(ctx.voice_client.filter, rotation=slate.obsidian.Rotation()))
+            await ctx.voice_client.set_filter(slate.Filter(ctx.voice_client.filter, rotation=slate.Rotation()))
             await ctx.reply(
                 embed=utils.embed(
                     colour=values.GREEN,
@@ -59,7 +59,7 @@ class Effects(commands.Cog):
 
         else:
             ctx.voice_client.effects.add(enums.Effect.ROTATION)
-            await ctx.voice_client.set_filter(slate.obsidian.Filter(ctx.voice_client.filter, rotation=slate.obsidian.Rotation(rotation_hertz=0.5)))
+            await ctx.voice_client.set_filter(slate.Filter(ctx.voice_client.filter, rotation=slate.Rotation(rotation_hertz=0.5)))
             await ctx.reply(
                 embed=utils.embed(
                     colour=values.GREEN,
@@ -81,7 +81,7 @@ class Effects(commands.Cog):
 
         if enums.Effect.NIGHTCORE in ctx.voice_client.effects:
             ctx.voice_client.effects.remove(enums.Effect.NIGHTCORE)
-            await ctx.voice_client.set_filter(slate.obsidian.Filter(ctx.voice_client.filter, timescale=slate.obsidian.Timescale()))
+            await ctx.voice_client.set_filter(slate.Filter(ctx.voice_client.filter, timescale=slate.Timescale()))
             await ctx.reply(
                 embed=utils.embed(
                     colour=values.GREEN,
@@ -91,7 +91,7 @@ class Effects(commands.Cog):
 
         else:
             ctx.voice_client.effects.add(enums.Effect.NIGHTCORE)
-            await ctx.voice_client.set_filter(slate.obsidian.Filter(ctx.voice_client.filter, timescale=slate.obsidian.Timescale(speed=1.12, pitch=1.12)))
+            await ctx.voice_client.set_filter(slate.Filter(ctx.voice_client.filter, timescale=slate.Timescale(speed=1.12, pitch=1.12)))
             await ctx.reply(
                 embed=utils.embed(
                     colour=values.GREEN,
@@ -115,7 +115,7 @@ class Effects(commands.Cog):
 
         if enums.Effect.MONO in ctx.voice_client.effects:
             ctx.voice_client.effects.remove(enums.Effect.MONO)
-            await ctx.voice_client.set_filter(slate.obsidian.Filter(ctx.voice_client.filter, channel_mix=slate.obsidian.ChannelMix()))
+            await ctx.voice_client.set_filter(slate.Filter(ctx.voice_client.filter, channel_mix=slate.ChannelMix()))
             await ctx.reply(
                 embed=utils.embed(
                     colour=values.GREEN,
@@ -127,7 +127,7 @@ class Effects(commands.Cog):
 
             ctx.voice_client.effects.add(enums.Effect.MONO)
             await ctx.voice_client.set_filter(
-                slate.obsidian.Filter(ctx.voice_client.filter, channel_mix=slate.obsidian.ChannelMix(left_to_right=1, right_to_left=1))
+                slate.Filter(ctx.voice_client.filter, channel_mix=slate.ChannelMix(left_to_right=1, right_to_left=1))
             )
             await ctx.reply(
                 embed=utils.embed(
@@ -157,7 +157,7 @@ class Effects(commands.Cog):
 
         if enums.Effect.LEFT_EAR in ctx.voice_client.effects:
             ctx.voice_client.effects.remove(enums.Effect.LEFT_EAR)
-            await ctx.voice_client.set_filter(slate.obsidian.Filter(ctx.voice_client.filter, channel_mix=slate.obsidian.ChannelMix()))
+            await ctx.voice_client.set_filter(slate.Filter(ctx.voice_client.filter, channel_mix=slate.ChannelMix()))
             await ctx.reply(
                 embed=utils.embed(
                     colour=values.GREEN,
@@ -169,7 +169,7 @@ class Effects(commands.Cog):
 
             ctx.voice_client.effects.add(enums.Effect.LEFT_EAR)
             await ctx.voice_client.set_filter(
-                slate.obsidian.Filter(ctx.voice_client.filter, channel_mix=slate.obsidian.ChannelMix(right_to_right=0, right_to_left=1))
+                slate.Filter(ctx.voice_client.filter, channel_mix=slate.ChannelMix(right_to_right=0, right_to_left=1))
             )
             await ctx.reply(
                 embed=utils.embed(
@@ -199,7 +199,7 @@ class Effects(commands.Cog):
 
         if enums.Effect.RIGHT_EAR in ctx.voice_client.effects:
             ctx.voice_client.effects.remove(enums.Effect.RIGHT_EAR)
-            await ctx.voice_client.set_filter(slate.obsidian.Filter(ctx.voice_client.filter, channel_mix=slate.obsidian.ChannelMix()))
+            await ctx.voice_client.set_filter(slate.Filter(ctx.voice_client.filter, channel_mix=slate.ChannelMix()))
             await ctx.reply(
                 embed=utils.embed(
                     colour=values.GREEN,
@@ -211,7 +211,7 @@ class Effects(commands.Cog):
 
             ctx.voice_client.effects.add(enums.Effect.RIGHT_EAR)
             await ctx.voice_client.set_filter(
-                slate.obsidian.Filter(ctx.voice_client.filter, channel_mix=slate.obsidian.ChannelMix(left_to_left=0, left_to_right=1))
+                slate.Filter(ctx.voice_client.filter, channel_mix=slate.ChannelMix(left_to_left=0, left_to_right=1))
             )
             await ctx.reply(
                 embed=utils.embed(
@@ -236,7 +236,7 @@ class Effects(commands.Cog):
         assert ctx.voice_client is not None
 
         ctx.voice_client.effects.clear()
-        await ctx.voice_client.set_filter(slate.obsidian.Filter())
+        await ctx.voice_client.set_filter(slate.Filter())
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,

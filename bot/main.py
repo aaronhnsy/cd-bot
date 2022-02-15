@@ -75,7 +75,7 @@ def logger() -> Generator[None, None, None]:
     loggers["bot"].setLevel(logging.DEBUG)
     loggers["extensions"].setLevel(logging.DEBUG)
     loggers["discord"].setLevel(logging.INFO)
-    loggers["slate"].setLevel(logging.INFO)
+    loggers["slate"].setLevel(logging.DEBUG)
 
     try:
         yield

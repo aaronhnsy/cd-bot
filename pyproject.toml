@@ -22,7 +22,7 @@ rapidfuzz       = "~2.0.0"
 wheel           = "^0.37.0"
 "mystbin.py"    = "~2.2.0"
 
-slate                       = { git = "git@github.com:Axelware/slate", branch = "main" }
+slate                       = { git = "git@github.com:Axelware/slate", branch = "lavalink" }
 "pretty"                    = { git = "git@github.com:ShineyDev/pretty", branch = "main" }
 "discord.py"                = { git = "git@github.com:Rapptz/discord.py", branch = "master" }
 "discord-ext-alternatives"  = { git = "git@github.com:Ext-Creators/discord-ext-alternatives", rev = "2987112c31de9bada4ee95cee9007a326e496e19" }

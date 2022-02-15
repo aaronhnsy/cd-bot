@@ -9,7 +9,6 @@ from typing import TYPE_CHECKING
 import async_timeout
 import discord
 import slate
-import slate.obsidian
 import yarl
 
 # My stuff
@@ -34,18 +33,18 @@ class SearchView(discord.ui.View):
         self,
         *,
         ctx: custom.Context | slash.ApplicationContext,
-        result: slate.obsidian.Result[custom.Context],
+        search: slate.Search[custom.Context],
         play_next: bool = False,
         play_now: bool = False
     ) -> None:
         super().__init__(timeout=60)
 
         self.ctx: custom.Context | slash.ApplicationContext = ctx
-        self.result: slate.obsidian.Result[custom.Context] = result
+        self.search: slate.Search[custom.Context] = search
         self.play_next: bool = play_next
         self.play_now: bool = play_now
 
-        self.tracks: list[slate.obsidian.Track[custom.Context]] = result.tracks[:25]
+        self.tracks: list[slate.Track[custom.Context]] = search.tracks[:25]
 
         self.add_item(
             SearchSelect(
@@ -104,13 +103,14 @@ class SearchSelect(discord.ui.Select[SearchView]):
                 )
             )
             self.view.ctx.voice_client.queue.extend(tracks, position=position)
+
         else:
             await interaction.response.send_message(
                 embed=utils.embed(
                     colour=values.GREEN,
-                    description=f"**added** the **{self.view.result.search_source.value.lower()}** track "
+                    description=f"added the **{self.view.search.source.value.lower()}** track "
                                 f"**[{discord.utils.escape_markdown(tracks[0].title)}]({tracks[0].uri})** "
-                                f"by **{discord.utils.escape_markdown(tracks[0].author)}** to the queue."
+                                f"by **{discord.utils.escape_markdown(tracks[0].author or 'unknown')}** to the queue."
                 )
             )
             self.view.ctx.voice_client.queue.put(tracks[0], position=position)
@@ -304,15 +304,7 @@ class Controller:
 # Player #
 ##########
 
-class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
-
-    def __call__(self, client: CD, channel: discord.VoiceChannel) -> Player:
-        super().__call__(client, channel)
-
-        self.bot: CD = client
-        self.voice_channel: discord.VoiceChannel = channel
-
-        return self
+class Player(slate.Player["CD", custom.Context, "Player"]):
 
     def __init__(self, text_channel: discord.TextChannel) -> None:
         super().__init__()
@@ -320,7 +312,7 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
         self.text_channel: discord.TextChannel = text_channel
 
         self.controller: Controller = Controller(self)
-        self.queue: slate.Queue[slate.obsidian.Track[custom.Context]] = slate.Queue()
+        self.queue: slate.Queue[slate.Track[custom.Context]] = slate.Queue()
 
         self.skip_request_ids: set[int] = set()
         self.effects: set[enums.Effect] = set()
@@ -338,15 +330,15 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
         )
         await self.disconnect()
 
-    async def _convert_spotify_track(self, track: slate.obsidian.Track[custom.Context]) -> slate.obsidian.Track[custom.Context]:
+    async def _convert_spotify_track(self, track: slate.Track[custom.Context]) -> slate.Track[custom.Context]:
 
         assert track.ctx is not None
         title = track.isrc or f"{track.author} - {track.title}"
 
         try:
-            search = await self.search(title, source=slate.obsidian.Source.YOUTUBE_MUSIC, ctx=track.ctx)
+            search = await self.search(title, source=slate.Source.YOUTUBE_MUSIC, ctx=track.ctx)
         except exceptions.EmbedError:
-            search = await self.search(title, source=slate.obsidian.Source.YOUTUBE, ctx=track.ctx)
+            search = await self.search(title, source=slate.Source.YOUTUBE, ctx=track.ctx)
 
         return search.tracks[0]
 
@@ -385,7 +377,7 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
 
         # Convert spotify tracks to youtube tracks.
 
-        if track.source is slate.obsidian.Source.SPOTIFY:
+        if track.source is slate.Source.SPOTIFY:
 
             try:
                 track = await self._convert_spotify_track(track)
@@ -411,23 +403,23 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
         self,
         query: str,
         /, *,
-        source: slate.obsidian.Source,
+        source: slate.Source,
         ctx: custom.Context | slash.ApplicationContext
-    ) -> slate.obsidian.Result[custom.Context]:
+    ) -> slate.Search[custom.Context]:
 
         if (url := yarl.URL(query)) and url.host and url.scheme:
-            source = slate.obsidian.Source.NONE
+            source = slate.Source.NONE
 
         try:
-            result = await self._node.search(query, source=source, ctx=ctx)  # type: ignore
+            search = await self._node.search(query, source=source, ctx=ctx)  # type: ignore
 
-        except slate.obsidian.NoResultsFound as error:
+        except slate.NoResultsFound as error:
             raise exceptions.EmbedError(
                 colour=values.RED,
-                description=f"no {error.search_source.value.lower().replace('_', ' ')} {error.search_type.value}s were found for your search.",
+                description=f"no {error.source.value.lower().replace('_', ' ')} {error.type}s were found for your search.",
             )
 
-        except (slate.obsidian.SearchFailed, slate.HTTPError):
+        except (slate.SearchFailed, slate.HTTPError):
 
             view = discord.ui.View(timeout=None)
             view.add_item(discord.ui.Button(label="Support Server", url=values.SUPPORT_LINK))
@@ -438,24 +430,24 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
                 view=view,
             )
 
-        return result
+        return search
 
     async def queue_search(
         self,
         query: str,
         /, *,
-        source: slate.obsidian.Source,
+        source: slate.Source,
         ctx: custom.Context | slash.ApplicationContext,
         search_select: bool = False,
         play_next: bool = False,
         play_now: bool = False,
     ) -> None:
 
-        result = await self.search(query, source=source, ctx=ctx)
+        search = await self.search(query, source=source, ctx=ctx)
 
         if search_select:
 
-            view = SearchView(ctx=ctx, result=result, play_next=play_next, play_now=play_now)
+            view = SearchView(ctx=ctx, search=search, play_next=play_next, play_now=play_now)
             message = await ctx.reply(values.ZWSP, view=view)
             view.message = message
 
@@ -463,24 +455,26 @@ class Player(slate.obsidian.Player["CD", custom.Context, "Player"]):
 
             position = 0 if (play_next or play_now) else None
 
-            if result.search_type in {slate.obsidian.SearchType.SEARCH_RESULT, slate.obsidian.SearchType.TRACK} or isinstance(result.result, list):
-                track = result.tracks[0]
+            if isinstance(search.result, list) or (isinstance(search.result, slate.Collection) and search.result.name.startswith("Search result for:")):
+
+                track = search.tracks[0]
                 await ctx.reply(
                     embed=utils.embed(
                         colour=values.GREEN,
-                        description=f"**added** the **{result.search_source.value.lower()}** track **[{discord.utils.escape_markdown(track.title)}]({track.uri})** by "
-                                    f"**{discord.utils.escape_markdown(track.author or 'Unknown')}** to the queue."
+                        description=f"added the **{search.source.value.lower()}** track **[{discord.utils.escape_markdown(track.title)}]({track.uri})** "
+                                    f"by **{discord.utils.escape_markdown(track.author or 'Unknown')}** to the queue."
                     )
                 )
                 self.queue.put(track, position=position)
 
             else:
-                tracks = result.tracks
+
+                tracks = search.tracks
                 await ctx.reply(
                     embed=utils.embed(
                         colour=values.GREEN,
-                        description=f"**added** the **{result.search_source.value.lower()}** {result.search_type.name.lower()} "
-                                    f"**[{result.result.name}]({result.result.url})** to the queue."
+                        description=f"added the **{search.source.value.lower()}** {search.type.lower()} **[{search.result.name}]({search.result.url})** "
+                                    f"to the queue."
                     )
                 )
                 self.queue.extend(tracks, position=position)
