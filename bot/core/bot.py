@@ -158,7 +158,7 @@ class CD(commands.AutoShardedBot):
         for node in config.NODES:
             try:
                 await self.slate.create_node(
-                    slate.Provider.LAVALINK,
+                    slate.Provider.OBSIDIAN,
                     bot=self,
                     identifier=node["identifier"],
                     host=node["host"],
