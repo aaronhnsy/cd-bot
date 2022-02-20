@@ -2,7 +2,6 @@
 *.log*
 
 node_modules/
-resources/
 static/
 venv/
 build/
