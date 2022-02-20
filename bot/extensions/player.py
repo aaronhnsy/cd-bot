@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 # Standard Library
+import datetime
 import math
 from typing import Literal, Optional
 
@@ -12,7 +13,7 @@ from discord.ext import commands
 # My stuff
 from core import values
 from core.bot import CD
-from utilities import checks, custom, exceptions, objects, paginators, utils
+from utilities import checks, custom, exceptions, imaging, objects, paginators, utils
 
 
 def setup(bot: CD) -> None:
@@ -535,3 +536,25 @@ class Player(commands.Cog):
             thumbnail=icon["url"] if (icon := data["album"].get("icon")) else None,
         )
         await paginator.start()
+
+    @commands.command(name="status")
+    async def status(self, ctx: custom.Context) -> None:
+
+        assert isinstance(ctx.author, discord.Member)
+
+        if not (activity := discord.utils.find(lambda x: isinstance(x, discord.Spotify), ctx.author.activities)):
+            raise exceptions.EmbedError(description="you dont have an active spotify status.")
+
+        assert isinstance(activity, discord.Spotify)
+        image = objects.FakeImage(url=activity.album_cover_url)
+
+        url = await imaging.edit_image(
+            ctx=ctx,
+            edit_function=imaging.spotify,
+            image=image,
+            length=activity.duration.seconds,
+            elapsed=(datetime.datetime.now(tz=datetime.timezone.utc) - activity.start).seconds,
+            title=activity.title,
+            artists=activity.artists,
+        )
+        await ctx.send(url)

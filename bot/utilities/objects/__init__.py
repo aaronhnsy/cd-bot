@@ -16,3 +16,9 @@ class FakePrefixConverter:
 
     def __init__(self, prefix: str) -> None:
         self.prefix: str = prefix
+
+
+class FakeImage:
+
+    def __init__(self, url: str) -> None:
+        self.url: str = url
