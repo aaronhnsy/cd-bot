@@ -21,105 +21,217 @@ from utilities import custom, exceptions, objects, utils
 
 
 def spotify(
-    image: Image,
+    IMAGE: Image,
     length: int,
     elapsed: int,
     title: str,
     artists: list[str],
-) -> None:  # sourcery skip: extract-method
+) -> None:  # sourcery skip: extract-duplicate-method, extract-method
 
-    image.format = "png"
+    IMAGE.format = "gif"
+    FRAMES = 100
+    TICKS = 10
 
-    with image.clone() as cover:
+    ###################
+    # PIXEL VARIABLES #
+    ###################
+    COVER_WIDTH = 150
+    COVER_HEIGHT = 150
+    COVER_PASTE_OFFSET = 25
 
-        # size cover appropriately.
-        cover.resize(width=150, height=150)
+    IMAGE_WIDTH = 500
+    IMAGE_HEIGHT = 500
+    IMAGE_CROP_OFFSET = 150
 
-        # create and apply rounded mask to cover.
-        with Image(width=cover.width, height=cover.height, background=Color("transparent")) as mask:
+    IMAGE_BLUR_STRENGTH = 10
 
-            with Drawing() as draw:
-                draw.fill_color = Color("black")
-                draw.rectangle(
-                    left=0,
-                    top=0,
-                    right=mask.width,
-                    bottom=mask.height,
-                    radius=mask.width
-                )
-                draw(mask)
+    TRACK_INFO_START_X = COVER_WIDTH + (COVER_PASTE_OFFSET * 2)
 
-            cover.composite_channel(
-                channel="alpha",
-                image=mask,
-                operator="copy_alpha",
-                left=0,
-                top=0
+    PROGRESS_BAR_HEIGHT = 5
+    PROGRESS_BAR_LENGTH = (IMAGE_WIDTH - COVER_PASTE_OFFSET) - TRACK_INFO_START_X
+    PROGRESS_BAR_Y1 = 140
+    PROGRESS_BAR_Y2 = PROGRESS_BAR_Y1 + PROGRESS_BAR_HEIGHT
+
+    ###########################
+    # TEXT / COLOUR VARIABLES #
+    ###########################
+    TRANSPARENT = Color("transparent")
+    BLACK = Color("black")
+    PROGRESS_BAR_BASE = Color("#565859")
+    TRACK_INFO = Color("#FFFFFF")
+
+    TITLE_FONT_SIZE = 20
+    ARTISTS_FONT_SIZE = 15
+
+    #########
+    # COVER #
+    #########
+    with IMAGE.clone() as COVER:
+
+        ##############
+        # EDIT COVER #
+        ##############
+        COVER.resize(
+            width=COVER_WIDTH,
+            height=COVER_HEIGHT
+        )
+
+        ###################
+        # EDIT BASE IMAGE #
+        ###################
+        IMAGE.resize(
+            width=IMAGE_WIDTH,
+            height=IMAGE_HEIGHT
+        )
+        IMAGE.crop(
+            top=IMAGE_CROP_OFFSET,
+            bottom=IMAGE_HEIGHT - IMAGE_CROP_OFFSET,
+        )
+        IMAGE.blur(
+            sigma=IMAGE_BLUR_STRENGTH
+        )
+
+        ##############
+        # TRACK INFO #
+        ##############
+        with Drawing() as DRAW:
+
+            DRAW.font = "resources/Exo-Bold.ttf"
+            DRAW.text_antialias = True
+
+            # draw progress bar base
+            DRAW.fill_color = PROGRESS_BAR_BASE
+            DRAW.rectangle(
+                left=TRACK_INFO_START_X,
+                right=TRACK_INFO_START_X + PROGRESS_BAR_LENGTH,
+                top=PROGRESS_BAR_Y1,
+                bottom=PROGRESS_BAR_Y2,
+                radius=IMAGE.width * 0.003
+            )
+            DRAW.fill_color = TRACK_INFO
+
+            # draw title
+            DRAW.text_alignment = "right"
+            DRAW.text(
+                x=TRACK_INFO_START_X + PROGRESS_BAR_LENGTH,
+                y=PROGRESS_BAR_Y1 - PROGRESS_BAR_HEIGHT,
+                body=utils.format_seconds(length),
+            )
+            DRAW.text_alignment = "left"
+
+            # draw title
+            DRAW.font_size = TITLE_FONT_SIZE
+            DRAW.text(
+                x=TRACK_INFO_START_X,
+                y=75,
+                body=title,
             )
 
-        # resize base image, crop it, blur it, and then paste cover onto it.
-        image.resize(width=500, height=500)
-        image.crop(top=150, bottom=350)
-        image.blur(sigma=10)
-        image.composite(cover, left=25, top=25)
+            # draw artists
+            DRAW.font_size = ARTISTS_FONT_SIZE
+            DRAW.text(
+                x=TRACK_INFO_START_X,
+                y=95,
+                body=", ".join(artists),
+            )
 
-    with Drawing() as draw:
+            DRAW(IMAGE)
 
-        draw.font = "resources/Exo-Bold.ttf"
+        #################
+        # CREATE FRAMES #
+        #################
+        IMAGE.sequence.extend([IMAGE.clone() for _ in range(FRAMES)])
 
-        # Progress bar base
-        draw.fill_color = Color("#565859")
-        draw.rectangle(
-            left=200,
-            right=475,
-            top=140,
-            bottom=145,
-            radius=image.width * 0.003
-        )
+        ###############
+        # EDIT FRAMES #
+        ###############
 
-        # Progress bar fill
-        draw.fill_color = Color("#ffffff")
-        draw.rectangle(
-            left=200,
-            right=225 + (250 * (elapsed / length)),
-            top=140,
-            bottom=145,
-            radius=image.width * 0.003
-        )
+        IMAGE.iterator_reset()
 
-        # Elapsed time
-        draw.text(
-            x=200,
-            y=135,
-            body=utils.format_seconds(elapsed),
-        )
+        while IMAGE.iterator_next():
 
-        # Length
-        draw.text_alignment = "right"
-        draw.text(
-            x=475,
-            y=135,
-            body=utils.format_seconds(length),
-        )
-        draw.text_alignment = "left"
+            index = IMAGE.iterator_get() - 1
 
-        # Title
-        draw.font_size = 20
-        draw.text(
-            x=200,
-            y=75,
-            body=title,
-        )
+            with COVER.clone() as COVER_CLONE:
 
-        # Artists
-        draw.font_size = 15
-        draw.text(
-            x=200,
-            y=95,
-            body=", ".join(artists),
-        )
+                # rotate cover
+                COVER_CLONE.distort(
+                    "scale_rotate_translate",
+                    (
+                        COVER_WIDTH / 2,
+                        COVER_HEIGHT / 2,
+                        (index * ((360 / TICKS) / 2))
+                    )
+                )
 
-        draw(image)
+                # create mask
+                with Image(
+                        width=COVER_WIDTH,
+                        height=COVER_HEIGHT,
+                        background=TRANSPARENT,
+                ) as MASK:
+
+                    with Drawing() as DRAW:
+                        DRAW.fill_color = BLACK
+                        DRAW.rectangle(
+                            left=0,
+                            top=0,
+                            width=COVER_WIDTH,
+                            height=COVER_HEIGHT,
+                            xradius=COVER_WIDTH,
+                            yradius=COVER_HEIGHT
+                        )
+                        DRAW(MASK)
+
+                    COVER_CLONE.composite_channel(
+                        channel="alpha",
+                        image=MASK,
+                        operator="copy_alpha",
+                        left=0,
+                        top=0
+                    )
+
+                # paste cover onto frame
+                IMAGE.composite(
+                    image=COVER_CLONE,
+                    left=COVER_PASTE_OFFSET,
+                    top=COVER_PASTE_OFFSET
+                )
+
+            with Drawing() as DRAW:
+
+                DRAW.font = "resources/Exo-Bold.ttf"
+                DRAW.text_antialias = True
+                DRAW.fill_color = TRACK_INFO
+
+                # draw progress bar fill
+                DRAW.rectangle(
+                    left=TRACK_INFO_START_X,
+                    right=TRACK_INFO_START_X + (PROGRESS_BAR_LENGTH * ((elapsed + (index // TICKS)) / length)),
+                    top=PROGRESS_BAR_Y1,
+                    bottom=PROGRESS_BAR_Y2,
+                    radius=IMAGE.width * 0.003
+                )
+
+                # draw elapsed time
+                DRAW.text(
+                    x=TRACK_INFO_START_X,
+                    y=PROGRESS_BAR_Y1 - PROGRESS_BAR_HEIGHT,
+                    body=utils.format_seconds(elapsed + (index // TICKS)),
+                )
+
+                DRAW(IMAGE)
+
+            IMAGE.delay = TICKS
+
+        ######################
+        # DELETE FIRST FRAME #
+        ######################
+        del IMAGE.sequence[0]
+
+    # OPTIMIZE GIF
+    IMAGE.type = "optimize"
+    IMAGE.optimize_transparency()
 
 
 MAX_CONTENT_SIZE = (2 ** 20) * 25
@@ -197,8 +309,6 @@ def do_edit_image(edit_function: Callable[..., Any], image_bytes: bytes, pipe: C
                 while image.iterator_next():
                     image.background_color = transparent
                     edit_function(image, **kwargs)
-
-                image.optimize_transparency()
 
             edited_image_format = image.format
             edited_image_bytes = image.make_blob()  # type: ignore
