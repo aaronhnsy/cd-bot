@@ -67,6 +67,7 @@ class EmbedSize(Enum):
     LARGE = 0
     MEDIUM = 1
     SMALL = 2
+    IMAGE = 3
 
 
 class TrackEndReason(Enum):

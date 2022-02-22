@@ -13,7 +13,7 @@ import yarl
 
 # My stuff
 from core import values
-from utilities import custom, enums, exceptions, slash, utils
+from utilities import custom, enums, exceptions, imaging, objects, slash, utils
 
 
 if TYPE_CHECKING:
@@ -166,6 +166,29 @@ class Controller:
 
     # Embed
 
+    async def _build_image(self) -> discord.Embed:
+
+        assert self.voice_client.current is not None
+        current = self.voice_client.current
+
+        image = objects.FakeImage(url=current.artwork_url)
+
+        url = await imaging.edit_image(
+            ctx=current.ctx,
+            edit_function=imaging.spotify,
+            image=image,
+            length=current.length // 1000,
+            elapsed=self.voice_client.position // 1000,
+            title=current.title,
+            artists=[current.author],
+            format="png",
+        )
+        return utils.embed(
+            title=discord.utils.escape_markdown(current.title),
+            url=current.uri,
+            image=url,
+        )
+
     def _build_small(self) -> discord.Embed:
 
         assert self.voice_client.current is not None
@@ -213,6 +236,8 @@ class Controller:
         guild_config = await self.voice_client.bot.config.get_guild_config(self.voice_client.voice_channel.guild.id)
 
         match guild_config.embed_size:
+            case enums.EmbedSize.IMAGE:
+                embed = await self._build_image()
             case enums.EmbedSize.SMALL:
                 embed = self._build_small()
             case enums.EmbedSize.MEDIUM:
