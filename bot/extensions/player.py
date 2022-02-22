@@ -537,8 +537,8 @@ class Player(commands.Cog):
         )
         await paginator.start()
 
-    @commands.command(name="status")
-    async def status(self, ctx: custom.Context) -> None:
+    @staticmethod
+    async def _do_status(ctx: custom.Context, *, format: Literal["png", "gif", "smooth_gif"]) -> None:
 
         assert isinstance(ctx.author, discord.Member)
 
@@ -556,5 +556,18 @@ class Player(commands.Cog):
             elapsed=(datetime.datetime.now(tz=datetime.timezone.utc) - activity.start).seconds,
             title=activity.title,
             artists=activity.artists,
+            format=format,
         )
         await ctx.send(url)
+
+    @commands.group(name="status", invoke_without_command=True)
+    async def status(self, ctx: custom.Context) -> None:
+        await self._do_status(ctx, format="png")
+
+    @status.command(name="gif")
+    async def status_gif(self, ctx: custom.Context) -> None:
+        await self._do_status(ctx, format="gif")
+
+    @status.command(name="smooth")
+    async def status_smooth(self, ctx: custom.Context) -> None:
+        await self._do_status(ctx, format="smooth_gif")
