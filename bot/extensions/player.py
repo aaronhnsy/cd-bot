@@ -296,8 +296,8 @@ class Player(commands.Cog):
 
         assert ctx.voice_client is not None
 
-        embed = await ctx.voice_client.controller.build_embed()
-        await ctx.send(embed=embed)
+        content, embed = await ctx.voice_client.controller.build_message()
+        await ctx.send(content, embed=embed)  # type: ignore
 
     # Skipping
 

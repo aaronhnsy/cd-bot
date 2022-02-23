@@ -166,10 +166,13 @@ class Controller:
 
     # Embed
 
-    async def _build_image(self) -> discord.Embed:
+    async def _build_image(self) -> tuple[str, None]:
 
         assert self.voice_client.current is not None
+
         current = self.voice_client.current
+        assert current.artwork_url is not None
+        assert current.ctx is not None
 
         image = objects.FakeImage(url=current.artwork_url)
 
@@ -183,18 +186,14 @@ class Controller:
             artists=[current.author],
             format="png",
         )
-        return utils.embed(
-            title=discord.utils.escape_markdown(current.title),
-            url=current.uri,
-            image=url,
-        )
+        return url, None
 
-    def _build_small(self) -> discord.Embed:
+    def _build_small(self) -> tuple[None, discord.Embed]:
 
         assert self.voice_client.current is not None
         current = self.voice_client.current
 
-        return utils.embed(
+        embed = utils.embed(
             colour=values.MAIN,
             title="Now Playing:",
             description=f"**[{discord.utils.escape_markdown(current.title)}]({current.uri})**\n"
@@ -202,12 +201,14 @@ class Controller:
             thumbnail=current.artwork_url or "https://dummyimage.com/1280x720/000/ffffff.png&text=no+thumbnail+:(",
         )
 
-    def _build_medium(self) -> discord.Embed:
+        return None, embed
+
+    def _build_medium(self) -> tuple[None, discord.Embed]:
 
         assert self.voice_client.current is not None
         current = self.voice_client.current
 
-        embed = self._build_small()
+        _, embed = self._build_small()
         embed.description += "\n\n" \
                              f"● **Requested by:** {getattr(current.requester, 'mention', None)}\n" \
                              f"● **Source:** {current.source.value.title()}\n" \
@@ -215,11 +216,11 @@ class Controller:
                              f"● **Effects:** {', '.join([effect.value for effect in self.voice_client.effects] or ['N/A'])}\n" \
                              f"● **Position:** {utils.format_seconds(self.voice_client.position // 1000)} / {utils.format_seconds(current.length // 1000)}\n"
 
-        return embed
+        return None, embed
 
-    def _build_large(self) -> discord.Embed:
+    def _build_large(self) -> tuple[None, discord.Embed]:
 
-        embed = self._build_medium()
+        _, embed = self._build_medium()
 
         if self.voice_client.queue._queue:
             entries = [
@@ -229,25 +230,25 @@ class Controller:
             ]
             embed.description += f"\n● **Up next ({len(self.voice_client.queue)}):**\n{''.join(entries)}"
 
-        return embed
+        return None, embed
 
-    async def build_embed(self) -> discord.Embed:
+    async def build_message(self) -> tuple[str | None, discord.Embed | None]:
 
         guild_config = await self.voice_client.bot.config.get_guild_config(self.voice_client.voice_channel.guild.id)
 
         match guild_config.embed_size:
             case enums.EmbedSize.IMAGE:
-                embed = await self._build_image()
+                content, embed = await self._build_image()
             case enums.EmbedSize.SMALL:
-                embed = self._build_small()
+                content, embed = self._build_small()
             case enums.EmbedSize.MEDIUM:
-                embed = self._build_medium()
+                content, embed = self._build_medium()
             case enums.EmbedSize.LARGE:
-                embed = self._build_large()
+                content, embed = self._build_large()
             case _:
                 raise ValueError(f"Unknown embed size: {guild_config.embed_size}")
 
-        return embed
+        return content, embed
 
     # Message
 
@@ -256,8 +257,8 @@ class Controller:
         if not self.voice_client.current:
             return
 
-        embed = await self.build_embed()
-        self.message = await self.voice_client.text_channel.send(embed=embed, view=self.view)
+        content, embed = await self.build_message()
+        self.message = await self.voice_client.text_channel.send(content, embed=embed, view=self.view)  # type: ignore
 
     async def _delete_old_message(self) -> None:
 
@@ -293,6 +294,7 @@ class Controller:
             view = None
 
         await self.message.edit(
+            content=None,
             embed=utils.embed(
                 colour=colour,
                 title=title,

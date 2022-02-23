@@ -63,3 +63,4 @@ reportUnknownMemberType = false
 reportFunctionMemberAccess = false
 reportUnknownArgumentType = false
 reportImportCycles = false
+reportConstantRedefinition = false
