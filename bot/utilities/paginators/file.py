@@ -6,7 +6,7 @@ import functools
 import io
 
 # My stuff
-from utilities import custom, paginators, slash, utils
+from utilities import custom, paginators, utils
 
 
 __all__ = (
@@ -19,7 +19,7 @@ class FilePaginator(paginators.BasePaginator):
     def __init__(
         self,
         *,
-        ctx: custom.Context | slash.ApplicationContext,
+        ctx: custom.Context,
         entries: list[functools.partial[bytes | io.BytesIO]],
         start_page: int = 0,
         timeout: int = 300,

@@ -5,7 +5,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import traceback
-from typing import Any, Type
+from typing import Type
 
 # Packages
 import discord
@@ -16,7 +16,7 @@ from discord.ext import commands
 # My stuff
 from core import config, values
 from core.bot import CD
-from utilities import custom, enums, exceptions, slash, utils
+from utilities import custom, enums, exceptions, utils
 
 
 __log__: logging.Logger = logging.getLogger("extensions.events")
@@ -367,22 +367,3 @@ class Events(commands.Cog):
     @commands.Cog.listener("on_slate_track_exception")
     async def _handle_track_exception(self, player: custom.Player, _: slate.TrackException) -> None:
         await player.handle_track_end(enums.TrackEndReason.EXCEPTION)
-
-    # Application commands
-
-    @commands.Cog.listener("on_interaction")
-    async def _internal_interaction_handler(self, interaction: discord.Interaction) -> None:
-
-        if interaction.type is not discord.InteractionType.application_command:
-            return
-
-        if not (command := self.bot.application_commands.get(interaction.data["name"])):  # type: ignore
-            return
-
-        arguments: dict[str, Any] = command._build_arguments(interaction, self.bot._connection)
-
-        ctx = slash.ApplicationContext(interaction, self.bot, command)
-        try:
-            await command.invoke(ctx, **arguments)
-        except Exception as error:
-            self.bot.dispatch("command_error", ctx, error)

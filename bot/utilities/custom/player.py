@@ -13,7 +13,7 @@ import yarl
 
 # My stuff
 from core import values
-from utilities import custom, enums, exceptions, imaging, objects, slash, utils
+from utilities import custom, enums, exceptions, imaging, objects, utils
 
 
 if TYPE_CHECKING:
@@ -32,14 +32,14 @@ class SearchView(discord.ui.View):
     def __init__(
         self,
         *,
-        ctx: custom.Context | slash.ApplicationContext,
+        ctx: custom.Context,
         search: slate.Search[custom.Context],
         play_next: bool = False,
         play_now: bool = False
     ) -> None:
         super().__init__(timeout=60)
 
-        self.ctx: custom.Context | slash.ApplicationContext = ctx
+        self.ctx: custom.Context = ctx
         self.search: slate.Search[custom.Context] = search
         self.play_next: bool = play_next
         self.play_now: bool = play_now
@@ -209,6 +209,8 @@ class Controller:
         current = self.voice_client.current
 
         _, embed = self._build_small()
+
+        assert isinstance(embed.description, str)
         embed.description += "\n\n" \
                              f"● **Requested by:** {getattr(current.requester, 'mention', None)}\n" \
                              f"● **Source:** {current.source.value.title()}\n" \
@@ -228,6 +230,8 @@ class Controller:
                 f"**⤷** by **{discord.utils.escape_markdown(entry.author)}** | {utils.format_seconds(entry.length // 1000, friendly=True)}\n"
                 for index, entry in enumerate(self.voice_client.queue._queue[:3], start=1)
             ]
+
+            assert isinstance(embed.description, str)
             embed.description += f"\n● **Up next ({len(self.voice_client.queue)}):**\n{''.join(entries)}"
 
         return None, embed
@@ -431,7 +435,7 @@ class Player(slate.Player["CD", custom.Context, "Player"]):
         query: str,
         /, *,
         source: slate.Source,
-        ctx: custom.Context | slash.ApplicationContext
+        ctx: custom.Context
     ) -> slate.Search[custom.Context]:
 
         if (url := yarl.URL(query)) and url.host and url.scheme:
@@ -464,7 +468,7 @@ class Player(slate.Player["CD", custom.Context, "Player"]):
         query: str,
         /, *,
         source: slate.Source,
-        ctx: custom.Context | slash.ApplicationContext,
+        ctx: custom.Context,
         search_select: bool = False,
         play_next: bool = False,
         play_now: bool = False,

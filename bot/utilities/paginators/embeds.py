@@ -8,7 +8,7 @@ from typing import Any
 import discord
 
 # My stuff
-from utilities import custom, paginators, slash
+from utilities import custom, paginators
 
 
 __all__ = (
@@ -21,7 +21,7 @@ class EmbedsPaginator(paginators.BasePaginator):
     def __init__(
         self,
         *,
-        ctx: custom.Context | slash.ApplicationContext,
+        ctx: custom.Context,
         entries: list[Any],
         start_page: int = 0,
         timeout: int = 300,

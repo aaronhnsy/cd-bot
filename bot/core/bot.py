@@ -3,7 +3,6 @@ from __future__ import annotations
 
 # Standard Library
 import collections
-import inspect
 import logging
 import time
 import traceback
@@ -14,7 +13,6 @@ import aiohttp
 import aioredis
 import asyncpg
 import discord
-import discord.types.interactions
 import mystbin
 import psutil
 import slate
@@ -24,7 +22,7 @@ from discord.ext.alternatives import converter_dict as converter_dict
 
 # My stuff
 from core import config, values
-from utilities import checks, custom, enums, slash, utils
+from utilities import checks, custom, enums, utils
 
 
 __log__: logging.Logger = logging.getLogger("bot")
@@ -33,7 +31,6 @@ __log__: logging.Logger = logging.getLogger("bot")
 class CD(commands.AutoShardedBot):
 
     converters: dict[Any, Any]
-    application_id: int  # type: ignore
 
     def __init__(self) -> None:
         super().__init__(
@@ -69,8 +66,6 @@ class CD(commands.AutoShardedBot):
         }
         self.log_queue: dict[enums.LogType, list[discord.Embed]] = collections.defaultdict(list)
 
-        self.application_commands: dict[str, slash.ApplicationCommand] = {}
-
         self.converters |= values.CONVERTERS
         self.add_check(checks.bot, call_once=True)  # type: ignore
         self.log_loop.start()
@@ -88,7 +83,7 @@ class CD(commands.AutoShardedBot):
         guild_config = await self.config.get_guild_config(message.guild.id)
         return commands.when_mentioned_or(guild_config.prefix or config.PREFIX)(self, message)
 
-    async def is_owner(self, user: discord.User | discord.Member) -> bool:
+    async def is_owner(self, user: discord.abc.User) -> bool:
         return user.id in values.OWNER_IDS
 
     async def start(self, token: str, *, reconnect: bool = True) -> None:
@@ -125,14 +120,7 @@ class CD(commands.AutoShardedBot):
             except commands.ExtensionFailed as error:
                 __log__.warning(f"[EXTENSIONS] Failed - {extension} - Reason: {traceback.print_exception(type(error), error, error.__traceback__)}")
 
-        await self.login(token)
-
-        app_info = await self.application_info()
-        self._connection.application_id = app_info.id
-
-        await self.sync_application_commands()
-
-        await self.connect(reconnect=reconnect)
+        await super().start(token=token, reconnect=reconnect)
 
     async def close(self) -> None:
 
@@ -184,45 +172,3 @@ class CD(commands.AutoShardedBot):
 
     async def log(self, type: enums.LogType, /, *, embed: discord.Embed) -> None:
         self.log_queue[type].append(embed)
-
-    # Slash commands
-
-    def get_application_command(self, name: str) -> slash.ApplicationCommand | None:
-        return self.application_commands.get(name)
-
-    async def sync_application_commands(self) -> None:
-
-        payloads: collections.defaultdict[int | None, list[discord.types.interactions.EditApplicationCommand]] = collections.defaultdict(list)
-
-        for cog in self.cogs.values():
-
-            if not isinstance(cog, slash.ApplicationCog):
-                continue
-
-            cog_commands = inspect.getmembers(cog, lambda member: isinstance(member, slash.ApplicationCommand))
-
-            for _, command in cog_commands:
-                command.cog = cog
-                self.application_commands[command.name] = command
-                payloads[command.guild_id].append(command._build_payload())
-
-        if global_commands := payloads.pop(None, []):
-            await self.http.bulk_upsert_global_commands(self.application_id, global_commands)
-
-        for guild_id, payload in payloads.items():
-            assert guild_id is not None
-            await self.http.bulk_upsert_guild_commands(self.application_id, guild_id, payload)
-
-    async def delete_all_application_commands(self, guild_id: int | None = None) -> None:
-
-        if not guild_id:
-            await self.http.bulk_upsert_global_commands(self.application_id, [])
-        else:
-            await self.http.bulk_upsert_guild_commands(self.application_id, guild_id, [])
-
-    async def delete_application_command(self, id: int, *, guild_id: int | None = None) -> None:
-
-        if not guild_id:
-            await self.http.delete_global_command(self.application_id, id)
-        else:
-            await self.http.delete_guild_command(self.application_id, guild_id, id)
