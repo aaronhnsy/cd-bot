@@ -164,7 +164,7 @@ class SlashQueue(slash.ApplicationCog):
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"removed **{entry}. [{discord.utils.escape_markdown(track.title)}]({track.uri})** "
+                description=f"Removed **{entry}. [{discord.utils.escape_markdown(track.title)}]({track.uri})** "
                             f"by **{discord.utils.escape_markdown(track.author or 'Unknown')}** from the queue."
             )
         )
@@ -195,7 +195,7 @@ class SlashQueue(slash.ApplicationCog):
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"moved **{entry}. [{discord.utils.escape_markdown(track.title)}]({track.uri})** "
+                description=f"Moved **{entry}. [{discord.utils.escape_markdown(track.title)}]({track.uri})** "
                             f"by **{discord.utils.escape_markdown(track.author or 'Unknown')}** from position **{entry}** to position **{to}**.",
             )
         )
@@ -233,7 +233,7 @@ class SlashQueue(slash.ApplicationCog):
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"queue loop mode is now **{ctx.voice_client.queue.loop_mode.name.title()}**.",
+                description=f"The queue loop mode is now **{ctx.voice_client.queue.loop_mode.name.title()}**.",
             )
         )
 
@@ -252,6 +252,6 @@ class SlashQueue(slash.ApplicationCog):
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"queue loop mode is now **{ctx.voice_client.queue.loop_mode.name.title()}**.",
+                description=f"The queue loop mode is now **{ctx.voice_client.queue.loop_mode.name.title()}**.",
             )
         )

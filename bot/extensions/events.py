@@ -313,7 +313,7 @@ class Events(commands.Cog):
             await ctx.reply(
                 embed=utils.embed(
                     colour=values.RED,
-                    description="something went wrong!",
+                    description="Something went wrong!",
                 ),
                 view=view
             )

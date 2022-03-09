@@ -295,22 +295,13 @@ async def request_image_bytes(*, session: aiohttp.ClientSession, url: str) -> by
     async with session.get(url) as request:
 
         if request.status != 200:
-            raise exceptions.EmbedError(
-                colour=values.RED,
-                description="something went wrong while fetching that image."
-            )
+            raise exceptions.EmbedError(description="Something went wrong while fetching that image.")
 
         if request.headers.get("Content-Type") not in VALID_CONTENT_TYPES:
-            raise exceptions.EmbedError(
-                colour=values.RED,
-                description="image format is not allowed.",
-            )
+            raise exceptions.EmbedError(description="That image format is not allowed.")
 
         if int(request.headers.get("Content-Length") or "0") > MAX_CONTENT_SIZE:
-            raise exceptions.EmbedError(
-                colour=values.RED,
-                description=f"image is too big to edit. maximum file size is **{humanize.naturalsize(MAX_CONTENT_SIZE)}**.",
-            )
+            raise exceptions.EmbedError(description=f"That image is too big to edit. The maximum file size is **{humanize.naturalsize(MAX_CONTENT_SIZE)}**.")
 
         return await request.read()
 
@@ -336,10 +327,7 @@ async def edit_image(ctx: custom.Context, edit_function: Callable[..., Any], ima
     process.close()
 
     if data in (ValueError, EOFError):
-        raise exceptions.EmbedError(
-            colour=values.RED,
-            description="something went wrong while editing that image."
-        )
+        raise exceptions.EmbedError(description="Something went wrong while editing that image.")
 
     _edit_image_end = time.perf_counter()
 

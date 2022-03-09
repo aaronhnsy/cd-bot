@@ -33,7 +33,7 @@ class Effects(commands.Cog):
 
         return True
 
-    # Control
+    # Controls
 
     EFFECT_MAP: dict[enums.Effect, dict[str, slate.BaseFilter]] = {
         enums.Effect.ROTATION:  {"rotation": slate.Rotation(rotation_hertz=0.5)},
@@ -62,12 +62,12 @@ class Effects(commands.Cog):
         assert ctx.voice_client
 
         if effect in ctx.voice_client.effects:
-            description = f"**disabled** the **{effect.value}** audio effect."
+            description = f"**Disabled** the **{effect.value}** audio effect."
             ctx.voice_client.effects.remove(effect)
             await ctx.voice_client.set_filter(slate.Filter(ctx.voice_client.filter, **self.INVERSE_EFFECT_MAP[effect]))
 
         else:
-            description = f"**enabled** the **{effect.value}** audio effect."
+            description = f"**Enabled** the **{effect.value}** audio effect."
             ctx.voice_client.effects.add(effect)
             await ctx.voice_client.set_filter(slate.Filter(ctx.voice_client.filter, **self.EFFECT_MAP[effect]))
 
@@ -95,7 +95,7 @@ class Effects(commands.Cog):
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description="**disabled** all audio effects."
+                description="**Disabled** all audio effects."
             )
         )
 

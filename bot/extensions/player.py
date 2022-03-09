@@ -22,7 +22,7 @@ def setup(bot: CD) -> None:
 
 class Player(commands.Cog):
     """
-    Commands for controlling the player.
+    Player control commands.
     """
 
     def __init__(self, bot: CD) -> None:
@@ -37,8 +37,8 @@ class Player(commands.Cog):
 
     # Connecting
 
-    @commands.command(name="join", aliases=["j", "connect", "summon"])
-    async def join(self, ctx: custom.Context) -> None:
+    @commands.command(name="connect", aliases=["join", "summon"])
+    async def _connect(self, ctx: custom.Context) -> None:
         """
         Connects the bot to your voice channel.
         """
@@ -46,28 +46,25 @@ class Player(commands.Cog):
         assert isinstance(ctx.author, discord.Member)
 
         if not ctx.author.voice or not ctx.author.voice.channel:
-            raise exceptions.EmbedError(description="you must be connected to a voice channel to use this command.")
+            raise exceptions.EmbedError(description="You must be connected to a voice channel to use this command.")
 
         if ctx.voice_client and ctx.voice_client.voice_channel:
-            raise exceptions.EmbedError(description=f"i am already connected to {ctx.voice_client.voice_channel.mention}.")
+            raise exceptions.EmbedError(description=f"I'm already connected to {ctx.voice_client.voice_channel.mention}.")
 
-        await ctx.author.voice.channel.connect(cls=custom.Player(text_channel=ctx.channel))  # type: ignore
-        ctx.voice_client.text_channel = ctx.channel  # type: ignore
-
-        assert ctx.voice_client is not None
         await ctx.send(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"Joined {ctx.voice_client.voice_channel.mention}."
+                description=f"**Connecting** to {ctx.author.voice.channel}."
             )
         )
+        await ctx.author.voice.channel.connect(cls=custom.Player(text_channel=ctx.channel))  # type: ignore
 
     @commands.command(name="disconnect", aliases=["dc", "leave", "destroy"])
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def disconnect(self, ctx: custom.Context) -> None:
+    async def _disconnect(self, ctx: custom.Context) -> None:
         """
-        Disconnects the bot from your voice channel.
+        Disconnects the bot from its voice channel.
         """
 
         assert ctx.voice_client is not None
@@ -75,7 +72,7 @@ class Player(commands.Cog):
         await ctx.send(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"Left {ctx.voice_client.voice_channel.mention}.")
+                description=f"**Disconnecting** from {ctx.voice_client.voice_channel.mention}.")
         )
         await ctx.voice_client.disconnect()
 
@@ -84,44 +81,44 @@ class Player(commands.Cog):
     @commands.command(name="pause", aliases=["stop"])
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def pause(self, ctx: custom.Context) -> None:
+    async def _pause(self, ctx: custom.Context) -> None:
         """
-        Pauses the current track.
+        Pauses the player
         """
 
         assert ctx.voice_client is not None
 
         if ctx.voice_client.paused is True:
-            raise exceptions.EmbedError(description="the current track is already paused.")
+            raise exceptions.EmbedError(description="The player is already paused.")
 
-        await ctx.voice_client.set_pause(True)
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description="**paused** the current track."
+                description="**Pausing** the player."
             )
         )
+        await ctx.voice_client.set_pause(True)
 
-    @commands.command(name="resume", aliases=["unpause", "continue"])
+    @commands.command(name="resume", aliases=["continue", "unpause"])
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def resume(self, ctx: custom.Context) -> None:
+    async def _resume(self, ctx: custom.Context) -> None:
         """
-        Resumes the current track.
+        Resumes the player.
         """
 
         assert ctx.voice_client is not None
 
         if ctx.voice_client.paused is False:
-            raise exceptions.EmbedError(description="the current track is already playing.")
+            raise exceptions.EmbedError(description="The player is already playing.")
 
-        await ctx.voice_client.set_pause(False)
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description="**resumed** the current track."
+                description="**Resuming** the player."
             )
         )
+        await ctx.voice_client.set_pause(False)
 
     # Seeking
 
@@ -130,12 +127,12 @@ class Player(commands.Cog):
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def seek(self, ctx: custom.Context, *, time: objects.FakeTimeConverter) -> None:
+    async def _seek(self, ctx: custom.Context, *, position: objects.FakeTimeConverter) -> None:
         """
-        Seeks to time in the current track.
+        Seeks to a position in the current track.
 
         **Arguments:**
-        `time`: The time to seek to, this can be in any of the following formats:
+        `position`: The position to seek to. Can be in any of the following formats:
         - `ss`
         - `mm:ss`
         - `hh:mm:ss`
@@ -152,34 +149,34 @@ class Player(commands.Cog):
         assert ctx.voice_client is not None
         assert ctx.voice_client.current is not None
 
-        milliseconds = time.seconds * 1000
+        milliseconds = position.seconds * 1000
 
         if 0 < milliseconds > ctx.voice_client.current.length:
             raise exceptions.EmbedError(
-                description=f"That is not a valid amount of time, please choose a time between "
-                            f"**0s** and **{utils.format_seconds(ctx.voice_client.current.length // 1000, friendly=True)}**.",
+                description=f"**{position.original}** is not a valid position, the current track is only "
+                            f"**{utils.format_seconds(ctx.voice_client.current.length // 1000, friendly=True)}** long.",
             )
-
-        await ctx.voice_client.set_position(milliseconds)
 
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"The players position is now **{utils.format_seconds(ctx.voice_client.position // 1000, friendly=True)}**."
+                description=f"**Setting** the players position to "
+                            f"**{utils.format_seconds(ctx.voice_client.position // 1000, friendly=True)}**."
             )
         )
+        await ctx.voice_client.set_position(milliseconds)
 
     @commands.command(name="fast-forward", aliases=["fast_forward", "fastforward", "ff", "forward", "fwd"])
     @checks.is_track_seekable()
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def fast_forward(self, ctx: custom.Context, *, time: objects.FakeTimeConverter) -> None:
+    async def _fast_forward(self, ctx: custom.Context, *, time: objects.FakeTimeConverter) -> None:
         """
         Fast-forwards the current track by an amount of time.
 
         **Arguments:**
-        `time`: The amount of time to fast-forward by, this can be in any of the following formats:
+        `time`: The amount of time to fast-forward by. Can be in any of the following formats:
         - `ss`
         - `mm:ss`
         - `hh:mm:ss`
@@ -202,31 +199,30 @@ class Player(commands.Cog):
 
         if milliseconds >= remaining:
             raise exceptions.EmbedError(
-                description=f"That was too much time to seek forward, try seeking forward an amount less than "
-                            f"**{utils.format_seconds(remaining // 1000, friendly=True)}**.",
+                description=f"**{time.original}** is too much time to fast forward, the current track only has "
+                            f"**{utils.format_seconds(remaining // 1000, friendly=True)}** remaining.",
             )
-
-        await ctx.voice_client.set_position(position + milliseconds)
 
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"Seeking forward **{utils.format_seconds(time.seconds, friendly=True)}**, the players position is now "
-                            f"**{utils.format_seconds(ctx.voice_client.position // 1000, friendly=True)}**."
+                description=f"**fast-forwarding** by **{utils.format_seconds(time.seconds, friendly=True)}**, the "
+                            f"players position will be **{utils.format_seconds(ctx.voice_client.position // 1000, friendly=True)}**."
             )
         )
+        await ctx.voice_client.set_position(position + milliseconds)
 
     @commands.command(name="rewind", aliases=["rwd", "backward", "bwd"])
     @checks.is_track_seekable()
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def rewind(self, ctx: custom.Context, *, time: objects.FakeTimeConverter) -> None:
+    async def _rewind(self, ctx: custom.Context, *, time: objects.FakeTimeConverter) -> None:
         """
         Rewinds the current track by an amount of time.
 
         **Arguments:**
-        `time`: The amount of time to rewind by, this can be in any of the following formats:
+        `time`: The amount of time to rewind by. Can be in any of the following formats:
         - `ss`
         - `mm:ss`
         - `hh:mm:ss`
@@ -248,26 +244,25 @@ class Player(commands.Cog):
 
         if milliseconds >= position:
             raise exceptions.EmbedError(
-                description=f"That was too much time to seek backward, try seeking backward an amount less than "
-                            f"**{utils.format_seconds(position // 1000, friendly=True)}**."
+                description=f"**{time.original}** is too much time to rewind, only "
+                            f"**{utils.format_seconds(position // 1000, friendly=True)}** of the current track has passed."
             )
-
-        await ctx.voice_client.set_position(position - milliseconds)
 
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"Seeking backward **{utils.format_seconds(time.seconds, friendly=True)}**, the players position is now "
-                            f"**{utils.format_seconds(ctx.voice_client.position // 1000, friendly=True)}**."
+                description=f"**rewinding** by **{utils.format_seconds(time.seconds, friendly=True)}**, the players "
+                            f"position will be **{utils.format_seconds(ctx.voice_client.position // 1000, friendly=True)}**."
             )
         )
+        await ctx.voice_client.set_position(position - milliseconds)
 
     @commands.command(name="replay", aliases=["restart"])
     @checks.is_track_seekable()
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def replay(self, ctx: custom.Context) -> None:
+    async def _replay(self, ctx: custom.Context) -> None:
         """
         Replays the current track.
         """
@@ -275,21 +270,20 @@ class Player(commands.Cog):
         assert ctx.voice_client is not None
         assert ctx.voice_client.current is not None
 
-        await ctx.voice_client.set_position(0)
-
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"Replaying **[{ctx.voice_client.current.title}]({ctx.voice_client.current.uri})** by **{ctx.voice_client.current.author}**."
+                description="**replaying** the current track."
             )
         )
+        await ctx.voice_client.set_position(0)
 
-    # Misc
+    # Now playing
 
     @commands.command(name="now-playing", aliases=["now_playing", "nowplaying", "np"])
     @checks.is_player_playing()
     @checks.is_player_connected()
-    async def now_playing(self, ctx: custom.Context) -> None:
+    async def _now_playing(self, ctx: custom.Context) -> None:
         """
         Shows the current track.
         """
@@ -302,7 +296,7 @@ class Player(commands.Cog):
     # Skipping
 
     @staticmethod
-    async def _try_force_skip(ctx: custom.Context) -> None:
+    async def _check_force_skip_permissions(ctx: custom.Context) -> None:
 
         _checks = [
             checks.is_owner(),
@@ -329,70 +323,69 @@ class Player(commands.Cog):
         try:
             await commands.check_any(*_checks).predicate(ctx=ctx)  # type: ignore
         except (commands.CheckAnyFailure, commands.MissingRole):
-            raise exceptions.EmbedError(
-                colour=values.RED,
-                description="you don't have permission to force skip."
-            )
+            raise exceptions.EmbedError(description="You don't have permission to force skip.")
 
     @commands.command(name="force-skip", aliases=["force_skip", "forceskip", "fs", "skipto"])
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def force_skip(self, ctx: custom.Context, amount: Optional[int]) -> None:
+    async def _force_skip(self, ctx: custom.Context, amount: int = 0) -> None:
         """
-        Force skips the current track.
+        Force skips tracks in the queue.
 
         **Arguments:**
         `amount`: An optional amount of tracks to skip, defaults to 1.
 
         **Note:**
-        You can only use this command if you meet one of the following requirements:
+        You can only use this command if you meet one (or more) of the following requirements:
         - You are the owner of the bot.
-        - You are the owner of the server.
-        - You have the `Manage Channels`, `Manage Roles`, `Manage Guild`, `Kick Members`, `Ban Members`, or `Administrator` permission.
+        - You are the owner of this server.
+        - You have the `Manage Channels`, `Manage Roles`, `Manage Guild`, `Kick Members`, `Ban Members`, or `Administrator` permissions.
         - You have the servers DJ role.
         """
 
-        await self._try_force_skip(ctx)
+        await self._check_force_skip_permissions(ctx)
 
         assert ctx.voice_client is not None
 
         if amount:
-
             if 0 <= amount > len(ctx.voice_client.queue) + 1:
                 raise exceptions.EmbedError(
-                    description=f"There are not enough tracks in the queue to skip that many, try again with an amount between "
-                                f"**1** and **{len(ctx.voice_client.queue) + 1}**.",
+                    description=f"**{amount}** is not a valid amount of tracks to skip, there are only"
+                                f"**{len(ctx.voice_client.queue) + 1}** tracks in the queue."
                 )
-
             del ctx.voice_client.queue[:amount - 1]
 
         await ctx.voice_client.stop()
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"Force skipped **{amount or 1}** track{'s' if (amount or 1) != 1 else ''}."
+                description=f"Skipped **{amount or 1}** track{'s' if (amount or 1) != 1 else ''}."
             )
         )
+
         ctx.voice_client.skip_request_ids.clear()
 
-    @commands.command(name="vote-skip", aliases=["vote_skip", "voteskip", "vs", "skip", "s"])
+    @commands.command(name="skip", aliases=["s", "vote-skip", "vote_skip", "voteskip", "vs"])
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def vote_skip(self, ctx: custom.Context) -> None:
+    async def _skip(self, ctx: custom.Context) -> None:
         """
         Starts a vote-skip for the current track.
 
-        If you meet any of the following, the track will be force skipped:
+        **Note:**
+        If you meet one or more of the following conditions, the track will be force skipped:
         - You are the owner of the bot.
-        - You are the owner of the server.
-        - You have the `Manage Channels`, `Manage Roles`, `Manage Guild`, `Kick Members`, `Ban Members`, or `Administrator` permission.
+        - You are the owner of this server.
+        - You have the `Manage Channels`, `Manage Roles`, `Manage Guild`, `Kick Members`, `Ban Members`, or `Administrator` permissions.
+        - You have the servers DJ role.
+        - You are the requester of the current track.
         """
 
         try:
-            await self._try_force_skip(ctx)
-            await self.force_skip(ctx, amount=None)
+            await self._check_force_skip_permissions(ctx)
+            await self._force_skip.invoke(ctx, amount=0)
             return
         except exceptions.EmbedError:
             pass
@@ -402,7 +395,7 @@ class Player(commands.Cog):
         assert ctx.voice_client.current.requester is not None
 
         if ctx.author not in ctx.voice_client.listeners:
-            raise exceptions.EmbedError(description="you can not vote skip as you are currently deafened.")
+            raise exceptions.EmbedError(description="You can't vote to skip because you are currently deafened.")
 
         async def skip() -> None:
 
@@ -418,35 +411,34 @@ class Player(commands.Cog):
 
         if ctx.author.id == ctx.voice_client.current.requester.id:
             await skip()
+            return
 
-        elif ctx.author.id in ctx.voice_client.skip_request_ids:
+        if ctx.author.id in ctx.voice_client.skip_request_ids:
 
             ctx.voice_client.skip_request_ids.remove(ctx.author.id)
             await ctx.reply(
                 embed=utils.embed(
                     colour=values.GREEN,
-                    description="Removed your vote to skip."
+                    description="**Removed** your vote to skip."
                 )
             )
+            return
 
-        else:
+        skips_needed = math.floor(75 * len(ctx.voice_client.listeners) / 100)
 
-            skips_needed = math.floor(75 * len(ctx.voice_client.listeners) / 100)
+        if len(ctx.voice_client.listeners) < 3 or (len(ctx.voice_client.skip_request_ids) + 1) >= skips_needed:
+            await skip()
+            return
 
-            if len(ctx.voice_client.listeners) < 3 or (len(ctx.voice_client.skip_request_ids) + 1) >= skips_needed:
-                await skip()
+        ctx.voice_client.skip_request_ids.add(ctx.author.id)
+        await ctx.reply(
+            embed=utils.embed(
+                colour=values.GREEN,
+                description=f"**Added** your vote to skip, now at **{len(ctx.voice_client.skip_request_ids)}** out of **{skips_needed}** votes."
+            )
+        )
 
-            else:
-                ctx.voice_client.skip_request_ids.add(ctx.author.id)
-                await ctx.reply(
-                    embed=utils.embed(
-                        colour=values.GREEN,
-                        description=f"Added your vote to skip, now at **{len(ctx.voice_client.skip_request_ids)}** out of **{skips_needed}** votes "
-                                    f"needed to skip."
-                    )
-                )
-
-    # Lyrics
+    # TODO: Refactor the following.
 
     @commands.command(name="lyrics")
     async def lyrics(self, ctx: custom.Context, *, query: Optional[str]) -> None:
@@ -481,22 +473,13 @@ class Player(commands.Cog):
         match query:
             case "spotify":
                 if not (query := get_spotify_query()):
-                    raise exceptions.EmbedError(
-                        colour=values.RED,
-                        description="You don't have an active spotify status.",
-                    )
+                    raise exceptions.EmbedError(description="You don't have an active spotify status.")
             case "player":
                 if not (query := get_player_query()):
-                    raise exceptions.EmbedError(
-                        colour=values.RED,
-                        description="I am not playing any tracks.",
-                    )
+                    raise exceptions.EmbedError(description="I am not playing any tracks.")
             case _:
                 if query is None and not (query := get_spotify_query()) and not (query := get_player_query()):
-                    raise exceptions.EmbedError(
-                        colour=values.RED,
-                        description="You didn't specify a search query.",
-                    )
+                    raise exceptions.EmbedError(description="You didn't specify a search query.")
 
         async with self.bot.session.get(
                 url="https://evan.lol/lyrics/search/top",
@@ -507,15 +490,9 @@ class Player(commands.Cog):
                 case 200:
                     data = await response.json()
                 case 404:
-                    raise exceptions.EmbedError(
-                        colour=values.RED,
-                        description=f"No lyrics were found for **{query}**.",
-                    )
+                    raise exceptions.EmbedError(description=f"No lyrics were found for **{query}**.")
                 case _:
-                    raise exceptions.EmbedError(
-                        colour=values.RED,
-                        description=f"Lyrics are unavailable right now, please try again later."
-                    )
+                    raise exceptions.EmbedError(description=f"Lyrics are unavailable right now, please try again later.")
 
         entries = []
 
@@ -543,7 +520,7 @@ class Player(commands.Cog):
         assert isinstance(ctx.author, discord.Member)
 
         if not (activity := discord.utils.find(lambda x: isinstance(x, discord.Spotify), ctx.author.activities)):
-            raise exceptions.EmbedError(description="you dont have an active spotify status.")
+            raise exceptions.EmbedError(description="You dont have an active spotify status.")
 
         assert isinstance(activity, discord.Spotify)
         image = objects.FakeImage(url=activity.album_cover_url)

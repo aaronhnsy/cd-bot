@@ -38,8 +38,4 @@ class EnumConverter(Generic[EnumType], commands.Converter[EnumType]):
             return enum
 
         options = [f"- **{option}**" for option in [repeat_type.name.replace("_", " ").lower() for repeat_type in self.enum]]
-
-        raise exceptions.EmbedError(
-            colour=values.RED,
-            description=f"**{self.name}** must be one of:\n{values.NL.join(options)}",
-        )
+        raise exceptions.EmbedError(description=f"**{self.name}** must be one of:\n{values.NL.join(options)}")

@@ -27,24 +27,15 @@ class PrefixConverter(commands.Converter[objects.FakePrefixConverter]):
     async def convert(self, ctx: commands.Context[CD], argument: str) -> objects.FakePrefixConverter:
 
         if not (argument := (await commands.clean_content(escape_markdown=True).convert(ctx=ctx, argument=argument)).lstrip()):
-            raise exceptions.EmbedError(
-                colour=values.RED,
-                description="you must provide a prefix."
-            )
+            raise exceptions.EmbedError(description="You must provide a prefix.")
 
         if len(argument) > 50:
-            raise exceptions.EmbedError(
-                colour=values.RED,
-                description="your prefix must be 50 characters or less."
-            )
+            raise exceptions.EmbedError(description="Your prefix must be 50 characters or less.")
 
         assert ctx.guild is not None
         guild_config = await ctx.bot.config.get_guild_config(ctx.guild.id)
 
         if argument == guild_config.prefix:
-            raise exceptions.EmbedError(
-                colour=values.RED,
-                description="your prefix can not be the same as the current prefix."
-            )
+            raise exceptions.EmbedError(description="Your prefix can not be the same as the current prefix.")
 
         return objects.FakePrefixConverter(argument)

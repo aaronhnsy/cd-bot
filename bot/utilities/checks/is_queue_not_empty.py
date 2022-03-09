@@ -25,7 +25,7 @@ def is_queue_not_empty() -> Callable[[T], T]:
     async def predicate(ctx: custom.Context) -> Literal[True]:
 
         if not ctx.voice_client or not ctx.voice_client.queue._queue:
-            raise exceptions.EmbedError(description="the queue is empty.")
+            raise exceptions.EmbedError(description="The queue is empty.")
 
         return True
 
@@ -37,7 +37,7 @@ def is_queue_history_not_empty() -> Callable[[T], T]:
     async def predicate(ctx: custom.Context) -> Literal[True]:
 
         if not ctx.voice_client or not ctx.voice_client.queue._history:
-            raise exceptions.EmbedError(description="the queue history is empty.")
+            raise exceptions.EmbedError(description="The queue history is empty.")
 
         return True
 

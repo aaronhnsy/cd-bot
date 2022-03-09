@@ -145,7 +145,7 @@ class Information(commands.Cog):
 
         else:
             if (obj := self.bot.get_command(command.replace(".", ""))) is None:  # type: ignore
-                raise exceptions.EmbedError(description="i couldn't find that command.")
+                raise exceptions.EmbedError(description="I couldn't find that command.")
 
             source = obj.callback.__code__
             filename = source.co_filename

@@ -108,7 +108,7 @@ class SearchSelect(discord.ui.Select[SearchView]):
             await interaction.response.send_message(
                 embed=utils.embed(
                     colour=values.GREEN,
-                    description=f"added the **{self.view.search.source.value.lower()}** track "
+                    description=f"Added the **{self.view.search.source.value.lower()}** track "
                                 f"**[{discord.utils.escape_markdown(tracks[0].title)}]({tracks[0].uri})** "
                                 f"by **{discord.utils.escape_markdown(tracks[0].author or 'unknown')}** to the queue."
                 )
@@ -417,7 +417,7 @@ class Player(slate.Player["CD", custom.Context, "Player"]):
                 await self.text_channel.send(
                     embed=utils.embed(
                         colour=values.RED,
-                        description=f"no youtube tracks were found for **[{discord.utils.escape_markdown(track.title)}]({track.uri})** by **{discord.utils.escape_markdown(track.author or 'Unknown')}** on spotify."
+                        description=f"No youtube tracks were found for **[{discord.utils.escape_markdown(track.title)}]({track.uri})** by **{discord.utils.escape_markdown(track.author or 'Unknown')}** on spotify."
                     )
                 )
                 await self.handle_track_end(enums.TrackEndReason.NORMAL)
@@ -446,8 +446,7 @@ class Player(slate.Player["CD", custom.Context, "Player"]):
 
         except slate.NoResultsFound as error:
             raise exceptions.EmbedError(
-                colour=values.RED,
-                description=f"no {error.source.value.lower().replace('_', ' ')} {error.type}s were found for your search.",
+                description=f"No {error.source.value.lower().replace('_', ' ')} {error.type}s were found for your search.",
             )
 
         except (slate.SearchFailed, slate.HTTPError):
@@ -456,8 +455,7 @@ class Player(slate.Player["CD", custom.Context, "Player"]):
             view.add_item(discord.ui.Button(label="Support Server", url=values.SUPPORT_LINK))
 
             raise exceptions.EmbedError(
-                colour=values.RED,
-                description="there was an error while searching for results, try again later.",
+                description="There was an error while searching for results, try again later.",
                 view=view,
             )
 
@@ -492,7 +490,7 @@ class Player(slate.Player["CD", custom.Context, "Player"]):
                 await ctx.reply(
                     embed=utils.embed(
                         colour=values.GREEN,
-                        description=f"added the **{search.source.value.lower()}** track **[{discord.utils.escape_markdown(track.title)}]({track.uri})** "
+                        description=f"Added the **{search.source.value.lower()}** track **[{discord.utils.escape_markdown(track.title)}]({track.uri})** "
                                     f"by **{discord.utils.escape_markdown(track.author or 'Unknown')}** to the queue."
                     )
                 )
@@ -504,7 +502,7 @@ class Player(slate.Player["CD", custom.Context, "Player"]):
                 await ctx.reply(
                     embed=utils.embed(
                         colour=values.GREEN,
-                        description=f"added the **{search.source.value.lower()}** {search.type.lower()} **[{search.result.name}]({search.result.url})** "
+                        description=f"Added the **{search.source.value.lower()}** {search.type.lower()} **[{search.result.name}]({search.result.url})** "
                                     f"to the queue."
                     )
                 )

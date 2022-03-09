@@ -69,7 +69,7 @@ class HelpCommand(commands.HelpCommand):
             )
 
         if not entries:
-            raise exceptions.EmbedError(description="there are no loaded categories.")
+            raise exceptions.EmbedError(description="There are no loaded categories.")
 
         paginator = paginators.FieldsPaginator(
             ctx=self.context,

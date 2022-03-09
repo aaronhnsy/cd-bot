@@ -63,6 +63,6 @@ class TimeConverter(commands.Converter[objects.FakeTimeConverter]):
             try:
                 seconds = int(argument)
             except ValueError:
-                raise exceptions.EmbedError(description="that time format was not recognized.")
+                raise exceptions.EmbedError(description="That time format was not recognized.")
 
-        return objects.FakeTimeConverter(seconds)
+        return objects.FakeTimeConverter(seconds, argument)

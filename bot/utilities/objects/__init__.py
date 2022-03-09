@@ -8,8 +8,9 @@ from utilities.objects.user import *
 
 class FakeTimeConverter:
 
-    def __init__(self, seconds: int) -> None:
+    def __init__(self, seconds: int, original: str) -> None:
         self.seconds: int = seconds
+        self.original: str = original
 
 
 class FakePrefixConverter:
