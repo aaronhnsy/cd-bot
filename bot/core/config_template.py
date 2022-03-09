@@ -26,7 +26,6 @@ NODES: list[dict[str, str]] = [
     },
 ]
 
-CDN_TOKEN: str = ""
 SPOTIFY_CLIENT_ID: str = ""
 SPOTIFY_CLIENT_SECRET: str = ""
 
@@ -34,3 +33,5 @@ ERROR_WEBHOOK_URL: str = ""
 GUILD_WEBHOOK_URL: str = ""
 DM_WEBHOOK_URL: str = ""
 COMMAND_WEBHOOK_URL: str = ""
+
+CDN_TOKEN: str = ""

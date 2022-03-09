@@ -14,8 +14,8 @@ class FakeTimeConverter:
 
 class FakePrefixConverter:
 
-    def __init__(self, prefix: str) -> None:
-        self.prefix: str = prefix
+    def __init__(self, value: str) -> None:
+        self.value: str = value
 
 
 class FakeImage:
