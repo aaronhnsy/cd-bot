@@ -21,7 +21,7 @@ def setup(bot: CD) -> None:
 
 class Queue(commands.Cog):
     """
-    Commands for managing the queue.
+    Queue management commands.
     """
 
     def __init__(self, bot: CD) -> None:
@@ -109,7 +109,7 @@ class Queue(commands.Cog):
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description="The queue has been cleared."
+                description="**Cleared** the queue."
             )
         )
 
@@ -128,7 +128,7 @@ class Queue(commands.Cog):
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description="The queue has been shuffled."
+                description="**Shuffled** the queue."
             )
         )
 
@@ -147,7 +147,7 @@ class Queue(commands.Cog):
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description="The queue has been reversed."
+                description="**Reversed** the queue."
             )
         )
 
@@ -186,7 +186,7 @@ class Queue(commands.Cog):
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"Tracks in the queue have been {'inversely ' if reverse else ''}sorted by **{method}**."
+                description=f"**{'Inversely sorted' if reverse else 'Sorted'}** the queue by **{method}**."
             )
         )
 
@@ -206,7 +206,8 @@ class Queue(commands.Cog):
 
         if entry <= 0 or entry > len(ctx.voice_client.queue):
             raise exceptions.EmbedError(
-                description=f"That was not a valid track entry, try again with a number between **1** and **{len(ctx.voice_client.queue)}**.",
+                description=f"**{entry}** is not a valid queue position, the queue only has "
+                            f"**{len(ctx.voice_client.queue)}** track{'s' if len(ctx.voice_client.queue) > 1 else ''}.",
             )
 
         track = ctx.voice_client.queue.get(entry - 1, put_history=False)
@@ -215,7 +216,7 @@ class Queue(commands.Cog):
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"Removed **[{discord.utils.escape_markdown(track.title)}]({track.uri})** "
+                description=f"Removed **{entry}. [{discord.utils.escape_markdown(track.title)}]({track.uri})** "
                             f"by **{discord.utils.escape_markdown(track.author or 'Unknown')}** from the queue."
             )
         )
@@ -224,35 +225,37 @@ class Queue(commands.Cog):
     @checks.is_queue_not_empty()
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def move(self, ctx: custom.Context, entry_1: int = 0, entry_2: int = 0) -> None:
+    async def move(self, ctx: custom.Context, entry: int = 0, to: int = 0) -> None:
         """
         Moves a track in the queue.
 
         **Arguments:**
-        `entry_1`: The index of the track to move.
-        `entry_2`: The index to move the track to.
+        `entry`: The index of the track to move.
+        `to`: The index to move the track to.
         """
 
         assert ctx.voice_client is not None
 
-        if entry_1 <= 0 or entry_1 > len(ctx.voice_client.queue):
+        if entry <= 0 or entry > len(ctx.voice_client.queue):
             raise exceptions.EmbedError(
-                description=f"That was not a valid track entry to move from, try again with a number between **1** and **{len(ctx.voice_client.queue)}**.",
+                description=f"**{entry}** is not a valid queue position, the queue only has "
+                            f"**{len(ctx.voice_client.queue)}** track{'s' if len(ctx.voice_client.queue) > 1 else ''}.",
             )
-        if entry_2 <= 0 or entry_2 > len(ctx.voice_client.queue):
+        if to <= 0 or to > len(ctx.voice_client.queue):
             raise exceptions.EmbedError(
-                description=f"That was not a valid track entry to move too, try again with a number between **1** and **{len(ctx.voice_client.queue)}**.",
+                description=f"**{to}** is not a valid queue position, the queue only has "
+                            f"**{len(ctx.voice_client.queue)}** track{'s' if len(ctx.voice_client.queue) > 1 else ''}.",
             )
 
-        track = ctx.voice_client.queue.get(entry_1 - 1, put_history=False)
+        track = ctx.voice_client.queue.get(entry - 1, put_history=False)
         assert track is not None
 
-        ctx.voice_client.queue.put(track, position=entry_2 - 1)
+        ctx.voice_client.queue.put(track, position=to - 1)
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"Moved **[{discord.utils.escape_markdown(track.title)}]({track.uri})** "
-                            f"by **{discord.utils.escape_markdown(track.author or 'Unknown')}** from position **{entry_1}** to position **{entry_2}**.",
+                description=f"Moved **{entry}. [{discord.utils.escape_markdown(track.title)}]({track.uri})** "
+                            f"by **{discord.utils.escape_markdown(track.author or 'Unknown')}** from position **{entry}** to position **{to}**.",
             )
         )
 
@@ -268,15 +271,33 @@ class Queue(commands.Cog):
         assert ctx.voice_client is not None
 
         ctx.voice_client.queue._queue = list({track.identifier: track for track in ctx.voice_client.queue._queue}.values())
-
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description="Removed all duplicate tracks in the queue.",
+                description="**Removed** duplicate tracks from the queue."
             )
         )
 
     # Looping
+
+    @staticmethod
+    async def _change_queue_loop_mode(ctx: custom.Context, *, current: bool) -> None:
+
+        assert ctx.voice_client is not None
+
+        mode = slate.QueueLoopMode.CURRENT if current else slate.QueueLoopMode.QUEUE
+
+        if ctx.voice_client.queue.loop_mode != mode:
+            ctx.voice_client.queue.set_loop_mode(mode)
+        else:
+            ctx.voice_client.queue.set_loop_mode(slate.QueueLoopMode.OFF)
+
+        await ctx.reply(
+            embed=utils.embed(
+                colour=values.GREEN,
+                description=f"**Set** the queue loop mode to **{ctx.voice_client.queue.loop_mode.name.title()}**.",
+            )
+        )
 
     @commands.command(name="loop-current", aliases=["loop_current", "loopcurrent", "loopc", "cloop"])
     @checks.is_author_connected()
@@ -285,20 +306,7 @@ class Queue(commands.Cog):
         """
         Loops the current track.
         """
-
-        assert ctx.voice_client is not None
-
-        if ctx.voice_client.queue.loop_mode != slate.QueueLoopMode.CURRENT:
-            ctx.voice_client.queue.set_loop_mode(slate.QueueLoopMode.CURRENT)
-        else:
-            ctx.voice_client.queue.set_loop_mode(slate.QueueLoopMode.OFF)
-
-        await ctx.reply(
-            embed=utils.embed(
-                colour=values.GREEN,
-                description=f"The queue looping mode is now **{ctx.voice_client.queue.loop_mode.name.title()}**.",
-            )
-        )
+        await self._change_queue_loop_mode(ctx, current=True)
 
     @commands.command(name="loop-queue", aliases=["loop_queue", "loopqueue", "loopq", "qloop", "loop"])
     @checks.is_author_connected()
@@ -307,17 +315,4 @@ class Queue(commands.Cog):
         """
         Loops the entire queue.
         """
-
-        assert ctx.voice_client is not None
-
-        if ctx.voice_client.queue.loop_mode != slate.QueueLoopMode.QUEUE:
-            ctx.voice_client.queue.set_loop_mode(slate.QueueLoopMode.QUEUE)
-        else:
-            ctx.voice_client.queue.set_loop_mode(slate.QueueLoopMode.OFF)
-
-        await ctx.reply(
-            embed=utils.embed(
-                colour=values.GREEN,
-                description=f"The queue looping mode is now **{ctx.voice_client.queue.loop_mode.name.title()}**.",
-            )
-        )
+        await self._change_queue_loop_mode(ctx, current=False)

@@ -99,7 +99,7 @@ class SearchSelect(discord.ui.Select[SearchView]):
             await interaction.response.send_message(
                 embed=utils.embed(
                     colour=values.GREEN,
-                    description="**added** the selected tracks to the queue."
+                    description="**Added** the selected tracks to the queue."
                 )
             )
             self.view.ctx.voice_client.queue.extend(tracks, position=position)

@@ -51,13 +51,13 @@ class Player(commands.Cog):
         if ctx.voice_client and ctx.voice_client.voice_channel:
             raise exceptions.EmbedError(description=f"I'm already connected to {ctx.voice_client.voice_channel.mention}.")
 
+        await ctx.author.voice.channel.connect(cls=custom.Player(text_channel=ctx.channel))  # type: ignore
         await ctx.send(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"**Connecting** to {ctx.author.voice.channel}."
+                description=f"**Connected** to {ctx.author.voice.channel}."
             )
         )
-        await ctx.author.voice.channel.connect(cls=custom.Player(text_channel=ctx.channel))  # type: ignore
 
     @commands.command(name="disconnect", aliases=["dc", "leave", "destroy"])
     @checks.is_author_connected()
@@ -72,7 +72,7 @@ class Player(commands.Cog):
         await ctx.send(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"**Disconnecting** from {ctx.voice_client.voice_channel.mention}.")
+                description=f"**Disconnected** from {ctx.voice_client.voice_channel.mention}.")
         )
         await ctx.voice_client.disconnect()
 
@@ -91,13 +91,13 @@ class Player(commands.Cog):
         if ctx.voice_client.paused is True:
             raise exceptions.EmbedError(description="The player is already paused.")
 
+        await ctx.voice_client.set_pause(True)
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description="**Pausing** the player."
+                description="**Paused** the player."
             )
         )
-        await ctx.voice_client.set_pause(True)
 
     @commands.command(name="resume", aliases=["continue", "unpause"])
     @checks.is_author_connected()
@@ -112,13 +112,13 @@ class Player(commands.Cog):
         if ctx.voice_client.paused is False:
             raise exceptions.EmbedError(description="The player is already playing.")
 
+        await ctx.voice_client.set_pause(False)
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description="**Resuming** the player."
+                description="**Resumed** the player."
             )
         )
-        await ctx.voice_client.set_pause(False)
 
     # Seeking
 
@@ -160,7 +160,7 @@ class Player(commands.Cog):
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"**Setting** the players position to "
+                description=f"**Set** the players position to "
                             f"**{utils.format_seconds(ctx.voice_client.position // 1000, friendly=True)}**."
             )
         )
@@ -206,8 +206,8 @@ class Player(commands.Cog):
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"**fast-forwarding** by **{utils.format_seconds(time.seconds, friendly=True)}**, the "
-                            f"players position will be **{utils.format_seconds(ctx.voice_client.position // 1000, friendly=True)}**."
+                description=f"**Fast-forwarding** by **{utils.format_seconds(time.seconds, friendly=True)}**, the "
+                            f"players position is now **{utils.format_seconds(ctx.voice_client.position // 1000, friendly=True)}**."
             )
         )
         await ctx.voice_client.set_position(position + milliseconds)
@@ -248,14 +248,14 @@ class Player(commands.Cog):
                             f"**{utils.format_seconds(position // 1000, friendly=True)}** of the current track has passed."
             )
 
+        await ctx.voice_client.set_position(position - milliseconds)
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"**rewinding** by **{utils.format_seconds(time.seconds, friendly=True)}**, the players "
-                            f"position will be **{utils.format_seconds(ctx.voice_client.position // 1000, friendly=True)}**."
+                description=f"**Rewinded** by **{utils.format_seconds(time.seconds, friendly=True)}**, the players "
+                            f"position is now **{utils.format_seconds(ctx.voice_client.position - milliseconds // 1000, friendly=True)}**."
             )
         )
-        await ctx.voice_client.set_position(position - milliseconds)
 
     @commands.command(name="replay", aliases=["restart"])
     @checks.is_track_seekable()
@@ -270,13 +270,13 @@ class Player(commands.Cog):
         assert ctx.voice_client is not None
         assert ctx.voice_client.current is not None
 
+        await ctx.voice_client.set_position(0)
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description="**replaying** the current track."
+                description="**Replaying** the current track."
             )
         )
-        await ctx.voice_client.set_position(0)
 
     # Now playing
 

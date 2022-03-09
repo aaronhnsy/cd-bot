@@ -182,6 +182,6 @@ class Effects(commands.Cog):
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description="**disabled** all audio effects."
+                description="**Disabled** all audio effects."
             )
         )
