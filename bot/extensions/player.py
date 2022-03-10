@@ -157,14 +157,14 @@ class Player(commands.Cog):
                             f"**{utils.format_seconds(ctx.voice_client.current.length // 1000, friendly=True)}** long.",
             )
 
+        await ctx.voice_client.set_position(milliseconds)
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
                 description=f"**Set** the players position to "
-                            f"**{utils.format_seconds(ctx.voice_client.position // 1000, friendly=True)}**."
+                            f"**{utils.format_seconds(milliseconds // 1000, friendly=True)}**."
             )
         )
-        await ctx.voice_client.set_position(milliseconds)
 
     @commands.command(name="fast-forward", aliases=["fast_forward", "fastforward", "ff", "forward", "fwd"])
     @checks.is_track_seekable()
@@ -203,14 +203,14 @@ class Player(commands.Cog):
                             f"**{utils.format_seconds(remaining // 1000, friendly=True)}** remaining.",
             )
 
+        await ctx.voice_client.set_position(position + milliseconds)
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
                 description=f"**Fast-forwarding** by **{utils.format_seconds(time.seconds, friendly=True)}**, the "
-                            f"players position is now **{utils.format_seconds(ctx.voice_client.position // 1000, friendly=True)}**."
+                            f"players position is now **{utils.format_seconds(position + milliseconds // 1000, friendly=True)}**."
             )
         )
-        await ctx.voice_client.set_position(position + milliseconds)
 
     @commands.command(name="rewind", aliases=["rwd", "backward", "bwd"])
     @checks.is_track_seekable()
@@ -253,7 +253,7 @@ class Player(commands.Cog):
             embed=utils.embed(
                 colour=values.GREEN,
                 description=f"**Rewinded** by **{utils.format_seconds(time.seconds, friendly=True)}**, the players "
-                            f"position is now **{utils.format_seconds(ctx.voice_client.position - milliseconds // 1000, friendly=True)}**."
+                            f"position is now **{utils.format_seconds(position - milliseconds // 1000, friendly=True)}**."
             )
         )
 
