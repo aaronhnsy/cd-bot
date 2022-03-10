@@ -208,7 +208,7 @@ class Player(commands.Cog):
             embed=utils.embed(
                 colour=values.GREEN,
                 description=f"**Fast-forwarding** by **{utils.format_seconds(time.seconds, friendly=True)}**, the "
-                            f"players position is now **{utils.format_seconds(position + milliseconds // 1000, friendly=True)}**."
+                            f"players position is now **{utils.format_seconds((position + milliseconds) // 1000, friendly=True)}**."
             )
         )
 
@@ -253,7 +253,7 @@ class Player(commands.Cog):
             embed=utils.embed(
                 colour=values.GREEN,
                 description=f"**Rewinded** by **{utils.format_seconds(time.seconds, friendly=True)}**, the players "
-                            f"position is now **{utils.format_seconds(position - milliseconds // 1000, friendly=True)}**."
+                            f"position is now **{utils.format_seconds((position - milliseconds) // 1000, friendly=True)}**."
             )
         )
 
