@@ -366,7 +366,7 @@ class Player(commands.Cog):
 
         ctx.voice_client.skip_request_ids.clear()
 
-    @commands.command(name="skip", aliases=["s", "vote-skip", "vote_skip", "voteskip", "vs"])
+    @commands.command(name="skip", aliases=["vote-skip", "vote_skip", "voteskip", "vs"])
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()

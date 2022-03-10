@@ -254,7 +254,7 @@ class Queue(commands.Cog):
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"Moved **{entry}. [{discord.utils.escape_markdown(track.title)}]({track.uri})** "
+                description=f"Moved **[{discord.utils.escape_markdown(track.title)}]({track.uri})** "
                             f"by **{discord.utils.escape_markdown(track.author or 'Unknown')}** from position **{entry}** to position **{to}**.",
             )
         )
