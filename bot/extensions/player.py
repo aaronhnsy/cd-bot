@@ -252,7 +252,7 @@ class Player(commands.Cog):
         await ctx.reply(
             embed=utils.embed(
                 colour=values.GREEN,
-                description=f"**Rewinded** by **{utils.format_seconds(time.seconds, friendly=True)}**, the players "
+                description=f"**Rewinding** by **{utils.format_seconds(time.seconds, friendly=True)}**, the players "
                             f"position is now **{utils.format_seconds((position - milliseconds) // 1000, friendly=True)}**."
             )
         )
