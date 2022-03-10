@@ -385,7 +385,7 @@ class Player(commands.Cog):
 
         try:
             await self._check_force_skip_permissions(ctx)
-            await self._force_skip.invoke(ctx, amount=0)
+            await self._force_skip(ctx, amount=0)
             return
         except exceptions.EmbedError:
             pass
