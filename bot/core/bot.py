@@ -22,7 +22,7 @@ from discord.ext.alternatives import converter_dict as converter_dict
 
 # My stuff
 from core import config, values
-from utilities import checks, custom, enums, utils
+from utilities import checks, converters, custom, enums, objects, utils
 
 
 __log__: logging.Logger = logging.getLogger("bot")
@@ -75,7 +75,12 @@ class CD(commands.AutoShardedBot):
         }
         self.log_queue: dict[enums.LogType, list[discord.Embed]] = collections.defaultdict(list)
 
-        self.converters |= values.CONVERTERS
+        self.converters |= {
+            objects.FakeTimeConverter:   converters.TimeConverter,
+            objects.FakePrefixConverter: converters.PrefixConverter,
+            enums.EmbedSize:             converters.EnumConverter(enums.EmbedSize, "Embed size"),
+        }
+
         self.add_check(checks.bot, call_once=True)  # type: ignore
         self.log_loop.start()
 

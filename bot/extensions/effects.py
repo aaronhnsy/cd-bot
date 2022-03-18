@@ -24,7 +24,6 @@ class Effects(commands.Cog):
     """
 
     def __init__(self, bot: CD) -> None:
-        super().__init__()
         self.bot: CD = bot
 
     def cog_check(self, ctx: custom.Context) -> Literal[True]:  # pyright: reportIncompatibleMethodOverride=false

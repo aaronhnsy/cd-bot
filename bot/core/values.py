@@ -4,9 +4,6 @@ from __future__ import annotations
 # Packages
 import discord
 
-# My stuff
-from utilities import converters, enums, objects
-
 
 NQSP = " "
 ZWSP = "\u200b"
@@ -70,9 +67,3 @@ PREVIOUS = "<:previous:855193257633120286>"
 
 CODEBLOCK_START = f"```{NL}"
 CODEBLOCK_END = f"{NL}```"
-
-CONVERTERS = {
-    objects.FakeTimeConverter:   converters.TimeConverter,
-    objects.FakePrefixConverter: converters.PrefixConverter,
-    enums.EmbedSize:             converters.EnumConverter(enums.EmbedSize, "Embed size"),
-}
