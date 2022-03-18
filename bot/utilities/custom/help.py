@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 # Standard Library
+from collections.abc import Mapping
 from typing import Any
 
 # Packages
@@ -16,7 +17,7 @@ __all__ = (
     "HelpCommand",
 )
 
-Command = commands.Command[commands.Cog, Any, Any]
+Command = commands.Command[Any, Any, Any]
 Group = commands.Group[commands.Cog, Any, Any]
 
 
@@ -36,7 +37,7 @@ class HelpCommand(commands.HelpCommand):
 
     def filter_command_list(
         self,
-        command_list: list[Command | Group],
+        command_list: list[Command],
         /,
     ) -> list[Command | Group]:
 
@@ -49,7 +50,7 @@ class HelpCommand(commands.HelpCommand):
 
     #
 
-    async def send_bot_help(self, mapping: dict[commands.Cog | None, Command]) -> None:
+    async def send_bot_help(self, mapping: Mapping[commands.Cog | None, list[Command]]) -> None:
 
         entries: list[tuple[str, str]] = []
 
@@ -75,9 +76,9 @@ class HelpCommand(commands.HelpCommand):
             ctx=self.context,
             entries=entries,
             per_page=8,
-            title=f"{self.context.bot.user.name if self.context.bot.user else 'CD'} - Commands",
+            embed_title=f"{self.context.bot.user.name if self.context.bot.user else 'CD'} - Commands",
             embed_footer=f"Total commands: {len(self.filter_command_list(list(self.context.bot.walk_commands())))}",
-            thumbnail=utils.avatar(self.context.bot.user) if self.context.bot.user else None,
+            embed_thumbnail=utils.avatar(self.context.bot.user) if self.context.bot.user else None,
         )
         await paginator.start()
 
@@ -95,8 +96,8 @@ class HelpCommand(commands.HelpCommand):
                 ) for command in cog_commands
             ],
             per_page=8,
-            title=f"{cog.qualified_name} - Commands",
-            header=f"{cog.description or 'No description provided for this category.'}\n",
+            embed_title=f"{cog.qualified_name} - Commands",
+            embed_description=f"{cog.description or 'No description provided for this category.'}\n",
             embed_footer=f"Total commands: {len(cog_commands)}"
         )
         await paginator.start()
@@ -117,8 +118,8 @@ class HelpCommand(commands.HelpCommand):
                 ) for command in group_commands
             ],
             per_page=5,
-            title=f"{group.qualified_name} {' '.join([f'[{name}]' for name in group.clean_params.keys()])}",
-            header=f"{aliases}{group.help or 'No help provided for this group command.'}\n\n**Subcommands:**\n",
+            embed_title=f"{group.qualified_name} {' '.join([f'[{name}]' for name in group.clean_params.keys()])}",
+            embed_description=f"{aliases}{group.help or 'No help provided for this group command.'}\n\n**Subcommands:**\n",
             embed_footer=f"Total subcommands: {len(group_commands)}"
         )
         await paginator.start()

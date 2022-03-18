@@ -14,8 +14,8 @@ from core.bot import CD
 from utilities import custom, exceptions
 
 
-def setup(bot: CD) -> None:
-    bot.add_cog(Play(bot))
+async def setup(bot: CD) -> None:
+    await bot.add_cog(Play(bot))
 
 
 class Play(commands.Cog):
@@ -26,7 +26,7 @@ class Play(commands.Cog):
     def __init__(self, bot: CD) -> None:
         self.bot: CD = bot
 
-    def cog_check(self, ctx: commands.Context[CD]) -> Literal[True]:
+    def cog_check(self, ctx: custom.Context) -> Literal[True]:  # pyright: reportIncompatibleMethodOverride=false
 
         if not ctx.guild:
             raise commands.NoPrivateMessage()

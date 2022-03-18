@@ -21,8 +21,8 @@ from core.bot import CD
 from utilities import custom, exceptions, utils
 
 
-def setup(bot: CD) -> None:
-    bot.add_cog(Information(bot))
+async def setup(bot: CD) -> None:
+    await bot.add_cog(Information(bot))
 
 
 class Information(commands.Cog):

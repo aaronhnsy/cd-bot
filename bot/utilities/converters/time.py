@@ -3,18 +3,12 @@ from __future__ import annotations
 
 # Standard Library
 import re
-from typing import TYPE_CHECKING
 
 # Packages
 from discord.ext import commands
 
 # My stuff
-from utilities import exceptions, objects
-
-
-if TYPE_CHECKING:
-    # My stuff
-    from core.bot import CD
+from utilities import custom, exceptions, objects
 
 
 __all__ = (
@@ -45,7 +39,7 @@ $
 
 class TimeConverter(commands.Converter[objects.FakeTimeConverter]):
 
-    async def convert(self, ctx: commands.Context[CD], argument: str) -> objects.FakeTimeConverter:
+    async def convert(self, ctx: custom.Context, argument: str) -> objects.FakeTimeConverter:  # pyright: reportIncompatibleMethodOverride=false
 
         if (match := COLON_FORMAT_REGEX.match(argument)) or (match := HUMAN_FORMAT_REGEX.match(argument)):
 

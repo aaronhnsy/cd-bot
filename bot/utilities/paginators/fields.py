@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 # Standard Library
+import datetime
 from typing import Any
 
 # Packages
@@ -22,6 +23,7 @@ class FieldsPaginator(paginators.BasePaginator):
     def __init__(
         self,
         *,
+        # base
         ctx: custom.Context,
         entries: list[tuple[Any, Any]],
         per_page: int,
@@ -31,18 +33,20 @@ class FieldsPaginator(paginators.BasePaginator):
         delete_message: bool = False,
         codeblock: bool = False,
         splitter: str = "\n",
-        header: str | None = None,
-        footer: str | None = None,
+        # field-paginator-specific
+        embed_colour: discord.Colour | None = values.MAIN,
+        embed_title: str | None = None,
+        embed_url: str | None = None,
+        embed_description: str | None = None,
+        embed_timestamp: datetime.datetime | None = None,
         embed_footer: str | None = None,
-        embed_footer_url: str | None = None,
-        image: str | None = None,
-        thumbnail: str | None = None,
-        author: str | None = None,
-        author_url: str | None = None,
-        author_icon_url: str | None = None,
-        title: str | None = None,
-        url: str | None = None,
-        colour: discord.Colour = values.MAIN,
+        embed_footer_icon_url: str | None = None,
+        embed_image: str | None = None,
+        embed_thumbnail: str | None = None,
+        embed_author: str | None = None,
+        embed_author_url: str | None = None,
+        embed_author_icon_url: str | None = None,
+
     ) -> None:
 
         super().__init__(
@@ -58,42 +62,22 @@ class FieldsPaginator(paginators.BasePaginator):
             join_pages=False
         )
 
-        self.header: str = header or ""
-        self.footer: str = footer or ""
-
-        self.embed_footer: str | None = embed_footer
-        self.embed_footer_url: str | None = embed_footer_url
-
-        self.embed_image: str | None = image
-        self.embed_thumbnail: str | None = thumbnail
-
-        self.embed_author: str | None = author
-        self.embed_author_url: str | None = author_url
-        self.embed_author_icon_url: str | None = author_icon_url
-
-        self.embed_title: str | None = title
-        self.embed_url: str | None = url
-
-        self.embed_colour: discord.Colour = colour
-
         self.embed: discord.Embed = utils.embed(
+            colour=embed_colour,
+            title=embed_title,
+            url=embed_url,
+            description=embed_description,
+            timestamp=embed_timestamp,
             footer=embed_footer,
-            footer_url=embed_footer_url,
-            image=image,
-            thumbnail=thumbnail,
-            author=author,
-            author_url=author_url,
-            author_icon_url=author_icon_url,
-            title=title,
-            url=url,
-            colour=colour,
+            footer_icon_url=embed_footer_icon_url,
+            image=embed_image,
+            thumbnail=embed_thumbnail,
+            author=embed_author,
+            author_url=embed_author_url,
+            author_icon_url=embed_author_icon_url,
         )
 
-    #
-
     async def _update_page(self) -> None:
-
-        self.embed.description = f"{self.CODEBLOCK_START}{self.header}{self.footer}{self.CODEBLOCK_END}"
 
         self.embed.clear_fields()
 

@@ -17,7 +17,6 @@ from wand.drawing import Drawing
 from wand.image import Image
 
 # My stuff
-from core import values
 from utilities import custom, exceptions, objects, utils
 
 
@@ -355,7 +354,7 @@ def do_edit_image(edit_function: Callable[..., Any], image_bytes: bytes, pipe: C
     try:
         with Image(blob=image_bytes) as image, Color("transparent") as transparent:
 
-            if image.format != "GIF":
+            if image.format != "GIF":  # type: ignore
                 image.background_color = transparent
                 edit_function(image, **kwargs)
 

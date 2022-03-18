@@ -1,20 +1,11 @@
 # Future
 from __future__ import annotations
 
-# Standard Library
-from typing import TYPE_CHECKING
-
 # Packages
 from discord.ext import commands
 
 # My stuff
-from core import values
-from utilities import exceptions, objects
-
-
-if TYPE_CHECKING:
-    # My stuff
-    from core.bot import CD
+from utilities import custom, exceptions, objects
 
 
 __all__ = (
@@ -24,7 +15,7 @@ __all__ = (
 
 class PrefixConverter(commands.Converter[objects.FakePrefixConverter]):
 
-    async def convert(self, ctx: commands.Context[CD], argument: str) -> objects.FakePrefixConverter:
+    async def convert(self, ctx: custom.Context, argument: str) -> objects.FakePrefixConverter:  # pyright: reportIncompatibleMethodOverride=false
 
         if not (argument := (await commands.clean_content(escape_markdown=True).convert(ctx=ctx, argument=argument)).lstrip()):
             raise exceptions.EmbedError(description="You must provide a prefix.")

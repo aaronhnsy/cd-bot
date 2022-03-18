@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 # Standard Library
-from typing import TYPE_CHECKING, Generic, Type, TypeVar
+from typing import Generic, Type, TypeVar
 
 # Packages
 import discord
@@ -10,12 +10,7 @@ from discord.ext import commands
 
 # My stuff
 from core import values
-from utilities import exceptions
-
-
-if TYPE_CHECKING:
-    # My stuff
-    from core.bot import CD
+from utilities import custom, exceptions
 
 
 __all__ = (
@@ -32,7 +27,7 @@ class EnumConverter(Generic[EnumType], commands.Converter[EnumType]):
         self.enum: Type[EnumType] = enum
         self.name: str = name
 
-    async def convert(self, ctx: commands.Context[CD], argument: str) -> EnumType:
+    async def convert(self, ctx: custom.Context, argument: str) -> EnumType:  # pyright: reportIncompatibleMethodOverride=false
 
         if enum := getattr(self.enum, argument.replace(" ", "_").upper(), None):
             return enum

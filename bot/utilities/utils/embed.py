@@ -1,6 +1,9 @@
 # Future
 from __future__ import annotations
 
+# Standard Library
+import datetime
+
 # Packages
 import discord
 
@@ -11,48 +14,44 @@ __all__ = (
 
 
 def embed(
+    *,
+    # base
+    colour: discord.Colour | None = None,
+    title: str | None = None,
+    url: str | None = None,
+    description: str | None = None,
+    timestamp: datetime.datetime | None = None,
+    # footer
     footer: str | None = None,
-    footer_url: str | None = None,
+    footer_icon_url: str | None = None,
+    # images
     image: str | None = None,
     thumbnail: str | None = None,
+    # author
     author: str | None = None,
     author_url: str | None = None,
     author_icon_url: str | None = None,
-    title: str | None = None,
-    description: str | None = None,
-    url: str | None = None,
-    colour: discord.Colour | None = None,
+    # extras
     emoji: str | None = None,
 ) -> discord.Embed:
 
-    e = discord.Embed()
+    _embed = discord.Embed(
+        colour=colour,
+        title=title,
+        url=url,
+        description=description,
+        timestamp=timestamp,
+    )
+    if emoji is not None:
+        _embed.description = f"{emoji} \u200b {_embed.description}"
 
-    if footer:
-        e.set_footer(
-            text=footer,
-            icon_url=footer_url or discord.embeds.EmptyEmbed
-        )
-
-    if image:
-        e.set_image(url=image)
-    if thumbnail:
-        e.set_thumbnail(url=thumbnail)
-
+    if footer is not None:
+        _embed.set_footer(text=footer, icon_url=footer_icon_url)
+    if image is not None:
+        _embed.set_image(url=image)
+    if thumbnail is not None:
+        _embed.set_thumbnail(url=thumbnail)
     if author:
-        e.set_author(
-            name=author,
-            url=author_url or discord.embeds.EmptyEmbed,
-            icon_url=author_icon_url or discord.embeds.EmptyEmbed
-        )
+        _embed.set_author(name=author, url=author_url, icon_url=author_icon_url)
 
-    if title:
-        e.title = title
-    if description:
-        e.description = f"{emoji} \u200b {description}" if emoji else description
-    if url:
-        e.url = url
-
-    if colour:
-        e.colour = colour
-
-    return e
+    return _embed

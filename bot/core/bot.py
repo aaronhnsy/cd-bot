@@ -28,6 +28,15 @@ from utilities import checks, custom, enums, utils
 __log__: logging.Logger = logging.getLogger("bot")
 
 
+async def get_prefix(bot: CD, message: discord.Message) -> list[str]:
+
+    if not message.guild:
+        return commands.when_mentioned_or(config.PREFIX)(bot, message)
+
+    guild_config = await bot.config.get_guild_config(message.guild.id)
+    return commands.when_mentioned_or(guild_config.prefix or config.PREFIX)(bot, message)
+
+
 class CD(commands.AutoShardedBot):
 
     converters: dict[Any, Any]
@@ -39,7 +48,7 @@ class CD(commands.AutoShardedBot):
             allowed_mentions=discord.AllowedMentions(everyone=False, users=True, roles=True, replied_user=False),
             help_command=custom.HelpCommand(),
             intents=discord.Intents.all(),
-            command_prefix=self.get_prefix,
+            command_prefix=get_prefix,
             case_insensitive=True,
             owner_ids=values.OWNER_IDS,
         )
@@ -75,14 +84,6 @@ class CD(commands.AutoShardedBot):
     async def get_context(self, message: discord.Message, *, cls: Type[commands.Context[CD]] = custom.Context) -> commands.Context[CD]:
         return await super().get_context(message=message, cls=cls)
 
-    async def get_prefix(self, message: discord.Message) -> list[str]:
-
-        if not message.guild:
-            return commands.when_mentioned_or(config.PREFIX)(self, message)
-
-        guild_config = await self.config.get_guild_config(message.guild.id)
-        return commands.when_mentioned_or(guild_config.prefix or config.PREFIX)(self, message)
-
     async def is_owner(self, user: discord.abc.User) -> bool:
         return user.id in values.OWNER_IDS
 
@@ -111,7 +112,7 @@ class CD(commands.AutoShardedBot):
 
         for extension in values.EXTENSIONS:
             try:
-                self.load_extension(extension)
+                await self.load_extension(extension)
                 __log__.info(f"[EXTENSIONS] Loaded - {extension}")
             except commands.ExtensionNotFound:
                 __log__.warning(f"[EXTENSIONS] Extension not found - {extension}")

@@ -83,8 +83,8 @@ ERRORS: dict[Type[commands.CommandError], str] = {
 }
 
 
-def setup(bot: CD) -> None:
-    bot.add_cog(Events(bot))
+async def setup(bot: CD) -> None:
+    await bot.add_cog(Events(bot))
 
 
 class Events(commands.Cog):
