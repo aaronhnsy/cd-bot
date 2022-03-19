@@ -50,7 +50,7 @@ def setup_logger() -> None:
         "slate": logging.getLogger("slate"),
     }
     loggers["bot"].setLevel(logging.DEBUG)
-    loggers["slate"].setLevel(logging.DEBUG)
+    loggers["slate"].setLevel(logging.INFO)
 
     for name, logger in loggers.items():
 
