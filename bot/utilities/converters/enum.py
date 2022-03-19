@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 # Standard Library
-from typing import Generic, Type, TypeVar
+from typing import Generic, TypeVar
 
 # Packages
 import discord
@@ -23,8 +23,8 @@ EnumType = TypeVar("EnumType", bound=discord.Enum)
 
 class EnumConverter(Generic[EnumType], commands.Converter[EnumType]):
 
-    def __init__(self, enum: Type[EnumType], name: str) -> None:
-        self.enum: Type[EnumType] = enum
+    def __init__(self, enum: type[EnumType], name: str) -> None:
+        self.enum: type[EnumType] = enum
         self.name: str = name
 
     async def convert(self, ctx: custom.Context, argument: str) -> EnumType:  # pyright: reportIncompatibleMethodOverride=false

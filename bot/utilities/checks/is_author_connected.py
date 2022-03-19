@@ -2,7 +2,8 @@
 from __future__ import annotations
 
 # Standard Library
-from typing import Callable, Literal, TypeVar
+from collections.abc import Callable
+from typing import Literal, TypeVar
 
 # Packages
 import discord

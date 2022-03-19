@@ -6,8 +6,9 @@ import multiprocessing
 import sys
 import time
 import traceback
+from collections.abc import Callable
 from multiprocessing.connection import Connection
-from typing import Any, Callable, Literal
+from typing import Any, Literal
 
 # Packages
 import aiohttp

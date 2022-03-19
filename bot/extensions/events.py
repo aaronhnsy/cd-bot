@@ -5,7 +5,6 @@ from __future__ import annotations
 import asyncio
 import logging
 import traceback
-from typing import Type
 
 # Packages
 import discord
@@ -42,7 +41,7 @@ CONCURRENCY_BUCKETS = {
     commands.BucketType.category: "per channel category",
 }
 
-ERRORS: dict[Type[commands.CommandError], str] = {
+ERRORS: dict[type[commands.CommandError], str] = {
     commands.MissingRequiredArgument:       "You missed the **{error.param.name}** argument.",
     commands.TooManyArguments:              "You used too many arguments for this command.",
     commands.BadUnionArgument:              "I couldn't convert your **{error.param.name}** argument into any of the accepted types.",
