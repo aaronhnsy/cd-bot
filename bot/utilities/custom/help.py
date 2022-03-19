@@ -21,11 +21,9 @@ Command = commands.Command[Any, Any, Any]
 Group = commands.Group[commands.Cog, Any, Any]
 
 
-class HelpCommand(commands.HelpCommand):
+class HelpCommand(commands.HelpCommand[custom.Context]):
 
     def __init__(self) -> None:
-
-        self.context: custom.Context = utils.MISSING
 
         super().__init__(
             command_attrs={

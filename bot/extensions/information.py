@@ -139,16 +139,11 @@ class Information(commands.Cog):
             )
             return
 
-        if command == "help":
-            source = type(self.bot.help_command)
-            filename: str = str(inspect.getsourcefile(source))
+        if (obj := self.bot.get_command(command.replace(".", ""))) is None:  # type: ignore
+            raise exceptions.EmbedError(description="I couldn't find that command.")
 
-        else:
-            if (obj := self.bot.get_command(command.replace(".", ""))) is None:  # type: ignore
-                raise exceptions.EmbedError(description="I couldn't find that command.")
-
-            source = obj.callback.__code__
-            filename = source.co_filename
+        source = obj.callback.__code__
+        filename = source.co_filename
 
         lines, start_line_number = inspect.getsourcelines(source)
         location = os.path.relpath(filename).replace("\\", "/")
