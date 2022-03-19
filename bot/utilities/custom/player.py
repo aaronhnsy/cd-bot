@@ -238,7 +238,7 @@ class Controller:
 
     async def build_message(self) -> tuple[str | None, discord.Embed | None]:
 
-        guild_config = await self.voice_client.bot.config.get_guild_config(self.voice_client.voice_channel.guild.id)
+        guild_config = await self.voice_client.bot.manager.get_guild_config(self.voice_client.voice_channel.guild.id)
 
         match guild_config.embed_size:
             case enums.EmbedSize.IMAGE:
@@ -323,7 +323,7 @@ class Controller:
 
     async def handle_track_end(self, reason: enums.TrackEndReason) -> None:
 
-        guild_config = await self.voice_client.bot.config.get_guild_config(self.voice_client.voice_channel.guild.id)
+        guild_config = await self.voice_client.bot.manager.get_guild_config(self.voice_client.voice_channel.guild.id)
 
         if guild_config.delete_old_now_playing_messages:
             await self._delete_old_message()

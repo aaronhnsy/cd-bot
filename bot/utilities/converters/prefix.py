@@ -24,7 +24,7 @@ class PrefixConverter(commands.Converter[objects.FakePrefixConverter]):
             raise exceptions.EmbedError(description="Your prefix must be 50 characters or less.")
 
         assert ctx.guild is not None
-        guild_config = await ctx.bot.config.get_guild_config(ctx.guild.id)
+        guild_config = await ctx.bot.manager.get_guild_config(ctx.guild.id)
 
         if argument == guild_config.prefix:
             raise exceptions.EmbedError(description="Your prefix can not be the same as the current prefix.")

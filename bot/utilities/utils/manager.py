@@ -14,11 +14,11 @@ if TYPE_CHECKING:
 
 
 __all__ = (
-    "Config",
+    "Manager",
 )
 
 
-class Config:
+class Manager:
 
     def __init__(self, bot: CD) -> None:
         self.bot: CD = bot

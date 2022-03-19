@@ -312,7 +312,7 @@ class Player(commands.Cog):
         ]
 
         assert ctx.guild is not None
-        guild_config = await ctx.bot.config.get_guild_config(ctx.guild.id)
+        guild_config = await ctx.bot.manager.get_guild_config(ctx.guild.id)
 
         if guild_config.dj_role_id:
             if role := ctx.guild.get_role(guild_config.dj_role_id):

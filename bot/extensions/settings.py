@@ -62,7 +62,7 @@ class Settings(commands.Cog):
         """
 
         assert ctx.guild is not None
-        guild_config = await self.bot.config.get_guild_config(ctx.guild.id)
+        guild_config = await self.bot.manager.get_guild_config(ctx.guild.id)
 
         await ctx.send(
             embed=utils.embed(
@@ -93,7 +93,7 @@ class Settings(commands.Cog):
         await self._check_is_mod(ctx, "You don't have permission to change this servers prefix.")
 
         assert ctx.guild is not None
-        guild_config = await self.bot.config.get_guild_config(ctx.guild.id)
+        guild_config = await self.bot.manager.get_guild_config(ctx.guild.id)
 
         await guild_config.set_prefix(prefix.value)
 
@@ -119,7 +119,7 @@ class Settings(commands.Cog):
         await self._check_is_mod(ctx, "You don't have permission to change this servers prefix.")
 
         assert ctx.guild is not None
-        guild_config = await self.bot.config.get_guild_config(ctx.guild.id)
+        guild_config = await self.bot.manager.get_guild_config(ctx.guild.id)
 
         if not guild_config.prefix:
             raise exceptions.EmbedError(description="This server doesn't have a custom prefix.")
@@ -142,7 +142,7 @@ class Settings(commands.Cog):
         """
 
         assert ctx.guild is not None
-        guild_config = await self.bot.config.get_guild_config(ctx.guild.id)
+        guild_config = await self.bot.manager.get_guild_config(ctx.guild.id)
 
         if not guild_config.dj_role_id:
             raise exceptions.EmbedError(description="This server doesn't have a dj role.")
@@ -176,7 +176,7 @@ class Settings(commands.Cog):
         await self._check_is_mod(ctx, "You don't have permission to change this servers dj role.")
 
         assert ctx.guild is not None
-        guild_config = await self.bot.config.get_guild_config(ctx.guild.id)
+        guild_config = await self.bot.manager.get_guild_config(ctx.guild.id)
 
         await guild_config.set_dj_role_id(role.id)
 
@@ -202,7 +202,7 @@ class Settings(commands.Cog):
         await self._check_is_mod(ctx, "You don't have permission to change this servers dj role.")
 
         assert ctx.guild is not None
-        guild_config = await self.bot.config.get_guild_config(ctx.guild.id)
+        guild_config = await self.bot.manager.get_guild_config(ctx.guild.id)
 
         if not guild_config.dj_role_id:
             raise exceptions.EmbedError(description="This server doesn't have a dj role.")
@@ -225,7 +225,7 @@ class Settings(commands.Cog):
         """
 
         assert ctx.guild is not None
-        guild_config = await self.bot.config.get_guild_config(ctx.guild.id)
+        guild_config = await self.bot.manager.get_guild_config(ctx.guild.id)
 
         await ctx.send(
             embed=utils.embed(
@@ -252,7 +252,7 @@ class Settings(commands.Cog):
         await self._check_is_mod(ctx, "You don't have permission to change this servers embed size.")
 
         assert ctx.guild is not None
-        guild_config = await self.bot.config.get_guild_config(ctx.guild.id)
+        guild_config = await self.bot.manager.get_guild_config(ctx.guild.id)
 
         await guild_config.set_embed_size(embed_size)
 
@@ -278,7 +278,7 @@ class Settings(commands.Cog):
         await self._check_is_mod(ctx, "You don't have permission to change this servers embed size.")
 
         assert ctx.guild is not None
-        guild_config = await self.bot.config.get_guild_config(ctx.guild.id)
+        guild_config = await self.bot.manager.get_guild_config(ctx.guild.id)
 
         await guild_config.set_embed_size(enums.EmbedSize.LARGE)
 
