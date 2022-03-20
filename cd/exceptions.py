@@ -12,6 +12,12 @@ from discord.ext import commands
 from cd import utilities, values
 
 
+__all__ = (
+    "CDError",
+    "EmbedError",
+)
+
+
 class CDError(commands.CommandError):
     pass
 
