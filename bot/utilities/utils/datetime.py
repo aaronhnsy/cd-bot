@@ -25,7 +25,7 @@ def convert_datetime(
     datetime: dt.datetime | pendulum.DateTime, /
 ) -> pendulum.DateTime:
 
-    datetime.replace(microsecond=0)  # type: ignore
+    datetime.replace(microsecond=0)
 
     if type(datetime) is dt.datetime and datetime.tzinfo == dt.timezone.utc:
         datetime = datetime.replace(tzinfo=None)
@@ -41,7 +41,7 @@ def format_datetime(
     if isinstance(datetime, dt.datetime):
         datetime = convert_datetime(datetime)
 
-    return datetime.format(format.value)  # type: ignore
+    return datetime.format(format.value)
 
 
 def format_difference(
@@ -50,9 +50,12 @@ def format_difference(
 ) -> str:
 
     datetime = convert_datetime(datetime)
+
+    # pendulum typings are a big wrong :)
     now = pendulum.now(tz=datetime.timezone).replace(microsecond=0)  # type: ignore
 
-    return humanize.precisedelta(now.diff(datetime), format="%0.0f", suppress=suppress)  # type: ignore
+    # noinspection PyUnresolvedReferences
+    return humanize.precisedelta(now.diff(datetime), format="%0.0f", suppress=suppress)
 
 
 def format_seconds(

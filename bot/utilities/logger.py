@@ -37,6 +37,7 @@ class ColourFormatter(logging.Formatter):
         )
 
     def format(self, record: logging.LogRecord) -> str:
+        # Assigning a new attribute isn't allowed or something similar. Not sure.
         record.colour = self.COLOURS[record.levelno]  # type: ignore
         return super().format(record)
 

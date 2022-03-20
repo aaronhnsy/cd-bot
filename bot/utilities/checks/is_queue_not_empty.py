@@ -30,7 +30,7 @@ def is_queue_not_empty() -> Callable[[T], T]:
 
         return True
 
-    return commands.check(predicate)  # type: ignore
+    return commands.check(predicate)
 
 
 def is_queue_history_not_empty() -> Callable[[T], T]:
@@ -42,4 +42,4 @@ def is_queue_history_not_empty() -> Callable[[T], T]:
 
         return True
 
-    return commands.check(predicate)  # type: ignore
+    return commands.check(predicate)

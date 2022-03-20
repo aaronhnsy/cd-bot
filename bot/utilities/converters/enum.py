@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 # Standard Library
-from typing import Generic, TypeVar
+from typing import TypeVar
 
 # Packages
 import discord
@@ -21,7 +21,7 @@ __all__ = (
 EnumType = TypeVar("EnumType", bound=discord.Enum)
 
 
-class EnumConverter(Generic[EnumType], commands.Converter[EnumType]):
+class EnumConverter(commands.Converter[EnumType]):
 
     def __init__(self, enum: type[EnumType], name: str) -> None:
         self.enum: type[EnumType] = enum

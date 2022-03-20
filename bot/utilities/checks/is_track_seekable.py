@@ -29,4 +29,4 @@ def is_track_seekable() -> Callable[[T], T]:
 
         return True
 
-    return commands.check(predicate)  # type: ignore
+    return commands.check(predicate)

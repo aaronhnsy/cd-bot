@@ -69,7 +69,7 @@ class Information(commands.Cog):
     @commands.command(name="system", aliases=["sys"])
     async def system(self, ctx: custom.Context) -> None:
         """
-        See the bots system information.
+        See the bots' system information.
         """
 
         cpu_freq: Any = psutil.cpu_freq()
@@ -139,7 +139,7 @@ class Information(commands.Cog):
             )
             return
 
-        if (obj := self.bot.get_command(command.replace(".", ""))) is None:  # type: ignore
+        if (obj := self.bot.get_command(command.replace(".", ""))) is None:
             raise exceptions.EmbedError(description="I couldn't find that command.")
 
         source = obj.callback.__code__

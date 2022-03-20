@@ -25,4 +25,4 @@ def is_guild_owner() -> Callable[[T], T]:
     def predicate(ctx: custom.Context) -> bool:
         return ctx.guild is not None and ctx.guild.owner_id == ctx.author.id
 
-    return commands.check(predicate)  # type: ignore
+    return commands.check(predicate)

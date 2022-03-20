@@ -17,7 +17,7 @@ from utilities import custom, enums, exceptions, imaging, objects, utils
 
 
 if TYPE_CHECKING:
-
+    # noinspection PyUnresolvedReferences
     # My stuff
     from core.bot import CD
 
@@ -46,19 +46,18 @@ class SearchView(discord.ui.View):
 
         self.tracks: list[slate.Track[custom.Context]] = search.tracks[:25]
 
-        self.add_item(
-            SearchSelect(
-                placeholder="choose some tracks:",
-                max_values=len(self.tracks),
-                options=[
-                    discord.SelectOption(
-                        label=f"{track.title[:100]}",
-                        value=f"{index}",
-                        description=f"by {(track.author or 'Unknown')[:95]}"
-                    ) for index, track in enumerate(self.tracks)
-                ]
-            )
+        self.select = Select(
+            placeholder="choose some tracks:",
+            max_values=len(self.tracks),
+            options=[
+                discord.SelectOption(
+                    label=f"{track.title[:100]}",
+                    value=f"{index}",
+                    description=f"by {(track.author or 'Unknown')[:95]}"
+                ) for index, track in enumerate(self.tracks)
+            ]
         )
+        self.add_item(self.select)
 
         self.message: discord.Message | None = None
 
@@ -70,9 +69,8 @@ class SearchView(discord.ui.View):
 
     async def _finish_selection(self, *, placeholder: str) -> None:
 
-        select: SearchSelect = self.children[0]  # type: ignore
-        select.disabled = True
-        select.placeholder = placeholder
+        self.select.disabled = True
+        self.select.placeholder = placeholder
 
         if self.message:
             await self.message.edit(view=self)
@@ -80,7 +78,7 @@ class SearchView(discord.ui.View):
         self.stop()
 
 
-class SearchSelect(discord.ui.Select[SearchView]):
+class Select(discord.ui.Select[SearchView]):
 
     async def callback(self, interaction: discord.Interaction) -> None:
 
@@ -406,7 +404,7 @@ class Player(slate.Player["CD", custom.Context, "Player"]):
             track = self.queue.get()
             assert track is not None
 
-        # Convert spotify tracks to youtube tracks.
+        # Convert spotify tracks to YouTube tracks.
 
         if track.source is slate.Source.SPOTIFY:
 
@@ -442,7 +440,7 @@ class Player(slate.Player["CD", custom.Context, "Player"]):
             source = slate.Source.NONE
 
         try:
-            search = await self._node.search(query, source=source, ctx=ctx)  # type: ignore
+            search = await self._node.search(query, source=source, ctx=ctx)
 
         except slate.NoResultsFound as error:
             raise exceptions.EmbedError(

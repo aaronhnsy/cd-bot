@@ -28,6 +28,7 @@ def has_any_permission(**permissions: bool) -> Callable[[T], T]:
 
     def predicate(ctx: custom.Context) -> bool:
 
+        # permissions_for doesn't exist for certain channel types, but trust me, it's fine.
         current = dict(ctx.channel.permissions_for(ctx.author))  # type: ignore
 
         for permission in permissions.keys():
@@ -36,4 +37,4 @@ def has_any_permission(**permissions: bool) -> Callable[[T], T]:
 
         raise commands.CheckFailure()
 
-    return commands.check(predicate)  # type: ignore
+    return commands.check(predicate)

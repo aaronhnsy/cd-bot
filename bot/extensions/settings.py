@@ -36,20 +36,22 @@ class Settings(commands.Cog):
     @staticmethod
     async def _check_is_mod(ctx: custom.Context, message: str) -> None:
 
-        try:
-            await commands.check_any(  # type: ignore
-                checks.is_owner(),  # type: ignore
-                checks.is_guild_owner(),  # type: ignore
-                checks.has_any_permission(  # type: ignore
-                    manage_channels=True,
-                    manage_roles=True,
-                    manage_guild=True,
-                    kick_members=True,
-                    ban_members=True,
-                    administrator=True,
-                ),
-            ).predicate(ctx=ctx)
+        _checks = [
+            checks.is_owner(),
+            checks.is_guild_owner(),
+            checks.has_any_permission(
+                manage_channels=True,
+                manage_roles=True,
+                manage_guild=True,
+                kick_members=True,
+                ban_members=True,
+                administrator=True,
+            )
+        ]
 
+        try:
+            # noinspection PyUnresolvedReferences
+            await commands.check_any(*_checks).predicate(ctx=ctx)
         except commands.CheckAnyFailure:
             raise exceptions.EmbedError(description=message)
 

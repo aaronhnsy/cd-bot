@@ -38,7 +38,7 @@ class CD(commands.AutoShardedBot):
             allowed_mentions=discord.AllowedMentions(everyone=False, users=True, roles=False, replied_user=True),
             help_command=custom.HelpCommand(),
             intents=discord.Intents.all(),
-            command_prefix=self.get_prefix,  # type: ignore
+            command_prefix=self.__class__.get_prefix,
             case_insensitive=True,
             owner_ids=values.OWNER_IDS,
             owner_id=None,
@@ -169,7 +169,8 @@ class CD(commands.AutoShardedBot):
     async def log(
         self,
         _type: enums.LogType, /,
-        *, embed: discord.Embed
+        *,
+        embed: discord.Embed
     ) -> None:
         self._LOG_QUEUE[_type].append(embed)
 
@@ -178,7 +179,8 @@ class CD(commands.AutoShardedBot):
     async def get_context(
         self,
         message: discord.Message,
-        *, cls: type[commands.Context[CD]] = utils.MISSING
+        *,
+        cls: type[commands.Context[CD]] = utils.MISSING
     ) -> commands.Context[CD]:
         return await super().get_context(message=message, cls=custom.Context)
 

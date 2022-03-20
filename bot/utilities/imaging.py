@@ -355,7 +355,9 @@ def do_edit_image(edit_function: Callable[..., Any], image_bytes: bytes, pipe: C
     try:
         with Image(blob=image_bytes) as image, Color("transparent") as transparent:
 
-            if image.format != "GIF":  # type: ignore
+            assert isinstance(image.format, str)
+
+            if image.format != "GIF":
                 image.background_color = transparent
                 edit_function(image, **kwargs)
 
@@ -370,7 +372,7 @@ def do_edit_image(edit_function: Callable[..., Any], image_bytes: bytes, pipe: C
                     edit_function(image, **kwargs)
 
             edited_image_format = image.format
-            edited_image_bytes = image.make_blob()  # type: ignore
+            edited_image_bytes: bytes | None = image.make_blob()
 
             pipe.send((edited_image_bytes, edited_image_format))
 

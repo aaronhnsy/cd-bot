@@ -1,6 +1,9 @@
 # Future
 from __future__ import annotations
 
+# Standard Library
+from typing import TYPE_CHECKING, Any
+
 # Packages
 from discord.enums import Enum
 
@@ -13,6 +16,19 @@ __all__ = (
     "EmbedSize",
     "TrackEndReason",
 )
+
+
+if TYPE_CHECKING:
+
+    class Enum(Enum):
+
+        @property
+        def name(self) -> str:
+            return self.name
+
+        @property
+        def value(self) -> Any:
+            return self.value
 
 
 class Environment(Enum):

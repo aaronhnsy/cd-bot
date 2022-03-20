@@ -50,6 +50,7 @@ class Play(commands.Cog):
         if not author_voice_channel:
             raise exceptions.EmbedError(description="You must be connected to a voice channel to use this command.")
 
+        # slate's Player doesn't like this for some reason, investigate later.
         await author_voice_channel.connect(cls=custom.Player(text_channel=ctx.channel))  # type: ignore
 
     # Play

@@ -28,7 +28,7 @@ class Context(commands.Context["CD"]):
 
     @property
     def voice_client(self) -> custom.Player | None:
-        return self.guild.voice_client if self.guild else None  # type: ignore
+        return getattr(self.guild, "voice_client", None)
 
     async def try_dm(self, *args: Any, **kwargs: Any) -> discord.Message | None:
 
