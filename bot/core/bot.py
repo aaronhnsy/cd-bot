@@ -58,6 +58,7 @@ class CD(commands.AutoShardedBot):
         self.db: asyncpg.Pool = utils.MISSING
         self.redis: aioredis.Redis = utils.MISSING
         self.slate: slate.Pool[CD, custom.Context, custom.Player] = utils.MISSING
+        self.mystbin: mystbin.Client = utils.MISSING
 
         self._LOG_WEBHOOKS: dict[enums.LogType, discord.Webhook] = {
             enums.LogType.DM:      utils.MISSING,
@@ -72,8 +73,6 @@ class CD(commands.AutoShardedBot):
         self.process: psutil.Process = psutil.Process()
         self.manager: utils.Manager = utils.Manager(self)
         self.start_time: float = time.time()
-
-        self.mystbin: mystbin.Client = mystbin.Client(session=self.session)
 
     # Setup
 
@@ -142,6 +141,8 @@ class CD(commands.AutoShardedBot):
         self.add_check(checks.bot, call_once=True)
 
         self.session = aiohttp.ClientSession()
+
+        self.mystbin = mystbin.Client(session=self.session)
 
         self._LOG_WEBHOOKS[enums.LogType.DM] = discord.Webhook.from_url(session=self.session, url=config.DM_WEBHOOK_URL)
         self._LOG_WEBHOOKS[enums.LogType.GUILD] = discord.Webhook.from_url(session=self.session, url=config.GUILD_WEBHOOK_URL)
