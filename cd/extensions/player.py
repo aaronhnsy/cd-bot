@@ -524,12 +524,12 @@ class Player(commands.Cog):
             raise exceptions.EmbedError(description="You dont have an active spotify status.")
 
         assert isinstance(activity, discord.Spotify)
-        image = objects.FakeImage(url=activity.album_cover_url)
 
         url = await imaging.edit_image(
-            ctx=ctx,
-            edit_function=imaging.spotify,
-            image=image,
+            url=activity.album_cover_url,
+            bot=ctx.bot,
+            function=imaging.spotify,
+            # kwargs
             length=activity.duration.seconds,
             elapsed=(datetime.datetime.now(tz=datetime.timezone.utc) - activity.start).seconds,
             title=activity.title,

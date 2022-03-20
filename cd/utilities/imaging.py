@@ -2,33 +2,41 @@
 from __future__ import annotations
 
 # Standard Library
-import multiprocessing
-import sys
-import time
-import traceback
+import functools
 from collections.abc import Callable
-from multiprocessing.connection import Connection
-from typing import Any, Literal
+from typing import TYPE_CHECKING, Concatenate, Literal, ParamSpec, TypeVar
 
 # Packages
-import aiohttp
 import humanize
 from wand.color import Color
 from wand.drawing import Drawing
 from wand.image import Image
 
 # My stuff
-from cd.utilities import custom, exceptions, objects, utils
+from cd.utilities import exceptions, utils
+
+
+if TYPE_CHECKING:
+    # My stuff
+    from cd.bot import CD
+
+
+T = TypeVar("T")
+P = ParamSpec("P")
 
 
 MAX_CONTENT_SIZE: int = (2 ** 20) * 25
 VALID_CONTENT_TYPES: list[str] = ["image/gif", "image/heic", "image/jpeg", "image/png", "image/webp", "image/avif", "image/svg+xml"]
 
 
+################
+# EDIT METHODS #
+################
+
 def spotify(
     IMAGE: Image,
-    length: int,
-    elapsed: int,
+    length: float,
+    elapsed: float,
     title: str,
     artists: list[str],
     format: Literal["png", "gif", "smooth_gif"]
@@ -78,7 +86,7 @@ def spotify(
     GRAY = Color("#565859")
     WHITE = Color("#FFFFFF")
 
-    EXO_FONT = "resources/Exo-Bold.ttf"
+    EXO_FONT = "cd/resources/Exo-Bold.ttf"
 
     TITLE_FONT_SIZE = 20
     ARTISTS_FONT_SIZE = 15
@@ -290,9 +298,21 @@ def spotify(
         IMAGE.optimize_transparency()
 
 
-async def request_image_bytes(*, session: aiohttp.ClientSession, url: str) -> bytes:
+###########
+# EXECUTE #
+###########
 
-    async with session.get(url) as request:
+async def edit_image(
+    url: str,
+    bot: CD,
+    function: Callable[Concatenate[Image, P], None],
+    *args: P.args,
+    **kwargs: P.kwargs
+) -> str:
+
+    # request image bytes
+
+    async with bot.session.get(url) as request:
 
         if request.status != 200:
             raise exceptions.EmbedError(description="Something went wrong while fetching that image.")
@@ -301,81 +321,55 @@ async def request_image_bytes(*, session: aiohttp.ClientSession, url: str) -> by
             raise exceptions.EmbedError(description="That image format is not allowed.")
 
         if int(request.headers.get("Content-Length") or "0") > MAX_CONTENT_SIZE:
-            raise exceptions.EmbedError(description=f"That image is too big to edit. The maximum file size is **{humanize.naturalsize(MAX_CONTENT_SIZE)}**.")
+            raise exceptions.EmbedError(
+                description=f"That image is too big to edit. The maximum file size is **{humanize.naturalsize(MAX_CONTENT_SIZE)}**."
+            )
 
-        return await request.read()
+        original_bytes = await request.read()
 
+    # edit image
 
-async def edit_image(ctx: custom.Context, edit_function: Callable[..., Any], image: objects.FakeImage, **kwargs: Any) -> str:
-
-    _download_image_start = time.perf_counter()
-    image_bytes = await request_image_bytes(session=ctx.bot.session, url=image.url)
-    _download_image_end = time.perf_counter()
-
-    _edit_image_start = time.perf_counter()
-
-    receiving_pipe, sending_pipe = multiprocessing.Pipe(duplex=False)
-    process = multiprocessing.Process(target=do_edit_image, daemon=True, args=(edit_function, image_bytes, sending_pipe), kwargs=kwargs)
-
-    process.start()
-    data = await ctx.bot.loop.run_in_executor(None, receiving_pipe.recv)
-    process.join()
-
-    receiving_pipe.close()
-    sending_pipe.close()
-    process.terminate()
-    process.close()
-
-    if data in (ValueError, EOFError):
+    partial: functools.partial[tuple[bytes, str]] = functools.partial(do_edit_image, function, original_bytes, *args, **kwargs)
+    try:
+        edited_bytes, image_format = await bot.loop.run_in_executor(None, partial)
+    except Exception:
         raise exceptions.EmbedError(description="Something went wrong while editing that image.")
 
-    _edit_image_end = time.perf_counter()
+    # upload image and return url
 
-    _upload_image_start = time.perf_counter()
-    url = await utils.upload_file(ctx.bot.session, file=data[0], format=data[1])
-    _upload_image_end = time.perf_counter()
-
-    _download = (_download_image_end - _download_image_start) * 1000
-    _edit = (_edit_image_end - _edit_image_start) * 1000
-    _upload = (_upload_image_end - _upload_image_start) * 1000
-
-    await ctx.send(
-        f"Download: **{_download:.2f}ms**\n"
-        f"Edit: **{_edit:.2f}ms**\n"
-        f"Upload: **{_upload:.2f}ms**\n"
-        f"Total: **{(_download + _edit + _upload):.2f}ms**",
-    )
-
-    del data
-    return url
+    return await utils.upload_file(bot.session, file=edited_bytes, format=image_format)
 
 
-def do_edit_image(edit_function: Callable[..., Any], image_bytes: bytes, pipe: Connection, **kwargs: Any) -> None:
+def do_edit_image(
+    function: Callable[Concatenate[Image, P], None],
+    image_bytes: bytes,
+    *args: P.args,
+    **kwargs: P.kwargs
+) -> tuple[bytes, str]:
 
-    try:
-        with Image(blob=image_bytes) as image, Color("transparent") as transparent:
+    with Image(blob=image_bytes) as image, Color("transparent") as transparent:
 
-            assert isinstance(image.format, str)
+        assert isinstance(image.format, str)
 
-            if image.format != "GIF":
+        if image.format != "GIF":
+            image.background_color = transparent
+            function(image, *args, **kwargs)
+
+        else:
+            image.coalesce()
+            image.iterator_reset()
+
+            image.background_color = transparent
+            function(image, *args, **kwargs)
+
+            while image.iterator_next():
                 image.background_color = transparent
-                edit_function(image, **kwargs)
+                function(image, *args, **kwargs)
 
-            else:
-                image.coalesce()
-                image.iterator_reset()
+        edited_bytes: bytes | None = image.make_blob(format=image.format)
+        if not edited_bytes:
+            raise exceptions.EmbedError(description="Something went wrong while editing that image.")
 
-                image.background_color = transparent
-                edit_function(image, **kwargs)
-                while image.iterator_next():
-                    image.background_color = transparent
-                    edit_function(image, **kwargs)
+        image_format: str = image.format
 
-            edited_image_format = image.format
-            edited_image_bytes: bytes | None = image.make_blob()
-
-            pipe.send((edited_image_bytes, edited_image_format))
-
-    except Exception as error:
-        print("".join(traceback.format_exception(type(error), error, error.__traceback__)), file=sys.stderr)
-        pipe.send(ValueError)
+        return edited_bytes, image_format

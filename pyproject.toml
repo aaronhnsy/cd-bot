@@ -41,7 +41,7 @@ lines_after_imports         = 2
 combine_star                = true
 include_trailing_comma      = true
 star_first                  = true
-known_local_folder          = ["core", "extensions", "utilities"]
+known_local_folder          = ["extensions", "utilities", "cd"]
 import_heading_future       = "Future"
 import_heading_stdlib       = "Standard Library"
 import_heading_thirdparty   = "Packages"
@@ -50,8 +50,7 @@ import_heading_localfolder  = "My stuff"
 
 
 [tool.pyright]
-include                 = ["bot"]
-exclude                 = ["**/slash"]
+include                 = ["cd"]
 verboseOutput           = false
 pythonVersion           = "3.10"
 typeCheckingMode        = "strict"

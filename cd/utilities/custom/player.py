@@ -12,7 +12,7 @@ import slate
 import yarl
 
 # My stuff
-from cd.utilities import custom, enums, exceptions, imaging, objects, utils, values
+from cd.utilities import custom, enums, exceptions, imaging, utils, values
 
 
 if TYPE_CHECKING:
@@ -171,12 +171,11 @@ class Controller:
         assert current.artwork_url is not None
         assert current.ctx is not None
 
-        image = objects.FakeImage(url=current.artwork_url)
-
         url = await imaging.edit_image(
-            ctx=current.ctx,
-            edit_function=imaging.spotify,
-            image=image,
+            url=current.artwork_url,
+            bot=current.ctx.bot,
+            function=imaging.spotify,
+            # kwargs
             length=current.length // 1000,
             elapsed=self.voice_client.position // 1000,
             title=current.title,

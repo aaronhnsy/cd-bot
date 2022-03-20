@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     # My stuff
-    from core.bot import CD
+    from cd.bot import CD
 
 
 __all__ = (
