@@ -7,4 +7,4 @@ venv/
 build/
 .idea/
 
-bot/core/config.py
+cd/config.py
