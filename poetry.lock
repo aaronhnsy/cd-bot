@@ -190,7 +190,7 @@ resolved_reference = "2987112c31de9bada4ee95cee9007a326e496e19"
 
 [[package]]
 name = "discord.py"
-version = "2.0.0a3934+gfafc5b13"
+version = "2.0.0a3936+g2876622f"
 description = "A Python wrapper for the Discord API"
 category = "main"
 optional = false
@@ -212,7 +212,7 @@ voice = ["PyNaCl (>=1.3.0,<1.6)"]
 type = "git"
 url = "git@github.com:Rapptz/discord.py"
 reference = "master"
-resolved_reference = "fafc5b13f6677f57fa3f5b64cb873b3a4cf1fb4c"
+resolved_reference = "2876622f8404c380d2ce5fa353452336ad2c4306"
 
 [[package]]
 name = "frozenlist"
@@ -316,17 +316,18 @@ python-versions = ">=3.7"
 
 [[package]]
 name = "mystbin.py"
-version = "2.2.0"
+version = "3.1.1"
 description = "A small simple wrapper around the mystb.in API."
 category = "main"
 optional = false
-python-versions = ">=3.8,<4.0"
+python-versions = ">=3.9,<4.0"
 
 [package.dependencies]
 aiohttp = ">=3.7.4,<4.0.0"
 
 [package.extras]
 requests = ["requests (>=2.24.0,<3.0.0)"]
+docs = ["sphinx (>=4.0.0,<5.0.0)", "sphinxcontrib-trio", "furo"]
 
 [[package]]
 name = "orjson"
@@ -547,7 +548,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10.0"
-content-hash = "4c92375f1d107329e64a5becc7ca82fdb9c3f1f557b6ed2e9e74ed0609f946df"
+content-hash = "47a9330f94d57dd93e91d57891f279703d0c6717c29b108de1513c2a566a8f4b"
 
 [metadata.files]
 aiodns = [
@@ -1063,8 +1064,8 @@ multidict = [
     {file = "multidict-6.0.2.tar.gz", hash = "sha256:5ff3bd75f38e4c43f1f470f2df7a4d430b821c4ce22be384e1459cb57d6bb013"},
 ]
 "mystbin.py" = [
-    {file = "mystbin.py-2.2.0-py3-none-any.whl", hash = "sha256:ff405f74426203c56998e328b663e5452d5b81ec47a03ea929b5343446bfd640"},
-    {file = "mystbin.py-2.2.0.tar.gz", hash = "sha256:a6c17af2bcca5b5d36670f56785f813aec0b80a95cc741fb44c8991d97919b9a"},
+    {file = "mystbin.py-3.1.1-py3-none-any.whl", hash = "sha256:32e57fb9a8353817db02c5c25f726dbc0269e29e094f3ce7cd09ac2457531db3"},
+    {file = "mystbin.py-3.1.1.tar.gz", hash = "sha256:09d27b21c9ca5bc5483a9f095cd273118a5168bf6e51685303dd93ac3ac90d13"},
 ]
 orjson = [
     {file = "orjson-3.6.7-cp310-cp310-macosx_10_7_x86_64.whl", hash = "sha256:93188a9d6eb566419ad48befa202dfe7cd7a161756444b99c4ec77faea9352a4"},

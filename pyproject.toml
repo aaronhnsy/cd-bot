@@ -21,7 +21,7 @@ pynacl          = "~1.5.0"
 rapidfuzz       = "~2.0.0"
 wheel           = "~0.37.0"
 wand            = "~0.6.0"
-"mystbin.py"    = "~2.2.0"
+"mystbin.py"    = "~3.1.0"
 
 jishaku                     = { git = "git@github.com:Axelware/jishaku", rev = "master", extras = ["voice"] }
 slate                       = { git = "git@github.com:Axelware/slate", branch = "main" }

@@ -41,8 +41,7 @@ async def upload_file(
 
 
 async def upload_text(
-    client: mystbin.Client,
-    /,
+    client: mystbin.Client, /,
     *,
     content: str,
     format: str,
@@ -53,6 +52,8 @@ async def upload_text(
         return content
 
     try:
-        return (await client.post(content, syntax=format)).url  # type: ignore
+        paste = await client.post(content, syntax=format)
     except mystbin.APIError:
         return content[:max_characters]
+
+    return paste.url
