@@ -20,8 +20,7 @@ from discord.ext import commands, tasks
 from discord.ext.alternatives import converter_dict as converter_dict
 
 # My stuff
-from cd import config
-from cd.utilities import checks, converters, custom, enums, objects, utils, values
+from cd import checks, config, converters, custom, enums, manager, objects, utilities, values
 
 
 __log__: logging.Logger = logging.getLogger("cd.bot")
@@ -47,31 +46,31 @@ class CD(commands.AutoShardedBot):
         # internals
         self.converters.update(
             {
-                objects.FakeTimeConverter:   converters.TimeConverter,
-                objects.FakePrefixConverter: converters.PrefixConverter,
-                enums.EmbedSize:             converters.EnumConverter(enums.EmbedSize, "Embed size"),
+                objects.ConvertedTime:   converters.TimeConverter,
+                objects.ConvertedPrefix: converters.PrefixConverter,
+                enums.EmbedSize:         converters.EnumConverter(enums.EmbedSize, "Embed size"),
             }
         )
 
         # external connections
-        self.session: aiohttp.ClientSession = utils.MISSING
-        self.db: asyncpg.Pool = utils.MISSING
-        self.redis: aioredis.Redis = utils.MISSING
-        self.slate: slate.Pool[CD, custom.Context, custom.Player] = utils.MISSING
-        self.mystbin: mystbin.Client = utils.MISSING
+        self.session: aiohttp.ClientSession = utilities.MISSING
+        self.db: asyncpg.Pool = utilities.MISSING
+        self.redis: aioredis.Redis = utilities.MISSING
+        self.slate: slate.Pool[CD, custom.Context, custom.Player] = utilities.MISSING
+        self.mystbin: mystbin.Client = utilities.MISSING
 
         self._LOG_WEBHOOKS: dict[enums.LogType, discord.Webhook] = {
-            enums.LogType.DM:      utils.MISSING,
-            enums.LogType.GUILD:   utils.MISSING,
-            enums.LogType.ERROR:   utils.MISSING,
-            enums.LogType.COMMAND: utils.MISSING,
+            enums.LogType.DM:      utilities.MISSING,
+            enums.LogType.GUILD:   utilities.MISSING,
+            enums.LogType.ERROR:   utilities.MISSING,
+            enums.LogType.COMMAND: utilities.MISSING,
         }
         self._LOG_QUEUE: dict[enums.LogType, list[discord.Embed]] = collections.defaultdict(list)
 
         # tracking
         self.socket_stats: collections.Counter[str] = collections.Counter()
         self.process: psutil.Process = psutil.Process()
-        self.manager: utils.Manager = utils.Manager(self)
+        self.manager: manager.Manager = manager.Manager(self)
         self.start_time: float = time.time()
 
     # Setup
@@ -181,7 +180,7 @@ class CD(commands.AutoShardedBot):
         self,
         message: discord.Message,
         *,
-        cls: type[commands.Context[CD]] = utils.MISSING
+        cls: type[commands.Context[CD]] = utilities.MISSING
     ) -> commands.Context[CD]:
         return await super().get_context(message=message, cls=custom.Context)
 

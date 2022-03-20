@@ -11,8 +11,8 @@ import discord
 from discord.ext import commands
 
 # My stuff
+from cd import checks, custom, exceptions, objects, paginators, utilities, values
 from cd.bot import CD
-from cd.utilities import checks, custom, exceptions, imaging, objects, paginators, utils, values
 
 
 async def setup(bot: CD) -> None:
@@ -53,7 +53,7 @@ class Player(commands.Cog):
         # slate's Player doesn't like this for some reason, investigate later.
         await ctx.author.voice.channel.connect(cls=custom.Player(text_channel=ctx.channel))  # type: ignore
         await ctx.send(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.GREEN,
                 description=f"**Connected** to {ctx.author.voice.channel}."
             )
@@ -70,7 +70,7 @@ class Player(commands.Cog):
         assert ctx.voice_client is not None
 
         await ctx.send(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.GREEN,
                 description=f"**Disconnected** from {ctx.voice_client.voice_channel.mention}.")
         )
@@ -93,7 +93,7 @@ class Player(commands.Cog):
 
         await ctx.voice_client.set_pause(True)
         await ctx.reply(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.GREEN,
                 description="**Paused** the player."
             )
@@ -114,7 +114,7 @@ class Player(commands.Cog):
 
         await ctx.voice_client.set_pause(False)
         await ctx.reply(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.GREEN,
                 description="**Resumed** the player."
             )
@@ -127,7 +127,7 @@ class Player(commands.Cog):
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def _seek(self, ctx: custom.Context, *, position: objects.FakeTimeConverter) -> None:
+    async def _seek(self, ctx: custom.Context, *, position: objects.ConvertedTime) -> None:
         """
         Seeks to a position in the current track.
 
@@ -154,15 +154,15 @@ class Player(commands.Cog):
         if 0 < milliseconds > ctx.voice_client.current.length:
             raise exceptions.EmbedError(
                 description=f"**{position.original}** is not a valid position, the current track is only "
-                            f"**{utils.format_seconds(ctx.voice_client.current.length // 1000, friendly=True)}** long.",
+                            f"**{utilities.format_seconds(ctx.voice_client.current.length // 1000, friendly=True)}** long.",
             )
 
         await ctx.voice_client.set_position(milliseconds)
         await ctx.reply(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.GREEN,
                 description=f"**Set** the players position to "
-                            f"**{utils.format_seconds(milliseconds // 1000, friendly=True)}**."
+                            f"**{utilities.format_seconds(milliseconds // 1000, friendly=True)}**."
             )
         )
 
@@ -171,7 +171,7 @@ class Player(commands.Cog):
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def _fast_forward(self, ctx: custom.Context, *, time: objects.FakeTimeConverter) -> None:
+    async def _fast_forward(self, ctx: custom.Context, *, time: objects.ConvertedTime) -> None:
         """
         Fast-forwards the current track by an amount of time.
 
@@ -200,15 +200,15 @@ class Player(commands.Cog):
         if milliseconds >= remaining:
             raise exceptions.EmbedError(
                 description=f"**{time.original}** is too much time to fast forward, the current track only has "
-                            f"**{utils.format_seconds(remaining // 1000, friendly=True)}** remaining.",
+                            f"**{utilities.format_seconds(remaining // 1000, friendly=True)}** remaining.",
             )
 
         await ctx.voice_client.set_position(position + milliseconds)
         await ctx.reply(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.GREEN,
-                description=f"**Fast-forwarding** by **{utils.format_seconds(time.seconds, friendly=True)}**, the "
-                            f"players position is now **{utils.format_seconds((position + milliseconds) // 1000, friendly=True)}**."
+                description=f"**Fast-forwarding** by **{utilities.format_seconds(time.seconds, friendly=True)}**, the "
+                            f"players position is now **{utilities.format_seconds((position + milliseconds) // 1000, friendly=True)}**."
             )
         )
 
@@ -217,7 +217,7 @@ class Player(commands.Cog):
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def _rewind(self, ctx: custom.Context, *, time: objects.FakeTimeConverter) -> None:
+    async def _rewind(self, ctx: custom.Context, *, time: objects.ConvertedTime) -> None:
         """
         Rewinds the current track by an amount of time.
 
@@ -245,15 +245,15 @@ class Player(commands.Cog):
         if milliseconds >= position:
             raise exceptions.EmbedError(
                 description=f"**{time.original}** is too much time to rewind, only "
-                            f"**{utils.format_seconds(position // 1000, friendly=True)}** of the current track has passed."
+                            f"**{utilities.format_seconds(position // 1000, friendly=True)}** of the current track has passed."
             )
 
         await ctx.voice_client.set_position(position - milliseconds)
         await ctx.reply(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.GREEN,
-                description=f"**Rewinding** by **{utils.format_seconds(time.seconds, friendly=True)}**, the players "
-                            f"position is now **{utils.format_seconds((position - milliseconds) // 1000, friendly=True)}**."
+                description=f"**Rewinding** by **{utilities.format_seconds(time.seconds, friendly=True)}**, the players "
+                            f"position is now **{utilities.format_seconds((position - milliseconds) // 1000, friendly=True)}**."
             )
         )
 
@@ -272,7 +272,7 @@ class Player(commands.Cog):
 
         await ctx.voice_client.set_position(0)
         await ctx.reply(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.GREEN,
                 description="**Replaying** the current track."
             )
@@ -359,7 +359,7 @@ class Player(commands.Cog):
 
         await ctx.voice_client.stop()
         await ctx.reply(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.GREEN,
                 description=f"Skipped **{amount or 1}** track{'s' if (amount or 1) != 1 else ''}."
             )
@@ -404,7 +404,7 @@ class Player(commands.Cog):
 
             await ctx.voice_client.stop()
             await ctx.reply(
-                embed=utils.embed(
+                embed=utilities.embed(
                     colour=values.GREEN,
                     description="Skipped the current track.")
             )
@@ -418,7 +418,7 @@ class Player(commands.Cog):
 
             ctx.voice_client.skip_request_ids.remove(ctx.author.id)
             await ctx.reply(
-                embed=utils.embed(
+                embed=utilities.embed(
                     colour=values.GREEN,
                     description="**Removed** your vote to skip."
                 )
@@ -433,7 +433,7 @@ class Player(commands.Cog):
 
         ctx.voice_client.skip_request_ids.add(ctx.author.id)
         await ctx.reply(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.GREEN,
                 description=f"**Added** your vote to skip, now at **{len(ctx.voice_client.skip_request_ids)}** out of **{skips_needed}** votes."
             )
@@ -525,10 +525,10 @@ class Player(commands.Cog):
 
         assert isinstance(activity, discord.Spotify)
 
-        url = await imaging.edit_image(
+        url = await utilities.edit_image(
             url=activity.album_cover_url,
             bot=ctx.bot,
-            function=imaging.spotify,
+            function=utilities.spotify,
             # kwargs
             length=activity.duration.seconds,
             elapsed=(datetime.datetime.now(tz=datetime.timezone.utc) - activity.start).seconds,

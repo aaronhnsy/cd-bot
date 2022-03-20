@@ -9,9 +9,8 @@ import discord
 from discord.ext import commands
 
 # My stuff
-from cd import config
+from cd import checks, config, custom, enums, exceptions, objects, utilities, values
 from cd.bot import CD
-from cd.utilities import checks, custom, enums, exceptions, objects, utils, values
 
 
 async def setup(bot: CD) -> None:
@@ -67,14 +66,14 @@ class Settings(commands.Cog):
         guild_config = await self.bot.manager.get_guild_config(ctx.guild.id)
 
         await ctx.send(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.MAIN,
                 description=f"This servers prefix is `{guild_config.prefix or config.PREFIX}`",
             )
         )
 
     @_prefix.command(name="set")
-    async def _prefix_set(self, ctx: custom.Context, prefix: objects.FakePrefixConverter) -> None:
+    async def _prefix_set(self, ctx: custom.Context, prefix: objects.ConvertedPrefix) -> None:
         """
         Sets this servers prefix.
 
@@ -100,7 +99,7 @@ class Settings(commands.Cog):
         await guild_config.set_prefix(prefix.value)
 
         await ctx.send(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.GREEN,
                 description=f"This servers prefix is now `{prefix.value}`",
             )
@@ -129,7 +128,7 @@ class Settings(commands.Cog):
         await guild_config.set_prefix(None)
 
         await ctx.send(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.GREEN,
                 description=f"This servers prefix is now `{config.PREFIX}`",
             )
@@ -154,7 +153,7 @@ class Settings(commands.Cog):
             raise exceptions.EmbedError(description="This servers dj role was deleted, please set a new one.")
 
         await ctx.send(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.MAIN,
                 description=f"This servers dj role is {role.mention}.",
             )
@@ -183,7 +182,7 @@ class Settings(commands.Cog):
         await guild_config.set_dj_role_id(role.id)
 
         await ctx.send(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.GREEN,
                 description=f"**Set** this severs dj role to {role.mention}.",
             )
@@ -212,7 +211,7 @@ class Settings(commands.Cog):
         await guild_config.set_dj_role_id(None)
 
         await ctx.send(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.GREEN,
                 description="**Reset** this servers dj role."
             )
@@ -230,7 +229,7 @@ class Settings(commands.Cog):
         guild_config = await self.bot.manager.get_guild_config(ctx.guild.id)
 
         await ctx.send(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.MAIN,
                 description=f"This servers embed size is **{guild_config.embed_size.name.title()}**.",
             )
@@ -259,7 +258,7 @@ class Settings(commands.Cog):
         await guild_config.set_embed_size(embed_size)
 
         await ctx.send(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.GREEN,
                 description=f"**Set** this severs embed size to **{embed_size.name.title()}**.",
             )
@@ -285,7 +284,7 @@ class Settings(commands.Cog):
         await guild_config.set_embed_size(enums.EmbedSize.LARGE)
 
         await ctx.send(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.GREEN,
                 description=f"**Reset** this servers embed size back to **{guild_config.embed_size.name.title()}**.",
             )

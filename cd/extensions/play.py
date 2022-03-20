@@ -10,8 +10,8 @@ import slate
 from discord.ext import commands
 
 # My stuff
+from cd import custom, exceptions
 from cd.bot import CD
-from cd.utilities import custom, exceptions
 
 
 async def setup(bot: CD) -> None:

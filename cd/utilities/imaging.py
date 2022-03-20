@@ -13,12 +13,19 @@ from wand.drawing import Drawing
 from wand.image import Image
 
 # My stuff
-from cd.utilities import exceptions, utils
+from cd import exceptions, utilities
 
 
 if TYPE_CHECKING:
     # My stuff
     from cd.bot import CD
+
+
+__all__ = (
+    "spotify",
+    "edit_image",
+    "do_edit_image",
+)
 
 
 T = TypeVar("T")
@@ -168,7 +175,7 @@ def spotify(
                 DRAW.text(
                     x=TRACK_INFO_START_X,
                     y=PROGRESS_BAR_Y1 - PROGRESS_BAR_HEIGHT,
-                    body=utils.format_seconds(elapsed),
+                    body=utilities.format_seconds(elapsed),
                 )
 
                 # paste mask onto cover.
@@ -192,7 +199,7 @@ def spotify(
             DRAW.text(
                 x=TRACK_INFO_START_X + PROGRESS_BAR_LENGTH,
                 y=PROGRESS_BAR_Y1 - PROGRESS_BAR_HEIGHT,
-                body=utils.format_seconds(length),
+                body=utilities.format_seconds(length),
             )
             DRAW.text_alignment = "left"
 
@@ -279,7 +286,7 @@ def spotify(
                     DRAW.text(
                         x=TRACK_INFO_START_X,
                         y=PROGRESS_BAR_Y1 - PROGRESS_BAR_HEIGHT,
-                        body=utils.format_seconds(elapsed + (index // FPS)),
+                        body=utilities.format_seconds(elapsed + (index // FPS)),
                     )
 
                     DRAW(IMAGE)
@@ -337,7 +344,7 @@ async def edit_image(
 
     # upload image and return url
 
-    return await utils.upload_file(bot.session, file=edited_bytes, format=image_format)
+    return await utilities.upload_file(bot.session, fp=edited_bytes, format=image_format)
 
 
 def do_edit_image(

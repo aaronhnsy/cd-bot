@@ -10,6 +10,11 @@ import os
 import colorama
 
 
+__all__ = (
+    "setup_logger",
+)
+
+
 class ColourFormatter(logging.Formatter):
 
     COLOURS: dict[int, str] = {

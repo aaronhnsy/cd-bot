@@ -13,9 +13,8 @@ import slate
 from discord.ext import commands
 
 # My stuff
-from cd import config
+from cd import config, custom, enums, exceptions, utilities, values
 from cd.bot import CD
-from cd.utilities import custom, enums, exceptions, utils, values
 
 
 __log__: logging.Logger = logging.getLogger("extensions.events")
@@ -81,6 +80,8 @@ ERRORS: dict[type[commands.CommandError], str] = {
     commands.MissingRequiredFlag:           "You missed the **{error.flag.name}** flag.",
 }
 
+NL = "\n"
+
 
 async def setup(bot: CD) -> None:
     await bot.add_cog(Events(bot))
@@ -97,33 +98,33 @@ class Events(commands.Cog):
         assert ctx.command is not None
 
         if ctx.guild:
-            channel_url = utils.guild_channel_url(ctx.guild.id, ctx.channel.id)
-            guild_info = f"**● [Guild:]({utils.guild_url(ctx.guild.id)})**\n" \
+            channel_url = utilities.guild_channel_url(ctx.guild.id, ctx.channel.id)
+            guild_info = f"**● [Guild:]({utilities.guild_url(ctx.guild.id)})**\n" \
                          f"{values.NQSP * 2}**● Name:** {ctx.guild}\n" \
                          f"{values.NQSP * 2}**● ID:** `{ctx.guild.id}`\n"
         else:
-            channel_url = utils.dm_channel_url(ctx.author.id)
+            channel_url = utilities.dm_channel_url(ctx.author.id)
             guild_info = ""
 
         now = ctx.message.created_at or pendulum.now(tz="UTC")
 
-        return utils.embed(
+        return utilities.embed(
             colour=colour,
             title=f"{ctx.prefix}{ctx.command.qualified_name}",
-            description=f"{await utils.upload_text(ctx.bot.mystbin, content=ctx.message.content, format='txt', max_characters=1000)}\n\n"
+            description=f"{await utilities.upload_text(ctx.bot.mystbin, content=ctx.message.content, format='txt', max_characters=1000)}\n\n"
                         f"{guild_info}"
                         f"**● [Channel:]({channel_url})**\n"
                         f"{values.NQSP * 2}**● Name:** {ctx.channel}\n"
                         f"{values.NQSP * 2}**● ID:** `{ctx.channel.id}`\n"
-                        f"**● [User:]({utils.user_url(ctx.author.id)})**\n"
+                        f"**● [User:]({utilities.user_url(ctx.author.id)})**\n"
                         f"{values.NQSP * 2}**● Name:** {ctx.author}\n"
                         f"{values.NQSP * 2}**● ID:** `{ctx.author.id}`\n"
                         f"**● [Message:]({ctx.message.jump_url})**\n"
                         f"{values.NQSP * 2}**● ID:** `{ctx.message.id}`\n"
                         f"{values.NQSP * 2}**● Command:** {ctx.command.qualified_name}\n"
-                        f"{values.NQSP * 2}**● Date:** {utils.format_datetime(now, format=enums.DatetimeFormat.FULL_LONG_DATE)}\n"
-                        f"{values.NQSP * 2}**● Time:** {utils.format_datetime(now, format=enums.DatetimeFormat.FULL_TIME)}\n\n",
-            thumbnail=utils.avatar(ctx.author),
+                        f"{values.NQSP * 2}**● Date:** {utilities.format_datetime(now, format=enums.DateTimeFormat.FULL_LONG_DATE)}\n"
+                        f"{values.NQSP * 2}**● Time:** {utilities.format_datetime(now, format=enums.DateTimeFormat.FULL_TIME)}\n\n",
+            thumbnail=utilities.avatar(ctx.author),
         )
 
     @staticmethod
@@ -135,12 +136,12 @@ class Events(commands.Cog):
 
         elif isinstance(error, commands.BadLiteralArgument):
             message = f"The **{error.param.name}** argument must exactly match one of the following:\n" \
-                      f"{values.NL.join([f'- **{arg}**' for arg in error.literals])}"
+                      f"{NL.join([f'- **{arg}**' for arg in error.literals])}"
 
         elif isinstance(error, commands.MissingPermissions):
             message = f"You need the following permissions to use this command:\n" \
                       f"```diff\n" \
-                      f"{values.NL.join([f'- {permission}' for permission in error.missing_permissions])}\n" \
+                      f"{NL.join([f'- {permission}' for permission in error.missing_permissions])}\n" \
                       f"```"
 
         elif isinstance(error, commands.MissingRole):
@@ -154,16 +155,16 @@ class Events(commands.Cog):
         elif isinstance(error, commands.MissingAnyRole):
             assert ctx.guild is not None
             message = f"You need the following roles to use this command:\n" \
-                      f"{values.NL.join([f'- {ctx.guild.get_role(role) if isinstance(role, int) else role}' for role in error.missing_roles])}"
+                      f"{NL.join([f'- {ctx.guild.get_role(role) if isinstance(role, int) else role}' for role in error.missing_roles])}"
 
         elif isinstance(error, commands.BotMissingAnyRole):
             assert ctx.guild is not None
             message = f"I need the following roles to run this command:\n" \
-                      f"{values.NL.join([f'- {ctx.guild.get_role(role) if isinstance(role, int) else role}' for role in error.missing_roles])}"
+                      f"{NL.join([f'- {ctx.guild.get_role(role) if isinstance(role, int) else role}' for role in error.missing_roles])}"
 
         elif isinstance(error, commands.CommandOnCooldown):
             message = f"This command is on cooldown **{COOLDOWN_BUCKETS.get(error.type)}**. " \
-                      f"You can retry in **{utils.format_seconds(error.retry_after, friendly=True)}**"
+                      f"You can retry in **{utilities.format_seconds(error.retry_after, friendly=True)}**"
 
         elif isinstance(error, commands.MaxConcurrencyReached):
             message = f"This command is already being ran at a maximum of **{error.number}** time{'s' if error.number > 1 else ''} " \
@@ -193,18 +194,18 @@ class Events(commands.Cog):
         if config.ENV is enums.Environment.DEVELOPMENT or message.guild or message.is_system() or not message.content:
             return
 
-        content = await utils.upload_text(self.bot.mystbin, content=message.content, format="txt")
+        content = await utilities.upload_text(self.bot.mystbin, content=message.content, format="txt")
 
         await self.bot.log(
             enums.LogType.DM,
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.GREEN,
                 title=f"**{message.author}**",
                 description=f"{content}\n\n"
                             f"**Author:** {message.author} (`{message.author.id}`)\n"
-                            f"**Created:** {utils.format_datetime(message.created_at, format=enums.DatetimeFormat.PARTIAL_LONG_DATETIME)}\n"
+                            f"**Created:** {utilities.format_datetime(message.created_at, format=enums.DateTimeFormat.PARTIAL_LONG_DATETIME)}\n"
                             f"**Jump:** [Click here]({message.jump_url})",
-                thumbnail=utils.avatar(message.author),
+                thumbnail=utilities.avatar(message.author),
                 footer=f"ID: {message.id}",
             )
         )
@@ -219,15 +220,15 @@ class Events(commands.Cog):
         __log__.info(f"Joined a guild. {guild.name} ({guild.id}) | Members: {len(guild.members)} | Bots: {bots} ({bots_percent}%)")
         await self.bot.log(
             enums.LogType.GUILD,
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.GREEN,
                 title=f"Joined: **{guild}**",
                 description=f"**Owner:** {guild.owner} (`{guild.owner_id}`)\n"
-                            f"**Created:** {utils.format_datetime(guild.created_at, format=enums.DatetimeFormat.PARTIAL_LONG_DATETIME)}\n"
-                            f"**Joined:** {utils.format_datetime(guild.me.joined_at, format=enums.DatetimeFormat.PARTIAL_LONG_DATETIME) if guild.me.joined_at else None}\n"
+                            f"**Created:** {utilities.format_datetime(guild.created_at, format=enums.DateTimeFormat.PARTIAL_LONG_DATETIME)}\n"
+                            f"**Joined:** {utilities.format_datetime(guild.me.joined_at, format=enums.DateTimeFormat.PARTIAL_LONG_DATETIME) if guild.me.joined_at else None}\n"
                             f"**Members:** {total}\n"
                             f"**Bots:** {bots} `{bots_percent}%`\n",
-                thumbnail=utils.icon(guild),
+                thumbnail=utilities.icon(guild),
                 footer=f"ID: {guild.id}",
             )
         )
@@ -243,15 +244,15 @@ class Events(commands.Cog):
 
         await self.bot.log(
             enums.LogType.GUILD,
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.RED,
                 title=f"Left: **{guild}**",
                 description=f"**Owner:** {guild.owner} (`{guild.owner_id}`)\n"
-                            f"**Created:** {utils.format_datetime(guild.created_at, format=enums.DatetimeFormat.PARTIAL_LONG_DATETIME)}\n"
-                            f"**Joined:** {utils.format_datetime(guild.me.joined_at, format=enums.DatetimeFormat.PARTIAL_LONG_DATETIME) if guild.me.joined_at else None}\n"
+                            f"**Created:** {utilities.format_datetime(guild.created_at, format=enums.DateTimeFormat.PARTIAL_LONG_DATETIME)}\n"
+                            f"**Joined:** {utilities.format_datetime(guild.me.joined_at, format=enums.DateTimeFormat.PARTIAL_LONG_DATETIME) if guild.me.joined_at else None}\n"
                             f"**Members:** {total}\n"
                             f"**Bots:** {bots} `{bots_percent}%`\n",
-                thumbnail=utils.icon(guild),
+                thumbnail=utilities.icon(guild),
                 footer=f"ID: {guild.id}",
             )
         )
@@ -262,7 +263,7 @@ class Events(commands.Cog):
         await self.bot._LOG_WEBHOOKS[enums.LogType.COMMAND].send(
             embed=await self._build_command_information_embed(ctx, colour=values.GREEN),
             username=f"{ctx.guild or ctx.author}",
-            avatar_url=utils.icon(ctx.guild) if ctx.guild else utils.avatar(ctx.author),
+            avatar_url=utilities.icon(ctx.guild) if ctx.guild else utilities.avatar(ctx.author),
         )
 
     @commands.Cog.listener("on_command_error")
@@ -281,16 +282,16 @@ class Events(commands.Cog):
 
         elif isinstance(error, commands.BotMissingPermissions):
             await ctx.try_dm(
-                embed=utils.embed(
+                embed=utilities.embed(
                     colour=values.RED,
                     description=f"I need the following permissions to run that command:\n"
-                                f"{utils.codeblock(values.NL.join([f'- {permission}' for permission in error.missing_permissions]), language='diff')}"
+                                f"{utilities.codeblock(NL.join([f'- {permission}' for permission in error.missing_permissions]), language='diff')}"
                 )
             )
 
         elif message := self._get_error_message(ctx, error):
             await ctx.reply(
-                embed=utils.embed(
+                embed=utilities.embed(
                     colour=values.RED,
                     description=message.format(error=error),
                     footer=f"Use '{ctx.prefix}help {ctx.command.qualified_name if ctx.command else 'Unknown'}' for more info.",
@@ -310,7 +311,7 @@ class Events(commands.Cog):
             view.add_item(discord.ui.Button(label="Support Server", url=values.SUPPORT_LINK))
 
             await ctx.reply(
-                embed=utils.embed(
+                embed=utilities.embed(
                     colour=values.RED,
                     description="Something went wrong!",
                 ),
@@ -320,12 +321,12 @@ class Events(commands.Cog):
             # Log error to webhook.
 
             webhook_username = f"{ctx.guild or ctx.author}"
-            webhook_avatar = utils.icon(ctx.guild) if ctx.guild else utils.avatar(ctx.author)
+            webhook_avatar = utilities.icon(ctx.guild) if ctx.guild else utilities.avatar(ctx.author)
 
             await self.bot._LOG_WEBHOOKS[enums.LogType.ERROR].send(
-                await utils.upload_text(
+                await utilities.upload_text(
                     self.bot.mystbin,
-                    content=utils.codeblock(exception, max_characters=2000),
+                    content=utilities.codeblock(exception, max_characters=2000),
                     format="python",
                     max_characters=2000
                 ),

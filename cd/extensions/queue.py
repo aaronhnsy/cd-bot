@@ -10,8 +10,8 @@ import slate
 from discord.ext import commands
 
 # My stuff
+from cd import checks, custom, exceptions, paginators, utilities, values
 from cd.bot import CD
-from cd.utilities import checks, custom, exceptions, paginators, utils, values
 
 
 async def setup(bot: CD) -> None:
@@ -49,7 +49,7 @@ class Queue(commands.Cog):
             ctx=ctx,
             entries=[
                 f"**{index + 1}. [{discord.utils.escape_markdown(track.title)}]({track.uri})** by **{discord.utils.escape_markdown(track.author or 'Unknown')}**\n"
-                f"**⤷** {utils.format_seconds(track.length // 1000, friendly=True)} | "
+                f"**⤷** {utilities.format_seconds(track.length // 1000, friendly=True)} | "
                 f"{track.source.value.title()} | "
                 f"Added by: {getattr(track.requester, 'mention', None)}"
                 for index, track in enumerate(ctx.voice_client.queue._queue)
@@ -57,7 +57,7 @@ class Queue(commands.Cog):
             per_page=5,
             splitter="\n\n",
             embed_footer=f"{len(ctx.voice_client.queue._queue)} tracks | "
-                         f"{utils.format_seconds(sum(track.length for track in ctx.voice_client.queue._queue) // 1000, friendly=True)} | "
+                         f"{utilities.format_seconds(sum(track.length for track in ctx.voice_client.queue._queue) // 1000, friendly=True)} | "
                          f"Loop mode: {ctx.voice_client.queue.loop_mode.name.title()} | "
                          f"1 = up next",
         )
@@ -77,7 +77,7 @@ class Queue(commands.Cog):
             ctx=ctx,
             entries=[
                 f"**{index + 1}. [{discord.utils.escape_markdown(track.title)}]({track.uri})** by **{discord.utils.escape_markdown(track.author or 'Unknown')}**\n"
-                f"**⤷** {utils.format_seconds(track.length // 1000, friendly=True)} | "
+                f"**⤷** {utilities.format_seconds(track.length // 1000, friendly=True)} | "
                 f"{track.source.value.title()} | "
                 f"Added by: {getattr(track.requester, 'mention', None)}"
                 for index, track in enumerate(reversed(ctx.voice_client.queue._history))
@@ -85,7 +85,7 @@ class Queue(commands.Cog):
             per_page=5,
             splitter="\n\n",
             embed_footer=f"{len(ctx.voice_client.queue._history)} tracks | "
-                         f"{utils.format_seconds(sum(track.length for track in ctx.voice_client.queue._history) // 1000, friendly=True)} | "
+                         f"{utilities.format_seconds(sum(track.length for track in ctx.voice_client.queue._history) // 1000, friendly=True)} | "
                          f"Loop mode: {ctx.voice_client.queue.loop_mode.name.title()} | "
                          f"1 = most recent",
         )
@@ -106,7 +106,7 @@ class Queue(commands.Cog):
 
         ctx.voice_client.queue.clear()
         await ctx.reply(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.GREEN,
                 description="**Cleared** the queue."
             )
@@ -125,7 +125,7 @@ class Queue(commands.Cog):
 
         ctx.voice_client.queue.shuffle()
         await ctx.reply(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.GREEN,
                 description="**Shuffled** the queue."
             )
@@ -144,7 +144,7 @@ class Queue(commands.Cog):
 
         ctx.voice_client.queue.reverse()
         await ctx.reply(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.GREEN,
                 description="**Reversed** the queue."
             )
@@ -183,7 +183,7 @@ class Queue(commands.Cog):
             ctx.voice_client.queue._queue.sort(key=lambda track: track.length, reverse=reverse)
 
         await ctx.reply(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.GREEN,
                 description=f"**{'Inversely sorted' if reverse else 'Sorted'}** the queue by **{method}**."
             )
@@ -213,7 +213,7 @@ class Queue(commands.Cog):
         assert track is not None
 
         await ctx.reply(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.GREEN,
                 description=f"Removed **{entry}. [{discord.utils.escape_markdown(track.title)}]({track.uri})** "
                             f"by **{discord.utils.escape_markdown(track.author or 'Unknown')}** from the queue."
@@ -251,7 +251,7 @@ class Queue(commands.Cog):
 
         ctx.voice_client.queue.put(track, position=to - 1)
         await ctx.reply(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.GREEN,
                 description=f"Moved **[{discord.utils.escape_markdown(track.title)}]({track.uri})** "
                             f"by **{discord.utils.escape_markdown(track.author or 'Unknown')}** from position **{entry}** to position **{to}**.",
@@ -271,7 +271,7 @@ class Queue(commands.Cog):
 
         ctx.voice_client.queue._queue = list({track.identifier: track for track in ctx.voice_client.queue._queue}.values())
         await ctx.reply(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.GREEN,
                 description="**Removed** duplicate tracks from the queue."
             )
@@ -292,7 +292,7 @@ class Queue(commands.Cog):
             ctx.voice_client.queue.set_loop_mode(slate.QueueLoopMode.OFF)
 
         await ctx.reply(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.GREEN,
                 description=f"**Set** the queue loop mode to **{ctx.voice_client.queue.loop_mode.name.title()}**.",
             )

@@ -16,8 +16,8 @@ import psutil
 from discord.ext import commands
 
 # My stuff
+from cd import custom, exceptions, utilities, values
 from cd.bot import CD
-from cd.utilities import custom, exceptions, utils, values
 
 
 async def setup(bot: CD) -> None:
@@ -52,7 +52,7 @@ class Information(commands.Cog):
         await self.bot.redis.set("ping", "value")
         redis_end = time.perf_counter()
 
-        embed = utils.embed(
+        embed = utilities.embed(
             colour=values.MAIN,
             title=":ping_pong:",
         )
@@ -78,13 +78,13 @@ class Information(commands.Cog):
         java_search = re.search(r'\"(\d+\.\d+).*\"', subprocess.check_output(["java", "-version"], stderr=subprocess.STDOUT).decode())
         java_version = java_search.groups()[0] if java_search else "Unknown"
 
-        embed = utils.embed(
+        embed = utilities.embed(
             colour=values.MAIN,
             title="System stats:",
             description=f"`OS:` {platform.platform()}\n"
                         f"`Python version:` {platform.python_version()} ({platform.python_implementation()})\n"
                         f"`Java version:` {java_version}\n"
-                        f"`Uptime:` {utils.format_seconds(time.time() - self.bot.start_time, friendly=True)}\n",
+                        f"`Uptime:` {utilities.format_seconds(time.time() - self.bot.start_time, friendly=True)}\n",
         )
         embed.add_field(
             name="System CPU:",
@@ -130,7 +130,7 @@ class Information(commands.Cog):
 
         if not command:
             await ctx.reply(
-                embed=utils.embed(
+                embed=utilities.embed(
                     colour=values.MAIN,
                     emoji=":computer:",
                     description=f"My source code is available on **[github]({values.GITHUB_LINK})**!"
@@ -156,7 +156,7 @@ class Information(commands.Cog):
         """
 
         await ctx.reply(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.MAIN,
                 emoji=":cd:",
                 description=f"You can invite me using **[this link]({values.INVITE_LINK})**!"
@@ -170,7 +170,7 @@ class Information(commands.Cog):
         """
 
         await ctx.reply(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.MAIN,
                 emoji=":inbox_tray:",
                 description=f"Join my **[support server]({values.SUPPORT_LINK})**!"
@@ -184,7 +184,7 @@ class Information(commands.Cog):
         """
 
         await ctx.reply(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.MAIN,
                 title=":link: Links",
                 description=f"● **[Invite]({values.INVITE_LINK})**\n"
@@ -201,7 +201,7 @@ class Information(commands.Cog):
         """
 
         await ctx.reply(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.MAIN,
                 title=":tools: Platforms",
                 description="● **Youtube** *(Links, Searching)*\n"

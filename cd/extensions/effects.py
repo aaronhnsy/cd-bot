@@ -9,8 +9,8 @@ import slate
 from discord.ext import commands
 
 # My stuff
+from cd import checks, custom, enums, utilities, values
 from cd.bot import CD
-from cd.utilities import checks, custom, enums, utils, values
 
 
 async def setup(bot: CD) -> None:
@@ -78,7 +78,7 @@ class Effects(commands.Cog):
                         pass
 
         await ctx.reply(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.GREEN,
                 description=description
             )
@@ -92,7 +92,7 @@ class Effects(commands.Cog):
         ctx.voice_client.effects.clear()
         await ctx.voice_client.set_filter(slate.Filter())
         await ctx.reply(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.GREEN,
                 description="**Disabled** all audio effects."
             )
@@ -179,7 +179,7 @@ class Effects(commands.Cog):
         ctx.voice_client.effects.clear()
         await ctx.voice_client.set_filter(slate.Filter())
         await ctx.reply(
-            embed=utils.embed(
+            embed=utilities.embed(
                 colour=values.GREEN,
                 description="**Disabled** all audio effects."
             )
