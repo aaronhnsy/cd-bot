@@ -4,6 +4,7 @@ from __future__ import annotations
 # Standard Library
 import datetime
 import math
+import urllib.parse
 from typing import Literal, Optional
 
 # Packages
@@ -11,7 +12,7 @@ import discord
 from discord.ext import commands
 
 # My stuff
-from cd import checks, custom, exceptions, objects, paginators, utilities, values
+from cd import checks, config, custom, exceptions, objects, paginators, utilities, values
 from cd.bot import CD
 
 
@@ -483,8 +484,8 @@ class Player(commands.Cog):
                     raise exceptions.EmbedError(description="You didn't specify a search query.")
 
         async with self.bot.session.get(
-                url="https://evan.lol/lyrics/search/top",
-                params={"q": query},
+            url=f"https://api.openrobot.xyz/api/lyrics/{urllib.parse.quote_plus(query)}",
+            headers={"Authorization": config.LYRIC_API_TOKEN}
         ) as response:
 
             match response.status:
@@ -508,10 +509,8 @@ class Player(commands.Cog):
             ctx=ctx,
             entries=entries,
             per_page=1,
-            title=data["name"],
-            url=f"https://open.spotify.com/track/{data['id']}",
-            header=f"by: **{', '.join([artist['name'] for artist in data['artists']] or ['Unknown Artist'])}**\n\n",
-            thumbnail=icon["url"] if (icon := data["album"].get("icon")) else None,
+            title=f"{data['title']} *by* {data['artist']}",
+            thumbnail=data["images"]["track"],
         )
         await paginator.start()
 
