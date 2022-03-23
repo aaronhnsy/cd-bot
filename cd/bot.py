@@ -182,7 +182,7 @@ class CD(commands.AutoShardedBot):
         *,
         cls: type[commands.Context[CD]] = utilities.MISSING
     ) -> commands.Context[CD]:
-        return await super().get_context(message=message, cls=custom.Context)
+        return await super().get_context(message, cls=custom.Context)
 
     async def get_prefix(self, message: discord.Message) -> list[str]:
 
