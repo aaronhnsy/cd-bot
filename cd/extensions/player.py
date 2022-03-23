@@ -546,5 +546,6 @@ class Player(commands.Cog):
         await self._do_status(ctx, format="gif")
 
     @status.command(name="smooth")
+    @checks.is_owner()
     async def status_smooth(self, ctx: custom.Context) -> None:
         await self._do_status(ctx, format="smooth_gif")
