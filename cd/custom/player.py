@@ -360,12 +360,20 @@ class Player(slate.Player["CD", custom.Context, "Player"]):
     async def _convert_spotify_track(self, track: slate.Track[custom.Context]) -> slate.Track[custom.Context]:
 
         assert track.ctx is not None
-        title = track.isrc or f"{track.author} - {track.title}"
 
-        try:
-            search = await self.search(title, source=slate.Source.YOUTUBE_MUSIC, ctx=track.ctx)
-        except exceptions.EmbedError:
-            search = await self.search(title, source=slate.Source.YOUTUBE, ctx=track.ctx)
+        search = None
+
+        if track.isrc:
+            try:
+                search = await self.search(track.isrc, source=slate.Source.YOUTUBE_MUSIC, ctx=track.ctx)
+            except exceptions.EmbedError:
+                try:
+                    search = await self.search(track.isrc, source=slate.Source.YOUTUBE, ctx=track.ctx)
+                except exceptions.EmbedError:
+                    pass
+
+        if search is None:
+            search = await self.search(f"{track.author} - {track.title}", source=slate.Source.YOUTUBE, ctx=track.ctx)
 
         return search.tracks[0]
 
