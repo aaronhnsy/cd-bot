@@ -214,3 +214,7 @@ class Information(commands.Cog):
                             "● **Vimeo** *(Links)*\n"
             )
         )
+
+    @commands.command(name="about")
+    async def about(self, ctx: custom.Context) -> None:
+        await ctx.reply("CD is a music bot which does absolutely nothing innovative but has a cool codebase full of probably broke shit.")
