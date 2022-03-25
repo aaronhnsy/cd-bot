@@ -13,7 +13,7 @@ from discord.ext import commands, tasks
 from cd.bot import CD
 
 
-__log__: logging.Logger = logging.getLogger("bot.extensions.reloader")
+__log__: logging.Logger = logging.getLogger("cd.extensions.reloader")
 
 
 async def setup(bot: CD):
