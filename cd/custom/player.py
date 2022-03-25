@@ -3,6 +3,7 @@ from __future__ import annotations
 
 # Standard Library
 import asyncio
+from collections.abc import Awaitable, Callable
 from typing import TYPE_CHECKING
 
 # Packages
@@ -26,7 +27,11 @@ __all__ = (
 )
 
 
-class SearchView(discord.ui.View):
+#####################
+# TRACK SEARCH VIEW #
+#####################
+
+class TrackSearchView(discord.ui.View):
 
     def __init__(
         self,
@@ -38,243 +43,256 @@ class SearchView(discord.ui.View):
     ) -> None:
         super().__init__(timeout=60)
 
-        self.ctx: custom.Context = ctx
-        self.search: slate.Search[custom.Context] = search
-        self.play_next: bool = play_next
-        self.play_now: bool = play_now
+        self._ctx: custom.Context = ctx
+        self._search: slate.Search[custom.Context] = search
+        self._play_next: bool = play_next
+        self._play_now: bool = play_now
+        self._message: discord.Message = utilities.MISSING
 
-        self.tracks: list[slate.Track[custom.Context]] = search.tracks[:25]
+        self._tracks: list[slate.Track[custom.Context]] = search.tracks[:25]
 
-        self.select = Select(
+        self._select = TrackSearchSelect(
             placeholder="choose some tracks:",
-            max_values=len(self.tracks),
+            max_values=len(self._tracks),
             options=[
                 discord.SelectOption(
                     label=f"{track.title[:100]}",
                     value=f"{index}",
                     description=f"by {(track.author or 'Unknown')[:95]}"
-                ) for index, track in enumerate(self.tracks)
+                ) for index, track in enumerate(self._tracks)
             ]
         )
-        self.add_item(self.select)
+        self.add_item(self._select)
 
-        self.message: discord.Message | None = None
+    # Overrides
 
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
-        return interaction.user is not None and interaction.user.id == self.ctx.author.id
+        return interaction.user is not None and interaction.user.id == self._ctx.author.id
 
     async def on_timeout(self) -> None:
-        await self._finish_selection(placeholder="timed out.")
+        await self.finish()
 
-    async def _finish_selection(self, *, placeholder: str) -> None:
+    # Utilities
 
-        self.select.disabled = True
-        self.select.placeholder = placeholder
-
-        if self.message:
-            await self.message.edit(view=self)
+    async def finish(self) -> None:
 
         self.stop()
 
+        try:
+            await self._message.delete()
+        except (discord.NotFound, discord.HTTPException):
+            pass
 
-class Select(discord.ui.Select[SearchView]):
+
+class TrackSearchSelect(discord.ui.Select[TrackSearchView]):
 
     async def callback(self, interaction: discord.Interaction) -> None:
 
         assert self.view is not None
-        await self.view._finish_selection(placeholder="tracks selection over.")
+
+        # Close view
+        await self.view.finish()
 
         # Put selected tracks in queue.
-
-        if not self.view.ctx.voice_client:
+        if not self.view._ctx.voice_client:
             return
 
-        tracks = [self.view.tracks[int(index)] for index in self.values]
-        position = 0 if (self.view.play_next or self.view.play_now) else None
+        tracks = [self.view._tracks[int(index)] for index in self.values]
+        position = 0 if (self.view._play_next or self.view._play_now) else None
 
         if len(tracks) > 1:
             await interaction.response.send_message(
                 embed=utilities.embed(
                     colour=values.GREEN,
-                    description="**Added** the selected tracks to the queue."
+                    description="Added the selected tracks to the queue."
                 )
             )
-            self.view.ctx.voice_client.queue.extend(tracks, position=position)
-
         else:
             await interaction.response.send_message(
                 embed=utilities.embed(
                     colour=values.GREEN,
-                    description=f"Added the **{self.view.search.source.value.lower()}** track "
+                    description=f"Added the **{self.view._search.source.value.title()}** track "
                                 f"**[{discord.utils.escape_markdown(tracks[0].title)}]({tracks[0].uri})** "
                                 f"by **{discord.utils.escape_markdown(tracks[0].author or 'unknown')}** to the queue."
                 )
             )
-            self.view.ctx.voice_client.queue.put(tracks[0], position=position)
 
-        if self.view.play_now:
-            await self.view.ctx.voice_client.stop()
-        if not self.view.ctx.voice_client.is_playing():
-            await self.view.ctx.voice_client.handle_track_end(enums.TrackEndReason.NORMAL)
+        self.view._ctx.voice_client.queue.extend(tracks, position=position)
+
+        if self.view._play_now:
+            await self.view._ctx.voice_client.stop()
+        if not self.view._ctx.voice_client.is_playing():
+            await self.view._ctx.voice_client.handle_track_end(enums.TrackEndReason.NORMAL)
 
 
 ##############
-# Controller #
+# CONTROLLER #
 ##############
 
 class ControllerView(discord.ui.View):
 
-    def __init__(self, voice_client: Player) -> None:
+    def __init__(
+        self,
+        *,
+        voice_client: Player
+    ) -> None:
         super().__init__(timeout=None)
 
-        self.voice_client: Player = voice_client
+        self._voice_client: Player = voice_client
+
+    # Buttons
 
     @discord.ui.button(label="Pause", emoji=values.PAUSE)
-    async def _pause_or_resume(self, _: discord.ui.Button[ControllerView], interaction: discord.Interaction) -> None:
+    async def _pause_or_resume(self, interaction: discord.Interaction, _: discord.ui.Button[ControllerView]) -> None:
 
         await interaction.response.defer()
 
-        if self.voice_client.is_paused():
-            await self.voice_client.set_pause(False)
+        if self._voice_client.is_paused():
+            await self._voice_client.set_pause(False)
             self._pause_or_resume.label = "Pause"
             self._pause_or_resume.emoji = values.PAUSE
         else:
-            await self.voice_client.set_pause(True)
+            await self._voice_client.set_pause(True)
             self._pause_or_resume.label = "Resume"
             self._pause_or_resume.emoji = values.PLAY
 
-        await self.voice_client.controller._update_view()
+        await self._voice_client.controller._update_view()
 
     @discord.ui.button(label="Next", emoji=values.NEXT)
-    async def _next(self, _: discord.ui.Button[ControllerView], interaction: discord.Interaction) -> None:
+    async def _next(self, interaction: discord.Interaction, _: discord.ui.Button[ControllerView]) -> None:
 
         await interaction.response.defer()
-        await self.voice_client.stop()
+        await self._voice_client.stop()
 
 
 class Controller:
 
-    def __init__(self, voice_client: Player) -> None:
+    def __init__(
+        self,
+        *,
+        voice_client: Player
+    ) -> None:
 
-        self.voice_client: Player = voice_client
+        self._voice_client: Player = voice_client
 
-        self.message: discord.Message | None = None
-        self.view: ControllerView = ControllerView(self.voice_client)
+        self._MESSAGE_BUILDERS: dict[enums.EmbedSize, Callable[..., Awaitable[tuple[str | None, discord.Embed | None]]]] = {
+            enums.EmbedSize.IMAGE:  self._build_image,
+            enums.EmbedSize.SMALL:  self._build_small,
+            enums.EmbedSize.MEDIUM: self._build_medium,
+            enums.EmbedSize.LARGE:  self._build_large,
+        }
 
-    # Embed
+        self._message: discord.Message | None = None
+        self._view: ControllerView = ControllerView(voice_client=self._voice_client)
+
+    # Message building
 
     async def _build_image(self) -> tuple[str, None]:
 
-        assert self.voice_client.current is not None
+        current = self._voice_client.current
 
-        current = self.voice_client.current
+        assert current is not None
         assert current.artwork_url is not None
         assert current.ctx is not None
 
-        url = await utilities.edit_image(
-            url=current.artwork_url,
-            bot=current.ctx.bot,
-            function=utilities.spotify,
-            # kwargs
-            length=current.length // 1000,
-            elapsed=self.voice_client.position // 1000,
-            title=current.title,
-            artists=[current.author],
-            format="png",
-        )
-        return url, None
-
-    def _build_small(self) -> tuple[None, discord.Embed]:
-
-        assert self.voice_client.current is not None
-        current = self.voice_client.current
-
-        embed = utilities.embed(
-            colour=values.MAIN,
-            title="Now Playing:",
-            description=f"**[{discord.utils.escape_markdown(current.title)}]({current.uri})**\n"
-                        f"by **{discord.utils.escape_markdown(current.author or 'Unknown')}**",
-            thumbnail=current.artwork_url or "https://dummyimage.com/1280x720/000/ffffff.png&text=no+thumbnail+:(",
+        return (
+            await utilities.edit_image(
+                url=current.artwork_url,
+                bot=current.ctx.bot,
+                function=utilities.spotify,
+                # kwargs
+                length=current.length // 1000,
+                elapsed=self._voice_client.position // 1000,
+                title=current.title,
+                artists=[current.author],
+                format="png",
+            ),
+            None
         )
 
-        return None, embed
+    async def _build_small(self) -> tuple[None, discord.Embed]:
 
-    def _build_medium(self) -> tuple[None, discord.Embed]:
+        current = self._voice_client.current
+        assert current is not None
 
-        assert self.voice_client.current is not None
-        current = self.voice_client.current
+        return (
+            None,
+            utilities.embed(
+                colour=values.MAIN,
+                title="Now Playing:",
+                description=f"**[{discord.utils.escape_markdown(current.title)}]({current.uri})**\n"
+                            f"by **{discord.utils.escape_markdown(current.author or 'Unknown')}**",
+                thumbnail=current.artwork_url or "https://dummyimage.com/1280x720/000/ffffff.png&text=no+thumbnail+:(",
+            )
+        )
 
-        _, embed = self._build_small()
+    async def _build_medium(self) -> tuple[None, discord.Embed]:
+
+        current = self._voice_client.current
+        assert current is not None
+
+        _, embed = await self._build_small()
 
         assert isinstance(embed.description, str)
         embed.description += "\n\n" \
                              f"● **Requested by:** {getattr(current.requester, 'mention', None)}\n" \
                              f"● **Source:** {current.source.value.title()}\n" \
-                             f"● **Paused:** {utilities.readable_bool(self.voice_client.paused).title()}\n" \
-                             f"● **Effects:** {', '.join([effect.value for effect in self.voice_client.effects] or ['N/A'])}\n" \
-                             f"● **Position:** {utilities.format_seconds(self.voice_client.position // 1000)} / {utilities.format_seconds(current.length // 1000)}\n"
+                             f"● **Paused:** {utilities.readable_bool(self._voice_client.paused).title()}\n" \
+                             f"● **Effects:** {', '.join([effect.value for effect in self._voice_client.effects] or ['N/A'])}\n" \
+                             f"● **Position:** {utilities.format_seconds(self._voice_client.position // 1000)} / {utilities.format_seconds(current.length // 1000)}\n"
 
-        return None, embed
+        return _, embed
 
-    def _build_large(self) -> tuple[None, discord.Embed]:
+    async def _build_large(self) -> tuple[None, discord.Embed]:
 
-        _, embed = self._build_medium()
+        _, embed = await self._build_medium()
 
-        if self.voice_client.queue._queue:
+        if self._voice_client.queue._queue:
             entries = [
                 f"**{index}. [{discord.utils.escape_markdown(entry.title)}]({entry.uri})**\n"
                 f"**⤷** by **{discord.utils.escape_markdown(entry.author)}** | {utilities.format_seconds(entry.length // 1000, friendly=True)}\n"
-                for index, entry in enumerate(self.voice_client.queue._queue[:3], start=1)
+                for index, entry in enumerate(self._voice_client.queue._queue[:3], start=1)
             ]
 
             assert isinstance(embed.description, str)
-            embed.description += f"\n● **Up next ({len(self.voice_client.queue)}):**\n{''.join(entries)}"
+            embed.description += f"\n● **Up next ({len(self._voice_client.queue)}):**\n{''.join(entries)}"
 
-        return None, embed
+        return _, embed
 
-    async def build_message(self) -> tuple[str | None, discord.Embed | None]:
+    async def build_message(self) -> dict[str, str | discord.Embed | None]:
 
-        guild_config = await self.voice_client.bot.manager.get_guild_config(self.voice_client.voice_channel.guild.id)
+        guild_config = await self._voice_client.bot.manager.get_guild_config(
+            self._voice_client.voice_channel.guild.id
+        )
+        built = await self._MESSAGE_BUILDERS[guild_config.embed_size]()
 
-        match guild_config.embed_size:
-            case enums.EmbedSize.IMAGE:
-                content, embed = await self._build_image()
-            case enums.EmbedSize.SMALL:
-                content, embed = self._build_small()
-            case enums.EmbedSize.MEDIUM:
-                content, embed = self._build_medium()
-            case enums.EmbedSize.LARGE:
-                content, embed = self._build_large()
-            case _:
-                raise ValueError(f"Unknown embed size: {guild_config.embed_size}")
+        return {"content": built[0], "embed": built[1]}
 
-        return content, embed
-
-    # Message
+    # Message handling
 
     async def _send_new_message(self) -> None:
 
-        if not self.voice_client.current:
+        if not self._voice_client.current:
             return
 
-        content, embed = await self.build_message()
-        self.message = await self.voice_client.text_channel.send(content, embed=embed, view=self.view)  # type: ignore
+        kwargs = await self.build_message()
+        self._message = await self._voice_client.text_channel.send(**kwargs, view=self._view)
 
     async def _delete_old_message(self) -> None:
 
-        if not self.message:
+        if not self._message:
             return
 
-        await self.message.delete()
-        self.message = None
+        await self._message.delete()
+        self._message = None
 
     async def _edit_old_message(self, reason: enums.TrackEndReason) -> None:
 
-        if not self.message:
+        if not self._message:
             return
 
         try:
-            old = self.voice_client.queue._history[-1]
+            old = self._voice_client.queue._history[-1]
         except IndexError:
             track_info = "*Track info not found*"
             track_thumbnail = "https://dummyimage.com/1280x720/000/ffffff.png&text=thumbnail+not+found"
@@ -293,7 +311,7 @@ class Controller:
             title = "Track ended:"
             view = None
 
-        await self.message.edit(
+        await self._message.edit(
             content=None,
             embed=utilities.embed(
                 colour=colour,
@@ -303,14 +321,14 @@ class Controller:
             ),
             view=view
         )
-        self.message = None
+        self._message = None
 
     async def _update_view(self) -> None:
 
-        if not self.message:
+        if not self._message:
             return
 
-        await self.message.edit(view=self.view)
+        await self._message.edit(view=self._view)
 
     # Events
 
@@ -319,7 +337,7 @@ class Controller:
 
     async def handle_track_end(self, reason: enums.TrackEndReason) -> None:
 
-        guild_config = await self.voice_client.bot.manager.get_guild_config(self.voice_client.voice_channel.guild.id)
+        guild_config = await self._voice_client.bot.manager.get_guild_config(self._voice_client.voice_channel.guild.id)
 
         if guild_config.delete_old_now_playing_messages:
             await self._delete_old_message()
@@ -338,7 +356,7 @@ class Player(slate.Player["CD", custom.Context, "Player"]):
 
         self.text_channel: discord.TextChannel = text_channel
 
-        self.controller: Controller = Controller(self)
+        self.controller: Controller = Controller(voice_client=self)
         self.queue: slate.Queue[slate.Track[custom.Context]] = slate.Queue()
 
         self.skip_request_ids: set[int] = set()
@@ -357,7 +375,7 @@ class Player(slate.Player["CD", custom.Context, "Player"]):
         )
         await self.disconnect()
 
-    async def _convert_spotify_track(self, track: slate.Track[custom.Context]) -> slate.Track[custom.Context]:
+    async def _convert_spotify_track(self, track: slate.Track[custom.Context]) -> slate.Track[custom.Context] | None:
 
         assert track.ctx is not None
 
@@ -373,13 +391,18 @@ class Player(slate.Player["CD", custom.Context, "Player"]):
                     pass
 
         if search is None:
-            search = await self.search(f"{track.author} - {track.title}", source=slate.Source.YOUTUBE, ctx=track.ctx)
+            try:
+                search = await self.search(f"{track.author} - {track.title}", source=slate.Source.YOUTUBE, ctx=track.ctx)
+            except exceptions.EmbedError:
+                pass
 
-        return search.tracks[0]
+        return search.tracks[0] if search else None
 
     # Events
 
     async def handle_track_start(self) -> None:
+
+        # Update controller message.
         await self.controller.handle_track_start()
 
     async def handle_track_end(self, reason: enums.TrackEndReason) -> None:
@@ -387,52 +410,60 @@ class Player(slate.Player["CD", custom.Context, "Player"]):
         # Update controller message.
         await self.controller.handle_track_end(reason)
 
-        # Set current to None, otherwise is_playing will be True even after the track has already ended.
+        # Set current track to None, otherwise is_playing
+        # will return True even if the track has actually
+        # ended.
         self._current = None
 
-        #
+        # Don't continue if we are already waiting for a
+        # new track or the player is already playing.
 
         if self.is_playing() or self.waiting:
             return
 
         self.waiting = True
 
-        # Fetch next track from queue.
+        # Fetch the next track from the queue, disconnect
+        # if there are no tracks in the queue and no new
+        # ones are added for 180 seconds.
 
-        if self.queue.is_empty():
+        if not self.queue.is_empty():
+            track = self.queue.get()
+            assert track is not None
+
+        else:
             try:
                 with async_timeout.timeout(180):
                     track = await self.queue.get_wait()
             except asyncio.TimeoutError:
                 await self._disconnect_on_timeout()
                 return
-        else:
-            track = self.queue.get()
-            assert track is not None
 
-        # Convert spotify tracks to YouTube tracks.
+        # Convert Spotify tracks to YouTube tracks.
 
         if track.source is slate.Source.SPOTIFY:
 
-            try:
-                track = await self._convert_spotify_track(track)
-            except exceptions.EmbedError:
-                self.waiting = False
+            if not (_track := await self._convert_spotify_track(track)):
                 await self.text_channel.send(
                     embed=utilities.embed(
                         colour=values.RED,
-                        description=f"No youtube tracks were found for **[{discord.utils.escape_markdown(track.title)}]({track.uri})** by **{discord.utils.escape_markdown(track.author or 'Unknown')}** on spotify."
+                        description=f"No YouTube tracks were found for the Spotify track "
+                                    f"**[{discord.utils.escape_markdown(track.title)}]({track.uri})** "
+                                    f"by **{discord.utils.escape_markdown(track.author or 'Unknown')}**."
                     )
                 )
+                self.waiting = False
                 await self.handle_track_end(enums.TrackEndReason.NORMAL)
                 return
+
+            track = _track
 
         # Play track.
 
         await self.play(track)
         self.waiting = False
 
-    # Searching and playing
+    # Searching
 
     async def search(
         self,
@@ -480,9 +511,9 @@ class Player(slate.Player["CD", custom.Context, "Player"]):
 
         if search_select:
 
-            view = SearchView(ctx=ctx, search=search, play_next=play_next, play_now=play_now)
+            view = TrackSearchView(ctx=ctx, search=search, play_next=play_next, play_now=play_now)
             message = await ctx.reply(values.ZWSP, view=view)
-            view.message = message
+            view._message = message
 
         else:
 
@@ -494,7 +525,7 @@ class Player(slate.Player["CD", custom.Context, "Player"]):
                 await ctx.reply(
                     embed=utilities.embed(
                         colour=values.GREEN,
-                        description=f"Added the **{search.source.value.lower()}** track **[{discord.utils.escape_markdown(track.title)}]({track.uri})** "
+                        description=f"Added the **{search.source.value.title()}** track **[{discord.utils.escape_markdown(track.title)}]({track.uri})** "
                                     f"by **{discord.utils.escape_markdown(track.author or 'Unknown')}** to the queue."
                     )
                 )
@@ -506,7 +537,7 @@ class Player(slate.Player["CD", custom.Context, "Player"]):
                 await ctx.reply(
                     embed=utilities.embed(
                         colour=values.GREEN,
-                        description=f"Added the **{search.source.value.lower()}** {search.type.lower()} **[{search.result.name}]({search.result.url})** "
+                        description=f"Added the **{search.source.value.title()}** {search.type.lower()} **[{search.result.name}]({search.result.url})** "
                                     f"to the queue."
                     )
                 )
