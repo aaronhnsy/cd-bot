@@ -70,7 +70,7 @@ class Play(commands.Cog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.Source.YOUTUBE, ctx=ctx)
+        await ctx.voice_client.searcher.queue(query, source=slate.Source.YOUTUBE, ctx=ctx)
 
     @commands.command(name="play-next", aliases=["play_next", "playnext", "pne"])
     async def play_next(self, ctx: custom.Context, *, query: str) -> None:
@@ -87,7 +87,7 @@ class Play(commands.Cog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.Source.YOUTUBE, ctx=ctx, play_next=True)
+        await ctx.voice_client.searcher.queue(query, source=slate.Source.YOUTUBE, ctx=ctx, play_next=True)
 
     @commands.command(name="play-now", aliases=["play_now", "playnow", "pno"])
     async def play_now(self, ctx: custom.Context, *, query: str) -> None:
@@ -104,7 +104,7 @@ class Play(commands.Cog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.Source.YOUTUBE, ctx=ctx, play_now=True)
+        await ctx.voice_client.searcher.queue(query, source=slate.Source.YOUTUBE, ctx=ctx, play_now=True)
 
     # Search
 
@@ -123,7 +123,7 @@ class Play(commands.Cog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.Source.YOUTUBE, ctx=ctx, search_select=True)
+        await ctx.voice_client.searcher.select(query, source=slate.Source.YOUTUBE, ctx=ctx)
 
     @commands.command(name="search-next", aliases=["search_next", "searchnext", "sne"], hidden=True)
     async def search_next(self, ctx: custom.Context, *, query: str) -> None:
@@ -131,7 +131,7 @@ class Play(commands.Cog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.Source.YOUTUBE, ctx=ctx, search_select=True, play_next=True)
+        await ctx.voice_client.searcher.select(query, source=slate.Source.YOUTUBE, ctx=ctx, play_next=True)
 
     @commands.command(name="search-now", aliases=["search_now", "searchnow", "sno"], hidden=True)
     async def search_now(self, ctx: custom.Context, *, query: str) -> None:
@@ -139,7 +139,7 @@ class Play(commands.Cog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.Source.YOUTUBE, ctx=ctx, search_select=True, play_now=True)
+        await ctx.voice_client.searcher.select(query, source=slate.Source.YOUTUBE, ctx=ctx, play_now=True)
 
     # Youtube
 
@@ -195,7 +195,7 @@ class Play(commands.Cog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.Source.YOUTUBE_MUSIC, ctx=ctx)
+        await ctx.voice_client.searcher.queue(query, source=slate.Source.YOUTUBE_MUSIC, ctx=ctx)
 
     @commands.command(name="youtube-music-next", aliases=["youtube_music_next", "youtubemusicnext", "ytmne"], hidden=True)
     async def youtube_music_next(self, ctx: custom.Context, *, query: str) -> None:
@@ -203,7 +203,7 @@ class Play(commands.Cog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.Source.YOUTUBE_MUSIC, ctx=ctx, play_next=True)
+        await ctx.voice_client.searcher.queue(query, source=slate.Source.YOUTUBE_MUSIC, ctx=ctx, play_next=True)
 
     @commands.command(name="youtube-music-now", aliases=["youtube_music_now", "youtubemusicnow", "ytmno"], hidden=True)
     async def youtube_music_now(self, ctx: custom.Context, *, query: str) -> None:
@@ -211,7 +211,7 @@ class Play(commands.Cog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.Source.YOUTUBE_MUSIC, ctx=ctx, play_now=True)
+        await ctx.voice_client.searcher.queue(query, source=slate.Source.YOUTUBE_MUSIC, ctx=ctx, play_now=True)
 
     # YouTube Music search
 
@@ -227,7 +227,7 @@ class Play(commands.Cog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.Source.YOUTUBE_MUSIC, ctx=ctx, search_select=True)
+        await ctx.voice_client.searcher.select(query, source=slate.Source.YOUTUBE_MUSIC, ctx=ctx)
 
     @commands.command(name="youtube-music-search-next", aliases=["youtube_music_search_next", "youtubemusicsearchnext", "ytmsne"], hidden=True)
     async def youtube_music_search_next(self, ctx: custom.Context, *, query: str) -> None:
@@ -235,7 +235,7 @@ class Play(commands.Cog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.Source.YOUTUBE_MUSIC, ctx=ctx, search_select=True, play_next=True)
+        await ctx.voice_client.searcher.select(query, source=slate.Source.YOUTUBE_MUSIC, ctx=ctx, play_next=True)
 
     @commands.command(name="youtube-music-search-now", aliases=["youtube_music_search_now", "youtubemusicsearchnow", "ytmsno"], hidden=True)
     async def youtube_music_search_now(self, ctx: custom.Context, *, query: str) -> None:
@@ -243,7 +243,7 @@ class Play(commands.Cog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.Source.YOUTUBE_MUSIC, ctx=ctx, search_select=True, play_now=True)
+        await ctx.voice_client.searcher.select(query, source=slate.Source.YOUTUBE_MUSIC, ctx=ctx, play_now=True)
 
     # Soundcloud
 
@@ -259,7 +259,7 @@ class Play(commands.Cog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.Source.SOUNDCLOUD, ctx=ctx)
+        await ctx.voice_client.searcher.queue(query, source=slate.Source.SOUNDCLOUD, ctx=ctx)
 
     @commands.command(name="soundcloud-next", aliases=["soundcloud_next", "soundcloudnext", "scne"], hidden=True)
     async def soundcloud_next(self, ctx: custom.Context, *, query: str) -> None:
@@ -267,7 +267,7 @@ class Play(commands.Cog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.Source.SOUNDCLOUD, ctx=ctx, play_next=True)
+        await ctx.voice_client.searcher.queue(query, source=slate.Source.SOUNDCLOUD, ctx=ctx, play_next=True)
 
     @commands.command(name="soundcloud-now", aliases=["soundcloud_now", "soundcloudnow", "scno"], hidden=True)
     async def soundcloud_now(self, ctx: custom.Context, *, query: str) -> None:
@@ -275,7 +275,7 @@ class Play(commands.Cog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.Source.SOUNDCLOUD, ctx=ctx, play_now=True)
+        await ctx.voice_client.searcher.queue(query, source=slate.Source.SOUNDCLOUD, ctx=ctx, play_now=True)
 
     # Soundcloud search
 
@@ -291,7 +291,7 @@ class Play(commands.Cog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.Source.SOUNDCLOUD, ctx=ctx, search_select=True)
+        await ctx.voice_client.searcher.select(query, source=slate.Source.SOUNDCLOUD, ctx=ctx)
 
     @commands.command(name="soundcloud-search-next", aliases=["soundcloud_search_next", "soundcloudsearchnext", "scsne"], hidden=True)
     async def soundcloud_search_next(self, ctx: custom.Context, *, query: str) -> None:
@@ -299,7 +299,7 @@ class Play(commands.Cog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.Source.SOUNDCLOUD, ctx=ctx, search_select=True, play_next=True)
+        await ctx.voice_client.searcher.select(query, source=slate.Source.SOUNDCLOUD, ctx=ctx, play_next=True)
 
     @commands.command(name="soundcloud-search-now", aliases=["soundcloud_search_now", "soundcloudsearchnow", "scsno"], hidden=True)
     async def soundcloud_search_now(self, ctx: custom.Context, *, query: str) -> None:
@@ -307,7 +307,7 @@ class Play(commands.Cog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.Source.SOUNDCLOUD, ctx=ctx, search_select=True, play_now=True)
+        await ctx.voice_client.searcher.select(query, source=slate.Source.SOUNDCLOUD, ctx=ctx, play_now=True)
 
     # Local
 
@@ -318,7 +318,7 @@ class Play(commands.Cog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.Source.LOCAL, ctx=ctx)
+        await ctx.voice_client.searcher.queue(query, source=slate.Source.LOCAL, ctx=ctx)
 
     @commands.command(name="local-next", aliases=["local_next", "localnext", "lne"], hidden=True)
     @commands.is_owner()
@@ -327,7 +327,7 @@ class Play(commands.Cog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.Source.LOCAL, ctx=ctx, play_next=True)
+        await ctx.voice_client.searcher.queue(query, source=slate.Source.LOCAL, ctx=ctx, play_next=True)
 
     @commands.command(name="local-now", aliases=["local_now", "localnow", "lno"], hidden=True)
     @commands.is_owner()
@@ -336,7 +336,7 @@ class Play(commands.Cog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.Source.LOCAL, ctx=ctx, play_now=True)
+        await ctx.voice_client.searcher.queue(query, source=slate.Source.LOCAL, ctx=ctx, play_now=True)
 
     # HTTP
 
@@ -347,7 +347,7 @@ class Play(commands.Cog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.Source.NONE, ctx=ctx)
+        await ctx.voice_client.searcher.queue(query, source=slate.Source.NONE, ctx=ctx)
 
     @commands.command(name="http-next", aliases=["http_next", "httpnext", "hne"], hidden=True)
     @commands.is_owner()
@@ -356,7 +356,7 @@ class Play(commands.Cog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.Source.NONE, ctx=ctx, play_next=True)
+        await ctx.voice_client.searcher.queue(query, source=slate.Source.NONE, ctx=ctx, play_next=True)
 
     @commands.command(name="http-now", aliases=["http_now", "httpnow", "hno"], hidden=True)
     @commands.is_owner()
@@ -365,4 +365,4 @@ class Play(commands.Cog):
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.queue_search(query, source=slate.Source.NONE, ctx=ctx, play_now=True)
+        await ctx.voice_client.searcher.queue(query, source=slate.Source.NONE, ctx=ctx, play_now=True)

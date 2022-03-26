@@ -41,15 +41,7 @@ class Queue:
     def __len__(self) -> int:
         return self.items.__len__()
 
-    #
-
-    def is_empty(self) -> bool:
-        return len(self.items) == 0
-
-    def set_loop_mode(self, mode: slate.QueueLoopMode, /) -> None:
-        self.loop_mode = mode
-
-    def wakeup_next(self) -> None:
+    def _wakeup_next(self) -> None:
 
         while self._waiters:
 
@@ -57,7 +49,34 @@ class Queue:
                 waiter.set_result(None)
                 break
 
-    #
+    # Utilities
+
+    def is_empty(self) -> bool:
+        return len(self.items) == 0
+
+    def set_loop_mode(self, mode: slate.QueueLoopMode, /) -> None:
+        self.loop_mode = mode
+
+    def shuffle(self) -> None:
+        random.shuffle(self.items)
+
+    def reverse(self) -> None:
+        self.items.reverse()
+
+    def clear(self) -> None:
+        self.items.clear()
+        self.history.clear()
+
+    def reset(self) -> None:
+
+        self.clear()
+
+        for waiter in self._waiters:
+            waiter.cancel()
+
+        self._waiters.clear()
+
+    # Get / Put
 
     def get(self, position: int = 0) -> Track | None:
 
@@ -93,7 +112,7 @@ class Queue:
                     pass
 
                 if not self.is_empty() and not waiter.cancelled():
-                    self.wakeup_next()
+                    self._wakeup_next()
 
                 raise
 
@@ -111,7 +130,7 @@ class Queue:
         else:
             self.items.insert(position, item)
 
-        self.wakeup_next()
+        self._wakeup_next()
 
     def extend(self, items: list[Track], position: int | None = None) -> None:
 
@@ -121,25 +140,4 @@ class Queue:
             for index, track, in enumerate(items):
                 self.items.insert(position + index, track)
 
-        self.wakeup_next()
-
-    #
-
-    def shuffle(self) -> None:
-        random.shuffle(self.items)
-
-    def reverse(self) -> None:
-        self.items.reverse()
-
-    def clear(self) -> None:
-        self.items.clear()
-        self.history.clear()
-
-    def reset(self) -> None:
-
-        self.clear()
-
-        for waiter in self._waiters:
-            waiter.cancel()
-
-        self._waiters.clear()
+        self._wakeup_next()
