@@ -32,26 +32,15 @@ class ControllerView(discord.ui.View):
     @discord.ui.button(label="Previous", emoji=values.PREVIOUS)
     async def _previous(self, interaction: discord.Interaction, _: discord.ui.Button[ControllerView]) -> None:
 
-        try:
-            track = self._voice_client.queue.history[0]
-
-        except IndexError:
-            await interaction.response.send_message(
-                embed=utilities.embed(
-                    colour=values.RED,
-                    description="There are no tracks in the queue history."
-                ),
-                ephemeral=True
-            )
-            return
-
         await interaction.response.defer()
 
+        previous_track = self._voice_client.queue.history[0]
+        self._voice_client.queue.items.insert(0, previous_track)
         del self._voice_client.queue.history[0]
 
-        assert self._voice_client._current is not None
-        self._voice_client.queue.items.insert(0, track)
-        self._voice_client.queue.items.insert(1, self._voice_client._current)
+        current_track = self._voice_client.current
+        assert current_track is not None
+        self._voice_client.queue.items.insert(1, current_track)
 
         await self._voice_client.handle_track_end(enums.TrackEndReason.REPLACED)
 
@@ -69,7 +58,7 @@ class ControllerView(discord.ui.View):
             self._pause_or_resume.label = "Resume"
             self._pause_or_resume.emoji = values.PLAY
 
-        await self._voice_client.controller._update_view()
+        await self._voice_client.controller.update_view()
 
     @discord.ui.button(label="Next", emoji=values.NEXT)
     async def _next(self, interaction: discord.Interaction, _: discord.ui.Button[ControllerView]) -> None:
@@ -188,6 +177,8 @@ class Controller:
         if not self._voice_client.current:
             return
 
+        await self.update_view()
+
         kwargs = await self.build_message()
         self._message = await self._voice_client.text_channel.send(**kwargs, view=self._view)
 
@@ -196,7 +187,11 @@ class Controller:
         if not self._message:
             return
 
-        await self._message.delete()
+        try:
+            await self._message.delete()
+        except (discord.NotFound, discord.HTTPException):
+            pass
+
         self._message = None
 
     async def _edit_old_message(self, reason: enums.TrackEndReason) -> None:
@@ -204,23 +199,13 @@ class Controller:
         if not self._message:
             return
 
-        try:
-            assert self._voice_client._current is not None
-            old = self._voice_client._current
-        except IndexError:
-            track_info = "*Track info not found*"
-            track_thumbnail = "https://dummyimage.com/1280x720/000/ffffff.png&text=thumbnail+not+found"
-        else:
-            track_info = f"**[{discord.utils.escape_markdown(old.title)}]({old.uri})**\n" \
-                         f"by **{discord.utils.escape_markdown(old.author or 'Unknown')}**"
-            track_thumbnail = old.artwork_url or "https://dummyimage.com/500x500/000/ffffff.png&text=thumbnail+not+found"
+        assert self._voice_client._current is not None
+        track = self._voice_client._current
 
         if reason not in [enums.TrackEndReason.NORMAL, enums.TrackEndReason.REPLACED]:
             colour = values.RED
             title = "Something went wrong!"
-            view = discord.ui.View(
-                timeout=None
-            ).add_item(
+            view = discord.ui.View(timeout=None).add_item(
                 discord.ui.Button(label="Support Server", url=values.SUPPORT_LINK)
             )
         else:
@@ -228,24 +213,34 @@ class Controller:
             title = "Track ended:"
             view = None
 
-        await self._message.edit(
-            content=None,
-            embed=utilities.embed(
-                colour=colour,
-                title=title,
-                description=track_info,
-                thumbnail=track_thumbnail,
-            ),
-            view=view
-        )
+        try:
+            await self._message.edit(
+                embed=utilities.embed(
+                    colour=colour,
+                    title=title,
+                    description=f"**[{discord.utils.escape_markdown(track.title)}]({track.uri})**\n"
+                                f"by **{discord.utils.escape_markdown(track.author or 'Unknown')}**",
+                    thumbnail=track.artwork_url or "https://dummyimage.com/500x500/000/ffffff.png&text=thumbnail+not+found",
+                ),
+                view=view
+            )
+        except (discord.NotFound, discord.HTTPException):
+            pass
+
         self._message = None
 
-    async def _update_view(self) -> None:
+    async def update_view(self) -> None:
 
         if not self._message:
             return
 
-        await self._message.edit(view=self._view)
+        self._view._next.disabled = self._voice_client.queue.is_empty() and not self._voice_client.current
+        self._view._previous.disabled = not self._voice_client.queue.history
+
+        try:
+            await self._message.edit(view=self._view)
+        except (discord.NotFound, discord.HTTPException):
+            pass
 
     # Events
 

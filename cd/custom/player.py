@@ -67,6 +67,8 @@ class TrackSearchSelect(discord.ui.Select["TrackSearchView"]):
         if not self.view._ctx.voice_client.is_playing():
             await self.view._ctx.voice_client._play_next()
 
+        await self.view._ctx.voice_client.controller.update_view()
+
 
 class TrackSearchView(discord.ui.View):
 
@@ -320,3 +322,5 @@ class Player(slate.Player["CD", custom.Context, "Player"]):
                 await self._play_next()
             if play_now:
                 await self.stop()
+
+            await self.controller.update_view()
