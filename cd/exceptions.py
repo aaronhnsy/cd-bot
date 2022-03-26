@@ -28,7 +28,7 @@ class EmbedError(CDError):
         self,
         *,
         # base
-        colour: discord.Colour | None = values.MAIN,
+        colour: discord.Colour | None = values.RED,
         title: str | None = None,
         url: str | None = None,
         description: str | None = None,

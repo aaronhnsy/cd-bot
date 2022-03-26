@@ -90,3 +90,4 @@ class TrackEndReason(Enum):
     NORMAL = 0
     STUCK = 1
     EXCEPTION = 2
+    REPLACED = 3

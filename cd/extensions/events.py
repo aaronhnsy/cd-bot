@@ -357,7 +357,11 @@ class Events(commands.Cog):
         await player.handle_track_start()
 
     @commands.Cog.listener("on_slate_track_end")
-    async def _handle_track_end(self, player: custom.Player, _: slate.TrackEnd) -> None:
+    async def _handle_track_end(self, player: custom.Player, event: slate.TrackEnd) -> None:
+
+        if event.reason == "REPLACED":
+            return
+
         await player.handle_track_end(enums.TrackEndReason.NORMAL)
 
     @commands.Cog.listener("on_slate_track_stuck")

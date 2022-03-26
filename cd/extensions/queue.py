@@ -48,16 +48,16 @@ class Queue(commands.Cog):
         paginator = paginators.EmbedPaginator(
             ctx=ctx,
             entries=[
-                f"**{index + 1}. [{discord.utils.escape_markdown(track.title)}]({track.uri})** by **{discord.utils.escape_markdown(track.author or 'Unknown')}**\n"
+                f"**{index}. [{discord.utils.escape_markdown(track.title)}]({track.uri})** by **{discord.utils.escape_markdown(track.author or 'Unknown')}**\n"
                 f"**⤷** {utilities.format_seconds(track.length // 1000, friendly=True)} | "
                 f"{track.source.value.title()} | "
                 f"Added by: {getattr(track.requester, 'mention', None)}"
-                for index, track in enumerate(ctx.voice_client.queue._queue)
+                for index, track in enumerate(ctx.voice_client.queue.items, start=1)
             ],
             per_page=5,
             splitter="\n\n",
-            embed_footer=f"{len(ctx.voice_client.queue._queue)} tracks | "
-                         f"{utilities.format_seconds(sum(track.length for track in ctx.voice_client.queue._queue) // 1000, friendly=True)} | "
+            embed_footer=f"{len(ctx.voice_client.queue.items)} tracks | "
+                         f"{utilities.format_seconds(sum(track.length for track in ctx.voice_client.queue.items) // 1000, friendly=True)} | "
                          f"Loop mode: {ctx.voice_client.queue.loop_mode.name.title()} | "
                          f"1 = up next",
         )
@@ -76,16 +76,16 @@ class Queue(commands.Cog):
         paginator = paginators.EmbedPaginator(
             ctx=ctx,
             entries=[
-                f"**{index + 1}. [{discord.utils.escape_markdown(track.title)}]({track.uri})** by **{discord.utils.escape_markdown(track.author or 'Unknown')}**\n"
+                f"**{index}. [{discord.utils.escape_markdown(track.title)}]({track.uri})** by **{discord.utils.escape_markdown(track.author or 'Unknown')}**\n"
                 f"**⤷** {utilities.format_seconds(track.length // 1000, friendly=True)} | "
                 f"{track.source.value.title()} | "
                 f"Added by: {getattr(track.requester, 'mention', None)}"
-                for index, track in enumerate(reversed(ctx.voice_client.queue._history))
+                for index, track in enumerate(reversed(ctx.voice_client.queue.history), start=1)
             ],
             per_page=5,
             splitter="\n\n",
-            embed_footer=f"{len(ctx.voice_client.queue._history)} tracks | "
-                         f"{utilities.format_seconds(sum(track.length for track in ctx.voice_client.queue._history) // 1000, friendly=True)} | "
+            embed_footer=f"{len(ctx.voice_client.queue.history)} tracks | "
+                         f"{utilities.format_seconds(sum(track.length for track in ctx.voice_client.queue.history) // 1000, friendly=True)} | "
                          f"Loop mode: {ctx.voice_client.queue.loop_mode.name.title()} | "
                          f"1 = most recent",
         )
@@ -176,11 +176,11 @@ class Queue(commands.Cog):
         assert ctx.voice_client is not None
 
         if method == "title":
-            ctx.voice_client.queue._queue.sort(key=lambda track: track.title, reverse=reverse)
+            ctx.voice_client.queue.items.sort(key=lambda track: track.title, reverse=reverse)
         elif method == "author":
-            ctx.voice_client.queue._queue.sort(key=lambda track: track.author, reverse=reverse)
+            ctx.voice_client.queue.items.sort(key=lambda track: track.author, reverse=reverse)
         elif method == "length":
-            ctx.voice_client.queue._queue.sort(key=lambda track: track.length, reverse=reverse)
+            ctx.voice_client.queue.items.sort(key=lambda track: track.length, reverse=reverse)
 
         await ctx.reply(
             embed=utilities.embed(
@@ -209,7 +209,7 @@ class Queue(commands.Cog):
                             f"**{len(ctx.voice_client.queue)}** track{'s' if len(ctx.voice_client.queue) > 1 else ''}.",
             )
 
-        track = ctx.voice_client.queue.get(entry - 1, put_history=False)
+        track = ctx.voice_client.queue.get(entry - 1)
         assert track is not None
 
         await ctx.reply(
@@ -246,7 +246,7 @@ class Queue(commands.Cog):
                             f"**{len(ctx.voice_client.queue)}** track{'s' if len(ctx.voice_client.queue) > 1 else ''}.",
             )
 
-        track = ctx.voice_client.queue.get(entry - 1, put_history=False)
+        track = ctx.voice_client.queue.get(entry - 1)
         assert track is not None
 
         ctx.voice_client.queue.put(track, position=to - 1)
@@ -269,7 +269,7 @@ class Queue(commands.Cog):
 
         assert ctx.voice_client is not None
 
-        ctx.voice_client.queue._queue = list({track.identifier: track for track in ctx.voice_client.queue._queue}.values())
+        ctx.voice_client.queue.items = list({track.identifier: track for track in ctx.voice_client.queue.items}.values())
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,

@@ -356,7 +356,7 @@ class Player(commands.Cog):
                     description=f"**{amount}** is not a valid amount of tracks to skip, there are only"
                                 f"**{len(ctx.voice_client.queue) + 1}** tracks in the queue."
                 )
-            del ctx.voice_client.queue[:amount - 1]
+            del ctx.voice_client.queue.items[:amount - 1]
 
         await ctx.voice_client.stop()
         await ctx.reply(
