@@ -141,6 +141,18 @@ class Player(slate.Player["CD", custom.Context, "Player"]):
 
         self.waiting: bool = False
 
+    # Overrides
+
+    async def stop(
+        self,
+        *,
+        force: bool = False
+    ) -> None:
+
+        current = self._current
+        await super().stop(force=force)
+        self._current = current
+
     # Misc
 
     async def _disconnect_on_timeout(self) -> None:
