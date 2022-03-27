@@ -140,8 +140,6 @@ class TrackSearchView(discord.ui.View):
 
 class Searcher:
 
-    _COLLECTION_TYPES = (spotipy.Album, spotipy.Playlist, spotipy.Artist, slate.Collection)
-
     def __init__(
         self,
         *,
@@ -193,7 +191,11 @@ class Searcher:
         search = await self._search(query, source=source, ctx=ctx)
         position = 0 if (play_next or play_now) else None
 
-        if isinstance(search.result, self._COLLECTION_TYPES) and not search.result.name.startswith("Search result for:"):
+        if (
+            isinstance(search.result, (spotipy.Album, spotipy.Playlist, spotipy.Artist, slate.Collection))
+                and
+            getattr(search.result, "name", "").startswith("Search result for:") is False
+        ):
             self.voice_client.queue.extend(search.tracks, position=position)
             embed = utilities.embed(
                 colour=values.GREEN,
