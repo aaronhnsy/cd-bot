@@ -9,7 +9,7 @@ import discord
 import slate
 from discord.ext import commands
 
-# My stuff
+# Local
 from cd import checks, custom, exceptions, paginators, utilities, values
 from cd.bot import CD
 

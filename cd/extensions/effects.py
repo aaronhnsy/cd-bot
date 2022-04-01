@@ -8,7 +8,7 @@ from typing import Literal
 import slate
 from discord.ext import commands
 
-# My stuff
+# Local
 from cd import checks, custom, enums, utilities, values
 from cd.bot import CD
 

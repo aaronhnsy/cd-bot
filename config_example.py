@@ -1,8 +1,8 @@
 # Future
 from __future__ import annotations
 
-# My stuff
-from utilities.enums import Environment
+# Local
+from cd.enums import Environment
 
 
 ENV: Environment = Environment.DEVELOPMENT

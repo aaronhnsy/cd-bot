@@ -4,12 +4,12 @@ from __future__ import annotations
 # Standard Library
 from typing import TYPE_CHECKING, Any
 
-# My stuff
+# Local
 from cd import enums
 
 
 if TYPE_CHECKING:
-    # My stuff
+    # Local
     from cd.bot import CD
 
 

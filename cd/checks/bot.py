@@ -5,7 +5,7 @@ from __future__ import annotations
 import discord
 from discord.ext import commands
 
-# My stuff
+# Local
 from cd import custom, values
 
 

@@ -1,7 +1,7 @@
 # Future
 from __future__ import annotations
 
-# My stuff
+# Local
 from cd.objects.guild import *
 from cd.objects.user import *
 

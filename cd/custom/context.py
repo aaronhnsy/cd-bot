@@ -8,13 +8,13 @@ from typing import TYPE_CHECKING, Any
 import discord
 from discord.ext import commands
 
-# My stuff
+# Local
 from cd import custom
 
 
 if TYPE_CHECKING:
-    # My stuff
     # noinspection PyUnresolvedReferences
+    # Local
     from cd.bot import CD
 
 

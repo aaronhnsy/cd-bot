@@ -2,36 +2,34 @@
 name        = "CD-bot"
 version     = "0.0.1"
 description = "A general purpose music bot."
-license     = "MIT"
 authors     = ["Axel <axelancerr@gmail.com>"]
+license     = "MIT"
 readme      = "README.md"
 
 
 [tool.poetry.dependencies]
 python = "^3.10.0"
 
-aiohttp         = { version = "~3.8.0", extras = ["speedups"]}
-aioredis        = "~2.0.0"
-asyncpg         = "~0.25.0"
-colorama        = "~0.4.0"
-humanize        = "~4.0.0"
-pendulum        = "~2.1.0"
-psutil          = "~5.9.0"
-pynacl          = "~1.5.0"
-rapidfuzz       = "~2.0.0"
-wheel           = "~0.37.0"
-wand            = "~0.6.0"
-"mystbin.py"    = "~3.1.0"
+aiohttp         = { version = "~3.8.0", extras = ["speedups"] }
+aioredis        = { version = "~2.0.0"  }
+asyncpg         = { version = "~0.25.0" }
+colorama        = { version = "~0.4.0"  }
+humanize        = { version = "~4.0.0"  }
+pendulum        = { version = "~2.1.0"  }
+psutil          = { version = "~5.9.0"  }
+pynacl          = { version = "~1.5.0"  }
+rapidfuzz       = { version = "~2.0.0"  }
+wand            = { version = "~0.6.0"  }
+"mystbin.py"    = { version = "~3.1.0"  }
 
-jishaku                     = { git = "git@github.com:Axelware/jishaku", rev = "master", extras = ["voice"] }
-slate                       = { git = "git@github.com:Axelware/slate", branch = "main" }
-"pretty"                    = { git = "git@github.com:ShineyDev/pretty", branch = "main" }
-"discord.py"                = { git = "git@github.com:Rapptz/discord.py", branch = "master", extras = ["voice", "speed"]}
-"discord-ext-alternatives"  = { git = "git@github.com:Ext-Creators/discord-ext-alternatives", rev = "2987112c31de9bada4ee95cee9007a326e496e19" }
+slate                       = { git = "git@github.com:Axelware/slate",                          branch = "main"                                                                     }
+jishaku                     = { git = "git@github.com:Axelware/jishaku",                        branch = "master",                                  extras = ["voice"]              }
+"discord.py"                = { git = "git@github.com:Rapptz/discord.py",                       branch = "master",                                  extras = ["voice", "speed"]     }
+"discord-ext-alternatives"  = { git = "git@github.com:Ext-Creators/discord-ext-alternatives",   rev = "2987112c31de9bada4ee95cee9007a326e496e19"                                    }
 
 
 [tool.poetry.dev-dependencies]
-isort = "^5.10.0"
+isort = "*"
 
 
 [tool.isort]
@@ -39,28 +37,29 @@ line_length                 = 120
 multi_line_output           = 3
 lines_after_imports         = 2
 combine_star                = true
-include_trailing_comma      = true
 star_first                  = true
-known_local_folder          = ["extensions", "utilities", "cd"]
+include_trailing_comma      = true
+dedup_headings              = true
+src_paths                   = ["cd"]
 import_heading_future       = "Future"
 import_heading_stdlib       = "Standard Library"
 import_heading_thirdparty   = "Packages"
-import_heading_firstparty   = "My stuff"
-import_heading_localfolder  = "My stuff"
+import_heading_firstparty   = "Local"
+import_heading_localfolder  = "Local"
 
 
 [tool.pyright]
-include                 = ["cd"]
-verboseOutput           = false
-pythonVersion           = "3.10"
-typeCheckingMode        = "strict"
-useLibraryCodeForTypes  = true
-
-reportMissingTypeStubs = false
-reportPrivateImportUsage = false
-reportPrivateUsage = false
-reportUnknownMemberType = false
-reportFunctionMemberAccess = false
-reportUnknownArgumentType = false
-reportImportCycles = false
-reportConstantRedefinition = false
+include                     = ["cd", "launcher.py"]
+verboseOutput               = false
+pythonVersion               = "3.10"
+typeCheckingMode            = "strict"
+useLibraryCodeForTypes      = true
+reportMissingTypeStubs      = false
+reportPrivateImportUsage    = false
+reportPrivateUsage          = false
+reportFunctionMemberAccess  = false
+reportUnknownMemberType     = false
+reportUnknownVariableType   = false
+reportUnknownArgumentType   = false
+reportImportCycles          = false
+reportConstantRedefinition  = false

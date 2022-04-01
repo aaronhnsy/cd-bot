@@ -4,7 +4,7 @@ from __future__ import annotations
 # Packages
 from discord.ext import commands
 
-# My stuff
+# Local
 from cd import custom, exceptions, objects
 
 

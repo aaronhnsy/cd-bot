@@ -7,7 +7,7 @@ import slate
 import spotipy
 import yarl
 
-# My stuff
+# Local
 from cd import custom, exceptions, utilities, values
 
 

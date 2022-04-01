@@ -8,7 +8,7 @@ from typing import Literal
 import discord
 from discord.ext import commands
 
-# My stuff
+# Local
 from cd import checks, config, custom, enums, exceptions, objects, utilities, values
 from cd.bot import CD
 

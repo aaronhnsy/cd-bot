@@ -8,7 +8,7 @@ import io
 import aiohttp
 import mystbin
 
-# My stuff
+# Local
 from cd import config, exceptions
 
 

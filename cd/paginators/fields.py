@@ -8,7 +8,7 @@ from typing import Any
 # Packages
 import discord
 
-# My stuff
+# Local
 from cd import custom, utilities, values
 from cd.paginators.base import BasePaginator
 

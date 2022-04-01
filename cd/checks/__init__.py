@@ -1,7 +1,7 @@
 # Future
 from __future__ import annotations
 
-# My stuff
+# Local
 from cd.checks.bot import *
 from cd.checks.has_any_permission import *
 from cd.checks.is_author_connected import *

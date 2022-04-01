@@ -11,7 +11,7 @@ from typing import Literal, Optional
 import discord
 from discord.ext import commands
 
-# My stuff
+# Local
 from cd import checks, config, custom, exceptions, objects, paginators, utilities, values
 from cd.bot import CD
 

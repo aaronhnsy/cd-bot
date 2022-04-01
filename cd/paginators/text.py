@@ -4,7 +4,7 @@ from __future__ import annotations
 # Standard Library
 from typing import Any
 
-# My stuff
+# Local
 from cd import custom
 from cd.paginators.base import BasePaginator
 

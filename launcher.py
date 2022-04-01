@@ -5,7 +5,7 @@ from __future__ import annotations
 import asyncio
 import os
 
-# My stuff
+# Local
 from cd.bot import CD
 from cd.config import TOKEN
 from cd.utilities.logger import setup_logger

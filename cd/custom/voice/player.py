@@ -10,13 +10,13 @@ import async_timeout
 import discord
 import slate
 
-# My stuff
+# Local
 from cd import custom, enums, exceptions, utilities, values
 
 
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences
-    # My stuff
+    # Local
     from cd.bot import CD
 
 

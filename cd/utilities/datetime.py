@@ -10,7 +10,7 @@ import discord
 import humanize
 import pendulum
 
-# My stuff
+# Local
 from cd import enums
 
 

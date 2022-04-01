@@ -10,7 +10,7 @@ from typing import Any
 # Packages
 import slate
 
-# My stuff
+# Local
 from cd import custom
 
 

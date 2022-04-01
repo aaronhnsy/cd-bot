@@ -5,7 +5,7 @@ from __future__ import annotations
 import functools
 import io
 
-# My stuff
+# Local
 from cd import custom, utilities
 from cd.paginators.base import BasePaginator
 

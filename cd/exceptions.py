@@ -8,7 +8,7 @@ import datetime
 import discord
 from discord.ext import commands
 
-# My stuff
+# Local
 from cd import utilities, values
 
 

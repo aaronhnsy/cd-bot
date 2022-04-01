@@ -1,7 +1,7 @@
 # Future
 from __future__ import annotations
 
-# My stuff
+# Local
 from cd.paginators.embed import *
 from cd.paginators.embeds import *
 from cd.paginators.fields import *

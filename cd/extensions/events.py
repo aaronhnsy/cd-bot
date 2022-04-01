@@ -12,7 +12,7 @@ import pendulum
 import slate
 from discord.ext import commands
 
-# My stuff
+# Local
 from cd import config, custom, enums, exceptions, utilities, values
 from cd.bot import CD
 

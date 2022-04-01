@@ -9,7 +9,7 @@ import pathlib
 # Packages
 from discord.ext import commands, tasks
 
-# My stuff
+# Local
 from cd.bot import CD
 
 

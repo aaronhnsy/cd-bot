@@ -8,7 +8,8 @@ from typing import TypeVar
 import discord
 from discord.ext import commands
 
-# My stuff
+# Local
+# My
 from cd import custom, exceptions
 
 

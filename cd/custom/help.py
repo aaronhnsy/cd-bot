@@ -8,8 +8,9 @@ from typing import Any
 # Packages
 from discord.ext import commands
 
-# My stuff
-from cd import custom, exceptions, paginators, utilities, values
+# Local
+import custom
+from cd import exceptions, paginators, utilities, values
 
 
 __all__ = (
@@ -20,9 +21,11 @@ Command = commands.Command[Any, Any, Any]
 Group = commands.Group[commands.Cog, Any, Any]
 
 
-class HelpCommand(commands.HelpCommand[custom.Context]):
+class HelpCommand(commands.HelpCommand):
 
     def __init__(self) -> None:
+
+        self.context: custom.Context = utilities.MISSING
 
         super().__init__(
             command_attrs={

@@ -12,12 +12,12 @@ from wand.color import Color
 from wand.drawing import Drawing
 from wand.image import Image
 
-# My stuff
+# Local
 from cd import exceptions, utilities
 
 
 if TYPE_CHECKING:
-    # My stuff
+    # Local
     from cd.bot import CD
 
 

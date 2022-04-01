@@ -19,7 +19,7 @@ from discord.ext import commands, tasks
 # noinspection PyUnresolvedReferences
 from discord.ext.alternatives import converter_dict as converter_dict
 
-# My stuff
+# Local
 from cd import checks, config, converters, custom, enums, manager, objects, utilities, values
 
 

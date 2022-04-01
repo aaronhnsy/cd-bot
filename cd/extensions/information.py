@@ -15,7 +15,7 @@ import humanize
 import psutil
 from discord.ext import commands
 
-# My stuff
+# Local
 from cd import custom, exceptions, utilities, values
 from cd.bot import CD
 

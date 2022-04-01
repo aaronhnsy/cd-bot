@@ -153,11 +153,11 @@ unicode_backport = ["unicodedata2"]
 
 [[package]]
 name = "click"
-version = "8.0.4"
+version = "8.1.2"
 description = "Composable command line interface toolkit"
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 
 [package.dependencies]
 colorama = {version = "*", markers = "platform_system == \"Windows\""}
@@ -190,7 +190,7 @@ resolved_reference = "2987112c31de9bada4ee95cee9007a326e496e19"
 
 [[package]]
 name = "discord.py"
-version = "2.0.0a3966+gcda1f0a4"
+version = "2.0.0a4007+ga0618ef7"
 description = "A Python wrapper for the Discord API"
 category = "main"
 optional = false
@@ -212,7 +212,7 @@ voice = ["PyNaCl (>=1.3.0,<1.6)"]
 type = "git"
 url = "git@github.com:Rapptz/discord.py"
 reference = "master"
-resolved_reference = "cda1f0a4ef23934ed2c1694b616ca3857541e3ea"
+resolved_reference = "a0618ef791c674fdd2b4bff21a4b09829a5e2398"
 
 [[package]]
 name = "frozenlist"
@@ -279,7 +279,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "jishaku"
-version = "2.3.2a389+gb9f7e5a.master"
+version = "2.3.2a394+gf740920.master"
 description = "A discord.py extension including useful tools for bot development and debugging."
 category = "main"
 optional = false
@@ -304,7 +304,7 @@ voice = ["youtube-dl"]
 type = "git"
 url = "git@github.com:Axelware/jishaku"
 reference = "master"
-resolved_reference = "b9f7e5afb937c4ca4d99b49606478ab90bbe606c"
+resolved_reference = "f740920daa0ca59fbf988435ae4e465915ea34db"
 
 [[package]]
 name = "multidict"
@@ -348,24 +348,6 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 [package.dependencies]
 python-dateutil = ">=2.6,<3.0"
 pytzdata = ">=2020.1"
-
-[[package]]
-name = "pretty"
-version = "2.0.0a411+gaa29108"
-description = "A Python module for prettier (and far more useful) stack traces."
-category = "main"
-optional = false
-python-versions = ">=3.8.0"
-develop = false
-
-[package.extras]
-docs = ["sphinx", "sphinxcontrib-trio", "sphinx-rtd-theme"]
-
-[package.source]
-type = "git"
-url = "git@github.com:ShineyDev/pretty"
-reference = "main"
-resolved_reference = "aa291089087712666c6abe585c0f8284017fad6d"
 
 [[package]]
 name = "psutil"
@@ -548,7 +530,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10.0"
-content-hash = "47a9330f94d57dd93e91d57891f279703d0c6717c29b108de1513c2a566a8f4b"
+content-hash = "7d16565a42e2a24fefac01dcfebb39bdea5b321eaa0039e72e0eaf1e2dd43b53"
 
 [metadata.files]
 aiodns = [
@@ -833,8 +815,8 @@ charset-normalizer = [
     {file = "charset_normalizer-2.0.12-py3-none-any.whl", hash = "sha256:6881edbebdb17b39b4eaaa821b438bf6eddffb4468cf344f09f89def34a8b1df"},
 ]
 click = [
-    {file = "click-8.0.4-py3-none-any.whl", hash = "sha256:6a7a62563bbfabfda3a38f3023a1db4a35978c0abd76f6c9605ecd6554d6d9b1"},
-    {file = "click-8.0.4.tar.gz", hash = "sha256:8458d7b1287c5fb128c90e23381cf99dcde74beaf6c7ff6384ce84d6fe090adb"},
+    {file = "click-8.1.2-py3-none-any.whl", hash = "sha256:24e1a4a9ec5bf6299411369b208c1df2188d9eb8d916302fe6bf03faed227f1e"},
+    {file = "click-8.1.2.tar.gz", hash = "sha256:479707fe14d9ec9a0757618b7a100a0ae4c4e236fac5b7f80ca68028141a1a72"},
 ]
 colorama = [
     {file = "colorama-0.4.4-py2.py3-none-any.whl", hash = "sha256:9f47eda37229f68eee03b24b9748937c7dc3868f906e8ba69fbcbdd3bc5dc3e2"},
@@ -1124,7 +1106,6 @@ pendulum = [
     {file = "pendulum-2.1.2-cp39-cp39-manylinux1_x86_64.whl", hash = "sha256:94b1fc947bfe38579b28e1cccb36f7e28a15e841f30384b5ad6c5e31055c85d7"},
     {file = "pendulum-2.1.2.tar.gz", hash = "sha256:b06a0ca1bfe41c990bbf0c029f0b6501a7f2ec4e38bfec730712015e8860f207"},
 ]
-pretty = []
 psutil = [
     {file = "psutil-5.9.0-cp27-cp27m-manylinux2010_i686.whl", hash = "sha256:55ce319452e3d139e25d6c3f85a1acf12d1607ddedea5e35fb47a552c051161b"},
     {file = "psutil-5.9.0-cp27-cp27m-manylinux2010_x86_64.whl", hash = "sha256:7336292a13a80eb93c21f36bde4328aa748a04b68c13d01dfddd67fc13fd0618"},

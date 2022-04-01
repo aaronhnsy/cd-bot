@@ -1,7 +1,7 @@
 # Future
 from __future__ import annotations
 
-# My stuff
+# Local
 from cd.utilities.asset import *
 from cd.utilities.datetime import *
 from cd.utilities.embed import *

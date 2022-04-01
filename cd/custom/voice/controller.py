@@ -7,7 +7,7 @@ from collections.abc import Awaitable, Callable
 # Packages
 import discord
 
-# My stuff
+# Local
 from cd import custom, enums, utilities, values
 
 
