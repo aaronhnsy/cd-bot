@@ -9,8 +9,7 @@ from typing import Any
 from discord.ext import commands
 
 # Local
-import custom
-from cd import exceptions, paginators, utilities, values
+from cd import exceptions, paginators, utilities, values, custom
 
 
 __all__ = (
