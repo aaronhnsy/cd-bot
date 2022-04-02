@@ -33,14 +33,14 @@ class PaginatorButtons(discord.ui.View):
 
     # Buttons
 
-    @discord.ui.button(emoji=values.FIRST)
+    @discord.ui.button(emoji=values.PAGINATOR_FIRST)
     async def _first(self, interaction: discord.Interaction, _: discord.ui.Button[PaginatorButtons]) -> None:
 
         await interaction.response.defer()
         await self.paginator._change_page(page=0)
 
-    @discord.ui.button(emoji=values.BACKWARD)
-    async def _backward(self, interaction: discord.Interaction, _: discord.ui.Button[PaginatorButtons]) -> None:
+    @discord.ui.button(emoji=values.PAGINATOR_PREVIOUS)
+    async def _previous(self, interaction: discord.Interaction, _: discord.ui.Button[PaginatorButtons]) -> None:
 
         await interaction.response.defer()
         await self.paginator._change_page(page=self.paginator.page - 1)
@@ -49,19 +49,19 @@ class PaginatorButtons(discord.ui.View):
     async def _label(self, interaction: discord.Interaction, _: discord.ui.Button[PaginatorButtons]) -> None:
         await interaction.response.defer()
 
-    @discord.ui.button(emoji=values.FORWARD)
-    async def _forward(self, interaction: discord.Interaction, _: discord.ui.Button[PaginatorButtons]) -> None:
+    @discord.ui.button(emoji=values.PAGINATOR_NEXT)
+    async def _next(self, interaction: discord.Interaction, _: discord.ui.Button[PaginatorButtons]) -> None:
 
         await interaction.response.defer()
         await self.paginator._change_page(page=self.paginator.page + 1)
 
-    @discord.ui.button(emoji=values.LAST)
+    @discord.ui.button(emoji=values.PAGINATOR_LAST)
     async def _last(self, interaction: discord.Interaction, _: discord.ui.Button[PaginatorButtons]) -> None:
 
         await interaction.response.defer()
         await self.paginator._change_page(page=len(self.paginator.pages) - 1)
 
-    @discord.ui.button(emoji=values.STOP)
+    @discord.ui.button(emoji=values.PAGINATOR_STOP)
     async def _stop(self, interaction: discord.Interaction, _: discord.ui.Button[PaginatorButtons]) -> None:
 
         await interaction.response.defer()
@@ -127,13 +127,13 @@ class BasePaginator(abc.ABC):
         self.view._label.label = f"{self.page + 1}/{len(self.pages)}"
 
         if self.page == 0:
-            self.view._first.disabled, self.view._backward.disabled = True, True
+            self.view._first.disabled, self.view._previous.disabled = True, True
         else:
-            self.view._first.disabled, self.view._backward.disabled = False, False
+            self.view._first.disabled, self.view._previous.disabled = False, False
         if self.page == len(self.pages) - 1:
-            self.view._forward.disabled, self.view._last.disabled = True, True
+            self.view._next.disabled, self.view._last.disabled = True, True
         else:
-            self.view._forward.disabled, self.view._last.disabled = False, False
+            self.view._next.disabled, self.view._last.disabled = False, False
 
     async def _change_page(self, page: int) -> None:
 

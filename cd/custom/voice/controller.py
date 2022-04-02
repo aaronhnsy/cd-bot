@@ -24,7 +24,7 @@ class ShuffleButton(discord.ui.Button["ControllerView"]):
     def __init__(self) -> None:
         super().__init__(
             label="Shuffle",
-            emoji=values.SHUFFLE,
+            emoji=values.PLAYER_SHUFFLE,
         )
 
     async def callback(self, interaction: discord.Interaction) -> None:
@@ -41,7 +41,7 @@ class PreviousButton(discord.ui.Button["ControllerView"]):
     def __init__(self) -> None:
         super().__init__(
             label="Previous",
-            emoji=values.PREVIOUS,
+            emoji=values.PLAYER_PREVIOUS,
         )
 
     async def callback(self, interaction: discord.Interaction) -> None:
@@ -69,7 +69,7 @@ class PauseStateButton(discord.ui.Button["ControllerView"]):
     def __init__(self) -> None:
         super().__init__(
             label="Pause",
-            emoji=values.PAUSE,
+            emoji=values.PLAYER_IS_PLAYING,
         )
 
     async def callback(self, interaction: discord.Interaction) -> None:
@@ -80,13 +80,13 @@ class PauseStateButton(discord.ui.Button["ControllerView"]):
         if self.view.voice_client.is_paused():
             await self.view.voice_client.set_pause(False)
             self.label = "Pause"
-            self.emoji = values.PAUSE
+            self.emoji = values.PLAYER_IS_PLAYING
         else:
             await self.view.voice_client.set_pause(True)
             self.label = "Resume"
-            self.emoji = values.PLAY
+            self.emoji = values.PLAYER_IS_PAUSED
 
-        await self.view.voice_client.controller._update_view()
+        await self.view.voice_client.controller._update_message()
 
 
 class NextButton(discord.ui.Button["ControllerView"]):
@@ -94,7 +94,7 @@ class NextButton(discord.ui.Button["ControllerView"]):
     def __init__(self) -> None:
         super().__init__(
             label="Next",
-            emoji=values.NEXT,
+            emoji=values.PLAYER_NEXT,
         )
 
     async def callback(self, interaction: discord.Interaction) -> None:
@@ -110,7 +110,7 @@ class LoopButton(discord.ui.Button["ControllerView"]):
     def __init__(self) -> None:
         super().__init__(
             label="Loop",
-            emoji=values.LOOP_QUEUE,
+            emoji=values.PLAYER_LOOP_DISABLED,
         )
 
     async def callback(self, interaction: discord.Interaction) -> None:
@@ -119,6 +119,7 @@ class LoopButton(discord.ui.Button["ControllerView"]):
         await interaction.response.defer()
 
         # TODO: Implement this
+        await self.view.voice_client.controller._update_message()
 
 
 class ControllerView(discord.ui.View):
@@ -310,6 +311,7 @@ class Controller:
             return
 
         kwargs = await self.build_message()
+        await self.view._update_state()
 
         try:
             await self.message.edit(**kwargs, view=self.view)
