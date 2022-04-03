@@ -9,11 +9,13 @@ from typing import Literal, Optional
 
 # Packages
 import discord
+import slate
 from discord.ext import commands
 
 # Local
 from cd import checks, config, custom, exceptions, objects, paginators, utilities, values
 from cd.bot import CD
+from cd.extensions.play import Play
 
 
 async def setup(bot: CD) -> None:
@@ -549,3 +551,18 @@ class Player(commands.Cog):
     @checks.is_owner()
     async def status_smooth(self, ctx: custom.Context) -> None:
         await self._do_status(ctx, format="smooth_gif")
+
+    @commands.command(name="sync")
+    async def sync(self, ctx: custom.Context) -> None:
+
+        assert isinstance(ctx.author, discord.Member)
+
+        if not (activity := discord.utils.find(lambda x: isinstance(x, discord.Spotify), ctx.author.activities)):
+            raise exceptions.EmbedError(description="You dont have an active spotify status.")
+
+        assert isinstance(activity, discord.Spotify)
+
+        await Play._ensure_connected(ctx)
+
+        assert ctx.voice_client is not None
+        await ctx.voice_client.searcher.queue(activity.track_url, source=slate.Source.YOUTUBE, ctx=ctx, play_now=True)
