@@ -190,7 +190,7 @@ resolved_reference = "2987112c31de9bada4ee95cee9007a326e496e19"
 
 [[package]]
 name = "discord.py"
-version = "2.0.0a4007+ga0618ef7"
+version = "2.0.0a4034+g18050aec"
 description = "A Python wrapper for the Discord API"
 category = "main"
 optional = false
@@ -212,7 +212,7 @@ voice = ["PyNaCl (>=1.3.0,<1.6)"]
 type = "git"
 url = "git@github.com:Rapptz/discord.py"
 reference = "master"
-resolved_reference = "a0618ef791c674fdd2b4bff21a4b09829a5e2398"
+resolved_reference = "18050aecd7c2718634a2dd4336e667a899da0859"
 
 [[package]]
 name = "frozenlist"

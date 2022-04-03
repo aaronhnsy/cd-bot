@@ -6,6 +6,7 @@ from collections.abc import Awaitable, Callable
 
 # Packages
 import discord
+import slate
 
 # Local
 from cd import custom, enums, utilities, values
@@ -23,7 +24,6 @@ class ShuffleButton(discord.ui.Button["ControllerView"]):
 
     def __init__(self) -> None:
         super().__init__(
-            label="Shuffle",
             emoji=values.PLAYER_SHUFFLE,
         )
 
@@ -32,15 +32,16 @@ class ShuffleButton(discord.ui.Button["ControllerView"]):
         assert self.view is not None
         await interaction.response.defer()
 
-        self.view.voice_client.queue.shuffle()
-        await self.view.voice_client.controller._update_message()
+        voice_client = self.view.voice_client
+
+        voice_client.queue.shuffle()
+        await voice_client.controller._update_message()
 
 
 class PreviousButton(discord.ui.Button["ControllerView"]):
 
     def __init__(self) -> None:
         super().__init__(
-            label="Previous",
             emoji=values.PLAYER_PREVIOUS,
         )
 
@@ -49,26 +50,27 @@ class PreviousButton(discord.ui.Button["ControllerView"]):
         assert self.view is not None
         await interaction.response.defer()
 
+        voice_client = self.view.voice_client
+
         # Pop the previous track from the queue history
         # and then add it to start of the queue.
-        previous_track = self.view.voice_client.queue.history.pop(0)
-        self.view.voice_client.queue.items.insert(0, previous_track)
+        previous_track = voice_client.queue.history.pop(0)
+        voice_client.queue.items.insert(0, previous_track)
 
         # Add the current track to the queue right after
         # the previous track so that it will play again
         # if the 'next' button is pressed.
-        current_track = self.view.voice_client.current
+        current_track = voice_client.current
         assert current_track is not None
-        self.view.voice_client.queue.items.insert(1, current_track)
+        voice_client.queue.items.insert(1, current_track)
 
-        await self.view.voice_client.handle_track_end(enums.TrackEndReason.REPLACED)
+        await voice_client.handle_track_end(enums.TrackEndReason.REPLACED)
 
 
 class PauseStateButton(discord.ui.Button["ControllerView"]):
 
     def __init__(self) -> None:
         super().__init__(
-            label="Pause",
             emoji=values.PLAYER_IS_PLAYING,
         )
 
@@ -77,23 +79,22 @@ class PauseStateButton(discord.ui.Button["ControllerView"]):
         assert self.view is not None
         await interaction.response.defer()
 
-        if self.view.voice_client.is_paused():
-            await self.view.voice_client.set_pause(False)
-            self.label = "Pause"
+        voice_client = self.view.voice_client
+
+        if voice_client.is_paused():
+            await voice_client.set_pause(False)
             self.emoji = values.PLAYER_IS_PLAYING
         else:
-            await self.view.voice_client.set_pause(True)
-            self.label = "Resume"
+            await voice_client.set_pause(True)
             self.emoji = values.PLAYER_IS_PAUSED
 
-        await self.view.voice_client.controller._update_message()
+        await voice_client.controller._update_message()
 
 
 class NextButton(discord.ui.Button["ControllerView"]):
 
     def __init__(self) -> None:
         super().__init__(
-            label="Next",
             emoji=values.PLAYER_NEXT,
         )
 
@@ -109,8 +110,7 @@ class LoopButton(discord.ui.Button["ControllerView"]):
 
     def __init__(self) -> None:
         super().__init__(
-            label="Loop",
-            emoji=values.PLAYER_LOOP_DISABLED,
+            emoji=values.PLAYER_LOOP_OFF,
         )
 
     async def callback(self, interaction: discord.Interaction) -> None:
@@ -118,8 +118,20 @@ class LoopButton(discord.ui.Button["ControllerView"]):
         assert self.view is not None
         await interaction.response.defer()
 
-        # TODO: Implement this
-        await self.view.voice_client.controller._update_message()
+        voice_client = self.view.voice_client
+
+        match voice_client.queue.loop_mode:
+            case slate.QueueLoopMode.OFF:
+                voice_client.queue.set_loop_mode(slate.QueueLoopMode.QUEUE)
+                self.emoji = values.PLAYER_LOOP_QUEUE
+            case slate.QueueLoopMode.QUEUE:
+                voice_client.queue.set_loop_mode(slate.QueueLoopMode.CURRENT)
+                self.emoji = values.PLAYER_LOOP_CURRENT
+            case slate.QueueLoopMode.CURRENT:
+                voice_client.queue.set_loop_mode(slate.QueueLoopMode.OFF)
+                self.emoji = values.PLAYER_LOOP_OFF
+
+        await voice_client.controller._update_message()
 
 
 class ControllerView(discord.ui.View):
