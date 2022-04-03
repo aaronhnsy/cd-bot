@@ -97,17 +97,18 @@ class Player(slate.Player["CD", custom.Context, "Player"]):
         self.waiting = True
 
         if not self.queue.is_empty():
-            track = self.queue.get()
-            assert track is not None
+            item = self.queue.get()
+            assert item is not None
 
         else:
             try:
                 with async_timeout.timeout(180):
-                    track = await self.queue.get_wait()
+                    item = await self.queue.get_wait()
             except asyncio.TimeoutError:
                 await self._disconnect_on_timeout()
                 return
 
+        track = item.track
         if track.source is slate.Source.SPOTIFY:
 
             if not (_track := await self._convert_spotify_track(track)):
@@ -125,7 +126,7 @@ class Player(slate.Player["CD", custom.Context, "Player"]):
 
             track = _track
 
-        await self.play(track)
+        await self.play(track, start_time=item.start_time)
         self.waiting = False
 
     # Events

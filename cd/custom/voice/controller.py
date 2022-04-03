@@ -10,6 +10,7 @@ import slate
 
 # Local
 from cd import custom, enums, utilities, values
+from cd.custom.voice.queue import QueueItem
 
 
 __all__ = (
@@ -55,14 +56,14 @@ class PreviousButton(discord.ui.Button["ControllerView"]):
         # Pop the previous track from the queue history
         # and then add it to start of the queue.
         previous_track = voice_client.queue.history.pop(0)
-        voice_client.queue.items.insert(0, previous_track)
+        voice_client.queue.items.insert(0, QueueItem(track=previous_track))
 
         # Add the current track to the queue right after
         # the previous track so that it will play again
         # if the 'next' button is pressed.
         current_track = voice_client.current
         assert current_track is not None
-        voice_client.queue.items.insert(1, current_track)
+        voice_client.queue.items.insert(1, QueueItem(track=current_track))
 
         await voice_client.handle_track_end(enums.TrackEndReason.REPLACED)
 
@@ -239,9 +240,9 @@ class Controller:
             return _, embed
 
         entries = [
-            f"**{index}. [{discord.utils.escape_markdown(entry.title)}]({entry.uri})**\n"
-            f"**⤷** by **{discord.utils.escape_markdown(entry.author)}** | {utilities.format_seconds(entry.length // 1000, friendly=True)}\n"
-            for index, entry in enumerate(self.voice_client.queue.items[:3], start=1)
+            f"**{index}. [{discord.utils.escape_markdown(item.track.title)}]({item.track.uri})**\n"
+            f"**⤷** by **{discord.utils.escape_markdown(item.track.author)}** | {utilities.format_seconds(item.track.length // 1000, friendly=True)}\n"
+            for index, item in enumerate(self.voice_client.queue.items[:3], start=1)
         ]
 
         assert embed.description is not None
