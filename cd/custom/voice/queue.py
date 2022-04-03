@@ -22,11 +22,18 @@ __all__ = (
 Track = slate.Track[custom.Context]
 
 
+class QueueItem:
+    
+    def __init__(self, *, track: Track, start_time: int = 0):
+        self.track = track
+        self.start_time = start_time
+
+
 class Queue:
 
     def __init__(self) -> None:
 
-        self.items: list[Track] = []
+        self.items: list[QueueItem] = []
         self.history: list[Track] = []
 
         self.loop_mode: slate.QueueLoopMode = slate.QueueLoopMode.OFF
@@ -78,7 +85,7 @@ class Queue:
 
     # Get / Put
 
-    def get(self, position: int = 0) -> Track | None:
+    def get(self, position: int = 0) -> QueueItem | None:
 
         try:
             item = self.items.pop(position)
@@ -90,7 +97,7 @@ class Queue:
 
         return item
 
-    async def get_wait(self) -> Track:
+    async def get_wait(self) -> QueueItem:
 
         while self.is_empty():
 
@@ -123,7 +130,7 @@ class Queue:
 
         return item
 
-    def put(self, item: Track, position: int | None = None) -> None:
+    def put(self, item: QueueItem, position: int | None = None) -> None:
 
         if position is None:
             self.items.append(item)
@@ -132,12 +139,12 @@ class Queue:
 
         self._wakeup_next()
 
-    def extend(self, items: list[Track], position: int | None = None) -> None:
+    def extend(self, items: list[QueueItem], position: int | None = None) -> None:
 
         if position is None:
             self.items.extend(items)
         else:
-            for index, track, in enumerate(items):
-                self.items.insert(position + index, track)
+            for index, item, in enumerate(items):
+                self.items.insert(position + index, item)
 
         self._wakeup_next()

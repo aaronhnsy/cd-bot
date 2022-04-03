@@ -565,4 +565,10 @@ class Player(commands.Cog):
         await Play._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
-        await ctx.voice_client.searcher.queue(activity.track_url, source=slate.Source.YOUTUBE, ctx=ctx, play_now=True)
+        await ctx.voice_client.searcher.queue(
+            activity.track_url, 
+            source=slate.Source.YOUTUBE, 
+            start_time=(datetime.datetime.now(tz=datetime.timezone.utc) - activity.start).seconds * 1000, 
+            ctx=ctx, 
+            play_now=True
+        )

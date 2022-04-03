@@ -48,16 +48,16 @@ class Queue(commands.Cog):
         paginator = paginators.EmbedPaginator(
             ctx=ctx,
             entries=[
-                f"**{index}. [{discord.utils.escape_markdown(track.title)}]({track.uri})** by **{discord.utils.escape_markdown(track.author or 'Unknown')}**\n"
-                f"**⤷** {utilities.format_seconds(track.length // 1000, friendly=True)} | "
-                f"{track.source.value.title()} | "
-                f"Added by: {getattr(track.requester, 'mention', None)}"
-                for index, track in enumerate(ctx.voice_client.queue.items, start=1)
+                f"**{index}. [{discord.utils.escape_markdown(item.track.title)}]({item.track.uri})** by **{discord.utils.escape_markdown(item.track.author or 'Unknown')}**\n"
+                f"**⤷** {utilities.format_seconds(item.track.length // 1000, friendly=True)} | "
+                f"{item.track.source.value.title()} | "
+                f"Added by: {getattr(item.track.requester, 'mention', None)}"
+                for index, item in enumerate(ctx.voice_client.queue.items, start=1)
             ],
             per_page=5,
             splitter="\n\n",
             embed_footer=f"{len(ctx.voice_client.queue.items)} tracks | "
-                         f"{utilities.format_seconds(sum(track.length for track in ctx.voice_client.queue.items) // 1000, friendly=True)} | "
+                         f"{utilities.format_seconds(sum(item.track.length for item in ctx.voice_client.queue.items) // 1000, friendly=True)} | "
                          f"Loop mode: {ctx.voice_client.queue.loop_mode.name.title()} | "
                          f"1 = up next",
         )
@@ -176,11 +176,11 @@ class Queue(commands.Cog):
         assert ctx.voice_client is not None
 
         if method == "title":
-            ctx.voice_client.queue.items.sort(key=lambda track: track.title, reverse=reverse)
+            ctx.voice_client.queue.items.sort(key=lambda item: item.track.title, reverse=reverse)
         elif method == "author":
-            ctx.voice_client.queue.items.sort(key=lambda track: track.author, reverse=reverse)
+            ctx.voice_client.queue.items.sort(key=lambda item: item.track.author, reverse=reverse)
         elif method == "length":
-            ctx.voice_client.queue.items.sort(key=lambda track: track.length, reverse=reverse)
+            ctx.voice_client.queue.items.sort(key=lambda item: item.track.length, reverse=reverse)
 
         await ctx.reply(
             embed=utilities.embed(
@@ -209,14 +209,14 @@ class Queue(commands.Cog):
                             f"**{len(ctx.voice_client.queue)}** track{'s' if len(ctx.voice_client.queue) > 1 else ''}.",
             )
 
-        track = ctx.voice_client.queue.get(entry - 1)
-        assert track is not None
+        item = ctx.voice_client.queue.get(entry - 1)
+        assert item is not None
 
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description=f"Removed **{entry}. [{discord.utils.escape_markdown(track.title)}]({track.uri})** "
-                            f"by **{discord.utils.escape_markdown(track.author or 'Unknown')}** from the queue."
+                description=f"Removed **{entry}. [{discord.utils.escape_markdown(item.track.title)}]({item.track.uri})** "
+                            f"by **{discord.utils.escape_markdown(item.track.author or 'Unknown')}** from the queue."
             )
         )
 
@@ -246,15 +246,15 @@ class Queue(commands.Cog):
                             f"**{len(ctx.voice_client.queue)}** track{'s' if len(ctx.voice_client.queue) > 1 else ''}.",
             )
 
-        track = ctx.voice_client.queue.get(entry - 1)
-        assert track is not None
+        item = ctx.voice_client.queue.get(entry - 1)
+        assert item is not None
 
-        ctx.voice_client.queue.put(track, position=to - 1)
+        ctx.voice_client.queue.put(item, position=to - 1)
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description=f"Moved **[{discord.utils.escape_markdown(track.title)}]({track.uri})** "
-                            f"by **{discord.utils.escape_markdown(track.author or 'Unknown')}** from position **{entry}** to position **{to}**.",
+                description=f"Moved **[{discord.utils.escape_markdown(item.track.title)}]({item.track.uri})** "
+                            f"by **{discord.utils.escape_markdown(item.track.author or 'Unknown')}** from position **{entry}** to position **{to}**.",
             )
         )
 
@@ -269,7 +269,7 @@ class Queue(commands.Cog):
 
         assert ctx.voice_client is not None
 
-        ctx.voice_client.queue.items = list({track.identifier: track for track in ctx.voice_client.queue.items}.values())
+        ctx.voice_client.queue.items = list({item.track.identifier: item for item in ctx.voice_client.queue.items}.values())
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,
