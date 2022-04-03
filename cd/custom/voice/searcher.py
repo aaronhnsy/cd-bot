@@ -9,7 +9,6 @@ import yarl
 
 # Local
 from cd import custom, exceptions, utilities, values
-from cd.custom.voice.queue import QueueItem
 
 
 __all__ = (
@@ -81,7 +80,7 @@ class TrackSearchSelect(discord.ui.Select["TrackSearchView"]):
         # Add the selected tracks to the queue and
         # the player's controller state.
         self.view.ctx.voice_client.queue.extend(
-            [QueueItem(track=track) for track in tracks],
+            [custom.QueueItem(track) for track in tracks],
             position=0 if (self.view.play_next or self.view.play_now) else None
         )
         if self.view.play_now:
@@ -89,7 +88,7 @@ class TrackSearchSelect(discord.ui.Select["TrackSearchView"]):
         if not self.view.ctx.voice_client.is_playing():
             await self.view.ctx.voice_client._play_next()
 
-        await self.view.ctx.voice_client.controller._update_view()
+        await self.view.ctx.voice_client.controller.update_current_message()
 
 
 class TrackSearchView(discord.ui.View):
@@ -185,9 +184,9 @@ class Searcher:
         /, *,
         source: slate.Source,
         ctx: custom.Context,
-        start_time: int = 0,
         play_next: bool = False,
         play_now: bool = False,
+        start_time: int = 0,
     ) -> None:
 
         search = await self._search(query, source=source, ctx=ctx)
@@ -199,7 +198,7 @@ class Searcher:
             getattr(search.result, "name", "").startswith("Search result for:") is False
         ):
             self.voice_client.queue.extend(
-                [QueueItem(track=track, start_time=start_time) for track in search.tracks], 
+                [custom.QueueItem(track) for track in search.tracks],
                 position=position
             )
             embed = utilities.embed(
@@ -208,7 +207,10 @@ class Searcher:
                             f"**[{search.result.name}]({search.result.url})** to the queue."
             )
         else:
-            self.voice_client.queue.put(QueueItem(track=search.tracks[0], start_time=start_time), position=position)
+            self.voice_client.queue.put(
+                custom.QueueItem(search.tracks[0], start_time=start_time),
+                position=position
+            )
             embed = utilities.embed(
                 colour=values.GREEN,
                 description=f"Added the **{search.source.value.title()}** track "
@@ -223,7 +225,7 @@ class Searcher:
         if not self.voice_client.is_playing():
             await self.voice_client._play_next()
 
-        await self.voice_client.controller._update_view()
+        await self.voice_client.controller.update_current_message()
 
     async def select(
         self,

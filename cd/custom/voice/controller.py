@@ -10,7 +10,6 @@ import slate
 
 # Local
 from cd import custom, enums, utilities, values
-from cd.custom.voice.queue import QueueItem
 
 
 __all__ = (
@@ -18,14 +17,29 @@ __all__ = (
 )
 
 
-MessageBuilder = Callable[..., Awaitable[tuple[str | None, discord.Embed | None]]]
+_MessageBuilder = Callable[..., Awaitable[tuple[str | None, discord.Embed | None]]]
+
+
+_SHUFFLE_STATE_EMOJIS: dict[bool, str] = {
+    False: values.PLAYER_SHUFFLE_DISABLED,
+    True:  values.PLAYER_SHUFFLE_ENABLED,
+}
+_PAUSE_STATE_EMOJIS: dict[bool, str] = {
+    False: values.PLAYER_IS_PLAYING,
+    True:  values.PLAYER_IS_PAUSED
+}
+_LOOP_MODE_EMOJIS: dict[slate.QueueLoopMode, str] = {
+    slate.QueueLoopMode.DISABLED: values.PLAYER_LOOP_DISABLED,
+    slate.QueueLoopMode.ALL:      values.PLAYER_LOOP_ALL,
+    slate.QueueLoopMode.CURRENT:  values.PLAYER_LOOP_CURRENT,
+}
 
 
 class ShuffleButton(discord.ui.Button["ControllerView"]):
 
     def __init__(self) -> None:
         super().__init__(
-            emoji=values.PLAYER_SHUFFLE,
+            emoji=values.PLAYER_SHUFFLE_DISABLED,
         )
 
     async def callback(self, interaction: discord.Interaction) -> None:
@@ -35,8 +49,12 @@ class ShuffleButton(discord.ui.Button["ControllerView"]):
 
         voice_client = self.view.voice_client
 
-        voice_client.queue.shuffle()
-        await voice_client.controller._update_message()
+        if voice_client.queue.shuffle_state is True:
+            voice_client.queue.set_shuffle_state(False)
+        else:
+            voice_client.queue.set_shuffle_state(True)
+
+        await voice_client.controller.update_current_message()
 
 
 class PreviousButton(discord.ui.Button["ControllerView"]):
@@ -53,18 +71,18 @@ class PreviousButton(discord.ui.Button["ControllerView"]):
 
         voice_client = self.view.voice_client
 
-        # Pop the previous track from the queue history
-        # and then add it to start of the queue.
-        previous_track = voice_client.queue.history.pop(0)
-        voice_client.queue.items.insert(0, QueueItem(track=previous_track))
+        # Pop the previous track from the queue history and
+        # then add it to front of the queue.
+        previous = voice_client.queue.history.pop(0)
+        voice_client.queue.items.insert(0, custom.QueueItem(previous))
 
-        # Add the current track to the queue right after
-        # the previous track so that it will play again
-        # if the 'next' button is pressed.
-        current_track = voice_client.current
-        assert current_track is not None
-        voice_client.queue.items.insert(1, QueueItem(track=current_track))
+        # Add the current track to the queue right after the
+        # previous track so that it will play again if the
+        # 'next' button is pressed after the 'previous' button.
+        assert voice_client.current is not None
+        voice_client.queue.items.insert(1, custom.QueueItem(voice_client.current))
 
+        # Trigger the next track in the queue to play.
         await voice_client.handle_track_end(enums.TrackEndReason.REPLACED)
 
 
@@ -84,12 +102,10 @@ class PauseStateButton(discord.ui.Button["ControllerView"]):
 
         if voice_client.is_paused():
             await voice_client.set_pause(False)
-            self.emoji = values.PLAYER_IS_PLAYING
         else:
             await voice_client.set_pause(True)
-            self.emoji = values.PLAYER_IS_PAUSED
 
-        await voice_client.controller._update_message()
+        await voice_client.controller.update_current_message()
 
 
 class NextButton(discord.ui.Button["ControllerView"]):
@@ -111,7 +127,7 @@ class LoopButton(discord.ui.Button["ControllerView"]):
 
     def __init__(self) -> None:
         super().__init__(
-            emoji=values.PLAYER_LOOP_OFF,
+            emoji=values.PLAYER_LOOP_DISABLED,
         )
 
     async def callback(self, interaction: discord.Interaction) -> None:
@@ -122,17 +138,14 @@ class LoopButton(discord.ui.Button["ControllerView"]):
         voice_client = self.view.voice_client
 
         match voice_client.queue.loop_mode:
-            case slate.QueueLoopMode.OFF:
-                voice_client.queue.set_loop_mode(slate.QueueLoopMode.QUEUE)
-                self.emoji = values.PLAYER_LOOP_QUEUE
-            case slate.QueueLoopMode.QUEUE:
+            case slate.QueueLoopMode.DISABLED:
+                voice_client.queue.set_loop_mode(slate.QueueLoopMode.ALL)
+            case slate.QueueLoopMode.ALL:
                 voice_client.queue.set_loop_mode(slate.QueueLoopMode.CURRENT)
-                self.emoji = values.PLAYER_LOOP_CURRENT
             case slate.QueueLoopMode.CURRENT:
-                voice_client.queue.set_loop_mode(slate.QueueLoopMode.OFF)
-                self.emoji = values.PLAYER_LOOP_OFF
+                voice_client.queue.set_loop_mode(slate.QueueLoopMode.DISABLED)
 
-        await voice_client.controller._update_message()
+        await voice_client.controller.update_current_message()
 
 
 class ControllerView(discord.ui.View):
@@ -148,15 +161,17 @@ class ControllerView(discord.ui.View):
         self._next_button: NextButton = NextButton()
         self._loop_button: LoopButton = LoopButton()
 
-        # TODO: Add items based on the guilds EmbedSize.
         self.add_item(self._shuffle_button)
         self.add_item(self._previous_button)
         self.add_item(self._pause_state_button)
         self.add_item(self._next_button)
         self.add_item(self._loop_button)
 
-    async def _update_state(self) -> None:
+    def update_state(self) -> None:
+        self._shuffle_button.emoji = _SHUFFLE_STATE_EMOJIS[self.voice_client.queue.shuffle_state]
         self._previous_button.disabled = not self.voice_client.queue.history
+        self._pause_state_button.emoji = _PAUSE_STATE_EMOJIS[self.voice_client.paused]
+        self._loop_button.emoji = _LOOP_MODE_EMOJIS[self.voice_client.queue.loop_mode]
 
 
 class Controller:
@@ -168,7 +183,7 @@ class Controller:
         self.message: discord.Message | None = None
         self.view: ControllerView = ControllerView(voice_client=self.voice_client)
 
-        self._MESSAGE_BUILDERS: dict[enums.EmbedSize, MessageBuilder] = {
+        self._MESSAGE_BUILDERS: dict[enums.EmbedSize, _MessageBuilder] = {
             enums.EmbedSize.IMAGE:  self._build_image,
             enums.EmbedSize.SMALL:  self._build_small,
             enums.EmbedSize.MEDIUM: self._build_medium,
@@ -259,17 +274,35 @@ class Controller:
 
         return {"content": message[0], "embed": message[1]}
 
-    # Message handling
+    # Track Start
 
-    async def _send_new_message(self) -> None:
+    async def send_new_message(self) -> None:
 
         if not self.voice_client.current:
             return
 
-        await self.view._update_state()
+        kwargs = await self.build_message()
+        self.view.update_state()
+
+        self.message = await self.voice_client.text_channel.send(**kwargs, view=self.view)
+
+    async def update_current_message(self) -> None:
+
+        if not self.message or not self.voice_client.current:
+            return
 
         kwargs = await self.build_message()
-        self.message = await self.voice_client.text_channel.send(**kwargs, view=self.view)
+        self.view.update_state()
+
+        try:
+            await self.message.edit(**kwargs, view=self.view)
+        except (discord.NotFound, discord.HTTPException):
+            pass
+
+    async def handle_track_start(self) -> None:
+        await self.send_new_message()
+
+    # Track End
 
     async def _edit_old_message(self, reason: enums.TrackEndReason) -> None:
 
@@ -318,36 +351,6 @@ class Controller:
 
         self.message = None
 
-    async def _update_message(self) -> None:
-
-        if not self.voice_client.current or not self.message:
-            return
-
-        kwargs = await self.build_message()
-        await self.view._update_state()
-
-        try:
-            await self.message.edit(**kwargs, view=self.view)
-        except (discord.NotFound, discord.HTTPException):
-            pass
-
-    async def _update_view(self) -> None:
-
-        if not self.message:
-            return
-
-        await self.view._update_state()
-
-        try:
-            await self.message.edit(view=self.view)
-        except (discord.NotFound, discord.HTTPException):
-            pass
-
-    # Events
-
-    async def handle_track_start(self) -> None:
-        await self._send_new_message()
-
     async def handle_track_end(self, reason: enums.TrackEndReason) -> None:
 
         guild_config = await self.voice_client.bot.manager.get_guild_config(
@@ -356,6 +359,5 @@ class Controller:
 
         if guild_config.delete_old_now_playing_messages:
             await self._delete_old_message()
-            return
-
-        await self._edit_old_message(reason)
+        else:
+            await self._edit_old_message(reason)

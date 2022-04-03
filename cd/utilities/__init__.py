@@ -24,3 +24,12 @@ def codeblock(content: str, language: str = "py", max_characters: int | None = N
     return f"```{language}\n" \
            f"{content}" \
            f"\n```"
+
+
+def truncate(text: str | int, characters: int) -> str:
+    text = str(text)
+    return text if len(text) < characters else f"{text[:characters]}..."
+
+
+def pluralize(text: str, count: int) -> str:
+    return f"{text}{'s' if count > 1 else ''}"

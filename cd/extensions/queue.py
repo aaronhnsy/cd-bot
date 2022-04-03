@@ -63,10 +63,10 @@ class Queue(commands.Cog):
         )
         await paginator.start()
 
-    @commands.command(name="queue-history", aliases=["queue_history", "queuehistory", "qh"])
+    @commands.command(name="history", aliases=["hist"])
     @checks.is_queue_history_not_empty()
     @checks.is_player_connected()
-    async def queue_history(self, ctx: custom.Context) -> None:
+    async def history(self, ctx: custom.Context) -> None:
         """
         Shows the queue history.
         """
@@ -80,7 +80,7 @@ class Queue(commands.Cog):
                 f"**⤷** {utilities.format_seconds(track.length // 1000, friendly=True)} | "
                 f"{track.source.value.title()} | "
                 f"Added by: {getattr(track.requester, 'mention', None)}"
-                for index, track in enumerate(reversed(ctx.voice_client.queue.history), start=1)
+                for index, track in enumerate(ctx.voice_client.queue.history, start=1)
             ],
             per_page=5,
             splitter="\n\n",
@@ -93,7 +93,7 @@ class Queue(commands.Cog):
 
     # General
 
-    @commands.command(name="clear")
+    @commands.command(name="clear", aliases=["clr"])
     @checks.is_queue_not_empty()
     @checks.is_author_connected()
     @checks.is_player_connected()
@@ -111,25 +111,7 @@ class Queue(commands.Cog):
                 description="**Cleared** the queue."
             )
         )
-
-    @commands.command(name="shuffle")
-    @checks.is_queue_not_empty()
-    @checks.is_author_connected()
-    @checks.is_player_connected()
-    async def shuffle(self, ctx: custom.Context) -> None:
-        """
-        Shuffles the queue.
-        """
-
-        assert ctx.voice_client is not None
-
-        ctx.voice_client.queue.shuffle()
-        await ctx.reply(
-            embed=utilities.embed(
-                colour=values.GREEN,
-                description="**Shuffled** the queue."
-            )
-        )
+        await ctx.voice_client.controller.update_current_message()
 
     @commands.command(name="reverse")
     @checks.is_queue_not_empty()
@@ -149,6 +131,7 @@ class Queue(commands.Cog):
                 description="**Reversed** the queue."
             )
         )
+        await ctx.voice_client.controller.update_current_message()
 
     @commands.command(name="sort")
     @checks.is_queue_not_empty()
@@ -164,13 +147,9 @@ class Queue(commands.Cog):
         - `length`
         - `author`
 
-        `reverse`: Whether to reverse the order, can be one of the following:
-        - `true`
-        - `false`
-        - `on`
-        - `off`
-        - `yes`
-        - `no`
+        `reverse`: Whether to reverse the sorting order, can be one of the following:
+        - `yes`/`y`/`true`/`t`/`on`
+        - `no`/`n`/`false`/`f`/`off`
         """
 
         assert ctx.voice_client is not None
@@ -185,9 +164,10 @@ class Queue(commands.Cog):
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description=f"**{'Inversely sorted' if reverse else 'Sorted'}** the queue by **{method}**."
+                description=f"**{'Inversely sorted' if reverse else 'Sorted'}** the queue with method **track {method}**."
             )
         )
+        await ctx.voice_client.controller.update_current_message()
 
     @commands.command(name="remove", aliases=["rm"])
     @checks.is_queue_not_empty()
@@ -198,27 +178,30 @@ class Queue(commands.Cog):
         Removes a track from the queue.
 
         **Arguments:**
-        `entry`: The index of the track to remove.
+        `entry`: The position of the track to remove.
         """
 
         assert ctx.voice_client is not None
 
-        if entry <= 0 or entry > len(ctx.voice_client.queue):
+        length = len(ctx.voice_client.queue)
+
+        if entry < 1 or entry > length:
             raise exceptions.EmbedError(
-                description=f"**{entry}** is not a valid queue position, the queue only has "
-                            f"**{len(ctx.voice_client.queue)}** track{'s' if len(ctx.voice_client.queue) > 1 else ''}.",
+                description=f"**{utilities.truncate(entry, 10)}** is not a valid position, the queue only has "
+                            f"**{length}** {utilities.pluralize('track', length)}.",
             )
 
-        item = ctx.voice_client.queue.get(entry - 1)
+        item = ctx.voice_client.queue.get(position=entry - 1)
         assert item is not None
 
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description=f"Removed **{entry}. [{discord.utils.escape_markdown(item.track.title)}]({item.track.uri})** "
+                description=f"Removed **[{discord.utils.escape_markdown(item.track.title)}]({item.track.uri})** "
                             f"by **{discord.utils.escape_markdown(item.track.author or 'Unknown')}** from the queue."
             )
         )
+        await ctx.voice_client.controller.update_current_message()
 
     @commands.command(name="move", aliases=["mv"])
     @checks.is_queue_not_empty()
@@ -229,24 +212,26 @@ class Queue(commands.Cog):
         Moves a track in the queue.
 
         **Arguments:**
-        `entry`: The index of the track to move.
-        `to`: The index to move the track to.
+        `entry`: The position of the track to move.
+        `to`: The position to move the track to.
         """
 
         assert ctx.voice_client is not None
 
-        if entry <= 0 or entry > len(ctx.voice_client.queue):
+        length = len(ctx.voice_client.queue)
+
+        if entry < 1 or entry > length:
             raise exceptions.EmbedError(
-                description=f"**{entry}** is not a valid queue position, the queue only has "
-                            f"**{len(ctx.voice_client.queue)}** track{'s' if len(ctx.voice_client.queue) > 1 else ''}.",
+                description=f"**{utilities.truncate(entry, 10)}** is not a valid position, the queue only has "
+                            f"**{length}** {utilities.pluralize('track', length)}.",
             )
-        if to <= 0 or to > len(ctx.voice_client.queue):
+        if to < 1 or to > length:
             raise exceptions.EmbedError(
-                description=f"**{to}** is not a valid queue position, the queue only has "
-                            f"**{len(ctx.voice_client.queue)}** track{'s' if len(ctx.voice_client.queue) > 1 else ''}.",
+                description=f"**{utilities.truncate(to, 10)}** is not a valid position, the queue only has "
+                            f"**{length}** {utilities.pluralize('track', length)}.",
             )
 
-        item = ctx.voice_client.queue.get(entry - 1)
+        item = ctx.voice_client.queue.get(position=entry - 1)
         assert item is not None
 
         ctx.voice_client.queue.put(item, position=to - 1)
@@ -254,9 +239,11 @@ class Queue(commands.Cog):
             embed=utilities.embed(
                 colour=values.GREEN,
                 description=f"Moved **[{discord.utils.escape_markdown(item.track.title)}]({item.track.uri})** "
-                            f"by **{discord.utils.escape_markdown(item.track.author or 'Unknown')}** from position **{entry}** to position **{to}**.",
+                            f"by **{discord.utils.escape_markdown(item.track.author or 'Unknown')}** from position "
+                            f"**{entry}** to position **{to}**.",
             )
         )
+        await ctx.voice_client.controller.update_current_message()
 
     @commands.command(name="remove-duplicates", aliases=["remove_duplicates", "removeduplicates", "deduplicate", "dedupe"])
     @checks.is_queue_not_empty()
@@ -276,42 +263,57 @@ class Queue(commands.Cog):
                 description="**Removed** duplicate tracks from the queue."
             )
         )
+        await ctx.voice_client.controller.update_current_message()
 
-    # Looping
+    # Toggleable
 
-    @staticmethod
-    async def _change_queue_loop_mode(ctx: custom.Context, *, current: bool) -> None:
+    @commands.command(name="loop")
+    @checks.is_author_connected()
+    @checks.is_player_connected()
+    async def loop(self, ctx: custom.Context) -> None:
+        """
+        Switches between queue loop modes; disabled, current, and all.
+        """
 
         assert ctx.voice_client is not None
 
-        mode = slate.QueueLoopMode.CURRENT if current else slate.QueueLoopMode.QUEUE
-
-        if ctx.voice_client.queue.loop_mode != mode:
-            ctx.voice_client.queue.set_loop_mode(mode)
-        else:
-            ctx.voice_client.queue.set_loop_mode(slate.QueueLoopMode.OFF)
+        match ctx.voice_client.queue.loop_mode:
+            case slate.QueueLoopMode.DISABLED:
+                ctx.voice_client.queue.set_loop_mode(slate.QueueLoopMode.ALL)
+            case slate.QueueLoopMode.ALL:
+                ctx.voice_client.queue.set_loop_mode(slate.QueueLoopMode.CURRENT)
+            case slate.QueueLoopMode.CURRENT:
+                ctx.voice_client.queue.set_loop_mode(slate.QueueLoopMode.DISABLED)
 
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description=f"**Set** the queue loop mode to **{ctx.voice_client.queue.loop_mode.name.title()}**.",
+                description=f"The queue loop mode is now **{ctx.voice_client.queue.loop_mode.name.title()}**.",
             )
         )
+        await ctx.voice_client.controller.update_current_message()
 
-    @commands.command(name="loop-current", aliases=["loop_current", "loopcurrent", "loopc", "cloop"])
+    @commands.command(name="shuffle")
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def loop_current(self, ctx: custom.Context) -> None:
+    async def shuffle(self, ctx: custom.Context) -> None:
         """
-        Loops the current track.
+        Toggles the queue shuffling or not.
         """
-        await self._change_queue_loop_mode(ctx, current=True)
 
-    @commands.command(name="loop-queue", aliases=["loop_queue", "loopqueue", "loopq", "qloop", "loop"])
-    @checks.is_author_connected()
-    @checks.is_player_connected()
-    async def loop_queue(self, ctx: custom.Context) -> None:
-        """
-        Loops the entire queue.
-        """
-        await self._change_queue_loop_mode(ctx, current=False)
+        assert ctx.voice_client is not None
+
+        if ctx.voice_client.queue.shuffle_state is False:
+            ctx.voice_client.queue.set_shuffle_state(True)
+            description = "The queue will now shuffle."
+        else:
+            ctx.voice_client.queue.set_shuffle_state(False)
+            description = "The queue will no longer shuffle."
+
+        await ctx.reply(
+            embed=utilities.embed(
+                colour=values.GREEN,
+                description=description
+            )
+        )
+        await ctx.voice_client.controller.update_current_message()

@@ -96,7 +96,7 @@ class Player(slate.Player["CD", custom.Context, "Player"]):
             return
         self.waiting = True
 
-        if not self.queue.is_empty():
+        if self.queue.is_empty() is False:
             item = self.queue.get()
             assert item is not None
 
@@ -109,6 +109,7 @@ class Player(slate.Player["CD", custom.Context, "Player"]):
                 return
 
         track = item.track
+
         if track.source is slate.Source.SPOTIFY:
 
             if not (_track := await self._convert_spotify_track(track)):

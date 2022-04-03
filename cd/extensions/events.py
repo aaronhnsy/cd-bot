@@ -167,7 +167,7 @@ class Events(commands.Cog):
                       f"You can retry in **{utilities.format_seconds(error.retry_after, friendly=True)}**"
 
         elif isinstance(error, commands.MaxConcurrencyReached):
-            message = f"This command is already being ran at a maximum of **{error.number}** time{'s' if error.number > 1 else ''} " \
+            message = f"This command is already being ran at a maximum of **{error.number}** {utilities.pluralize('time', error.number)} " \
                       f"**{CONCURRENCY_BUCKETS.get(error.per)}**."
 
         return message

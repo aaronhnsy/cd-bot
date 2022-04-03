@@ -364,7 +364,7 @@ class Player(commands.Cog):
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description=f"Skipped **{amount or 1}** track{'s' if (amount or 1) != 1 else ''}."
+                description=f"Skipped **{amount or 1}** {utilities.pluralize('track', amount)}."
             )
         )
 
@@ -566,9 +566,9 @@ class Player(commands.Cog):
 
         assert ctx.voice_client is not None
         await ctx.voice_client.searcher.queue(
-            activity.track_url, 
-            source=slate.Source.YOUTUBE, 
-            start_time=(datetime.datetime.now(tz=datetime.timezone.utc) - activity.start).seconds * 1000, 
-            ctx=ctx, 
-            play_now=True
+            activity.track_url,
+            source=slate.Source.YOUTUBE,
+            ctx=ctx,
+            play_now=True,
+            start_time=(datetime.datetime.now(tz=datetime.timezone.utc) - activity.start).seconds * 1000,
         )
