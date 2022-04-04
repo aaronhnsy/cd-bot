@@ -190,7 +190,7 @@ resolved_reference = "2987112c31de9bada4ee95cee9007a326e496e19"
 
 [[package]]
 name = "discord.py"
-version = "2.0.0a4034+g18050aec"
+version = "2.0.0a4042+g14582517"
 description = "A Python wrapper for the Discord API"
 category = "main"
 optional = false
@@ -212,7 +212,7 @@ voice = ["PyNaCl (>=1.3.0,<1.6)"]
 type = "git"
 url = "git@github.com:Rapptz/discord.py"
 reference = "master"
-resolved_reference = "18050aecd7c2718634a2dd4336e667a899da0859"
+resolved_reference = "14582517368a4079a4de2deb1f3347b4c8ff203b"
 
 [[package]]
 name = "frozenlist"
@@ -440,8 +440,8 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
 name = "slate"
-version = "0.2.1"
-description = "A discord.py compatible wrapper for the lavalink and obsidian websocket and rest API."
+version = "0.2.2"
+description = "A discord.py compatible wrapper for lavalink-like applications."
 category = "main"
 optional = false
 python-versions = "^3.10.0"
@@ -452,14 +452,15 @@ aiohttp = "^3.8.0"
 "spoti.py" = "^0.1.0"
 
 [package.extras]
-speed = ["orjson (>=3.6.0,<4.0.0)"]
-docs = ["sphinx (>=4.4.0,<5.0.0)", "sphinxcontrib-trio (>=1.1.0,<2.0.0)", "sphinx-copybutton (>=0.5.0,<0.6.0)", "sphinxext-opengraph (>=0.5.0,<0.6.0)", "furo (>=2022.1.2,<2023.0.0)"]
+dev = []
+docs = ["sphinx (>=4.5.0,<5.0.0)", "sphinxcontrib-trio", "sphinx-copybutton", "sphinx-inline-tabs", "furo"]
+docs-dev = ["sphinx (>=4.5.0,<5.0.0)", "sphinxcontrib-trio", "sphinx-copybutton", "sphinx-inline-tabs", "furo", "sphinx-autobuild"]
 
 [package.source]
 type = "git"
 url = "git@github.com:Axelware/slate"
 reference = "main"
-resolved_reference = "66057695b233279780e403c3d1db760889d0e8f5"
+resolved_reference = "3c93f0e0857d0947eedbe15496edd4319e3ba731"
 
 [[package]]
 name = "spoti.py"
