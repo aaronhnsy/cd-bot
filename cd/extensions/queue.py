@@ -303,12 +303,15 @@ class Queue(commands.Cog):
 
         assert ctx.voice_client is not None
 
-        if ctx.voice_client.queue.shuffle_state is False:
-            ctx.voice_client.queue.set_shuffle_state(True)
-            description = "The queue will now shuffle."
-        else:
-            ctx.voice_client.queue.set_shuffle_state(False)
-            description = "The queue will no longer shuffle."
+        match ctx.voice_client.queue.shuffle_state:
+            case True:
+                ctx.voice_client.queue.set_shuffle_state(True)
+                description = "The queue will now shuffle."
+            case False:
+                ctx.voice_client.queue.set_shuffle_state(False)
+                description = "The queue will no longer shuffle."
+            case _:
+                raise ValueError
 
         await ctx.reply(
             embed=utilities.embed(

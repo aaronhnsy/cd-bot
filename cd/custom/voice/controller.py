@@ -49,10 +49,11 @@ class ShuffleButton(discord.ui.Button["ControllerView"]):
 
         voice_client = self.view.voice_client
 
-        if voice_client.queue.shuffle_state is True:
-            voice_client.queue.set_shuffle_state(False)
-        else:
-            voice_client.queue.set_shuffle_state(True)
+        match voice_client.queue.shuffle_state:
+            case True:
+                voice_client.queue.set_shuffle_state(False)
+            case False:
+                voice_client.queue.set_shuffle_state(True)
 
         await voice_client.controller.update_current_message()
 
