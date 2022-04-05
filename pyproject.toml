@@ -22,10 +22,9 @@ rapidfuzz       = { version = "~2.0.0"  }
 wand            = { version = "~0.6.0"  }
 "mystbin.py"    = { version = "~3.1.0"  }
 
-slate                       = { git = "git@github.com:Axelware/slate",                          branch = "main"                                                                     }
-jishaku                     = { git = "git@github.com:Axelware/jishaku",                        branch = "master",                                  extras = ["voice"]              }
-"discord.py"                = { git = "git@github.com:Rapptz/discord.py",                       branch = "master",                                  extras = ["voice", "speed"]     }
-"discord-ext-alternatives"  = { git = "git@github.com:Ext-Creators/discord-ext-alternatives",   rev = "2987112c31de9bada4ee95cee9007a326e496e19"                                    }
+slate           = { git = "git@github.com:Axelware/slate",      branch = "main"                                     }
+jishaku         = { git = "git@github.com:Axelware/jishaku",    branch = "master",  extras = ["voice", "procinfo"]  }
+"discord.py"    = { git = "git@github.com:Rapptz/discord.py",   branch = "master",  extras = ["voice", "speed"]     }
 
 
 [tool.poetry.dev-dependencies]
