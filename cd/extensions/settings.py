@@ -9,7 +9,7 @@ import discord
 from discord.ext import commands
 
 # Local
-from cd import checks, config, custom, enums, exceptions, objects, utilities, values
+from cd import checks, config, converters, custom, enums, exceptions, utilities, values
 from cd.bot import CD
 
 
@@ -73,7 +73,7 @@ class Settings(commands.Cog):
         )
 
     @_prefix.command(name="set")
-    async def _prefix_set(self, ctx: custom.Context, prefix: objects.ConvertedPrefix) -> None:
+    async def _prefix_set(self, ctx: custom.Context, prefix: str = commands.param(converter=converters.PrefixConverter)) -> None:
         """
         Sets this servers prefix.
 
@@ -96,12 +96,12 @@ class Settings(commands.Cog):
         assert ctx.guild is not None
         guild_config = await self.bot.manager.get_guild_config(ctx.guild.id)
 
-        await guild_config.set_prefix(prefix.value)
+        await guild_config.set_prefix(prefix)
 
         await ctx.send(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description=f"This servers prefix is now `{prefix.value}`",
+                description=f"This servers prefix is now `{prefix}`",
             )
         )
 
@@ -236,7 +236,7 @@ class Settings(commands.Cog):
         )
 
     @_embed_size.command(name="set")
-    async def _embed_size_set(self, ctx: custom.Context, *, embed_size: enums.EmbedSize) -> None:
+    async def _embed_size_set(self, ctx: custom.Context, *, embed_size: enums.EmbedSize = commands.param(converter=converters.EnumConverter(enums.EmbedSize, "Embed Size"))) -> None:
         """
         Sets this servers embed size.
 

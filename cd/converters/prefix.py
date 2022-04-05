@@ -5,7 +5,7 @@ from __future__ import annotations
 from discord.ext import commands
 
 # Local
-from cd import custom, exceptions, objects
+from cd import custom, exceptions
 
 
 __all__ = (
@@ -13,9 +13,9 @@ __all__ = (
 )
 
 
-class PrefixConverter(commands.Converter[objects.ConvertedPrefix]):
+class PrefixConverter(commands.Converter[str]):
 
-    async def convert(self, ctx: custom.Context, argument: str) -> objects.ConvertedPrefix:  # pyright: reportIncompatibleMethodOverride=false
+    async def convert(self, ctx: custom.Context, argument: str) -> str:  # pyright: reportIncompatibleMethodOverride=false
 
         if not (argument := (await commands.clean_content(escape_markdown=True).convert(ctx=ctx, argument=argument)).lstrip()):
             raise exceptions.EmbedError(description="You must provide a prefix.")
@@ -29,4 +29,4 @@ class PrefixConverter(commands.Converter[objects.ConvertedPrefix]):
         if argument == guild_config.prefix:
             raise exceptions.EmbedError(description="Your prefix can not be the same as the current prefix.")
 
-        return objects.ConvertedPrefix(argument)
+        return argument

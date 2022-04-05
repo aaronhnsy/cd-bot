@@ -5,7 +5,6 @@ from __future__ import annotations
 import collections
 import logging
 import time
-from typing import Any
 
 # Packages
 import aiohttp
@@ -16,19 +15,15 @@ import mystbin
 import psutil
 import slate
 from discord.ext import commands, tasks
-# noinspection PyUnresolvedReferences
-from discord.ext.alternatives import converter_dict as converter_dict
 
 # Local
-from cd import checks, config, converters, custom, enums, manager, objects, utilities, values
+from cd import checks, config, custom, enums, manager, utilities, values
 
 
 __log__: logging.Logger = logging.getLogger("cd.bot")
 
 
 class CD(commands.AutoShardedBot):
-
-    converters: dict[Any, Any]
 
     def __init__(self) -> None:
         super().__init__(
@@ -41,15 +36,6 @@ class CD(commands.AutoShardedBot):
             case_insensitive=True,
             owner_ids=values.OWNER_IDS,
             owner_id=None,
-        )
-
-        # internals
-        self.converters.update(
-            {
-                objects.ConvertedTime:   converters.TimeConverter,
-                objects.ConvertedPrefix: converters.PrefixConverter,
-                enums.EmbedSize:         converters.EnumConverter(enums.EmbedSize, "Embed size"),
-            }
         )
 
         # external connections

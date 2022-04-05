@@ -13,7 +13,7 @@ import slate
 from discord.ext import commands
 
 # Local
-from cd import checks, config, custom, exceptions, objects, paginators, utilities, values
+from cd import checks, config, converters, custom, exceptions, paginators, utilities, values
 from cd.bot import CD
 from cd.extensions.play import Play
 
@@ -130,7 +130,7 @@ class Player(commands.Cog):
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def _seek(self, ctx: custom.Context, *, position: objects.ConvertedTime) -> None:
+    async def _seek(self, ctx: custom.Context, *, position: int = commands.param(converter=converters.TimeConverter)) -> None:
         """
         Seeks to a position in the current track.
 
@@ -152,11 +152,11 @@ class Player(commands.Cog):
         assert ctx.voice_client is not None
         assert ctx.voice_client.current is not None
 
-        milliseconds = position.seconds * 1000
+        milliseconds = position * 1000
 
         if 0 < milliseconds > ctx.voice_client.current.length:
             raise exceptions.EmbedError(
-                description=f"**{position.original}** is not a valid position, the current track is only "
+                description=f"**{utilities.format_seconds(position, friendly=True)}** is not a valid position, the current track is only "
                             f"**{utilities.format_seconds(ctx.voice_client.current.length // 1000, friendly=True)}** long.",
             )
 
@@ -174,7 +174,7 @@ class Player(commands.Cog):
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def _fast_forward(self, ctx: custom.Context, *, time: objects.ConvertedTime) -> None:
+    async def _fast_forward(self, ctx: custom.Context, *, time: int = commands.param(converter=converters.TimeConverter)) -> None:
         """
         Fast-forwards the current track by an amount of time.
 
@@ -196,13 +196,15 @@ class Player(commands.Cog):
         assert ctx.voice_client is not None
         assert ctx.voice_client.current is not None
 
-        milliseconds = time.seconds * 1000
+        milliseconds = time * 1000
         position = ctx.voice_client.position
         remaining = ctx.voice_client.current.length - position
 
+        formatted = utilities.format_seconds(time, friendly=True)
+
         if milliseconds >= remaining:
             raise exceptions.EmbedError(
-                description=f"**{time.original}** is too much time to fast forward, the current track only has "
+                description=f"**{formatted}** is too much time to fast forward, the current track only has "
                             f"**{utilities.format_seconds(remaining // 1000, friendly=True)}** remaining.",
             )
 
@@ -210,8 +212,8 @@ class Player(commands.Cog):
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description=f"**Fast-forwarding** by **{utilities.format_seconds(time.seconds, friendly=True)}**, the "
-                            f"players position is now **{utilities.format_seconds((position + milliseconds) // 1000, friendly=True)}**."
+                description=f"**Fast-forwarding** by **{formatted}**, the players position is now "
+                            f"**{utilities.format_seconds((position + milliseconds) // 1000, friendly=True)}**."
             )
         )
 
@@ -220,7 +222,7 @@ class Player(commands.Cog):
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def _rewind(self, ctx: custom.Context, *, time: objects.ConvertedTime) -> None:
+    async def _rewind(self, ctx: custom.Context, *, time: int = commands.param(converter=converters.TimeConverter)) -> None:
         """
         Rewinds the current track by an amount of time.
 
@@ -242,12 +244,14 @@ class Player(commands.Cog):
         assert ctx.voice_client is not None
         assert ctx.voice_client.current is not None
 
-        milliseconds = time.seconds * 1000
+        milliseconds = time * 1000
         position = ctx.voice_client.position
+
+        formatted = utilities.format_seconds(time, friendly=True)
 
         if milliseconds >= position:
             raise exceptions.EmbedError(
-                description=f"**{time.original}** is too much time to rewind, only "
+                description=f"**{formatted}** is too much time to rewind, only "
                             f"**{utilities.format_seconds(position // 1000, friendly=True)}** of the current track has passed."
             )
 
@@ -255,7 +259,7 @@ class Player(commands.Cog):
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description=f"**Rewinding** by **{utilities.format_seconds(time.seconds, friendly=True)}**, the players "
+                description=f"**Rewinding** by **{formatted}**, the players "
                             f"position is now **{utilities.format_seconds((position - milliseconds) // 1000, friendly=True)}**."
             )
         )

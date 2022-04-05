@@ -9,7 +9,6 @@ import discord
 from discord.ext import commands
 
 # Local
-# My
 from cd import custom, exceptions
 
 

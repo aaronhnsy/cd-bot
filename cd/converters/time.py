@@ -8,7 +8,7 @@ import re
 from discord.ext import commands
 
 # Local
-from cd import custom, exceptions, objects
+from cd import custom, exceptions
 
 
 __all__ = (
@@ -37,9 +37,9 @@ $
 """, flags=re.VERBOSE)
 
 
-class TimeConverter(commands.Converter[objects.ConvertedTime]):
+class TimeConverter(commands.Converter[int]):
 
-    async def convert(self, ctx: custom.Context, argument: str) -> objects.ConvertedTime:  # pyright: reportIncompatibleMethodOverride=false
+    async def convert(self, ctx: custom.Context, argument: str) -> int:  # pyright: reportIncompatibleMethodOverride=false
 
         if (match := COLON_FORMAT_REGEX.match(argument)) or (match := HUMAN_FORMAT_REGEX.match(argument)):
 
@@ -59,4 +59,4 @@ class TimeConverter(commands.Converter[objects.ConvertedTime]):
             except ValueError:
                 raise exceptions.EmbedError(description="That time format was not recognized.")
 
-        return objects.ConvertedTime(seconds, argument)
+        return seconds
