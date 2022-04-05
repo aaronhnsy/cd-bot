@@ -183,7 +183,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "discord.py"
-version = "2.0.0a4047+g66155faf"
+version = "2.0.0a4053+g629f36e7"
 description = "A Python wrapper for the Discord API"
 category = "main"
 optional = false
@@ -205,7 +205,7 @@ voice = ["PyNaCl (>=1.3.0,<1.6)"]
 type = "git"
 url = "git@github.com:Rapptz/discord.py"
 reference = "master"
-resolved_reference = "66155faf00cfb3d7cfc976c834d85e336c206505"
+resolved_reference = "629f36e7d78f034580572dc93659cae9082b48fe"
 
 [[package]]
 name = "frozenlist"
