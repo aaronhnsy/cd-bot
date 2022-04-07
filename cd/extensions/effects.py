@@ -84,20 +84,6 @@ class Effects(commands.Cog):
             )
         )
 
-    @staticmethod
-    async def _reset_effects(ctx: custom.Context) -> None:
-
-        assert ctx.voice_client
-
-        ctx.voice_client.effects.clear()
-        await ctx.voice_client.set_filter(slate.Filter())
-        await ctx.reply(
-            embed=utilities.embed(
-                colour=values.GREEN,
-                description="**Disabled** all audio effects."
-            )
-        )
-
     # Commands
 
     @commands.command(name="8d")
