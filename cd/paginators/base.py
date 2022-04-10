@@ -9,63 +9,146 @@ from typing import Any
 import discord
 
 # Local
-from cd import custom, values
+from cd import custom, utilities, values
 
 
-class PaginatorButtons(discord.ui.View):
+class FirstButton(discord.ui.Button["PaginatorView"]):
+
+    def __init__(self) -> None:
+        super().__init__(
+            emoji=values.PAGINATOR_FIRST,
+        )
+
+    async def callback(self, interaction: discord.Interaction) -> None:
+
+        assert self.view is not None
+
+        await interaction.response.defer()
+        await self.view.paginator._change_page(page=0)
+
+
+class PreviousButton(discord.ui.Button["PaginatorView"]):
+
+    def __init__(self) -> None:
+        super().__init__(
+            emoji=values.PAGINATOR_PREVIOUS,
+        )
+
+    async def callback(self, interaction: discord.Interaction) -> None:
+
+        assert self.view is not None
+
+        await interaction.response.defer()
+        await self.view.paginator._change_page(page=self.view.paginator.page - 1)
+
+
+class LabelButton(discord.ui.Button["PaginatorView"]):
+
+    def __init__(self) -> None:
+        super().__init__()
+
+    async def callback(self, interaction: discord.Interaction) -> None:
+
+        assert self.view is not None
+        await interaction.response.defer()
+
+
+class NextButton(discord.ui.Button["PaginatorView"]):
+
+    def __init__(self) -> None:
+        super().__init__(
+            emoji=values.PAGINATOR_NEXT,
+        )
+
+    async def callback(self, interaction: discord.Interaction) -> None:
+
+        assert self.view is not None
+
+        await interaction.response.defer()
+        await self.view.paginator._change_page(page=self.view.paginator.page + 1)
+
+
+class LastButton(discord.ui.Button["PaginatorView"]):
+
+    def __init__(self) -> None:
+        super().__init__(
+            emoji=values.PAGINATOR_LAST,
+        )
+
+    async def callback(self, interaction: discord.Interaction) -> None:
+
+        assert self.view is not None
+
+        await interaction.response.defer()
+        await self.view.paginator._change_page(page=len(self.view.paginator.pages) - 1)
+
+
+class StopButton(discord.ui.Button["PaginatorView"]):
+
+    def __init__(self) -> None:
+        super().__init__(
+            emoji=values.PAGINATOR_STOP,
+        )
+
+    async def callback(self, interaction: discord.Interaction) -> None:
+
+        assert self.view is not None
+
+        self.view.stop()
+        await self.view.paginator.stop()
+
+
+class PaginatorView(discord.ui.View):
 
     def __init__(self, paginator: BasePaginator) -> None:
         super().__init__(timeout=paginator.timeout)
 
         self.paginator: BasePaginator = paginator
 
+        self._first_button: FirstButton = FirstButton()
+        self._previous_button: PreviousButton = PreviousButton()
+        self._label_button: LabelButton = LabelButton()
+        self._next_button: NextButton = NextButton()
+        self._last_button: LastButton = LastButton()
+        self._stop_button: StopButton = StopButton()
+
+        match len(self.paginator.pages):
+            case 1:
+                buttons = (
+                    self._stop_button,
+                )
+            case 2:
+                self._stop_button.row = 1
+                buttons = (
+                    self._previous_button,
+                    self._label_button,
+                    self._next_button,
+                    self._stop_button,
+                )
+            case _:
+                buttons = (
+                    self._first_button,
+                    self._previous_button,
+                    self._label_button,
+                    self._next_button,
+                    self._last_button,
+                    self._stop_button,
+                )
+
+        for button in buttons:
+            self.add_item(button)
+
+        self._buttons = buttons
+
     # ABC Methods
 
-    async def on_error(self, error: Exception, item: discord.ui.Item[PaginatorButtons], interaction: discord.Interaction) -> None:
+    async def on_error(self, error: Exception, item: discord.ui.Item[PaginatorView], interaction: discord.Interaction) -> None:
         return
 
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         return interaction.user is not None and interaction.user.id in {*values.OWNER_IDS, self.paginator.ctx.author.id}
 
     async def on_timeout(self) -> None:
-        self.stop()
-        await self.paginator.stop()
-
-    # Buttons
-
-    @discord.ui.button(emoji=values.PAGINATOR_FIRST)
-    async def _first(self, interaction: discord.Interaction, _: discord.ui.Button[PaginatorButtons]) -> None:
-
-        await interaction.response.defer()
-        await self.paginator._change_page(page=0)
-
-    @discord.ui.button(emoji=values.PAGINATOR_PREVIOUS)
-    async def _previous(self, interaction: discord.Interaction, _: discord.ui.Button[PaginatorButtons]) -> None:
-
-        await interaction.response.defer()
-        await self.paginator._change_page(page=self.paginator.page - 1)
-
-    @discord.ui.button()
-    async def _label(self, interaction: discord.Interaction, _: discord.ui.Button[PaginatorButtons]) -> None:
-        await interaction.response.defer()
-
-    @discord.ui.button(emoji=values.PAGINATOR_NEXT)
-    async def _next(self, interaction: discord.Interaction, _: discord.ui.Button[PaginatorButtons]) -> None:
-
-        await interaction.response.defer()
-        await self.paginator._change_page(page=self.paginator.page + 1)
-
-    @discord.ui.button(emoji=values.PAGINATOR_LAST)
-    async def _last(self, interaction: discord.Interaction, _: discord.ui.Button[PaginatorButtons]) -> None:
-
-        await interaction.response.defer()
-        await self.paginator._change_page(page=len(self.paginator.pages) - 1)
-
-    @discord.ui.button(emoji=values.PAGINATOR_STOP)
-    async def _stop(self, interaction: discord.Interaction, _: discord.ui.Button[PaginatorButtons]) -> None:
-
-        await interaction.response.defer()
-
         self.stop()
         await self.paginator.stop()
 
@@ -98,7 +181,7 @@ class BasePaginator(abc.ABC):
         self.splitter: str = splitter
         self.join_pages: bool = join_pages
 
-        self.view: PaginatorButtons = PaginatorButtons(paginator=self)
+        self.view: PaginatorView = utilities.MISSING
         self.message: discord.Message | None = None
         self.embed: discord.Embed | None = None
         self.content: str | None = None
@@ -124,16 +207,16 @@ class BasePaginator(abc.ABC):
 
     def _update_buttons(self) -> None:
 
-        self.view._label.label = f"{self.page + 1}/{len(self.pages)}"
+        self.view._label_button.label = f"{self.page + 1}/{len(self.pages)}"
 
         if self.page == 0:
-            self.view._first.disabled, self.view._previous.disabled = True, True
+            self.view._first_button.disabled, self.view._previous_button.disabled = True, True
         else:
-            self.view._first.disabled, self.view._previous.disabled = False, False
+            self.view._first_button.disabled, self.view._previous_button.disabled = False, False
         if self.page == len(self.pages) - 1:
-            self.view._next.disabled, self.view._last.disabled = True, True
+            self.view._next_button.disabled, self.view._last_button.disabled = True, True
         else:
-            self.view._next.disabled, self.view._last.disabled = False, False
+            self.view._next_button.disabled, self.view._last_button.disabled = False, False
 
     async def _change_page(self, page: int) -> None:
 
@@ -148,6 +231,8 @@ class BasePaginator(abc.ABC):
     #
 
     async def start(self) -> None:
+
+        self.view = PaginatorView(paginator=self)
 
         await self._change_page(page=self.page)
         self.message = await self.ctx.reply(content=self.content, embed=self.embed, view=self.view)
