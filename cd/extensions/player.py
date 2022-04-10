@@ -86,7 +86,7 @@ class Player(commands.Cog):
     @checks.is_player_connected()
     async def _pause(self, ctx: custom.Context) -> None:
         """
-        Pauses the player
+        Pauses the player.
         """
 
         assert ctx.voice_client is not None
