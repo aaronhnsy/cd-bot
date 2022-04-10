@@ -23,6 +23,7 @@ EXTENSIONS = [
     "cd.extensions.queue",
     "cd.extensions.reloader",
     "cd.extensions.settings",
+    "cd.extensions.todo",
 ]
 
 PERMISSIONS = discord.Permissions(

@@ -34,9 +34,10 @@ class Manager:
             "INSERT INTO guilds (id) values ($1) ON CONFLICT (id) DO UPDATE SET id = excluded.id RETURNING *",
             guild_id
         )
-        self.guild_configs[guild_id] = objects.GuildConfig(bot=self.bot, data=data)
+        guild_config = objects.GuildConfig(bot=self.bot, data=data)
 
-        return self.guild_configs[guild_id]
+        self.guild_configs[guild_id] = guild_config
+        return guild_config
 
     async def get_guild_config(self, guild_id: int) -> objects.GuildConfig:
 
@@ -49,13 +50,22 @@ class Manager:
 
     async def fetch_user_config(self, user_id: int) -> objects.UserConfig:
 
+        # Fetch user config
         data: dict[str, Any] = await self.bot.db.fetchrow(
             "INSERT INTO users (id) values ($1) ON CONFLICT (id) DO UPDATE SET id = excluded.id RETURNING *",
             user_id
         )
-        self.user_configs[user_id] = objects.UserConfig(bot=self.bot, data=data)
+        user_config = objects.UserConfig(bot=self.bot, data=data)
 
-        return self.user_configs[user_id]
+        # Fetch user todos
+        todos = await self.bot.db.fetch(
+            "SELECT * FROM todos WHERE user_id = $1",
+            user_id
+        )
+        user_config.todos = {todo["id"]: objects.Todo(bot=self.bot, data=todo) for todo in todos}
+
+        self.user_configs[user_id] = user_config
+        return user_config
 
     async def get_user_config(self, user_id: int) -> objects.UserConfig:
 
