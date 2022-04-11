@@ -136,7 +136,7 @@ class Queue:
             try:
                 await waiter
 
-            except:
+            except Exception:
                 waiter.cancel()
 
                 try:
