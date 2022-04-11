@@ -164,7 +164,7 @@ class CD(commands.AutoShardedBot):
 
     async def get_context(
         self,
-        message: discord.Message,
+        message: discord.Message | discord.Interaction,
         *,
         cls: type[commands.Context[CD]] = utilities.MISSING
     ) -> commands.Context[CD]:

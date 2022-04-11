@@ -11,6 +11,7 @@ import time
 from typing import Any, Optional
 
 # Packages
+import discord
 import humanize
 import psutil
 from discord.ext import commands
@@ -34,7 +35,8 @@ class Information(commands.Cog):
 
     # General
 
-    @commands.command(name="ping")
+    @commands.hybrid_command(name="ping")
+    @discord.app_commands.guilds(240958773122957312)
     async def ping(self, ctx: custom.Context) -> None:
         """
         Get the bots ping.
@@ -63,9 +65,10 @@ class Information(commands.Cog):
         embed.add_field(name="Redis:", value=f"```py\n{(redis_end - redis_start) * 1000:.2f} ms\n```")
         embed.add_field(name=values.ZWSP, value=values.ZWSP)
 
-        await ctx.reply(embed=embed)
+        await ctx.send(embed=embed)
 
-    @commands.command(name="system", aliases=["sys"])
+    @commands.hybrid_command(name="system", aliases=["sys"])
+    @discord.app_commands.guilds(240958773122957312)
     async def system(self, ctx: custom.Context) -> None:
         """
         See the bots' system information.
@@ -117,9 +120,10 @@ class Information(commands.Cog):
                   f"`Threads:` {self.bot.process.num_threads()}",
         )
 
-        await ctx.reply(embed=embed)
+        await ctx.send(embed=embed)
 
-    @commands.command(name="source", aliases=["src"])
+    @commands.hybrid_command(name="source", aliases=["src"])
+    @discord.app_commands.guilds(240958773122957312)
     async def source(self, ctx: custom.Context, *, command: Optional[str]) -> None:
         """
         Get a link to the source code for a command.
@@ -129,7 +133,7 @@ class Information(commands.Cog):
         """
 
         if not command:
-            await ctx.reply(
+            await ctx.send(
                 embed=utilities.embed(
                     colour=values.MAIN,
                     emoji=":computer:",
@@ -147,15 +151,16 @@ class Information(commands.Cog):
         lines, start_line_number = inspect.getsourcelines(source)
         location = os.path.relpath(filename).replace("\\", "/")
 
-        await ctx.reply(f"<{values.GITHUB_LINK}/blob/main/bot/{location}#L{start_line_number}-L{start_line_number + len(lines) - 1}>")
+        await ctx.send(f"<{values.GITHUB_LINK}/blob/main/bot/{location}#L{start_line_number}-L{start_line_number + len(lines) - 1}>")
 
-    @commands.command(name="invite", aliases=["inv"])
+    @commands.hybrid_command(name="invite", aliases=["inv"])
+    @discord.app_commands.guilds(240958773122957312)
     async def invite(self, ctx: custom.Context) -> None:
         """
         Get an invite link for the bot.
         """
 
-        await ctx.reply(
+        await ctx.send(
             embed=utilities.embed(
                 colour=values.MAIN,
                 emoji=":cd:",
@@ -163,13 +168,14 @@ class Information(commands.Cog):
             )
         )
 
-    @commands.command(name="support", aliases=["discord"])
+    @commands.hybrid_command(name="support", aliases=["discord"])
+    @discord.app_commands.guilds(240958773122957312)
     async def support(self, ctx: custom.Context) -> None:
         """
         Join the bots support server.
         """
 
-        await ctx.reply(
+        await ctx.send(
             embed=utilities.embed(
                 colour=values.MAIN,
                 emoji=":inbox_tray:",
@@ -177,13 +183,14 @@ class Information(commands.Cog):
             )
         )
 
-    @commands.command(name="links")
+    @commands.hybrid_command(name="links")
+    @discord.app_commands.guilds(240958773122957312)
     async def links(self, ctx: custom.Context) -> None:
         """
         Get various links for the bot.
         """
 
-        await ctx.reply(
+        await ctx.send(
             embed=utilities.embed(
                 colour=values.MAIN,
                 title=":link: Links",
@@ -194,13 +201,14 @@ class Information(commands.Cog):
             )
         )
 
-    @commands.command(name="platforms")
+    @commands.hybrid_command(name="platforms", aliases=["sources"])
+    @discord.app_commands.guilds(240958773122957312)
     async def platforms(self, ctx: custom.Context) -> None:
         """
         Get a list of platforms the bot can play tracks from.
         """
 
-        await ctx.reply(
+        await ctx.send(
             embed=utilities.embed(
                 colour=values.MAIN,
                 title=":tools: Platforms",
@@ -215,6 +223,7 @@ class Information(commands.Cog):
             )
         )
 
-    @commands.command(name="about")
+    @commands.hybrid_command(name="about")
+    @discord.app_commands.guilds(240958773122957312)
     async def about(self, ctx: custom.Context) -> None:
-        await ctx.reply("CD is a music bot which does absolutely nothing innovative but has a cool codebase full of probably broke shit.")
+        await ctx.send("CD is a music bot which does absolutely nothing innovative but has a cool codebase full of probably broke shit.")
