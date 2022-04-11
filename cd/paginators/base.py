@@ -24,7 +24,7 @@ class FirstButton(discord.ui.Button["PaginatorView"]):
         assert self.view is not None
 
         await interaction.response.defer()
-        await self.view.paginator._change_page(page=0)
+        await self.view.paginator.change_page(page=0)
 
 
 class PreviousButton(discord.ui.Button["PaginatorView"]):
@@ -39,7 +39,7 @@ class PreviousButton(discord.ui.Button["PaginatorView"]):
         assert self.view is not None
 
         await interaction.response.defer()
-        await self.view.paginator._change_page(page=self.view.paginator.page - 1)
+        await self.view.paginator.change_page(page=self.view.paginator.page - 1)
 
 
 class LabelButton(discord.ui.Button["PaginatorView"]):
@@ -65,7 +65,7 @@ class NextButton(discord.ui.Button["PaginatorView"]):
         assert self.view is not None
 
         await interaction.response.defer()
-        await self.view.paginator._change_page(page=self.view.paginator.page + 1)
+        await self.view.paginator.change_page(page=self.view.paginator.page + 1)
 
 
 class LastButton(discord.ui.Button["PaginatorView"]):
@@ -80,7 +80,7 @@ class LastButton(discord.ui.Button["PaginatorView"]):
         assert self.view is not None
 
         await interaction.response.defer()
-        await self.view.paginator._change_page(page=len(self.view.paginator.pages) - 1)
+        await self.view.paginator.change_page(page=len(self.view.paginator.pages) - 1)
 
 
 class StopButton(discord.ui.Button["PaginatorView"]):
@@ -88,11 +88,13 @@ class StopButton(discord.ui.Button["PaginatorView"]):
     def __init__(self) -> None:
         super().__init__(
             emoji=values.PAGINATOR_STOP,
+            row=1
         )
 
     async def callback(self, interaction: discord.Interaction) -> None:
 
         assert self.view is not None
+        await interaction.response.defer()
 
         self.view.stop()
         await self.view.paginator.stop()
@@ -100,57 +102,78 @@ class StopButton(discord.ui.Button["PaginatorView"]):
 
 class PaginatorView(discord.ui.View):
 
-    def __init__(self, paginator: BasePaginator) -> None:
+    def __init__(self, *, paginator: BasePaginator) -> None:
         super().__init__(timeout=paginator.timeout)
 
         self.paginator: BasePaginator = paginator
 
-        self._first_button: FirstButton = FirstButton()
-        self._previous_button: PreviousButton = PreviousButton()
-        self._label_button: LabelButton = LabelButton()
-        self._next_button: NextButton = NextButton()
-        self._last_button: LastButton = LastButton()
-        self._stop_button: StopButton = StopButton()
+        self._first: FirstButton = FirstButton()
+        self._previous: PreviousButton = PreviousButton()
+        self._label: LabelButton = LabelButton()
+        self._next: NextButton = NextButton()
+        self._last: LastButton = LastButton()
+        self._stop: StopButton = StopButton()
 
         match len(self.paginator.pages):
             case 1:
-                buttons = (
-                    self._stop_button,
+                self.buttons = (
+                    self._stop,
                 )
             case 2:
-                self._stop_button.row = 1
-                buttons = (
-                    self._previous_button,
-                    self._label_button,
-                    self._next_button,
-                    self._stop_button,
+                self.buttons = (
+                    self._previous,
+                    self._label,
+                    self._next,
+                    self._stop,
                 )
             case _:
-                buttons = (
-                    self._first_button,
-                    self._previous_button,
-                    self._label_button,
-                    self._next_button,
-                    self._last_button,
-                    self._stop_button,
+                self.buttons = (
+                    self._first,
+                    self._previous,
+                    self._label,
+                    self._next,
+                    self._last,
+                    self._stop,
                 )
 
-        for button in buttons:
+        for button in self.buttons:
             self.add_item(button)
 
-        self._buttons = buttons
-
-    # ABC Methods
-
-    async def on_error(self, error: Exception, item: discord.ui.Item[PaginatorView], interaction: discord.Interaction) -> None:
-        return
+    # Overrides
 
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
-        return interaction.user is not None and interaction.user.id in {*values.OWNER_IDS, self.paginator.ctx.author.id}
+
+        if interaction.user and interaction.user.id in {self.paginator.ctx.author.id, *values.OWNER_IDS}:
+            return True
+
+        await interaction.response.send_message(
+            embed=utilities.embed(
+                colour=values.RED,
+                description="You are not allowed to use this paginator."
+            ),
+            ephemeral=True
+        )
+        return False
 
     async def on_timeout(self) -> None:
-        self.stop()
         await self.paginator.stop()
+        self.stop()
+
+    # Custom methods
+
+    def update_state(self) -> None:
+
+        self._label.label = f"{self.paginator.page + 1}/{len(self.paginator.pages)}"
+
+        if self.paginator.page == 0:
+            self._first.disabled, self._previous.disabled = True, True
+        else:
+            self._first.disabled, self._previous.disabled = False, False
+
+        if self.paginator.page == len(self.paginator.pages) - 1:
+            self._next.disabled, self._last.disabled = True, True
+        else:
+            self._next.disabled, self._last.disabled = False, False
 
 
 class BasePaginator(abc.ABC):
@@ -163,7 +186,7 @@ class BasePaginator(abc.ABC):
         per_page: int,
         start_page: int = 0,
         timeout: int = 300,
-        edit_message: bool = True,
+        edit_message: bool = False,
         delete_message: bool = False,
         codeblock: bool = False,
         splitter: str = "\n",
@@ -199,42 +222,32 @@ class BasePaginator(abc.ABC):
         self.CODEBLOCK_START: str = values.CODEBLOCK_START if self.codeblock else ""
         self.CODEBLOCK_END: str = values.CODEBLOCK_END if self.codeblock else ""
 
-    #
+    # Private Methods
 
     @abc.abstractmethod
-    async def _update_page(self) -> None:
+    async def _update_state(self) -> None:
         raise NotImplementedError
 
-    def _update_buttons(self) -> None:
+    # Public Methods
 
-        self.view._label_button.label = f"{self.page + 1}/{len(self.pages)}"
-
-        if self.page == 0:
-            self.view._first_button.disabled, self.view._previous_button.disabled = True, True
-        else:
-            self.view._first_button.disabled, self.view._previous_button.disabled = False, False
-        if self.page == len(self.pages) - 1:
-            self.view._next_button.disabled, self.view._last_button.disabled = True, True
-        else:
-            self.view._next_button.disabled, self.view._last_button.disabled = False, False
-
-    async def _change_page(self, page: int) -> None:
+    async def change_page(self, page: int) -> None:
 
         self.page = page
 
-        await self._update_page()
-        self._update_buttons()
+        await self._update_state()
+        self.view.update_state()
 
         if self.message:
-            await self.message.edit(content=self.content, embed=self.embed, view=self.view)
-
-    #
+            try:
+                await self.message.edit(content=self.content, embed=self.embed, view=self.view)
+            except (discord.NotFound, discord.HTTPException):
+                pass
 
     async def start(self) -> None:
 
         self.view = PaginatorView(paginator=self)
 
-        await self._change_page(page=self.page)
+        await self.change_page(page=self.page)
         self.message = await self.ctx.reply(content=self.content, embed=self.embed, view=self.view)
 
     async def stop(self) -> None:
@@ -242,9 +255,19 @@ class BasePaginator(abc.ABC):
         if not self.message:
             return
 
-        if self.delete_message:
-            await self.message.delete()
-        elif self.edit_message:
-            await self.message.edit(content="*Message was deleted.*", embed=None, view=None)
+        try:
+            if self.delete_message:
+                await self.message.delete()
+
+            elif self.edit_message:
+                await self.message.edit(content="*Message was deleted.*", embed=None, view=None)
+
+            else:
+                for button in self.view.buttons:
+                    button.disabled = True
+                await self.message.edit(view=self.view)
+
+        except (discord.NotFound, discord.HTTPException):
+            pass
 
         self.message = None

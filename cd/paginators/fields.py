@@ -29,7 +29,7 @@ class FieldsPaginator(BasePaginator):
         per_page: int,
         start_page: int = 0,
         timeout: int = 300,
-        edit_message: bool = True,
+        edit_message: bool = False,
         delete_message: bool = False,
         codeblock: bool = False,
         splitter: str = "\n",
@@ -46,7 +46,6 @@ class FieldsPaginator(BasePaginator):
         embed_author: str | None = None,
         embed_author_url: str | None = None,
         embed_author_icon_url: str | None = None,
-
     ) -> None:
 
         super().__init__(
@@ -77,7 +76,9 @@ class FieldsPaginator(BasePaginator):
             author_icon_url=embed_author_icon_url,
         )
 
-    async def _update_page(self) -> None:
+    # Overrides
+
+    async def _update_state(self) -> None:
 
         self.embed.clear_fields()
 

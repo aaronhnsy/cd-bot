@@ -4,9 +4,6 @@ from __future__ import annotations
 # Standard Library
 from typing import Any
 
-# Packages
-import discord
-
 # Local
 from cd import custom
 from cd.paginators.base import BasePaginator
@@ -41,9 +38,7 @@ class EmbedsPaginator(BasePaginator):
             join_pages=False
         )
 
-        self.embed: discord.Embed | None = None
+    # Overrides
 
-    #
-
-    async def _update_page(self) -> None:
+    async def _update_state(self) -> None:
         self.embed = self.pages[self.page]

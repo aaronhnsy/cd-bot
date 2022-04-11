@@ -24,7 +24,7 @@ class TextPaginator(BasePaginator):
         per_page: int,
         start_page: int = 0,
         timeout: int = 300,
-        edit_message: bool = True,
+        edit_message: bool = False,
         delete_message: bool = False,
         codeblock: bool = False,
         splitter: str = "\n",
@@ -47,7 +47,7 @@ class TextPaginator(BasePaginator):
         self.header: str = header or ""
         self.footer: str = footer or ""
 
-    #
+    # Overrides
 
-    async def _update_page(self) -> None:
+    async def _update_state(self) -> None:
         self.content = f"{self.CODEBLOCK_START}{self.header}{self.pages[self.page]}{self.footer}{self.CODEBLOCK_END}"

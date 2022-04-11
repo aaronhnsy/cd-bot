@@ -29,7 +29,7 @@ class EmbedPaginator(BasePaginator):
         per_page: int,
         start_page: int = 0,
         timeout: int = 300,
-        edit_message: bool = True,
+        edit_message: bool = False,
         delete_message: bool = False,
         codeblock: bool = False,
         splitter: str = "\n",
@@ -78,5 +78,7 @@ class EmbedPaginator(BasePaginator):
             author_icon_url=author_icon_url,
         )
 
-    async def _update_page(self) -> None:
+    # Overrides
+
+    async def _update_state(self) -> None:
         self.embed.description = f"{self.CODEBLOCK_START}{self.header}{self.pages[self.page]}{self.footer}{self.CODEBLOCK_END}"

@@ -24,7 +24,7 @@ class FilePaginator(BasePaginator):
         entries: list[functools.partial[bytes | io.BytesIO]],
         start_page: int = 0,
         timeout: int = 300,
-        edit_message: bool = True,
+        edit_message: bool = False,
         delete_message: bool = False,
         header: str | None = None,
     ) -> None:
@@ -41,9 +41,9 @@ class FilePaginator(BasePaginator):
 
         self.header: str = header or ""
 
-    #
+    # Overrides
 
-    async def _update_page(self) -> None:
+    async def _update_state(self) -> None:
 
         buffer = await self.entries[self.page]()
         url = await utilities.upload_file(self.ctx.bot.session, fp=buffer, format="png")
