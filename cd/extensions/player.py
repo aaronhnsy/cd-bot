@@ -10,6 +10,7 @@ from typing import Literal, Optional
 # Packages
 import discord
 import slate
+from discord import app_commands
 from discord.ext import commands
 
 # Local
@@ -39,7 +40,8 @@ class Player(commands.Cog):
 
     # Connecting
 
-    @commands.command(name="connect", aliases=["join", "summon"])
+    @commands.hybrid_command(name="connect", aliases=["join", "summon"])
+    @app_commands.guilds(240958773122957312)
     async def _connect(self, ctx: custom.Context) -> None:
         """
         Connects the bot to your voice channel.
@@ -58,11 +60,12 @@ class Player(commands.Cog):
         await ctx.send(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description=f"**Connected** to {ctx.author.voice.channel}."
+                description=f"Connected to {ctx.author.voice.channel}."
             )
         )
 
-    @commands.command(name="disconnect", aliases=["dc", "leave", "destroy"])
+    @commands.hybrid_command(name="disconnect", aliases=["dc", "leave", "destroy"])
+    @app_commands.guilds(240958773122957312)
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def _disconnect(self, ctx: custom.Context) -> None:
@@ -75,13 +78,14 @@ class Player(commands.Cog):
         await ctx.send(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description=f"**Disconnected** from {ctx.voice_client.voice_channel.mention}.")
+                description=f"Disconnected from {ctx.voice_client.voice_channel.mention}.")
         )
         await ctx.voice_client.disconnect()
 
     # Pausing
 
-    @commands.command(name="pause", aliases=["stop"])
+    @commands.hybrid_command(name="pause", aliases=["stop"])
+    @app_commands.guilds(240958773122957312)
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def _pause(self, ctx: custom.Context) -> None:
@@ -98,11 +102,12 @@ class Player(commands.Cog):
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description="**Paused** the player."
+                description="Paused the player."
             )
         )
 
-    @commands.command(name="resume", aliases=["continue", "unpause"])
+    @commands.hybrid_command(name="resume", aliases=["continue", "unpause"])
+    @app_commands.guilds(240958773122957312)
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def _resume(self, ctx: custom.Context) -> None:
@@ -119,13 +124,14 @@ class Player(commands.Cog):
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description="**Resumed** the player."
+                description="Resumed the player."
             )
         )
 
     # Seeking
 
-    @commands.command(name="seek", aliases=["scrub"])
+    @commands.hybrid_command(name="seek", aliases=["scrub"])
+    @app_commands.guilds(240958773122957312)
     @checks.is_track_seekable()
     @checks.is_player_playing()
     @checks.is_author_connected()
@@ -135,7 +141,7 @@ class Player(commands.Cog):
         Seeks to a position in the current track.
 
         **Arguments:**
-        `position`: The position to seek to. Can be in any of the following formats:
+        ● `position`: The position to seek to. Can be in any of the following formats:
         - `ss`
         - `mm:ss`
         - `hh:mm:ss`
@@ -166,12 +172,13 @@ class Player(commands.Cog):
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description=f"**Set** the players position to "
+                description=f"Set the players position to "
                             f"**{utilities.format_seconds(milliseconds // 1000, friendly=True)}**."
             )
         )
 
-    @commands.command(name="fast-forward", aliases=["fast_forward", "fastforward", "ff", "forward", "fwd"])
+    @commands.hybrid_command(name="fast-forward", aliases=["fast_forward", "fastforward", "ff", "forward", "fwd"])
+    @app_commands.guilds(240958773122957312)
     @checks.is_track_seekable()
     @checks.is_player_playing()
     @checks.is_author_connected()
@@ -181,7 +188,7 @@ class Player(commands.Cog):
         Fast-forwards the current track by an amount of time.
 
         **Arguments:**
-        `time`: The amount of time to fast-forward by. Can be in any of the following formats:
+        ● `time`: The amount of time to fast-forward by. Can be in any of the following formats:
         - `ss`
         - `mm:ss`
         - `hh:mm:ss`
@@ -214,12 +221,13 @@ class Player(commands.Cog):
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description=f"**Fast-forwarding** by **{formatted}**, the players position is now "
+                description=f"Fast-forwarding by **{formatted}**, the players position is now "
                             f"**{utilities.format_seconds((position + milliseconds) // 1000, friendly=True)}**."
             )
         )
 
-    @commands.command(name="rewind", aliases=["rwd", "backward", "bwd"])
+    @commands.hybrid_command(name="rewind", aliases=["rwd", "backward", "bwd"])
+    @app_commands.guilds(240958773122957312)
     @checks.is_track_seekable()
     @checks.is_player_playing()
     @checks.is_author_connected()
@@ -229,7 +237,7 @@ class Player(commands.Cog):
         Rewinds the current track by an amount of time.
 
         **Arguments:**
-        `time`: The amount of time to rewind by. Can be in any of the following formats:
+        ● `time`: The amount of time to rewind by. Can be in any of the following formats:
         - `ss`
         - `mm:ss`
         - `hh:mm:ss`
@@ -262,12 +270,13 @@ class Player(commands.Cog):
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description=f"**Rewinding** by **{formatted}**, the players position is now "
+                description=f"Rewinding by **{formatted}**, the players position is now "
                             f"**{utilities.format_seconds((position - milliseconds) // 1000, friendly=True)}**."
             )
         )
 
-    @commands.command(name="replay", aliases=["restart"])
+    @commands.hybrid_command(name="replay", aliases=["restart"])
+    @app_commands.guilds(240958773122957312)
     @checks.is_track_seekable()
     @checks.is_player_playing()
     @checks.is_author_connected()
@@ -284,13 +293,14 @@ class Player(commands.Cog):
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description="**Replaying** the current track."
+                description="Replaying the current track."
             )
         )
 
     # Now playing
 
-    @commands.command(name="now-playing", aliases=["now_playing", "nowplaying", "np"])
+    @commands.hybrid_command(name="now-playing", aliases=["now_playing", "nowplaying", "np"])
+    @app_commands.guilds(240958773122957312)
     @checks.is_player_playing()
     @checks.is_player_connected()
     async def _now_playing(self, ctx: custom.Context) -> None:
@@ -336,7 +346,8 @@ class Player(commands.Cog):
         except (commands.CheckAnyFailure, commands.MissingRole):
             raise exceptions.EmbedError(description="You don't have permission to force skip.")
 
-    @commands.command(name="force-skip", aliases=["force_skip", "forceskip", "fs", "skipto"])
+    @commands.hybrid_command(name="force-skip", aliases=["force_skip", "forceskip", "fs", "skipto"])
+    @app_commands.guilds(240958773122957312)
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()
@@ -345,7 +356,7 @@ class Player(commands.Cog):
         Force skips tracks in the queue.
 
         **Arguments:**
-        `amount`: An optional amount of tracks to skip, defaults to 1.
+        ● `amount`: An optional amount of tracks to skip, defaults to 1.
 
         **Note:**
         You can only use this command if you meet one (or more) of the following requirements:
@@ -377,7 +388,8 @@ class Player(commands.Cog):
 
         ctx.voice_client.skip_request_ids.clear()
 
-    @commands.command(name="skip", aliases=["vote-skip", "vote_skip", "voteskip", "vs"])
+    @commands.hybrid_command(name="skip", aliases=["vote-skip", "vote_skip", "voteskip", "vs"])
+    @app_commands.guilds(240958773122957312)
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()
@@ -430,7 +442,7 @@ class Player(commands.Cog):
             await ctx.reply(
                 embed=utilities.embed(
                     colour=values.GREEN,
-                    description="**Removed** your vote to skip."
+                    description="Removed your vote to skip."
                 )
             )
             return
@@ -445,7 +457,7 @@ class Player(commands.Cog):
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description=f"**Added** your vote to skip, now at **{len(ctx.voice_client.skip_request_ids)}** out of **{skips_needed}** votes."
+                description=f"Added your vote to skip, now at **{len(ctx.voice_client.skip_request_ids)}** out of **{skips_needed}** votes."
             )
         )
 
@@ -519,7 +531,7 @@ class Player(commands.Cog):
             entries=entries,
             per_page=1,
             title=f"{data['title']} *by* {data['artist']}",
-            thumbnail=data["images"]["track"],
+            thumbnail=data["images"].get("track", None),
         )
         await paginator.start()
 
