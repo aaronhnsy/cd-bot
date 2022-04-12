@@ -188,7 +188,7 @@ class Queue(commands.Cog):
         if entry < 1 or entry > length:
             raise exceptions.EmbedError(
                 description=f"**{utilities.truncate(entry, 10)}** is not a valid position, the queue only has "
-                            f"**{length}** {utilities.pluralize('track', length)}.",
+                            f"**{length}** {utilities.pluralize('track', length)}."
             )
 
         item = ctx.voice_client.queue.get(position=entry - 1)
@@ -223,12 +223,12 @@ class Queue(commands.Cog):
         if entry < 1 or entry > length:
             raise exceptions.EmbedError(
                 description=f"**{utilities.truncate(entry, 10)}** is not a valid position, the queue only has "
-                            f"**{length}** {utilities.pluralize('track', length)}.",
+                            f"**{length}** {utilities.pluralize('track', length)}."
             )
         if to < 1 or to > length:
             raise exceptions.EmbedError(
                 description=f"**{utilities.truncate(to, 10)}** is not a valid position, the queue only has "
-                            f"**{length}** {utilities.pluralize('track', length)}.",
+                            f"**{length}** {utilities.pluralize('track', length)}."
             )
 
         item = ctx.voice_client.queue.get(position=entry - 1)

@@ -45,10 +45,13 @@ class Play(commands.Cog):
             return
 
         if (not author_voice_channel and bot_voice_channel) or (author_voice_channel and bot_voice_channel):
-            raise exceptions.EmbedError(description=f"You must be connected to {bot_voice_channel.mention} to use this command.")
-
+            raise exceptions.EmbedError(
+                description=f"You must be connected to {bot_voice_channel.mention} to use this command."
+            )
         if not author_voice_channel:
-            raise exceptions.EmbedError(description="You must be connected to a voice channel to use this command.")
+            raise exceptions.EmbedError(
+                description="You must be connected to a voice channel to use this command."
+            )
 
         # slate's Player doesn't like this for some reason, investigate later.
         await author_voice_channel.connect(cls=custom.Player(text_channel=ctx.channel))  # type: ignore

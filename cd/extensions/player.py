@@ -156,8 +156,10 @@ class Player(commands.Cog):
 
         if 0 < milliseconds > ctx.voice_client.current.length:
             raise exceptions.EmbedError(
-                description=f"**{utilities.format_seconds(position, friendly=True)}** is not a valid position, the current track is only "
-                            f"**{utilities.format_seconds(ctx.voice_client.current.length // 1000, friendly=True)}** long.",
+                description=f"**{utilities.format_seconds(position, friendly=True)}** is not a valid position, the "
+                            f"current track is only "
+                            f"**{utilities.format_seconds(ctx.voice_client.current.length // 1000, friendly=True)}** "
+                            f"long.",
             )
 
         await ctx.voice_client.set_position(milliseconds)
@@ -205,7 +207,7 @@ class Player(commands.Cog):
         if milliseconds >= remaining:
             raise exceptions.EmbedError(
                 description=f"**{formatted}** is too much time to fast forward, the current track only has "
-                            f"**{utilities.format_seconds(remaining // 1000, friendly=True)}** remaining.",
+                            f"**{utilities.format_seconds(remaining // 1000, friendly=True)}** remaining."
             )
 
         await ctx.voice_client.set_position(position + milliseconds)
@@ -252,15 +254,16 @@ class Player(commands.Cog):
         if milliseconds >= position:
             raise exceptions.EmbedError(
                 description=f"**{formatted}** is too much time to rewind, only "
-                            f"**{utilities.format_seconds(position // 1000, friendly=True)}** of the current track has passed."
+                            f"**{utilities.format_seconds(position // 1000, friendly=True)}** of the current track "
+                            f"has passed."
             )
 
         await ctx.voice_client.set_position(position - milliseconds)
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description=f"**Rewinding** by **{formatted}**, the players "
-                            f"position is now **{utilities.format_seconds((position - milliseconds) // 1000, friendly=True)}**."
+                description=f"**Rewinding** by **{formatted}**, the players position is now "
+                            f"**{utilities.format_seconds((position - milliseconds) // 1000, friendly=True)}**."
             )
         )
 

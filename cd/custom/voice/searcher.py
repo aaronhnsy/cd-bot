@@ -164,16 +164,18 @@ class Searcher:
 
         except slate.NoResultsFound as error:
             raise exceptions.EmbedError(
-                description=f"No **{error.source.value.replace('_', ' ').title()}** {error.type}s "
-                            f"were found for your search.",
+                description=f"No **{error.source.value.replace('_', ' ').title()}** {error.type}s were found for your "
+                            f"search.",
             )
 
         except (slate.SearchFailed, slate.HTTPError):
+
+            view = discord.ui.View()
+            view.add_item(discord.ui.Button(label="Support Server", url=values.SUPPORT_LINK))
+
             raise exceptions.EmbedError(
                 description="There was an error while searching for results, please try again later.",
-                view=discord.ui.View(timeout=None).add_item(
-                    discord.ui.Button(label="Support Server", url=values.SUPPORT_LINK)
-                ),
+                view=view
             )
 
         return search
