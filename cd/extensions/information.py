@@ -9,6 +9,7 @@ from typing import Optional
 
 # Packages
 import discord
+from discord import app_commands
 from discord.ext import commands
 
 # Local
@@ -28,8 +29,10 @@ class Information(commands.Cog):
     def __init__(self, bot: CD) -> None:
         self.bot: CD = bot
 
+    # Commands (Supports slash commands)
+
     @commands.hybrid_command(name="ping")
-    @discord.app_commands.guilds(240958773122957312)
+    @app_commands.guilds(240958773122957312)
     async def ping(self, ctx: custom.Context) -> None:
         """
         Shows the bots ping.
@@ -55,7 +58,7 @@ class Information(commands.Cog):
         await ctx.reply(embed=embed)
 
     @commands.hybrid_command(name="source", aliases=["src"])
-    @discord.app_commands.guilds(240958773122957312)
+    @app_commands.guilds(240958773122957312)
     async def source(self, ctx: custom.Context, *, command: Optional[str]) -> None:
         """
         Gets a GitHub link to the source code of a command or the bot.
@@ -102,7 +105,7 @@ class Information(commands.Cog):
         )
 
     @commands.hybrid_command(name="invite", aliases=["inv"])
-    @discord.app_commands.guilds(240958773122957312)
+    @app_commands.guilds(240958773122957312)
     async def invite(self, ctx: custom.Context) -> None:
         """
         Shows invite links for the bot.
@@ -122,7 +125,7 @@ class Information(commands.Cog):
         )
 
     @commands.hybrid_command(name="support", aliases=["discord"])
-    @discord.app_commands.guilds(240958773122957312)
+    @app_commands.guilds(240958773122957312)
     async def support(self, ctx: custom.Context) -> None:
         """
         Shows the bots support server invite.

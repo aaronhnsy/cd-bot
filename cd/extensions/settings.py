@@ -6,6 +6,7 @@ from typing import Literal
 
 # Packages
 import discord
+from discord import app_commands
 from discord.ext import commands
 
 # Local
@@ -25,6 +26,8 @@ class Settings(commands.Cog):
     def __init__(self, bot: CD) -> None:
         self.bot: CD = bot
 
+    # Checks
+
     def cog_check(self, ctx: custom.Context) -> Literal[True]:  # pyright: reportIncompatibleMethodOverride=false
 
         if not ctx.guild:
@@ -33,7 +36,7 @@ class Settings(commands.Cog):
         return True
 
     @staticmethod
-    async def _check_is_mod(ctx: custom.Context, message: str) -> None:
+    async def _is_mod(ctx: custom.Context, message: str) -> None:
 
         _checks = [
             checks.is_owner(),
@@ -91,7 +94,7 @@ class Settings(commands.Cog):
         - You have the `Manage Channels`, `Manage Roles`, `Manage Guild`, `Kick Members`, `Ban Members`, or `Administrator` permissions.
         """
 
-        await self._check_is_mod(ctx, "You don't have permission to change this servers prefix.")
+        await self._is_mod(ctx, "You don't have permission to change this servers prefix.")
 
         assert ctx.guild is not None
         guild_config = await self.bot.manager.get_guild_config(ctx.guild.id)
@@ -117,7 +120,7 @@ class Settings(commands.Cog):
         - You have the `Manage Channels`, `Manage Roles`, `Manage Guild`, `Kick Members`, `Ban Members`, or `Administrator` permissions.
         """
 
-        await self._check_is_mod(ctx, "You don't have permission to change this servers prefix.")
+        await self._is_mod(ctx, "You don't have permission to change this servers prefix.")
 
         assert ctx.guild is not None
         guild_config = await self.bot.manager.get_guild_config(ctx.guild.id)
@@ -134,10 +137,10 @@ class Settings(commands.Cog):
             )
         )
 
-    # DJ role
+    # DJ role (Supports slash commands)
 
     @commands.hybrid_group(name="dj", invoke_without_command=True)
-    @discord.app_commands.guilds(240958773122957312)
+    @app_commands.guilds(240958773122957312)
     async def _dj(self, ctx: custom.Context) -> None:
         """
         Shows this servers DJ role.
@@ -182,7 +185,7 @@ class Settings(commands.Cog):
         - You have the `Manage Channels`, `Manage Roles`, `Manage Guild`, `Kick Members`, `Ban Members`, or `Administrator` permissions.
         """
 
-        await self._check_is_mod(ctx, "You don't have permission to change this servers dj role.")
+        await self._is_mod(ctx, "You don't have permission to change this servers dj role.")
 
         assert ctx.guild is not None
         guild_config = await self.bot.manager.get_guild_config(ctx.guild.id)
@@ -208,7 +211,7 @@ class Settings(commands.Cog):
         - You have the `Manage Channels`, `Manage Roles`, `Manage Guild`, `Kick Members`, `Ban Members`, or `Administrator` permissions.
         """
 
-        await self._check_is_mod(ctx, "You don't have permission to remove this servers dj role.")
+        await self._is_mod(ctx, "You don't have permission to remove this servers dj role.")
 
         assert ctx.guild is not None
         guild_config = await self.bot.manager.get_guild_config(ctx.guild.id)
@@ -225,11 +228,11 @@ class Settings(commands.Cog):
             )
         )
 
-    # Embed size
+    # Embed size (Supports slash commands)
 
     async def _set_embed_size(self, ctx: custom.Context, size: enums.EmbedSize) -> None:
 
-        await self._check_is_mod(ctx, "You don't have permission to change this servers embed size.")
+        await self._is_mod(ctx, "You don't have permission to change this servers embed size.")
 
         assert ctx.guild is not None
         guild_config = await self.bot.manager.get_guild_config(ctx.guild.id)
@@ -244,7 +247,7 @@ class Settings(commands.Cog):
         )
 
     @commands.hybrid_group(name="embed-size", aliases=["embed_size", "embedsize", "es"], invoke_without_command=True)
-    @discord.app_commands.guilds(240958773122957312)
+    @app_commands.guilds(240958773122957312)
     async def _embed_size(self, ctx: custom.Context) -> None:
         """
         Shows this servers embed size.
