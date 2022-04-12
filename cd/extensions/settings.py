@@ -6,7 +6,6 @@ from typing import Literal
 
 # Packages
 import discord
-from discord import app_commands
 from discord.ext import commands
 
 # Local
@@ -140,7 +139,6 @@ class Settings(commands.Cog):
     # DJ role (Supports slash commands)
 
     @commands.hybrid_group(name="dj", invoke_without_command=True)
-    @app_commands.guilds(240958773122957312)
     async def _dj(self, ctx: custom.Context) -> None:
         """
         Shows this servers DJ role.
@@ -247,7 +245,6 @@ class Settings(commands.Cog):
         )
 
     @commands.hybrid_group(name="embed-size", aliases=["embed_size", "embedsize", "es"], invoke_without_command=True)
-    @app_commands.guilds(240958773122957312)
     async def _embed_size(self, ctx: custom.Context) -> None:
         """
         Shows this servers embed size.

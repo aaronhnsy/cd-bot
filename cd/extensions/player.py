@@ -10,7 +10,6 @@ from typing import Literal, Optional
 # Packages
 import discord
 import slate
-from discord import app_commands
 from discord.ext import commands
 
 # Local
@@ -41,7 +40,6 @@ class Player(commands.Cog):
     # Connecting
 
     @commands.hybrid_command(name="connect", aliases=["join", "summon"])
-    @app_commands.guilds(240958773122957312)
     async def _connect(self, ctx: custom.Context) -> None:
         """
         Connects the bot to your voice channel.
@@ -65,7 +63,6 @@ class Player(commands.Cog):
         )
 
     @commands.hybrid_command(name="disconnect", aliases=["dc", "leave", "destroy"])
-    @app_commands.guilds(240958773122957312)
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def _disconnect(self, ctx: custom.Context) -> None:
@@ -85,7 +82,6 @@ class Player(commands.Cog):
     # Pausing
 
     @commands.hybrid_command(name="pause", aliases=["stop"])
-    @app_commands.guilds(240958773122957312)
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def _pause(self, ctx: custom.Context) -> None:
@@ -107,7 +103,6 @@ class Player(commands.Cog):
         )
 
     @commands.hybrid_command(name="resume", aliases=["continue", "unpause"])
-    @app_commands.guilds(240958773122957312)
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def _resume(self, ctx: custom.Context) -> None:
@@ -131,7 +126,6 @@ class Player(commands.Cog):
     # Seeking
 
     @commands.hybrid_command(name="seek", aliases=["scrub"])
-    @app_commands.guilds(240958773122957312)
     @checks.is_track_seekable()
     @checks.is_player_playing()
     @checks.is_author_connected()
@@ -178,7 +172,6 @@ class Player(commands.Cog):
         )
 
     @commands.hybrid_command(name="fast-forward", aliases=["fast_forward", "fastforward", "ff", "forward", "fwd"])
-    @app_commands.guilds(240958773122957312)
     @checks.is_track_seekable()
     @checks.is_player_playing()
     @checks.is_author_connected()
@@ -227,7 +220,6 @@ class Player(commands.Cog):
         )
 
     @commands.hybrid_command(name="rewind", aliases=["rwd", "backward", "bwd"])
-    @app_commands.guilds(240958773122957312)
     @checks.is_track_seekable()
     @checks.is_player_playing()
     @checks.is_author_connected()
@@ -276,7 +268,6 @@ class Player(commands.Cog):
         )
 
     @commands.hybrid_command(name="replay", aliases=["restart"])
-    @app_commands.guilds(240958773122957312)
     @checks.is_track_seekable()
     @checks.is_player_playing()
     @checks.is_author_connected()
@@ -300,7 +291,6 @@ class Player(commands.Cog):
     # Now playing
 
     @commands.hybrid_command(name="now-playing", aliases=["now_playing", "nowplaying", "np"])
-    @app_commands.guilds(240958773122957312)
     @checks.is_player_playing()
     @checks.is_player_connected()
     async def _now_playing(self, ctx: custom.Context) -> None:
@@ -347,7 +337,6 @@ class Player(commands.Cog):
             raise exceptions.EmbedError(description="You don't have permission to force skip.")
 
     @commands.hybrid_command(name="force-skip", aliases=["force_skip", "forceskip", "fs", "skipto"])
-    @app_commands.guilds(240958773122957312)
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()
@@ -389,7 +378,6 @@ class Player(commands.Cog):
         ctx.voice_client.skip_request_ids.clear()
 
     @commands.hybrid_command(name="skip", aliases=["vote-skip", "vote_skip", "voteskip", "vs"])
-    @app_commands.guilds(240958773122957312)
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()

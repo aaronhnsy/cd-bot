@@ -30,7 +30,6 @@ class Todo(commands.Cog):
     # Commands (Support slash commands)
 
     @commands.hybrid_group(name="todo", aliases=["todos"], invoke_without_command=True)
-    @app_commands.guilds(240958773122957312)
     async def _todo(self, ctx: custom.Context, *, content: str | None = _TODO_OPTIONAL_CONTENT_CONVERTER) -> None:
         """
         Creates a todo.
