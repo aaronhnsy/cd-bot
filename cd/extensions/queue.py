@@ -35,7 +35,7 @@ class Queue(commands.Cog):
 
     # Queue
 
-    @commands.group(name="queue", aliases=["q"])
+    @commands.hybrid_command(name="queue", aliases=["q"])
     @checks.is_queue_not_empty()
     @checks.is_player_connected()
     async def queue(self, ctx: custom.Context) -> None:
@@ -63,7 +63,7 @@ class Queue(commands.Cog):
         )
         await paginator.start()
 
-    @commands.command(name="history", aliases=["hist"])
+    @commands.hybrid_command(name="history", aliases=["hist"])
     @checks.is_queue_history_not_empty()
     @checks.is_player_connected()
     async def history(self, ctx: custom.Context) -> None:
@@ -93,7 +93,7 @@ class Queue(commands.Cog):
 
     # General
 
-    @commands.command(name="clear", aliases=["clr"])
+    @commands.hybrid_command(name="clear", aliases=["clr"])
     @checks.is_queue_not_empty()
     @checks.is_author_connected()
     @checks.is_player_connected()
@@ -108,12 +108,12 @@ class Queue(commands.Cog):
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description="**Cleared** the queue."
+                description="Cleared the queue."
             )
         )
         await ctx.voice_client.controller.update_current_message()
 
-    @commands.command(name="reverse")
+    @commands.hybrid_command(name="reverse")
     @checks.is_queue_not_empty()
     @checks.is_author_connected()
     @checks.is_player_connected()
@@ -128,12 +128,12 @@ class Queue(commands.Cog):
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description="**Reversed** the queue."
+                description="Reversed the queue."
             )
         )
         await ctx.voice_client.controller.update_current_message()
 
-    @commands.command(name="sort")
+    @commands.hybrid_command(name="sort")
     @checks.is_queue_not_empty()
     @checks.is_author_connected()
     @checks.is_player_connected()
@@ -164,16 +164,16 @@ class Queue(commands.Cog):
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description=f"**{'Inversely sorted' if reverse else 'Sorted'}** the queue with method **track {method}**."
+                description=f"{'Inversely sorted' if reverse else 'Sorted'} the queue with method **{method}**."
             )
         )
         await ctx.voice_client.controller.update_current_message()
 
-    @commands.command(name="remove", aliases=["rm"])
+    @commands.hybrid_command(name="remove", aliases=["rm"])
     @checks.is_queue_not_empty()
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def remove(self, ctx: custom.Context, entry: int = 0) -> None:
+    async def remove(self, ctx: custom.Context, entry: int) -> None:
         """
         Removes a track from the queue.
 
@@ -203,11 +203,11 @@ class Queue(commands.Cog):
         )
         await ctx.voice_client.controller.update_current_message()
 
-    @commands.command(name="move", aliases=["mv"])
+    @commands.hybrid_command(name="move", aliases=["mv"])
     @checks.is_queue_not_empty()
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def move(self, ctx: custom.Context, entry: int = 0, to: int = 0) -> None:
+    async def move(self, ctx: custom.Context, entry: int, to: int) -> None:
         """
         Moves a track in the queue.
 
@@ -245,7 +245,7 @@ class Queue(commands.Cog):
         )
         await ctx.voice_client.controller.update_current_message()
 
-    @commands.command(name="remove-duplicates", aliases=["remove_duplicates", "removeduplicates", "deduplicate", "dedupe"])
+    @commands.hybrid_command(name="remove-duplicates", aliases=["remove_duplicates", "removeduplicates", "deduplicate", "dedupe"])
     @checks.is_queue_not_empty()
     @checks.is_author_connected()
     @checks.is_player_connected()
@@ -260,14 +260,14 @@ class Queue(commands.Cog):
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description="**Removed** duplicate tracks from the queue."
+                description="Removed duplicate tracks from the queue."
             )
         )
         await ctx.voice_client.controller.update_current_message()
 
     # Toggleable
 
-    @commands.command(name="loop")
+    @commands.hybrid_command(name="loop")
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def loop(self, ctx: custom.Context) -> None:
@@ -293,7 +293,7 @@ class Queue(commands.Cog):
         )
         await ctx.voice_client.controller.update_current_message()
 
-    @commands.command(name="shuffle")
+    @commands.hybrid_command(name="shuffle")
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def shuffle(self, ctx: custom.Context) -> None:
@@ -305,11 +305,11 @@ class Queue(commands.Cog):
 
         match ctx.voice_client.queue.shuffle_state:
             case True:
-                ctx.voice_client.queue.set_shuffle_state(True)
-                description = "The queue will now shuffle."
-            case False:
                 ctx.voice_client.queue.set_shuffle_state(False)
                 description = "The queue will no longer shuffle."
+            case False:
+                ctx.voice_client.queue.set_shuffle_state(True)
+                description = "The queue will now shuffle."
             case _:
                 raise ValueError
 
