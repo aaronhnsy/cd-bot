@@ -83,7 +83,7 @@ class Information(commands.Cog):
             lines, first_line_number = inspect.getsourcelines(source)
 
             url = f"{values.GITHUB_LINK}/blob/main/{location}#L{first_line_number}-L{first_line_number + len(lines) - 1}"
-            description = f"The **{command}** commands source code can be found in the GitHub file linked below."
+            description = f"The **{command}** command's source code can be found in the GitHub file linked below."
 
         else:
             url = values.GITHUB_LINK
