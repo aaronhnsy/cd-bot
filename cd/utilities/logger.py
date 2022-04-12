@@ -30,7 +30,7 @@ class ColourFormatter(logging.Formatter):
 
         if self.enabled:
             fmt = f"{colorama.Fore.CYAN}[%(asctime)s] {colorama.Style.RESET_ALL}" \
-                  f"{colorama.Fore.LIGHTCYAN_EX}[%(name) 16s] {colorama.Style.RESET_ALL}" \
+                  f"{colorama.Fore.LIGHTCYAN_EX}[%(name) 30s] {colorama.Style.RESET_ALL}" \
                   f"%(colour)s[%(levelname) 8s] {colorama.Style.RESET_ALL}" \
                   f"%(message)s"
         else:
