@@ -45,23 +45,26 @@ class Play(commands.Cog):
             return
 
         if (not author_voice_channel and bot_voice_channel) or (author_voice_channel and bot_voice_channel):
-            raise exceptions.EmbedError(description=f"You must be connected to {bot_voice_channel.mention} to use this command.")
-
+            raise exceptions.EmbedError(
+                description=f"You must be connected to {bot_voice_channel.mention} to use this command."
+            )
         if not author_voice_channel:
-            raise exceptions.EmbedError(description="You must be connected to a voice channel to use this command.")
+            raise exceptions.EmbedError(
+                description="You must be connected to a voice channel to use this command."
+            )
 
         # slate's Player doesn't like this for some reason, investigate later.
         await author_voice_channel.connect(cls=custom.Player(text_channel=ctx.channel))  # type: ignore
 
     # Play
 
-    @commands.command(name="play", aliases=["p"])
+    @commands.hybrid_command(name="play", aliases=["p"])
     async def play(self, ctx: custom.Context, *, query: str) -> None:
         """
         Searches for and adds a track to the queue.
 
         **Arguments:**
-        `query`: The track to search for. Can be a URL or search query.
+        ● `query`: The track to search for. Can be a URL or search query.
 
         **Note:**
         This command supports all sources providing you use a direct URL. When using a search query with this command you will always get a YouTube track.
@@ -72,13 +75,13 @@ class Play(commands.Cog):
         assert ctx.voice_client is not None
         await ctx.voice_client.searcher.queue(query, source=slate.Source.YOUTUBE, ctx=ctx)
 
-    @commands.command(name="play-next", aliases=["play_next", "playnext", "pne"])
+    @commands.hybrid_command(name="play-next", aliases=["play_next", "playnext", "pne"])
     async def play_next(self, ctx: custom.Context, *, query: str) -> None:
         """
         Searches for and adds a track to the start of the queue.
 
         **Arguments:**
-        `query`: The track to search for. Can be a URL or search query.
+        ● `query`: The track to search for. Can be a URL or search query.
 
         **Note:**
         This command supports all sources providing you use a direct URL. When using a search query with this command you will always get a YouTube track.
@@ -89,13 +92,13 @@ class Play(commands.Cog):
         assert ctx.voice_client is not None
         await ctx.voice_client.searcher.queue(query, source=slate.Source.YOUTUBE, ctx=ctx, play_next=True)
 
-    @commands.command(name="play-now", aliases=["play_now", "playnow", "pno"])
+    @commands.hybrid_command(name="play-now", aliases=["play_now", "playnow", "pno"])
     async def play_now(self, ctx: custom.Context, *, query: str) -> None:
         """
         Searches for and plays a track immediately.
 
         **Arguments:**
-        `query`: The track to search for. Can be a URL or search query.
+        ● `query`: The track to search for. Can be a URL or search query.
 
         **Note:**
         This command supports all sources providing you use a direct URL. When using a search query with this command you will always get a YouTube track.
@@ -108,13 +111,13 @@ class Play(commands.Cog):
 
     # Search
 
-    @commands.command(name="search", aliases=["s"])
+    @commands.hybrid_command(name="search", aliases=["s"])
     async def search(self, ctx: custom.Context, *, query: str) -> None:
         """
         Allows you to select which tracks to add to the queue.
 
         **Arguments:**
-        `query`: The track to search for. Can be a URL or search query.
+        ● `query`: The track to search for. Can be a URL or search query.
 
         **Note:**
         This command supports all sources providing you use a direct URL. When using a search query with this command you will always get a YouTube track.
@@ -125,16 +128,34 @@ class Play(commands.Cog):
         assert ctx.voice_client is not None
         await ctx.voice_client.searcher.select(query, source=slate.Source.YOUTUBE, ctx=ctx)
 
-    @commands.command(name="search-next", aliases=["search_next", "searchnext", "sne"], hidden=True)
+    @commands.hybrid_command(name="search-next", aliases=["search_next", "searchnext", "sne"])
     async def search_next(self, ctx: custom.Context, *, query: str) -> None:
+        """
+        Allows you to select which tracks to add to the start of the queue.
+
+        **Arguments:**
+        ● `query`: The track to search for. Can be a URL or search query.
+
+        **Note:**
+        This command supports all sources providing you use a direct URL. When using a search query with this command you will always get a YouTube track.
+        """
 
         await self._ensure_connected(ctx)
 
         assert ctx.voice_client is not None
         await ctx.voice_client.searcher.select(query, source=slate.Source.YOUTUBE, ctx=ctx, play_next=True)
 
-    @commands.command(name="search-now", aliases=["search_now", "searchnow", "sno"], hidden=True)
+    @commands.hybrid_command(name="search-now", aliases=["search_now", "searchnow", "sno"])
     async def search_now(self, ctx: custom.Context, *, query: str) -> None:
+        """
+        Allows you to select which tracks to play immediately.
+
+        **Arguments:**
+        ● `query`: The track to search for. Can be a URL or search query.
+
+        **Note:**
+        This command supports all sources providing you use a direct URL. When using a search query with this command you will always get a YouTube track.
+        """
 
         await self._ensure_connected(ctx)
 
@@ -143,13 +164,13 @@ class Play(commands.Cog):
 
     # Youtube
 
-    @commands.command(name="youtube", aliases=["yt"])
+    @commands.hybrid_command(name="youtube", aliases=["yt"])
     async def youtube(self, ctx: custom.Context, *, query: str) -> None:
         """
         Searches for tracks from YouTube to add to the queue.
 
         **Arguments:**
-        `query`: The track to search for. Can be a URL or search query.
+        ● `query`: The track to search for. Can be a URL or search query.
         """
         await self.play(ctx, query=query)
 
@@ -163,13 +184,13 @@ class Play(commands.Cog):
 
     # YouTube search
 
-    @commands.command(name="youtube-search", aliases=["youtube_search", "youtubesearch", "yts"])
+    @commands.hybrid_command(name="youtube-search", aliases=["youtube_search", "youtubesearch", "yts"])
     async def youtube_search(self, ctx: custom.Context, *, query: str) -> None:
         """
         Allows you to select which tracks from YouTube to add to the queue.
 
         **Arguments:**
-        `query`: The track to search for. Can be a URL or search query.
+        ● `query`: The track to search for. Can be a URL or search query.
         """
         await self.search(ctx, query=query)
 
@@ -183,13 +204,13 @@ class Play(commands.Cog):
 
     # YouTube Music
 
-    @commands.command(name="youtube-music", aliases=["youtube_music", "youtubemusic", "ytm"])
+    @commands.hybrid_command(name="youtube-music", aliases=["youtube_music", "youtubemusic", "ytm"])
     async def youtube_music(self, ctx: custom.Context, *, query: str) -> None:
         """
         Searches for tracks from YouTube Music to add to the queue.
 
         **Arguments:**
-        `query`: The track to search for. Can be a URL or search query.
+        ● `query`: The track to search for. Can be a URL or search query.
         """
 
         await self._ensure_connected(ctx)
@@ -215,13 +236,13 @@ class Play(commands.Cog):
 
     # YouTube Music search
 
-    @commands.command(name="youtube-music-search", aliases=["youtube_music_search", "youtubemusicsearch", "ytms"])
+    @commands.hybrid_command(name="youtube-music-search", aliases=["youtube_music_search", "youtubemusicsearch", "ytms"])
     async def youtube_music_search(self, ctx: custom.Context, *, query: str) -> None:
         """
         Allows you to select which tracks from YouTube Music to add to the queue.
 
         **Arguments:**
-        `query`: The track to search for. Can be a URL or search query.
+        ● `query`: The track to search for. Can be a URL or search query.
         """
 
         await self._ensure_connected(ctx)
@@ -247,13 +268,13 @@ class Play(commands.Cog):
 
     # Soundcloud
 
-    @commands.command(name="soundcloud", aliases=["sc"])
+    @commands.hybrid_command(name="soundcloud", aliases=["sc"])
     async def soundcloud(self, ctx: custom.Context, *, query: str) -> None:
         """
         Searches for tracks from Soundcloud to add to the queue.
 
         **Arguments:**
-        `query`: The track to search for. Can be a URL or search query.
+        ● `query`: The track to search for. Can be a URL or search query.
         """
 
         await self._ensure_connected(ctx)
@@ -279,13 +300,13 @@ class Play(commands.Cog):
 
     # Soundcloud search
 
-    @commands.command(name="soundcloud-search", aliases=["soundcloud_search", "soundcloudsearch", "scs"])
+    @commands.hybrid_command(name="soundcloud-search", aliases=["soundcloud_search", "soundcloudsearch", "scs"])
     async def soundcloud_search(self, ctx: custom.Context, *, query: str) -> None:
         """
         Allows you to select which tracks from Soundcloud to add to the queue.
 
         **Arguments:**
-        `query`: The track to search for. Can be a URL or search query.
+        ● `query`: The track to search for. Can be a URL or search query.
         """
 
         await self._ensure_connected(ctx)

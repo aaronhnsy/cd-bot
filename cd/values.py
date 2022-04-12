@@ -44,7 +44,7 @@ INVITE_LINK = discord.utils.oauth_url(
 
 INVITE_LINK_NO_PERMISSIONS = discord.utils.oauth_url(
     client_id=BOT_ID,
-    scopes=["bot"]
+    scopes=["bot", "applications.commands"]
 )
 
 SUPPORT_LINK = "https://discord.gg/w9f6NkQbde"
@@ -73,4 +73,7 @@ PLAYER_LOOP_ALL = "<:lq:959620032592232498>"
 PLAYER_LOOP_CURRENT = "<:lc:959620032596430849>"
 
 CODEBLOCK_START = "```\n"
+ANSI_CODEBLOCK_START = "```ansi\n"
+PYTHON_CODEBLOCK_START = "```py\n"
+
 CODEBLOCK_END = "\n```"

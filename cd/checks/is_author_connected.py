@@ -32,7 +32,8 @@ def is_author_connected() -> Callable[[T], T]:
 
         if voice_client_channel != author_channel:
             raise exceptions.EmbedError(
-                description=f"You must be connected to {getattr(voice_client_channel, 'mention', None)} to use this command.",
+                description=f"You must be connected to {getattr(voice_client_channel, 'mention', None)} to use this "
+                            f"command."
             )
 
         return True

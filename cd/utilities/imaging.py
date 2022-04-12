@@ -329,7 +329,8 @@ async def edit_image(
 
         if int(request.headers.get("Content-Length") or "0") > MAX_CONTENT_SIZE:
             raise exceptions.EmbedError(
-                description=f"That image is too big to edit. The maximum file size is **{humanize.naturalsize(MAX_CONTENT_SIZE)}**."
+                description=f"That image is too big to edit. The maximum file size is "
+                            f"**{humanize.naturalsize(MAX_CONTENT_SIZE)}**."
             )
 
         original_bytes = await request.read()

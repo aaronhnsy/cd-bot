@@ -4,15 +4,11 @@ from __future__ import annotations
 # Standard Library
 import inspect
 import os
-import platform
-import re
-import subprocess
 import time
-from typing import Any, Optional
+from typing import Optional
 
 # Packages
-import humanize
-import psutil
+import discord
 from discord.ext import commands
 
 # Local
@@ -32,189 +28,112 @@ class Information(commands.Cog):
     def __init__(self, bot: CD) -> None:
         self.bot: CD = bot
 
-    # General
+    # Commands (Supports slash commands)
 
-    @commands.command(name="ping")
+    @commands.hybrid_command(name="ping")
     async def ping(self, ctx: custom.Context) -> None:
         """
-        Get the bots ping.
+        Shows the bots ping.
         """
 
-        typing_start = time.perf_counter()
+        api_start = time.perf_counter()
         await ctx.trigger_typing()
-        typing_end = time.perf_counter()
-
-        db_start = time.perf_counter()
-        await self.bot.db.fetch("SELECT 1")
-        db_end = time.perf_counter()
-
-        redis_start = time.perf_counter()
-        await self.bot.redis.set("ping", "value")
-        redis_end = time.perf_counter()
+        api_end = time.perf_counter()
 
         embed = utilities.embed(
             colour=values.MAIN,
-            title=":ping_pong:",
-        )
-        embed.add_field(name="Websocket:", value=f"```py\n{self.bot.latency * 1000:.2f} ms\n```")
-        embed.add_field(name="API:", value=f"```py\n{(typing_end - typing_start) * 1000:.2f} ms\n```")
-        embed.add_field(name=values.ZWSP, value=values.ZWSP)
-        embed.add_field(name="PSQL:", value=f"```py\n{(db_end - db_start) * 1000:.2f} ms\n```")
-        embed.add_field(name="Redis:", value=f"```py\n{(redis_end - redis_start) * 1000:.2f} ms\n```")
-        embed.add_field(name=values.ZWSP, value=values.ZWSP)
-
-        await ctx.reply(embed=embed)
-
-    @commands.command(name="system", aliases=["sys"])
-    async def system(self, ctx: custom.Context) -> None:
-        """
-        See the bots' system information.
-        """
-
-        cpu_freq: Any = psutil.cpu_freq()
-        memory_info: Any = psutil.virtual_memory()
-        disk_usage = psutil.disk_usage("/")
-
-        java_search = re.search(r'\"(\d+\.\d+).*\"', subprocess.check_output(["java", "-version"], stderr=subprocess.STDOUT).decode())
-        java_version = java_search.groups()[0] if java_search else "Unknown"
-
-        embed = utilities.embed(
-            colour=values.MAIN,
-            title="System stats:",
-            description=f"`OS:` {platform.platform()}\n"
-                        f"`Python version:` {platform.python_version()} ({platform.python_implementation()})\n"
-                        f"`Java version:` {java_version}\n"
-                        f"`Uptime:` {utilities.format_seconds(time.time() - self.bot.start_time, friendly=True)}\n",
+            title="Pong!",
         )
         embed.add_field(
-            name="System CPU:",
-            value=f"`Frequency:` {round(cpu_freq.current, 2)} Mhz\n"
-                  f"`Cores (logical):` {psutil.cpu_count()}\n"
-                  f"`Overall Usage:` {psutil.cpu_percent(interval=0.1)}%",
+            name="Websocket:",
+            value=f"{values.CODEBLOCK_START}{self.bot.latency * 1000:.2f} ms{values.CODEBLOCK_END}"
         )
         embed.add_field(
-            name="\u200B", value="\u200B"
-        )
-        embed.add_field(
-            name="System Memory:",
-            value=f"`Available:` {humanize.naturalsize(memory_info.available, binary=True)}\n"
-                  f"`Total:` {humanize.naturalsize(memory_info.total, binary=True)}\n"
-                  f"`Used:` {humanize.naturalsize(memory_info.used, binary=True)}",
-        )
-        embed.add_field(
-            name="System Disk:",
-            value=f"`Total:` {humanize.naturalsize(disk_usage.total, binary=True)}\n"
-                  f"`Used:` {humanize.naturalsize(disk_usage.used, binary=True)}\n"
-                  f"`Free:` {humanize.naturalsize(disk_usage.free, binary=True)}",
-        )
-        embed.add_field(
-            name="\u200B", value="\u200B"
-        )
-        embed.add_field(
-            name="Process information:",
-            value=f"`Memory usage:` {humanize.naturalsize(self.bot.process.memory_full_info().rss, binary=True)}\n"
-                  f"`CPU usage:` {self.bot.process.cpu_percent()} %\n"
-                  f"`Threads:` {self.bot.process.num_threads()}",
+            name="API:",
+            value=f"{values.CODEBLOCK_START}{(api_end - api_start) * 1000:.2f} ms{values.CODEBLOCK_END}"
         )
 
         await ctx.reply(embed=embed)
 
-    @commands.command(name="source", aliases=["src"])
+    @commands.hybrid_command(name="source", aliases=["src"])
     async def source(self, ctx: custom.Context, *, command: Optional[str]) -> None:
         """
-        Get a link to the source code for a command.
+        Gets a GitHub link to the source code of a command or the bot.
 
         **Arguments:**
-        `command`: The command to get the source code for.
+        ● `command`: The command to get the source code for. If this is not specified the bots source will be provided.
         """
 
-        if not command:
-            await ctx.reply(
-                embed=utilities.embed(
-                    colour=values.MAIN,
-                    emoji=":computer:",
-                    description=f"My source code is available on **[github]({values.GITHUB_LINK})**!"
-                )
-            )
-            return
+        if command:
 
-        if (obj := self.bot.get_command(command.replace(".", ""))) is None:
-            raise exceptions.EmbedError(description="I couldn't find that command.")
+            if command != "help":
+                if (obj := self.bot.get_command(command.replace(".", " "))) is None:
+                    raise exceptions.EmbedError(
+                        description=f"No commands matching **{utilities.truncate(command, 10)}** were found."
+                    )
+                source = obj.callback.__code__
+                filename = source.co_filename
 
-        source = obj.callback.__code__
-        filename = source.co_filename
+            else:
+                source = type(self.bot.help_command)
+                filename = inspect.getsourcefile(source)
+                assert filename is not None
 
-        lines, start_line_number = inspect.getsourcelines(source)
-        location = os.path.relpath(filename).replace("\\", "/")
+            location = os.path.relpath(filename).replace("\\", "/")
+            lines, first_line_number = inspect.getsourcelines(source)
 
-        await ctx.reply(f"<{values.GITHUB_LINK}/blob/main/bot/{location}#L{start_line_number}-L{start_line_number + len(lines) - 1}>")
+            url = f"{values.GITHUB_LINK}/blob/main/{location}#L{first_line_number}-L{first_line_number + len(lines) - 1}"
+            description = f"The **{command}** command's source code can be found in the GitHub file linked below."
 
-    @commands.command(name="invite", aliases=["inv"])
+        else:
+            url = values.GITHUB_LINK
+            description = "You can view my source code in the GitHub repo linked below!"
+
+        view = discord.ui.View()
+        view.add_item(discord.ui.Button(label="GitHub", url=url))
+
+        await ctx.reply(
+            embed=utilities.embed(
+                colour=values.MAIN,
+                emoji=":computer:",
+                description=description
+            ),
+            view=view
+        )
+
+    @commands.hybrid_command(name="invite", aliases=["inv"])
     async def invite(self, ctx: custom.Context) -> None:
         """
-        Get an invite link for the bot.
+        Shows invite links for the bot.
         """
+
+        view = discord.ui.View()
+        view.add_item(discord.ui.Button(label="Invite", url=values.INVITE_LINK))
+        view.add_item(discord.ui.Button(label="Invite (No Permissions)", url=values.INVITE_LINK_NO_PERMISSIONS))
 
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.MAIN,
                 emoji=":cd:",
-                description=f"You can invite me using **[this link]({values.INVITE_LINK})**!"
-            )
+                description="You can invite me by using the buttons below!"
+            ),
+            view=view
         )
 
-    @commands.command(name="support", aliases=["discord"])
+    @commands.hybrid_command(name="support", aliases=["discord"])
     async def support(self, ctx: custom.Context) -> None:
         """
-        Join the bots support server.
+        Shows the bots support server invite.
         """
+
+        view = discord.ui.View()
+        view.add_item(discord.ui.Button(label="Discord", url=values.SUPPORT_LINK))
 
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.MAIN,
                 emoji=":inbox_tray:",
-                description=f"Join my **[support server]({values.SUPPORT_LINK})**!"
-            )
+                description="You can join my support server by using the button below!"
+            ),
+            view=view
         )
-
-    @commands.command(name="links")
-    async def links(self, ctx: custom.Context) -> None:
-        """
-        Get various links for the bot.
-        """
-
-        await ctx.reply(
-            embed=utilities.embed(
-                colour=values.MAIN,
-                title=":link: Links",
-                description=f"● **[Invite]({values.INVITE_LINK})**\n"
-                            f"● **[Invite (no perms)]({values.INVITE_LINK_NO_PERMISSIONS})**\n"
-                            f"● **[Support server]({values.SUPPORT_LINK})**\n"
-                            f"● **[Source]({values.GITHUB_LINK})**"
-            )
-        )
-
-    @commands.command(name="platforms")
-    async def platforms(self, ctx: custom.Context) -> None:
-        """
-        Get a list of platforms the bot can play tracks from.
-        """
-
-        await ctx.reply(
-            embed=utilities.embed(
-                colour=values.MAIN,
-                title=":tools: Platforms",
-                description="● **Youtube** *(Links, Searching)*\n"
-                            "● **Youtube music** *(Links, Searching)*\n"
-                            "● **Spotify** *(Links, Searching)*\n"
-                            "● **Soundcloud** *(Links, Searching)*\n"
-                            "● **Bandcamp** *(Links)*\n"
-                            "● **NicoNico** *(Links)*\n"
-                            "● **Twitch** *(Links)*\n"
-                            "● **Vimeo** *(Links)*\n"
-            )
-        )
-
-    @commands.command(name="about")
-    async def about(self, ctx: custom.Context) -> None:
-        await ctx.reply("CD is a music bot which does absolutely nothing innovative but has a cool codebase full of probably broke shit.")

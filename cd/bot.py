@@ -29,7 +29,7 @@ class CD(commands.AutoShardedBot):
         super().__init__(
             status=discord.Status.dnd,
             activity=discord.Activity(type=discord.ActivityType.listening, name="you."),
-            allowed_mentions=discord.AllowedMentions(everyone=False, users=True, roles=False, replied_user=True),
+            allowed_mentions=discord.AllowedMentions(everyone=False, users=True, roles=False, replied_user=False),
             help_command=custom.HelpCommand(),
             intents=discord.Intents.all(),
             command_prefix=self.__class__.get_prefix,
@@ -164,7 +164,7 @@ class CD(commands.AutoShardedBot):
 
     async def get_context(
         self,
-        message: discord.Message,
+        message: discord.Message | discord.Interaction,
         *,
         cls: type[commands.Context[CD]] = utilities.MISSING
     ) -> commands.Context[CD]:

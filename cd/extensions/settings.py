@@ -25,6 +25,8 @@ class Settings(commands.Cog):
     def __init__(self, bot: CD) -> None:
         self.bot: CD = bot
 
+    # Checks
+
     def cog_check(self, ctx: custom.Context) -> Literal[True]:  # pyright: reportIncompatibleMethodOverride=false
 
         if not ctx.guild:
@@ -33,7 +35,7 @@ class Settings(commands.Cog):
         return True
 
     @staticmethod
-    async def _check_is_mod(ctx: custom.Context, message: str) -> None:
+    async def _is_mod(ctx: custom.Context, message: str) -> None:
 
         _checks = [
             checks.is_owner(),
@@ -91,7 +93,7 @@ class Settings(commands.Cog):
         - You have the `Manage Channels`, `Manage Roles`, `Manage Guild`, `Kick Members`, `Ban Members`, or `Administrator` permissions.
         """
 
-        await self._check_is_mod(ctx, "You don't have permission to change this servers prefix.")
+        await self._is_mod(ctx, "You don't have permission to change this servers prefix.")
 
         assert ctx.guild is not None
         guild_config = await self.bot.manager.get_guild_config(ctx.guild.id)
@@ -117,7 +119,7 @@ class Settings(commands.Cog):
         - You have the `Manage Channels`, `Manage Roles`, `Manage Guild`, `Kick Members`, `Ban Members`, or `Administrator` permissions.
         """
 
-        await self._check_is_mod(ctx, "You don't have permission to change this servers prefix.")
+        await self._is_mod(ctx, "You don't have permission to change this servers prefix.")
 
         assert ctx.guild is not None
         guild_config = await self.bot.manager.get_guild_config(ctx.guild.id)
@@ -134,9 +136,9 @@ class Settings(commands.Cog):
             )
         )
 
-    # DJ role
+    # DJ role (Supports slash commands)
 
-    @commands.group(name="dj", invoke_without_command=True)
+    @commands.hybrid_group(name="dj", invoke_without_command=True)
     async def _dj(self, ctx: custom.Context) -> None:
         """
         Shows this servers DJ role.
@@ -159,13 +161,20 @@ class Settings(commands.Cog):
             )
         )
 
+    @_dj.command(name="show")
+    async def _dj_show(self, ctx: custom.Context) -> None:
+        """
+        Shows this servers DJ role.
+        """
+        await self._dj.invoke(ctx)
+
     @_dj.command(name="set")
     async def _dj_set(self, ctx: custom.Context, *, role: discord.Role) -> None:
         """
         Sets this servers DJ role.
 
         **Arguments:**
-        `role`: The role to set as the DJ role. Can be its mention, name, or ID.
+        ● `role`: The role to set as the DJ role. Can be its mention, name, or ID.
 
         **Note:**
         You can only use this command if you meet one (or more) of the following requirements:
@@ -174,7 +183,7 @@ class Settings(commands.Cog):
         - You have the `Manage Channels`, `Manage Roles`, `Manage Guild`, `Kick Members`, `Ban Members`, or `Administrator` permissions.
         """
 
-        await self._check_is_mod(ctx, "You don't have permission to change this servers dj role.")
+        await self._is_mod(ctx, "You don't have permission to change this servers dj role.")
 
         assert ctx.guild is not None
         guild_config = await self.bot.manager.get_guild_config(ctx.guild.id)
@@ -184,11 +193,11 @@ class Settings(commands.Cog):
         await ctx.send(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description=f"**Set** this severs dj role to {role.mention}.",
+                description=f"This servers dj role is now {role.mention}.",
             )
         )
 
-    @_dj.command(name="reset")
+    @_dj.command(name="remove")
     async def _dj_reset(self, ctx: custom.Context) -> None:
         """
         Resets this servers DJ role.
@@ -200,7 +209,7 @@ class Settings(commands.Cog):
         - You have the `Manage Channels`, `Manage Roles`, `Manage Guild`, `Kick Members`, `Ban Members`, or `Administrator` permissions.
         """
 
-        await self._check_is_mod(ctx, "You don't have permission to change this servers dj role.")
+        await self._is_mod(ctx, "You don't have permission to remove this servers dj role.")
 
         assert ctx.guild is not None
         guild_config = await self.bot.manager.get_guild_config(ctx.guild.id)
@@ -213,13 +222,29 @@ class Settings(commands.Cog):
         await ctx.send(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description="**Reset** this servers dj role."
+                description="Removed this servers dj role."
             )
         )
 
-    # Embed size
+    # Embed size (Supports slash commands)
 
-    @commands.group(name="embed-size", aliases=["embed_size", "embedsize", "es"], invoke_without_command=True)
+    async def _set_embed_size(self, ctx: custom.Context, size: enums.EmbedSize) -> None:
+
+        await self._is_mod(ctx, "You don't have permission to change this servers embed size.")
+
+        assert ctx.guild is not None
+        guild_config = await self.bot.manager.get_guild_config(ctx.guild.id)
+
+        await guild_config.set_embed_size(size)
+
+        await ctx.send(
+            embed=utilities.embed(
+                colour=values.GREEN,
+                description=f"This servers embed size is now **{size.name.title()}**.",
+            )
+        )
+
+    @commands.hybrid_group(name="embed-size", aliases=["embed_size", "embedsize", "es"], invoke_without_command=True)
     async def _embed_size(self, ctx: custom.Context) -> None:
         """
         Shows this servers embed size.
@@ -235,13 +260,20 @@ class Settings(commands.Cog):
             )
         )
 
+    @_embed_size.command(name="show")
+    async def _embed_size_show(self, ctx: custom.Context) -> None:
+        """
+        Shows this servers embed size.
+        """
+        await self._embed_size.invoke(ctx)
+
     @_embed_size.command(name="set")
-    async def _embed_size_set(self, ctx: custom.Context, *, embed_size: enums.EmbedSize = commands.param(converter=converters.EnumConverter(enums.EmbedSize, "Embed Size"))) -> None:
+    async def _embed_size_set(self, ctx: custom.Context, embed_size: enums.EmbedSize) -> None:
         """
         Sets this servers embed size.
 
         **Arguments:**
-        `embed_size`: The embed size to set, can be **large**, **medium**, **small**, or **image**.
+        ● `embed_size`: The embed size to set, can be **large**, **medium**, **small**, or **image**.
 
         **Note:**
         You can only use this command if you meet one (or more) of the following requirements:
@@ -249,20 +281,7 @@ class Settings(commands.Cog):
         - You are the owner of this server.
         - You have the `Manage Channels`, `Manage Roles`, `Manage Guild`, `Kick Members`, `Ban Members`, or `Administrator` permissions.
         """
-
-        await self._check_is_mod(ctx, "You don't have permission to change this servers embed size.")
-
-        assert ctx.guild is not None
-        guild_config = await self.bot.manager.get_guild_config(ctx.guild.id)
-
-        await guild_config.set_embed_size(embed_size)
-
-        await ctx.send(
-            embed=utilities.embed(
-                colour=values.GREEN,
-                description=f"**Set** this severs embed size to **{embed_size.name.title()}**.",
-            )
-        )
+        await self._set_embed_size(ctx, embed_size)
 
     @_embed_size.command(name="reset")
     async def _embed_size_reset(self, ctx: custom.Context) -> None:
@@ -275,17 +294,4 @@ class Settings(commands.Cog):
         - You are the owner of this server.
         - You have the `Manage Channels`, `Manage Roles`, `Manage Guild`, `Kick Members`, `Ban Members`, or `Administrator` permissions.
         """
-
-        await self._check_is_mod(ctx, "You don't have permission to change this servers embed size.")
-
-        assert ctx.guild is not None
-        guild_config = await self.bot.manager.get_guild_config(ctx.guild.id)
-
-        await guild_config.set_embed_size(enums.EmbedSize.LARGE)
-
-        await ctx.send(
-            embed=utilities.embed(
-                colour=values.GREEN,
-                description=f"**Reset** this servers embed size back to **{guild_config.embed_size.name.title()}**.",
-            )
-        )
+        await self._set_embed_size(ctx, enums.EmbedSize.LARGE)
