@@ -6,6 +6,7 @@ from typing import Literal
 
 # Packages
 import slate
+from discord import app_commands
 from discord.ext import commands
 
 # Local
@@ -61,12 +62,12 @@ class Effects(commands.Cog):
         assert ctx.voice_client
 
         if effect in ctx.voice_client.effects:
-            description = f"**Disabled** the **{effect.value}** audio effect."
+            description = f"Disabled the **{effect.value}** audio effect."
             ctx.voice_client.effects.remove(effect)
             await ctx.voice_client.set_filter(slate.Filter(ctx.voice_client.filter, **self.INVERSE_EFFECT_MAP[effect]))
 
         else:
-            description = f"**Enabled** the **{effect.value}** audio effect."
+            description = f"Enabled the **{effect.value}** audio effect."
             ctx.voice_client.effects.add(effect)
             await ctx.voice_client.set_filter(slate.Filter(ctx.voice_client.filter, **self.EFFECT_MAP[effect]))
 
@@ -86,7 +87,8 @@ class Effects(commands.Cog):
 
     # Commands
 
-    @commands.command(name="8d")
+    @commands.hybrid_command(name="8d")
+    @app_commands.guilds(240958773122957312)
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def _8d(self, ctx: custom.Context) -> None:
@@ -98,7 +100,8 @@ class Effects(commands.Cog):
 
         await self._toggle_effect(ctx, enums.Effect.ROTATION)
 
-    @commands.command(name="night-core", aliases=["night_core", "nightcore", "nc"])
+    @commands.hybrid_command(name="nightcore", aliases=["night-core", "night_core", "nc"])
+    @app_commands.guilds(240958773122957312)
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def night_core(self, ctx: custom.Context) -> None:
@@ -110,7 +113,8 @@ class Effects(commands.Cog):
 
         await self._toggle_effect(ctx, enums.Effect.NIGHTCORE)
 
-    @commands.command(name="mono")
+    @commands.hybrid_command(name="mono")
+    @app_commands.guilds(240958773122957312)
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def mono(self, ctx: custom.Context) -> None:
@@ -124,7 +128,8 @@ class Effects(commands.Cog):
 
         await self._toggle_effect(ctx, enums.Effect.MONO)
 
-    @commands.command(name="left-ear", aliases=["left_ear", "leftear", "left"])
+    @commands.hybrid_command(name="left-ear", aliases=["left_ear", "leftear", "left"])
+    @app_commands.guilds(240958773122957312)
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def left_ear(self, ctx: custom.Context) -> None:
@@ -138,7 +143,8 @@ class Effects(commands.Cog):
 
         await self._toggle_effect(ctx, enums.Effect.LEFT_EAR)
 
-    @commands.command(name="right-ear", aliases=["right_ear", "rightear", "right"])
+    @commands.hybrid_command(name="right-ear", aliases=["right_ear", "rightear", "right"])
+    @app_commands.guilds(240958773122957312)
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def right_ear(self, ctx: custom.Context) -> None:
@@ -152,7 +158,8 @@ class Effects(commands.Cog):
 
         await self._toggle_effect(ctx, enums.Effect.RIGHT_EAR)
 
-    @commands.command(name="reset-effects", aliases=["reset_effects", "reseteffects"])
+    @commands.hybrid_command(name="reset-effects", aliases=["reset_effects", "reseteffects"])
+    @app_commands.guilds(240958773122957312)
     @checks.is_author_connected()
     @checks.is_player_connected()
     async def reset_effects(self, ctx: custom.Context) -> None:
