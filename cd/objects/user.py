@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 # Standard Library
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, TypedDict
 
 # Local
 from cd import objects
@@ -14,13 +14,18 @@ if TYPE_CHECKING:
 
 
 __all__ = (
+    "UserData",
     "UserConfig",
 )
 
 
+class UserData(TypedDict):
+    id: int
+
+
 class UserConfig:
 
-    def __init__(self, bot: CD, data: dict[str, Any]) -> None:
+    def __init__(self, bot: CD, data: UserData) -> None:
         self.bot: CD = bot
 
         self.id: int = data["id"]

@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 # Standard Library
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Optional, TypedDict
 
 # Local
 from cd import enums
@@ -14,13 +14,22 @@ if TYPE_CHECKING:
 
 
 __all__ = (
+    "GuildData",
     "GuildConfig",
 )
 
 
+class GuildData(TypedDict):
+    id: int
+    prefix: Optional[str]
+    dj_role_id: Optional[int]
+    embed_size: int
+    delete_old_now_playing_messages: bool
+
+
 class GuildConfig:
 
-    def __init__(self, bot: CD, data: dict[str, Any]) -> None:
+    def __init__(self, bot: CD, data: GuildData) -> None:
         self.bot: CD = bot
 
         self.id: int = data["id"]

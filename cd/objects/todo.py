@@ -2,7 +2,8 @@
 from __future__ import annotations
 
 # Standard Library
-from typing import TYPE_CHECKING, Any
+import datetime
+from typing import TYPE_CHECKING, TypedDict
 
 # Packages
 import pendulum
@@ -21,9 +22,17 @@ __all__ = (
 )
 
 
+class TodoData(TypedDict):
+    id: int
+    user_id: int
+    created_at: datetime.datetime
+    content: str
+    jump_url: str
+
+
 class Todo:
 
-    def __init__(self, bot: CD, data: dict[str, Any]) -> None:
+    def __init__(self, bot: CD, data: TodoData) -> None:
         self.bot: CD = bot
 
         self.id: int = data["id"]
