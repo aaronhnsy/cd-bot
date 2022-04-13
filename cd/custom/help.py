@@ -51,7 +51,7 @@ class HelpCommand(commands.HelpCommand):
 
     async def send_bot_help(self, mapping: Mapping[commands.Cog | None, list[Command]]) -> None:
 
-        entries: list[tuple[str, str]] = []
+        entries: list[tuple[str, str, bool]] = []
 
         for cog in sorted(self.context.bot.cogs.values(), key=lambda c: len(self.filter_command_list(list(c.walk_commands()))), reverse=True):
 
@@ -64,7 +64,8 @@ class HelpCommand(commands.HelpCommand):
             entries.append(
                 (
                     f"● **{cog.qualified_name}**",
-                    f"{', '.join(f'`{command.qualified_name}`' for command in cog_commands)}"
+                    f"{', '.join(f'`{command.qualified_name}`' for command in cog_commands)}",
+                    False
                 )
             )
 
@@ -91,7 +92,8 @@ class HelpCommand(commands.HelpCommand):
             entries=[
                 (
                     f"● {command.qualified_name} {' '.join([f'[{name}]' for name in command.clean_params.keys()])}",
-                    f"{command.short_doc or 'No help provided for this command.'}"
+                    f"{command.short_doc or 'No help provided for this command.'}",
+                    False
                 ) for command in cog_commands
             ],
             per_page=8,
@@ -113,7 +115,8 @@ class HelpCommand(commands.HelpCommand):
             entries=[
                 (
                     f"● {command.qualified_name} {' '.join([f'[{name}]' for name in command.clean_params.keys()])}",
-                    f"{command.short_doc or 'No help provided for this subcommand.'}"
+                    f"{command.short_doc or 'No help provided for this subcommand.'}",
+                    False
                 ) for command in group_commands
             ],
             per_page=5,

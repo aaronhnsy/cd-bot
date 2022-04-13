@@ -1,8 +1,8 @@
 # Future
 from __future__ import annotations
 
-# Standard Library
-from typing import Any
+# Packages
+import discord
 
 # Local
 from cd import custom
@@ -19,12 +19,13 @@ class EmbedsPaginator(BasePaginator):
     def __init__(
         self,
         *,
+        # base
         ctx: custom.Context,
-        entries: list[Any],
+        entries: list[discord.Embed],
         start_page: int = 0,
-        timeout: int = 300,
-        edit_message: bool = False,
-        delete_message: bool = False,
+        edit_message_when_done: bool = True,
+        delete_message_when_done: bool = False,
+        timeout: int | None = 300,
     ) -> None:
 
         super().__init__(
@@ -32,13 +33,10 @@ class EmbedsPaginator(BasePaginator):
             entries=entries,
             per_page=1,
             start_page=start_page,
+            edit_message_when_done=edit_message_when_done,
+            delete_message_when_done=delete_message_when_done,
             timeout=timeout,
-            edit_message=edit_message,
-            delete_message=delete_message,
-            join_pages=False
         )
 
-    # Overrides
-
-    async def _update_state(self) -> None:
+    async def update_state(self) -> None:
         self.embed = self.pages[self.page]

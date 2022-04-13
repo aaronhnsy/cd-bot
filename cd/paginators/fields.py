@@ -25,15 +25,13 @@ class FieldsPaginator(BasePaginator):
         *,
         # base
         ctx: custom.Context,
-        entries: list[tuple[Any, Any]],
+        entries: list[tuple[Any, Any, bool]],
         per_page: int,
         start_page: int = 0,
-        timeout: int = 300,
-        edit_message: bool = False,
-        delete_message: bool = False,
-        codeblock: bool = False,
-        splitter: str = "\n",
-        # field-paginator-specific
+        edit_message_when_done: bool = True,
+        delete_message_when_done: bool = False,
+        timeout: int | None = 300,
+        # field paginator specific
         embed_colour: discord.Colour | None = values.MAIN,
         embed_title: str | None = None,
         embed_url: str | None = None,
@@ -53,12 +51,10 @@ class FieldsPaginator(BasePaginator):
             entries=entries,
             per_page=per_page,
             start_page=start_page,
+            join_entries=False,
+            edit_message_when_done=edit_message_when_done,
+            delete_message_when_done=delete_message_when_done,
             timeout=timeout,
-            edit_message=edit_message,
-            delete_message=delete_message,
-            codeblock=codeblock,
-            splitter=splitter,
-            join_pages=False
         )
 
         self.embed: discord.Embed = utilities.embed(
@@ -76,11 +72,9 @@ class FieldsPaginator(BasePaginator):
             author_icon_url=embed_author_icon_url,
         )
 
-    # Overrides
-
-    async def _update_state(self) -> None:
+    async def update_state(self) -> None:
 
         self.embed.clear_fields()
 
-        for name, value in self.pages[self.page]:
-            self.embed.add_field(name=name, value=value, inline=False)
+        for name, value, inline in self.pages[self.page]:
+            self.embed.add_field(name=name, value=value, inline=inline)

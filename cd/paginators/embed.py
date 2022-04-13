@@ -28,12 +28,13 @@ class EmbedPaginator(BasePaginator):
         entries: list[Any],
         per_page: int,
         start_page: int = 0,
-        timeout: int = 300,
-        edit_message: bool = False,
-        delete_message: bool = False,
+        join_entries: bool = True,
         codeblock: bool = False,
         splitter: str = "\n",
-        # embed-paginator-specific
+        edit_message_when_done: bool = True,
+        delete_message_when_done: bool = False,
+        timeout: int | None = 300,
+        # embed paginator specific
         header: str | None = None,
         footer: str | None = None,
         colour: discord.Colour = values.MAIN,
@@ -54,12 +55,16 @@ class EmbedPaginator(BasePaginator):
             entries=entries,
             per_page=per_page,
             start_page=start_page,
-            timeout=timeout,
-            edit_message=edit_message,
-            delete_message=delete_message,
+            join_entries=join_entries,
             codeblock=codeblock,
             splitter=splitter,
+            edit_message_when_done=edit_message_when_done,
+            delete_message_when_done=delete_message_when_done,
+            timeout=timeout,
         )
+
+        self.CODEBLOCK_START: str = values.CODEBLOCK_START if self.codeblock else ""
+        self.CODEBLOCK_END: str = values.CODEBLOCK_END if self.codeblock else ""
 
         self.header: str = header or ""
         self.footer: str = footer or ""
@@ -78,7 +83,5 @@ class EmbedPaginator(BasePaginator):
             author_icon_url=author_icon_url,
         )
 
-    # Overrides
-
-    async def _update_state(self) -> None:
+    async def update_state(self) -> None:
         self.embed.description = f"{self.CODEBLOCK_START}{self.header}{self.pages[self.page]}{self.footer}{self.CODEBLOCK_END}"
