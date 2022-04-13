@@ -58,7 +58,7 @@ class Manager:
         user_config = objects.UserConfig(bot=self.bot, data=data)
 
         # Fetch user todos
-        todos = await self.bot.db.fetch(
+        todos: list[objects.TodoData] = await self.bot.db.fetch(
             "SELECT * FROM todos WHERE user_id = $1",
             user_id
         )

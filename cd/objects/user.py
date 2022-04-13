@@ -38,7 +38,7 @@ class UserConfig:
 
     async def create_todo(self, content: str, /, *, jump_url: str) -> objects.Todo:
 
-        data = await self.bot.db.fetchrow(
+        data: objects.TodoData = await self.bot.db.fetchrow(
             "INSERT INTO todos (user_id, content, jump_url) VALUES ($1, $2, $3) RETURNING *",
             self.id, content, jump_url
         )

@@ -53,7 +53,6 @@ class Settings(commands.Cog):
         ]
 
         try:
-            # noinspection PyUnresolvedReferences
             await commands.check_any(*_checks).predicate(ctx=ctx)
         except commands.CheckAnyFailure:
             raise exceptions.EmbedError(description=message)

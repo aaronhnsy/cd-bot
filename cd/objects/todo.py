@@ -18,6 +18,7 @@ if TYPE_CHECKING:
 
 
 __all__ = (
+    "TodoData",
     "Todo",
 )
 
@@ -52,8 +53,8 @@ class Todo:
         *, jump_url: str
     ) -> None:
 
-        data = await self.bot.db.fetchrow(
-            "UPDATE todos SET content = $1, jump_url = $2 WHERE id = $3 RETURNING content, jump_url",
+        data: TodoData = await self.bot.db.fetchrow(
+            "UPDATE todos SET content = $1, jump_url = $2 WHERE id = $3 RETURNING *",
             content, jump_url, self.id,
         )
         self.content = data["content"]

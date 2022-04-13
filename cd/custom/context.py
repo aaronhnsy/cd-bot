@@ -13,7 +13,6 @@ from cd import custom
 
 
 if TYPE_CHECKING:
-    # noinspection PyUnresolvedReferences
     # Local
     from cd.bot import CD
 
