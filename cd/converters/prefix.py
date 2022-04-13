@@ -15,9 +15,17 @@ __all__ = (
 
 class PrefixConverter(commands.Converter[str]):
 
-    async def convert(self, ctx: custom.Context, argument: str) -> str:  # pyright: reportIncompatibleMethodOverride=false
+    async def convert(
+        self,
+        ctx: custom.Context,
+        argument: str
+    ) -> str:  # pyright: reportIncompatibleMethodOverride=false
 
-        if not (argument := (await commands.clean_content(escape_markdown=True).convert(ctx=ctx, argument=argument)).lstrip()):
+        if not (
+            argument := (
+                    await commands.clean_content(escape_markdown=True).convert(ctx=ctx, argument=argument)
+            ).lstrip()
+        ):
             raise exceptions.EmbedError(description="You must provide a prefix.")
 
         if len(argument) > 50:

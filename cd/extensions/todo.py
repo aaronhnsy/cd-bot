@@ -84,7 +84,13 @@ class Todo(commands.Cog):
         )
 
     @_todo.command(name="edit", aliases=["update"])
-    async def _todo_edit(self, ctx: custom.Context, todo: objects.Todo = _TODO_CONVERTER, *, content: str = _TODO_CONTENT_CONVERTER) -> None:
+    async def _todo_edit(
+        self,
+        ctx: custom.Context,
+        todo: objects.Todo = _TODO_CONVERTER,
+        *,
+        content: str = _TODO_CONTENT_CONVERTER
+    ) -> None:
         """
         Edits a todo.
 

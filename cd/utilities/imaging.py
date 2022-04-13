@@ -33,7 +33,15 @@ P = ParamSpec("P")
 
 
 MAX_CONTENT_SIZE: int = (2 ** 20) * 25
-VALID_CONTENT_TYPES: list[str] = ["image/gif", "image/heic", "image/jpeg", "image/png", "image/webp", "image/avif", "image/svg+xml"]
+VALID_CONTENT_TYPES: list[str] = [
+    "image/gif",
+    "image/heic",
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "image/avif",
+    "image/svg+xml"
+]
 
 
 ################
@@ -337,7 +345,13 @@ async def edit_image(
 
     # edit image
 
-    partial: functools.partial[tuple[bytes, str]] = functools.partial(do_edit_image, function, original_bytes, *args, **kwargs)
+    partial: functools.partial[tuple[bytes, str]] = functools.partial(
+        do_edit_image,
+        function,
+        original_bytes,
+        *args,
+        **kwargs
+    )
     try:
         edited_bytes, image_format = await bot.loop.run_in_executor(None, partial)
     except Exception:

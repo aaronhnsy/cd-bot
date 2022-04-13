@@ -184,7 +184,10 @@ class Play(commands.Cog):
 
     # YouTube search
 
-    @commands.hybrid_command(name="youtube-search", aliases=["youtube_search", "youtubesearch", "yts"])
+    @commands.hybrid_command(
+        name="youtube-search",
+        aliases=["youtube_search", "youtubesearch", "yts"]
+    )
     async def youtube_search(self, ctx: custom.Context, *, query: str) -> None:
         """
         Allows you to select which tracks from YouTube to add to the queue.
@@ -194,17 +197,28 @@ class Play(commands.Cog):
         """
         await self.search(ctx, query=query)
 
-    @commands.command(name="youtube-search-next", aliases=["youtube_search_next", "youtubesearchnext", "ytsne"], hidden=True)
+    @commands.command(
+        name="youtube-search-next",
+        aliases=["youtube_search_next", "youtubesearchnext", "ytsne"],
+        hidden=True
+    )
     async def youtube_search_next(self, ctx: custom.Context, *, query: str) -> None:
         await self.search_next(ctx, query=query)
 
-    @commands.command(name="youtube-search-now", aliases=["youtube_search_now", "youtubesearchnow", "ytsno"], hidden=True)
+    @commands.command(
+        name="youtube-search-now",
+        aliases=["youtube_search_now", "youtubesearchnow", "ytsno"],
+        hidden=True
+    )
     async def youtube_search_now(self, ctx: custom.Context, *, query: str) -> None:
         await self.search_now(ctx, query=query)
 
     # YouTube Music
 
-    @commands.hybrid_command(name="youtube-music", aliases=["youtube_music", "youtubemusic", "ytm"])
+    @commands.hybrid_command(
+        name="youtube-music",
+        aliases=["youtube_music", "youtubemusic", "ytm"]
+    )
     async def youtube_music(self, ctx: custom.Context, *, query: str) -> None:
         """
         Searches for tracks from YouTube Music to add to the queue.
@@ -218,7 +232,11 @@ class Play(commands.Cog):
         assert ctx.voice_client is not None
         await ctx.voice_client.searcher.queue(query, source=slate.Source.YOUTUBE_MUSIC, ctx=ctx)
 
-    @commands.command(name="youtube-music-next", aliases=["youtube_music_next", "youtubemusicnext", "ytmne"], hidden=True)
+    @commands.command(
+        name="youtube-music-next",
+        aliases=["youtube_music_next", "youtubemusicnext", "ytmne"],
+        hidden=True
+    )
     async def youtube_music_next(self, ctx: custom.Context, *, query: str) -> None:
 
         await self._ensure_connected(ctx)
@@ -226,7 +244,11 @@ class Play(commands.Cog):
         assert ctx.voice_client is not None
         await ctx.voice_client.searcher.queue(query, source=slate.Source.YOUTUBE_MUSIC, ctx=ctx, play_next=True)
 
-    @commands.command(name="youtube-music-now", aliases=["youtube_music_now", "youtubemusicnow", "ytmno"], hidden=True)
+    @commands.command(
+        name="youtube-music-now",
+        aliases=["youtube_music_now", "youtubemusicnow", "ytmno"],
+        hidden=True
+    )
     async def youtube_music_now(self, ctx: custom.Context, *, query: str) -> None:
 
         await self._ensure_connected(ctx)
@@ -236,7 +258,10 @@ class Play(commands.Cog):
 
     # YouTube Music search
 
-    @commands.hybrid_command(name="youtube-music-search", aliases=["youtube_music_search", "youtubemusicsearch", "ytms"])
+    @commands.hybrid_command(
+        name="youtube-music-search",
+        aliases=["youtube_music_search", "youtubemusicsearch", "ytms"]
+    )
     async def youtube_music_search(self, ctx: custom.Context, *, query: str) -> None:
         """
         Allows you to select which tracks from YouTube Music to add to the queue.
@@ -250,7 +275,11 @@ class Play(commands.Cog):
         assert ctx.voice_client is not None
         await ctx.voice_client.searcher.select(query, source=slate.Source.YOUTUBE_MUSIC, ctx=ctx)
 
-    @commands.command(name="youtube-music-search-next", aliases=["youtube_music_search_next", "youtubemusicsearchnext", "ytmsne"], hidden=True)
+    @commands.command(
+        name="youtube-music-search-next",
+        aliases=["youtube_music_search_next", "youtubemusicsearchnext", "ytmsne"],
+        hidden=True
+    )
     async def youtube_music_search_next(self, ctx: custom.Context, *, query: str) -> None:
 
         await self._ensure_connected(ctx)
@@ -258,7 +287,11 @@ class Play(commands.Cog):
         assert ctx.voice_client is not None
         await ctx.voice_client.searcher.select(query, source=slate.Source.YOUTUBE_MUSIC, ctx=ctx, play_next=True)
 
-    @commands.command(name="youtube-music-search-now", aliases=["youtube_music_search_now", "youtubemusicsearchnow", "ytmsno"], hidden=True)
+    @commands.command(
+        name="youtube-music-search-now",
+        aliases=["youtube_music_search_now", "youtubemusicsearchnow", "ytmsno"],
+        hidden=True
+    )
     async def youtube_music_search_now(self, ctx: custom.Context, *, query: str) -> None:
 
         await self._ensure_connected(ctx)
@@ -268,7 +301,10 @@ class Play(commands.Cog):
 
     # Soundcloud
 
-    @commands.hybrid_command(name="soundcloud", aliases=["sc"])
+    @commands.hybrid_command(
+        name="soundcloud",
+        aliases=["sc"]
+    )
     async def soundcloud(self, ctx: custom.Context, *, query: str) -> None:
         """
         Searches for tracks from Soundcloud to add to the queue.
@@ -282,7 +318,11 @@ class Play(commands.Cog):
         assert ctx.voice_client is not None
         await ctx.voice_client.searcher.queue(query, source=slate.Source.SOUNDCLOUD, ctx=ctx)
 
-    @commands.command(name="soundcloud-next", aliases=["soundcloud_next", "soundcloudnext", "scne"], hidden=True)
+    @commands.command(
+        name="soundcloud-next",
+        aliases=["soundcloud_next", "soundcloudnext", "scne"],
+        hidden=True
+    )
     async def soundcloud_next(self, ctx: custom.Context, *, query: str) -> None:
 
         await self._ensure_connected(ctx)
@@ -290,7 +330,11 @@ class Play(commands.Cog):
         assert ctx.voice_client is not None
         await ctx.voice_client.searcher.queue(query, source=slate.Source.SOUNDCLOUD, ctx=ctx, play_next=True)
 
-    @commands.command(name="soundcloud-now", aliases=["soundcloud_now", "soundcloudnow", "scno"], hidden=True)
+    @commands.command(
+        name="soundcloud-now",
+        aliases=["soundcloud_now", "soundcloudnow", "scno"],
+        hidden=True
+    )
     async def soundcloud_now(self, ctx: custom.Context, *, query: str) -> None:
 
         await self._ensure_connected(ctx)
@@ -300,7 +344,10 @@ class Play(commands.Cog):
 
     # Soundcloud search
 
-    @commands.hybrid_command(name="soundcloud-search", aliases=["soundcloud_search", "soundcloudsearch", "scs"])
+    @commands.hybrid_command(
+        name="soundcloud-search",
+        aliases=["soundcloud_search", "soundcloudsearch", "scs"]
+    )
     async def soundcloud_search(self, ctx: custom.Context, *, query: str) -> None:
         """
         Allows you to select which tracks from Soundcloud to add to the queue.
@@ -314,7 +361,11 @@ class Play(commands.Cog):
         assert ctx.voice_client is not None
         await ctx.voice_client.searcher.select(query, source=slate.Source.SOUNDCLOUD, ctx=ctx)
 
-    @commands.command(name="soundcloud-search-next", aliases=["soundcloud_search_next", "soundcloudsearchnext", "scsne"], hidden=True)
+    @commands.command(
+        name="soundcloud-search-next",
+        aliases=["soundcloud_search_next", "soundcloudsearchnext", "scsne"],
+        hidden=True
+    )
     async def soundcloud_search_next(self, ctx: custom.Context, *, query: str) -> None:
 
         await self._ensure_connected(ctx)
@@ -322,7 +373,11 @@ class Play(commands.Cog):
         assert ctx.voice_client is not None
         await ctx.voice_client.searcher.select(query, source=slate.Source.SOUNDCLOUD, ctx=ctx, play_next=True)
 
-    @commands.command(name="soundcloud-search-now", aliases=["soundcloud_search_now", "soundcloudsearchnow", "scsno"], hidden=True)
+    @commands.command(
+        name="soundcloud-search-now",
+        aliases=["soundcloud_search_now", "soundcloudsearchnow", "scsno"],
+        hidden=True
+    )
     async def soundcloud_search_now(self, ctx: custom.Context, *, query: str) -> None:
 
         await self._ensure_connected(ctx)

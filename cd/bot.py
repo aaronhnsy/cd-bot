@@ -129,10 +129,22 @@ class CD(commands.AutoShardedBot):
 
         self.mystbin = mystbin.Client(session=self.session)
 
-        self._LOG_WEBHOOKS[enums.LogType.DM] = discord.Webhook.from_url(session=self.session, url=config.DM_WEBHOOK_URL)
-        self._LOG_WEBHOOKS[enums.LogType.GUILD] = discord.Webhook.from_url(session=self.session, url=config.GUILD_WEBHOOK_URL)
-        self._LOG_WEBHOOKS[enums.LogType.ERROR] = discord.Webhook.from_url(session=self.session, url=config.ERROR_WEBHOOK_URL)
-        self._LOG_WEBHOOKS[enums.LogType.COMMAND] = discord.Webhook.from_url(session=self.session, url=config.COMMAND_WEBHOOK_URL)
+        self._LOG_WEBHOOKS[enums.LogType.DM] = discord.Webhook.from_url(
+            session=self.session,
+            url=config.DM_WEBHOOK_URL
+        )
+        self._LOG_WEBHOOKS[enums.LogType.GUILD] = discord.Webhook.from_url(
+            session=self.session,
+            url=config.GUILD_WEBHOOK_URL
+        )
+        self._LOG_WEBHOOKS[enums.LogType.ERROR] = discord.Webhook.from_url(
+            session=self.session,
+            url=config.ERROR_WEBHOOK_URL
+        )
+        self._LOG_WEBHOOKS[enums.LogType.COMMAND] = discord.Webhook.from_url(
+            session=self.session,
+            url=config.COMMAND_WEBHOOK_URL
+        )
         self.log_task.start()
 
         await self.connect_postgresql()

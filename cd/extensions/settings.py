@@ -22,6 +22,8 @@ class Settings(commands.Cog):
     Manage the bots settings.
     """
 
+    _PREFIX_CONVERTER = commands.parameter(converter=converters.PrefixConverter)
+
     def __init__(self, bot: CD) -> None:
         self.bot: CD = bot
 
@@ -75,7 +77,7 @@ class Settings(commands.Cog):
         )
 
     @_prefix.command(name="set")
-    async def _prefix_set(self, ctx: custom.Context, prefix: str = commands.param(converter=converters.PrefixConverter)) -> None:
+    async def _prefix_set(self, ctx: custom.Context, prefix: str = _PREFIX_CONVERTER) -> None:
         """
         Sets this servers prefix.
 

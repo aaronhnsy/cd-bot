@@ -217,7 +217,9 @@ class Events(commands.Cog):
         bots = sum(1 for member in guild.members if member.bot)
         bots_percent = round((bots / total) * 100, 2)
 
-        __log__.info(f"Joined a guild. {guild.name} ({guild.id}) | Members: {len(guild.members)} | Bots: {bots} ({bots_percent}%)")
+        __log__.info(
+            f"Joined a guild. {guild.name} ({guild.id}) | Members: {len(guild.members)} | Bots: {bots} ({bots_percent}%)"
+        )
         await self.bot.log(
             enums.LogType.GUILD,
             embed=utilities.embed(
@@ -240,8 +242,9 @@ class Events(commands.Cog):
         bots = sum(1 for member in guild.members if member.bot)
         bots_percent = round((bots / total) * 100, 2)
 
-        __log__.info(f"Left a guild. {guild.name} ({guild.id}) | Members: {len(guild.members)} | Bots: {bots} ({bots_percent}%)")
-
+        __log__.info(
+            f"Left a guild. {guild.name} ({guild.id}) | Members: {len(guild.members)} | Bots: {bots} ({bots_percent}%)"
+        )
         await self.bot.log(
             enums.LogType.GUILD,
             embed=utilities.embed(
@@ -303,7 +306,9 @@ class Events(commands.Cog):
             # Format exception and log to console.
 
             exception = "".join(traceback.format_exception(type(error), error, error.__traceback__))
-            __log__.error(f"Error running command '{ctx.command.qualified_name if ctx.command else 'Unknown'}':\n{exception}")
+            __log__.error(
+                f"Error running command '{ctx.command.qualified_name if ctx.command else 'Unknown'}':\n{exception}"
+            )
 
             # Send friendly error message to user.
 
@@ -338,7 +343,12 @@ class Events(commands.Cog):
     # Voice events
 
     @commands.Cog.listener("on_voice_state_update")
-    async def _handle_voice_client_disconnect(self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState) -> None:
+    async def _handle_voice_client_disconnect(
+        self,
+        member: discord.Member,
+        before: discord.VoiceState,
+        after: discord.VoiceState
+    ) -> None:
 
         assert self.bot.user is not None
 

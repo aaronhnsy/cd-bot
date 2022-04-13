@@ -15,31 +15,40 @@ __all__ = (
     "TimeConverter",
 )
 
-
-COLON_FORMAT_REGEX = re.compile(r"""
-^
-    (?:
+COLON_FORMAT_REGEX = re.compile(
+    r"""
+    ^
         (?:
-            (?P<hours>[0-1]?[0-9]|2[0-3]):
+            (?:
+                (?P<hours>[0-1]?[0-9]|2[0-3]):
+            )?
+            (?P<minutes>[0-5]?[0-9]):
         )?
-        (?P<minutes>[0-5]?[0-9]):
-    )?
-    (?P<seconds>[0-5]?[0-9])
-$
-""", flags=re.VERBOSE)
+        (?P<seconds>[0-5]?[0-9])
+    $
+    """,
+    flags=re.VERBOSE
+)
 
-HUMAN_FORMAT_REGEX = re.compile(r"""
-^
-    (?: (?P<hours>[0-1]?[0-9]|2[0-3]) \s? (?:h|hour|hours)              (?:\s?|\s?and\s?) )?
-    (?: (?P<minutes>[0-5]?[0-9])      \s? (?:m|min|mins|minute|minutes) (?:\s?|\s?and\s?) )?
-    (?: (?P<seconds>[0-5]?[0-9])      \s? (?:s|sec|secs|second|seconds)                   )?
-$
-""", flags=re.VERBOSE)
+HUMAN_FORMAT_REGEX = re.compile(
+    r"""
+    ^
+        (?: (?P<hours>[0-1]?[0-9]|2[0-3]) \s? (?:h|hour|hours)              (?:\s?|\s?and\s?) )?
+        (?: (?P<minutes>[0-5]?[0-9])      \s? (?:m|min|mins|minute|minutes) (?:\s?|\s?and\s?) )?
+        (?: (?P<seconds>[0-5]?[0-9])      \s? (?:s|sec|secs|second|seconds)                   )?
+    $
+    """,
+    flags=re.VERBOSE
+)
 
 
 class TimeConverter(commands.Converter[int]):
 
-    async def convert(self, ctx: custom.Context, argument: str) -> int:  # pyright: reportIncompatibleMethodOverride=false
+    async def convert(
+        self,
+        ctx: custom.Context,
+        argument: str
+    ) -> int:  # pyright: reportIncompatibleMethodOverride=false
 
         if (match := COLON_FORMAT_REGEX.match(argument)) or (match := HUMAN_FORMAT_REGEX.match(argument)):
 

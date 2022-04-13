@@ -137,7 +137,12 @@ class Queue(commands.Cog):
     @checks.is_queue_not_empty()
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def sort(self, ctx: custom.Context, method: Literal["title", "length", "author"], reverse: bool = False) -> None:
+    async def sort(
+        self,
+        ctx: custom.Context,
+        method: Literal["title", "length", "author"],
+        reverse: bool = False
+    ) -> None:
         """
         Sorts the queue.
 
@@ -245,7 +250,10 @@ class Queue(commands.Cog):
         )
         await ctx.voice_client.controller.update_current_message()
 
-    @commands.hybrid_command(name="remove-duplicates", aliases=["remove_duplicates", "removeduplicates", "deduplicate", "dedupe"])
+    @commands.hybrid_command(
+        name="remove-duplicates",
+        aliases=["remove_duplicates", "removeduplicates", "deduplicate", "dedupe"]
+    )
     @checks.is_queue_not_empty()
     @checks.is_author_connected()
     @checks.is_player_connected()
@@ -256,7 +264,10 @@ class Queue(commands.Cog):
 
         assert ctx.voice_client is not None
 
-        ctx.voice_client.queue.items = list({item.track.identifier: item for item in ctx.voice_client.queue.items}.values())
+        ctx.voice_client.queue.items = list(
+            {item.track.identifier: item for item in ctx.voice_client.queue.items}.values()
+        )
+
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,

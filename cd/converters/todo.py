@@ -1,4 +1,3 @@
-
 # Future
 from __future__ import annotations
 
@@ -17,7 +16,11 @@ __all__ = (
 
 class TodoConverter(commands.Converter[objects.Todo]):
 
-    async def convert(self, ctx: custom.Context, argument: str) -> objects.Todo:  # pyright: reportIncompatibleMethodOverride=false
+    async def convert(
+        self,
+        ctx: custom.Context,
+        argument: str
+    ) -> objects.Todo:  # pyright: reportIncompatibleMethodOverride=false
 
         try:
             todo_id = int(argument)
@@ -34,7 +37,11 @@ class TodoConverter(commands.Converter[objects.Todo]):
 
 class TodoContentConverter(commands.Converter[str]):
 
-    async def convert(self, ctx: custom.Context, argument: str) -> str:  # pyright: reportIncompatibleMethodOverride=false
+    async def convert(
+        self,
+        ctx: custom.Context,
+        argument: str
+    ) -> str:  # pyright: reportIncompatibleMethodOverride=false
 
         if not (argument := (await commands.clean_content().convert(ctx=ctx, argument=argument)).strip()):
             raise commands.BadArgument

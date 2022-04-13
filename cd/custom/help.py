@@ -53,7 +53,11 @@ class HelpCommand(commands.HelpCommand):
 
         entries: list[tuple[str, str, bool]] = []
 
-        for cog in sorted(self.context.bot.cogs.values(), key=lambda c: len(self.filter_command_list(list(c.walk_commands()))), reverse=True):
+        for cog in sorted(
+            self.context.bot.cogs.values(),
+            key=lambda c: len(self.filter_command_list(list(c.walk_commands()))),
+            reverse=True
+        ):
 
             if cog.qualified_name == "Jishaku":
                 continue

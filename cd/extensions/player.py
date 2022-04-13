@@ -48,10 +48,14 @@ class Player(commands.Cog):
         assert isinstance(ctx.author, discord.Member)
 
         if not ctx.author.voice or not ctx.author.voice.channel:
-            raise exceptions.EmbedError(description="You must be connected to a voice channel to use this command.")
+            raise exceptions.EmbedError(
+                description="You must be connected to a voice channel to use this command."
+            )
 
         if ctx.voice_client and ctx.voice_client.voice_channel:
-            raise exceptions.EmbedError(description=f"I'm already connected to {ctx.voice_client.voice_channel.mention}.")
+            raise exceptions.EmbedError(
+                description=f"I'm already connected to {ctx.voice_client.voice_channel.mention}."
+            )
 
         # slate's Player doesn't like this for some reason, investigate later.
         await ctx.author.voice.channel.connect(cls=custom.Player(text_channel=ctx.channel))  # type: ignore
@@ -75,7 +79,8 @@ class Player(commands.Cog):
         await ctx.send(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description=f"Disconnected from {ctx.voice_client.voice_channel.mention}.")
+                description=f"Disconnected from {ctx.voice_client.voice_channel.mention}."
+            )
         )
         await ctx.voice_client.disconnect()
 
@@ -125,12 +130,14 @@ class Player(commands.Cog):
 
     # Seeking
 
+    _TIME_CONVERTER = commands.parameter(converter=converters.TimeConverter)
+
     @commands.hybrid_command(name="seek", aliases=["scrub"])
     @checks.is_track_seekable()
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def _seek(self, ctx: custom.Context, *, position: int = commands.param(converter=converters.TimeConverter)) -> None:
+    async def _seek(self, ctx: custom.Context, *, position: int = _TIME_CONVERTER) -> None:
         """
         Seeks to a position in the current track.
 
@@ -176,7 +183,7 @@ class Player(commands.Cog):
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def _fast_forward(self, ctx: custom.Context, *, time: int = commands.param(converter=converters.TimeConverter)) -> None:
+    async def _fast_forward(self, ctx: custom.Context, *, time: int = _TIME_CONVERTER) -> None:
         """
         Fast-forwards the current track by an amount of time.
 
@@ -224,7 +231,7 @@ class Player(commands.Cog):
     @checks.is_player_playing()
     @checks.is_author_connected()
     @checks.is_player_connected()
-    async def _rewind(self, ctx: custom.Context, *, time: int = commands.param(converter=converters.TimeConverter)) -> None:
+    async def _rewind(self, ctx: custom.Context, *, time: int = _TIME_CONVERTER) -> None:
         """
         Rewinds the current track by an amount of time.
 
@@ -416,7 +423,8 @@ class Player(commands.Cog):
             await ctx.reply(
                 embed=utilities.embed(
                     colour=values.GREEN,
-                    description="Skipped the current track.")
+                    description="Skipped the current track."
+                )
             )
             ctx.voice_client.skip_request_ids.clear()
 
@@ -493,17 +501,21 @@ class Player(commands.Cog):
                     raise exceptions.EmbedError(description="You didn't specify a search query.")
 
         async with self.bot.session.get(
-            url=f"https://api.openrobot.xyz/api/lyrics/{urllib.parse.quote_plus(query)}",
-            headers={"Authorization": config.LYRIC_API_TOKEN}
+                url=f"https://api.openrobot.xyz/api/lyrics/{urllib.parse.quote_plus(query)}",
+                headers={"Authorization": config.LYRIC_API_TOKEN}
         ) as response:
 
             match response.status:
                 case 200:
                     data = await response.json()
                 case 404:
-                    raise exceptions.EmbedError(description=f"No lyrics were found for **{query}**.")
+                    raise exceptions.EmbedError(
+                        description=f"No lyrics were found for **{query}**."
+                    )
                 case _:
-                    raise exceptions.EmbedError(description=f"Lyrics are unavailable right now, please try again later.")
+                    raise exceptions.EmbedError(
+                        description=f"Lyrics are unavailable right now, please try again later."
+                    )
 
         entries = []
 
