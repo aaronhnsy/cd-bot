@@ -144,7 +144,7 @@ class Queue:
                 except ValueError:
                     pass
 
-                if not self.is_empty and not waiter.cancelled():
+                if not self.is_empty() and not waiter.cancelled():
                     self._wakeup_next()
 
                 raise

@@ -10,7 +10,7 @@ import slate
 from discord.ext import commands
 
 # Local
-from cd import custom, exceptions
+from cd import checks, custom, exceptions
 from cd.bot import CD
 
 
@@ -333,7 +333,7 @@ class Play(commands.Cog):
     # Local
 
     @commands.command(name="local", aliases=["l"], hidden=True)
-    @commands.is_owner()
+    @checks.is_bot_owner()
     async def local(self, ctx: custom.Context, *, query: str) -> None:
 
         await self._ensure_connected(ctx)
@@ -342,7 +342,7 @@ class Play(commands.Cog):
         await ctx.voice_client.searcher.queue(query, source=slate.Source.LOCAL, ctx=ctx)
 
     @commands.command(name="local-next", aliases=["local_next", "localnext", "lne"], hidden=True)
-    @commands.is_owner()
+    @checks.is_bot_owner()
     async def local_next(self, ctx: custom.Context, *, query: str) -> None:
 
         await self._ensure_connected(ctx)
@@ -351,7 +351,7 @@ class Play(commands.Cog):
         await ctx.voice_client.searcher.queue(query, source=slate.Source.LOCAL, ctx=ctx, play_next=True)
 
     @commands.command(name="local-now", aliases=["local_now", "localnow", "lno"], hidden=True)
-    @commands.is_owner()
+    @checks.is_bot_owner()
     async def local_now(self, ctx: custom.Context, *, query: str) -> None:
 
         await self._ensure_connected(ctx)
@@ -362,7 +362,7 @@ class Play(commands.Cog):
     # HTTP
 
     @commands.command(name="http", aliases=["h"], hidden=True)
-    @commands.is_owner()
+    @checks.is_bot_owner()
     async def http(self, ctx: custom.Context, *, query: str) -> None:
 
         await self._ensure_connected(ctx)
@@ -371,7 +371,7 @@ class Play(commands.Cog):
         await ctx.voice_client.searcher.queue(query, source=slate.Source.NONE, ctx=ctx)
 
     @commands.command(name="http-next", aliases=["http_next", "httpnext", "hne"], hidden=True)
-    @commands.is_owner()
+    @checks.is_bot_owner()
     async def http_next(self, ctx: custom.Context, *, query: str) -> None:
 
         await self._ensure_connected(ctx)
@@ -380,7 +380,7 @@ class Play(commands.Cog):
         await ctx.voice_client.searcher.queue(query, source=slate.Source.NONE, ctx=ctx, play_next=True)
 
     @commands.command(name="http-now", aliases=["http_now", "httpnow", "hno"], hidden=True)
-    @commands.is_owner()
+    @checks.is_bot_owner()
     async def http_now(self, ctx: custom.Context, *, query: str) -> None:
 
         await self._ensure_connected(ctx)

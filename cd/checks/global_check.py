@@ -10,11 +10,11 @@ from cd import custom, values
 
 
 __all__ = (
-    "bot",
+    "global_check",
 )
 
 
-async def bot(ctx: custom.Context) -> bool:
+async def global_check(ctx: custom.Context) -> bool:
 
     if not ctx.guild:
         return True

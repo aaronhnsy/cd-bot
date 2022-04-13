@@ -38,7 +38,7 @@ class Settings(commands.Cog):
     async def _is_mod(ctx: custom.Context, message: str) -> None:
 
         _checks = [
-            checks.is_owner(),
+            checks.is_bot_owner(),
             checks.is_guild_owner(),
             checks.has_any_permission(
                 manage_channels=True,

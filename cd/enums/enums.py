@@ -2,26 +2,13 @@
 from __future__ import annotations
 
 # Standard Library
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TypeVar
 
 # Packages
 from discord.enums import Enum
 
 # Local
 from cd import custom, exceptions, utilities
-
-
-if TYPE_CHECKING:
-
-    class Enum(Enum):
-
-        @property
-        def name(self) -> str:
-            return self.name
-
-        @property
-        def value(self) -> Any:
-            return self.value
 
 
 __all__ = (

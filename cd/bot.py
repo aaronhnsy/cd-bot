@@ -17,7 +17,7 @@ import slate
 from discord.ext import commands, tasks
 
 # Local
-from cd import checks, config, custom, enums, manager, utilities, values
+from cd import checks, config, custom, enums, managers, utilities, values
 
 
 __log__: logging.Logger = logging.getLogger("cd.bot")
@@ -56,7 +56,7 @@ class CD(commands.AutoShardedBot):
         # tracking
         self.socket_stats: collections.Counter[str] = collections.Counter()
         self.process: psutil.Process = psutil.Process()
-        self.manager: manager.Manager = manager.Manager(self)
+        self.manager: managers.Manager = managers.Manager(self)
         self.start_time: float = time.time()
 
     # Setup
@@ -123,7 +123,7 @@ class CD(commands.AutoShardedBot):
 
     async def setup_hook(self) -> None:
 
-        self.add_check(checks.bot, call_once=True)
+        self.add_check(checks.global_check, call_once=True)
 
         self.session = aiohttp.ClientSession()
 

@@ -13,14 +13,14 @@ from cd import custom
 
 
 __all__ = (
-    "is_owner",
+    "is_bot_owner",
 )
 
 
 T = TypeVar("T")
 
 
-def is_owner() -> Callable[[T], T]:
+def is_bot_owner() -> Callable[[T], T]:
 
     async def predicate(ctx: custom.Context) -> bool:
 

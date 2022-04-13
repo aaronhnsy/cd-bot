@@ -309,7 +309,7 @@ class Player(commands.Cog):
     async def _check_force_skip_permissions(ctx: custom.Context) -> None:
 
         _checks = [
-            checks.is_owner(),
+            checks.is_bot_owner(),
             checks.is_guild_owner(),
             checks.has_any_permission(
                 manage_channels=True,
@@ -555,7 +555,7 @@ class Player(commands.Cog):
         await self._do_status(ctx, format="gif")
 
     @status.command(name="smooth")
-    @checks.is_owner()
+    @checks.is_bot_owner()
     async def status_smooth(self, ctx: custom.Context) -> None:
         await self._do_status(ctx, format="smooth_gif")
 
