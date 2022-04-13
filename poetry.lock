@@ -191,7 +191,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "discord.py"
-version = "2.0.0a4096+g517ccffa"
+version = "2.0.0a4106+g242d3f7a"
 description = "A Python wrapper for the Discord API"
 category = "main"
 optional = false
@@ -212,8 +212,8 @@ voice = ["PyNaCl (>=1.3.0,<1.6)"]
 [package.source]
 type = "git"
 url = "git@github.com:Rapptz/discord.py"
-reference = "feature/hybrid-commands"
-resolved_reference = "517ccffa2a7a14c99b83353317313342ed9dd433"
+reference = "master"
+resolved_reference = "242d3f7ab7065bb4efa0f0a49724b8cfca8e116e"
 
 [[package]]
 name = "frozenlist"
@@ -564,7 +564,7 @@ websockets = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10.0"
-content-hash = "d6b49bb6cdc61c83880ec8c4be2cd467aff1280151b6d7935a702366cd002ac8"
+content-hash = "f87c202c953a64e2ba866617e4862733df8f5fca2e98227680b435078704f256"
 
 [metadata.files]
 aiodns = [

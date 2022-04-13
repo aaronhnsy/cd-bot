@@ -22,9 +22,9 @@ rapidfuzz       = { version = "~2.0.0"  }
 wand            = { version = "~0.6.0"  }
 "mystbin.py"    = { version = "~3.1.0"  }
 
-slate           = { git = "git@github.com:Axelware/slate", branch = "main" }
-jishaku         = { git = "git@github.com:Axelware/jishaku", branch = "master", extras = ["voice"] }
-"discord.py"    = { git = "git@github.com:Rapptz/discord.py", branch = "feature/hybrid-commands", extras = ["voice", "speed"] }
+slate           = { git = "git@github.com:Axelware/slate",      branch = "main"                                 }
+jishaku         = { git = "git@github.com:Axelware/jishaku",    branch = "master", extras = ["voice"]           }
+"discord.py"    = { git = "git@github.com:Rapptz/discord.py",   branch = "master", extras = ["voice", "speed"]  }
 
 
 [tool.poetry.dev-dependencies]
