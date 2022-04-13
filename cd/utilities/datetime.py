@@ -57,7 +57,7 @@ def format_difference(
     assert isinstance(datetime, pendulum.DateTime)
 
     now = pendulum.now(tz=datetime.timezone)
-    now: pendulum.DateTime = now.replace(microsecond=0)  # type: ignore
+    now: pendulum.DateTime = now.replace(microsecond=0)
 
     return humanize.precisedelta(now.diff(datetime), format="%0.0f", suppress=suppress)
 

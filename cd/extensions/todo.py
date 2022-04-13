@@ -41,7 +41,7 @@ class Todo(commands.Cog):
         if content is None:
             await self._todo_list.invoke(ctx)
         else:
-            await ctx.invoke(self._todo_create, content=content)  # type: ignore
+            await ctx.invoke(self._todo_create, content=content)
 
     @_todo.command(name="list")
     async def _todo_list(self, ctx: custom.Context) -> None:
