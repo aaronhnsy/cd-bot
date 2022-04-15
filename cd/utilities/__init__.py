@@ -5,6 +5,8 @@ from __future__ import annotations
 from cd.utilities.asset import *
 from cd.utilities.datetime import *
 from cd.utilities.embed import *
+from cd.utilities.handlers import *
+from cd.utilities.http import *
 from cd.utilities.imaging import *
 from cd.utilities.links import *
 from cd.utilities.logger import *

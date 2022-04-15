@@ -30,7 +30,7 @@ class Manager:
 
     async def fetch_guild_config(self, guild_id: int) -> objects.GuildConfig:
 
-        data: objects.GuildData = await self.bot.db.fetchrow(
+        data: objects.GuildConfigData = await self.bot.db.fetchrow(
             "INSERT INTO guilds (id) values ($1) ON CONFLICT (id) DO UPDATE SET id = excluded.id RETURNING *",
             guild_id
         )
@@ -51,7 +51,7 @@ class Manager:
     async def fetch_user_config(self, user_id: int) -> objects.UserConfig:
 
         # Fetch user config
-        data: objects.UserData = await self.bot.db.fetchrow(
+        data: objects.UserConfigData = await self.bot.db.fetchrow(
             "INSERT INTO users (id) values ($1) ON CONFLICT (id) DO UPDATE SET id = excluded.id RETURNING *",
             user_id
         )

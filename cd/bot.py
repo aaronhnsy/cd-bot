@@ -4,6 +4,7 @@ from __future__ import annotations
 # Standard Library
 import collections
 import logging
+import os
 import time
 
 # Packages
@@ -14,10 +15,13 @@ import discord
 import mystbin
 import psutil
 import slate
+import tornado.httpserver
+import tornado.web
 from discord.ext import commands, tasks
 
 # Local
 from cd import checks, config, custom, enums, managers, utilities, values
+from cd.dashboard import handlers
 
 
 __log__: logging.Logger = logging.getLogger("cd.bot")
@@ -58,6 +62,21 @@ class CD(commands.AutoShardedBot):
         self.process: psutil.Process = psutil.Process()
         self.manager: managers.Manager = managers.Manager(self)
         self.start_time: float = time.time()
+
+        # dashboard
+        self.application = tornado.web.Application(
+            handlers.setup(bot=self),
+            static_path=os.path.join(os.path.dirname(__file__), "dashboard/static/"),
+            template_path=os.path.join(os.path.dirname(__file__), "dashboard/templates/"),
+            cookie_secret=config.COOKIE_SECRET,
+            default_host=config.HOST,
+            debug=True
+        )
+        self.server = tornado.httpserver.HTTPServer(
+            self.application,
+            xheaders=True
+        )
+        self.client: utilities.HTTPClient = utilities.MISSING
 
     # Setup
 
@@ -121,13 +140,20 @@ class CD(commands.AutoShardedBot):
 
             __log__.info(f"[EXTENSIONS] Loaded - {extension}")
 
+    async def start_dashboard(self) -> None:
+
+        self.server.bind(config.PORT, config.HOST)
+        self.server.start()
+
+        __log__.info("[DASHBOARD] Dashboard has connected.")
+
     async def setup_hook(self) -> None:
 
         self.add_check(checks.global_check, call_once=True)
 
         self.session = aiohttp.ClientSession()
-
         self.mystbin = mystbin.Client(session=self.session)
+        self.client = utilities.HTTPClient(self)
 
         self._LOG_WEBHOOKS[enums.LogType.DM] = discord.Webhook.from_url(
             session=self.session,
@@ -150,6 +176,7 @@ class CD(commands.AutoShardedBot):
         await self.connect_postgresql()
         await self.connect_redis()
         await self.connect_slate()
+        await self.start_dashboard()
         await self.setup_extensions()
 
     # Logging

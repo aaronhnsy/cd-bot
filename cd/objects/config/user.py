@@ -14,18 +14,18 @@ if TYPE_CHECKING:
 
 
 __all__ = (
-    "UserData",
+    "UserConfigData",
     "UserConfig",
 )
 
 
-class UserData(TypedDict):
+class UserConfigData(TypedDict):
     id: int
 
 
 class UserConfig:
 
-    def __init__(self, bot: CD, data: UserData) -> None:
+    def __init__(self, bot: CD, data: UserConfigData) -> None:
         self.bot: CD = bot
 
         self.id: int = data["id"]

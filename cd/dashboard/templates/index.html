@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}CD • home{% end title %}
+{% block description %}Home page{% end description %}
+
+{% block content %}
+
+<div class="container">
+
+    <div class="container mt-3 text-center">
+        <div class="card shadow m-1">
+            <div class="card-body">
+                <h2 class="card-text">Hey, I'm {{ bot.user.name }}!</h2>
+                <h4 class="card-text">{{ len(bot.guilds) }} servers</h4>
+                <h4 class="card-text">{{ len(bot.users) }} unique users</h4>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% end content %}

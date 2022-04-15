@@ -1,17 +1,5 @@
-# Future
-from __future__ import annotations
-
-# Standard Library
-from typing import Any, Literal
-
-
-__all__ = (
-    "MISSING",
-)
-
-
 """
-The following code is sourced from https://github.com/Rapptz/discord.py/blob/45d498c1b76deaf3b394d17ccf56112fa691d160/discord/utils.py#L92-L103 
+The following code is sourced from https://github.com/Rapptz/discord.py/blob/45d498c1b76deaf3b394d17ccf56112fa691d160/discord/utils.py#L92-L103
 and is subject to the following license:
 
 The MIT License (MIT)
@@ -36,6 +24,17 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
+
+# Future
+from __future__ import annotations
+
+# Standard Library
+from typing import Any, Literal
+
+
+__all__ = (
+    "MISSING",
+)
 
 
 class _MissingSentinel:

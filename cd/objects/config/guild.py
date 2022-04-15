@@ -14,12 +14,12 @@ if TYPE_CHECKING:
 
 
 __all__ = (
-    "GuildData",
+    "GuildConfigData",
     "GuildConfig",
 )
 
 
-class GuildData(TypedDict):
+class GuildConfigData(TypedDict):
     id: int
     prefix: Optional[str]
     dj_role_id: Optional[int]
@@ -29,7 +29,7 @@ class GuildData(TypedDict):
 
 class GuildConfig:
 
-    def __init__(self, bot: CD, data: GuildData) -> None:
+    def __init__(self, bot: CD, data: GuildConfigData) -> None:
         self.bot: CD = bot
 
         self.id: int = data["id"]
@@ -41,7 +41,7 @@ class GuildConfig:
     def __repr__(self) -> str:
         return f"<GuildConfig id={self.id}>"
 
-    #
+    # Config
 
     async def set_prefix(self, prefix: str | None) -> None:
 

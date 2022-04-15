@@ -45,7 +45,7 @@ class Todo:
     def __repr__(self) -> str:
         return f"<Todo id={self.id}, user_id={self.user_id}, created_at={self.created_at}>"
 
-    #
+    # Methods
 
     async def update_content(
         self,

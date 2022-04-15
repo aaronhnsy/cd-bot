@@ -133,10 +133,14 @@ class Player(slate.Player["CD", custom.Context, "Player"]):
 
     async def handle_track_start(self) -> None:
 
+        self.bot.dispatch("dashboard_track_start", voice_client=self)
+
         # Update controller message.
         await self.controller.handle_track_start()
 
     async def handle_track_end(self, reason: enums.TrackEndReason) -> None:
+
+        self.bot.dispatch("dashboard_track_end", voice_client=self)
 
         if reason is not enums.TrackEndReason.REPLACED:
 
@@ -153,3 +157,35 @@ class Player(slate.Player["CD", custom.Context, "Player"]):
 
         # Play the next track.
         await self._play_next()
+
+    # Overrides
+
+    async def connect(
+        self,
+        *,
+        timeout: float | None = None,
+        reconnect: bool | None = None,
+        self_mute: bool = False,
+        self_deaf: bool = True,
+    ) -> None:
+
+        await super().connect(
+            timeout=timeout,
+            reconnect=reconnect,
+            self_mute=self_mute,
+            self_deaf=self_deaf,
+        )
+
+        self.bot.dispatch("dashboard_player_connect", voice_client=self)
+
+    async def disconnect(
+        self,
+        *,
+        force: bool = False
+    ) -> None:
+
+        await super().disconnect(
+            force=force
+        )
+
+        self.bot.dispatch("dashboard_player_disconnect", voice_client=self)

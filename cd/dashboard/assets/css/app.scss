@@ -1,0 +1,189 @@
+/////////////////////////////////
+// Required bootstrap imports //
+///////////////////////////////
+
+@import "../node_modules/bootstrap/scss/functions";
+@import "../node_modules/bootstrap/scss/variables";
+@import "../node_modules/bootstrap/scss/mixins";
+@import "../node_modules/bootstrap/scss/utilities";
+
+
+//////////////////////////////////
+// Boostrap variable overrides //
+////////////////////////////////
+
+// Defaults
+$enable-shadows: true;
+$enable-negative-margins: true;
+
+// Cards
+$card-border-radius: 7.5px;
+$card-border-width: 0px;
+// Card colours
+$card-color: $white;
+$card-bg: var(--main-20);
+
+// Dropdowns
+$dropdown-min-width: 12em;
+$dropdown-padding-x: 0.4rem;
+$dropdown-padding-y: 0.4rem;
+$dropdown-border-radius: 5px;
+$dropdown-border-width: 0px;
+$dropdown-item-padding-y: 0.3em;
+$dropdown-item-padding-x: 0.3em;
+// Dropdown colours
+$dropdown-dark-color: $white;
+$dropdown-dark-bg: var(--background-20);
+$dropdown-dark-divider-bg: $white;
+$dropdown-dark-link-hover-color: $white;
+$dropdown-dark-link-hover-bg: var(--background-30);
+$dropdown-dark-link-active-color: $white;
+$dropdown-dark-link-active-bg: var(--background-30);
+
+// Navbars
+$navbar-nav-link-padding-x: 1.2rem;
+// Navbar colours
+$navbar-dark-color: $white;
+$navbar-dark-hover-color: $gray-500;
+$navbar-dark-active-color: $gray-500;
+
+// Progress
+$progress-bg: var(--progress);
+$progress-bar-bg: var(--progress-fill);
+
+
+/////////////////////////////
+// Other boostrap imports //
+///////////////////////////
+
+@import "../node_modules/bootstrap/scss/root";
+@import "../node_modules/bootstrap/scss/reboot";
+@import "../node_modules/bootstrap/scss/type";
+@import "../node_modules/bootstrap/scss/images";
+@import "../node_modules/bootstrap/scss/containers";
+@import "../node_modules/bootstrap/scss/progress";
+@import "../node_modules/bootstrap/scss/grid";
+@import "../node_modules/bootstrap/scss/forms";
+@import "../node_modules/bootstrap/scss/buttons";
+@import "../node_modules/bootstrap/scss/transitions";
+@import "../node_modules/bootstrap/scss/dropdown";
+@import "../node_modules/bootstrap/scss/button-group";
+@import "../node_modules/bootstrap/scss/nav";
+@import "../node_modules/bootstrap/scss/navbar";
+@import "../node_modules/bootstrap/scss/card";
+@import "../node_modules/bootstrap/scss/close";
+@import "../node_modules/bootstrap/scss/toasts";
+@import "../node_modules/bootstrap/scss/helpers";
+@import "../node_modules/bootstrap/scss/utilities/api";
+
+
+////////////////////
+// Custom styles //
+//////////////////
+
+:root {
+    --background-0: #FFFFFF;
+    --background-10: #FFFFFF;
+    --background-20: #373B40;
+    --background-30: #2F3136;
+    --background-40: #FFFFFF;
+
+    --progress: #535353;
+    --progress-fill: #b3b3b3;
+
+    --main-0: #801136;
+    --main-10: #A61646;
+    --main-20: #B3174B;
+    --main-30: #E91E61;
+    --main-40: #FF216B;
+}
+
+
+///////////////////////
+// Custom Scrollbar //
+/////////////////////
+::-webkit-scrollbar {
+    width: 15px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--background-30);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--main-30);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--main-20);
+}
+
+body {
+    background-color: var(--background-20);
+    color: $white;
+}
+
+
+//////////////
+// Filters //
+////////////
+.invert {
+    filter: invert(1);
+}
+
+
+//////////////
+// Buttons //
+////////////
+.btn {
+    transition: all 0.3s ease-out;
+}
+
+.btn:hover {
+    filter: brightness(70%);
+}
+
+
+////////////////
+// Dropdowns //
+//////////////
+.dropdown-menu {
+    transition: all 300ms ease-in-out;
+    opacity: 0;
+    visibility: hidden;
+    display: block;
+    z-index: 99999;
+}
+
+.dropdown-menu.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.dropdown-menu-end {
+    right: 0;
+    left: auto;
+}
+
+.dropdown-item {
+    border-radius: 5px;
+}
+
+#guildSelectorDropdown {
+    max-height: 500px;
+    max-width: 300px;
+    overflow-y: auto;
+}
+
+
+/////////////
+// Navbar //
+///////////
+.navbar {
+    background: var(--background-30);
+}
+
+.nav-link {
+    font-family: proxima-nova, sans-serif;
+    font-size: 15px;
+}
