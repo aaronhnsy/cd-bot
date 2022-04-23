@@ -57,8 +57,7 @@ class Player(commands.Cog):
                 description=f"I'm already connected to {ctx.voice_client.voice_channel.mention}."
             )
 
-        # slate doesn't like this for some reason, investigate later.
-        await ctx.author.voice.channel.connect(cls=custom.Player(text_channel=ctx.channel))  # type: ignore
+        await ctx.author.voice.channel.connect(cls=custom.Player(text_channel=ctx.channel))
         await ctx.send(
             embed=utilities.embed(
                 colour=values.GREEN,

@@ -53,8 +53,7 @@ class Play(commands.Cog):
                 description="You must be connected to a voice channel to use this command."
             )
 
-        # slate doesn't like this for some reason, investigate later.
-        await author_voice_channel.connect(cls=custom.Player(text_channel=ctx.channel))  # type: ignore
+        await author_voice_channel.connect(cls=custom.Player(text_channel=ctx.channel))
 
     # Play
 

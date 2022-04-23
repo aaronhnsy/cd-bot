@@ -27,12 +27,16 @@ __all__ = (
 Track = slate.Track[custom.Context]
 
 
-class Player(slate.Player["CD", custom.Context, "Player"]):
+class Player(slate.Player["CD", custom.Context]):
 
-    def __init__(self, *, text_channel: discord.TextChannel) -> None:
+    def __init__(
+        self,
+        *,
+        text_channel: discord.abc.MessageableChannel
+    ) -> None:
         super().__init__()
 
-        self.text_channel: discord.TextChannel = text_channel
+        self.text_channel: discord.TextChannel = text_channel  # type: ignore
 
         self.controller: custom.Controller = custom.Controller(voice_client=self)
         self.searcher: custom.Searcher = custom.Searcher(voice_client=self)

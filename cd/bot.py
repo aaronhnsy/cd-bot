@@ -46,7 +46,7 @@ class CD(commands.AutoShardedBot):
         self.session: aiohttp.ClientSession = utilities.MISSING
         self.db: asyncpg.Pool = utilities.MISSING
         self.redis: aioredis.Redis = utilities.MISSING
-        self.slate: slate.Pool[CD, custom.Context, custom.Player] = utilities.MISSING
+        self.slate: slate.Pool[CD, custom.Player] = utilities.MISSING
         self.mystbin: mystbin.Client = utilities.MISSING
 
         self._LOG_WEBHOOKS: dict[enums.LogType, discord.Webhook] = {
@@ -115,13 +115,13 @@ class CD(commands.AutoShardedBot):
         for node in config.NODES:
             try:
                 await self.slate.create_node(
-                    slate.Provider.OBSIDIAN,
                     bot=self,
+                    session=self.session,
+                    provider=slate.Provider.OBSIDIAN,
                     identifier=node["identifier"],
                     host=node["host"],
                     port=node["port"],
                     password=node["password"],
-                    session=self.session,
                     spotify_client_id=config.SPOTIFY_CLIENT_ID,
                     spotify_client_secret=config.SPOTIFY_CLIENT_SECRET,
                 )
