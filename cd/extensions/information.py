@@ -37,7 +37,7 @@ class Information(commands.Cog):
         """
 
         api_start = time.perf_counter()
-        await ctx.trigger_typing()
+        await ctx.typing()
         api_end = time.perf_counter()
 
         embed = utilities.embed(

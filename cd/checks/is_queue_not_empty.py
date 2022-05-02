@@ -2,14 +2,18 @@
 from __future__ import annotations
 
 # Standard Library
-from collections.abc import Callable
-from typing import Literal, TypeVar
+from typing import TYPE_CHECKING, Literal, TypeVar
 
 # Packages
 from discord.ext import commands
 
 # Local
 from cd import custom, exceptions
+
+
+if TYPE_CHECKING:
+    # Packages
+    from discord.ext.commands._types import Check
 
 
 __all__ = (
@@ -21,7 +25,7 @@ __all__ = (
 T = TypeVar("T")
 
 
-def is_queue_not_empty() -> Callable[[T], T]:
+def is_queue_not_empty() -> Check[custom.Context]:
 
     async def predicate(ctx: custom.Context) -> Literal[True]:
 
@@ -33,7 +37,7 @@ def is_queue_not_empty() -> Callable[[T], T]:
     return commands.check(predicate)
 
 
-def is_queue_history_not_empty() -> Callable[[T], T]:
+def is_queue_history_not_empty() -> Check[custom.Context]:
 
     async def predicate(ctx: custom.Context) -> Literal[True]:
 

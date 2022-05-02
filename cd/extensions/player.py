@@ -337,7 +337,7 @@ class Player(commands.Cog):
                 await guild_config.set_dj_role_id(None)
 
         try:
-            await commands.check_any(*_checks).predicate(ctx=ctx)
+            await commands.check_any(*_checks).predicate(ctx)
         except (commands.CheckAnyFailure, commands.MissingRole):
             raise exceptions.EmbedError(description="You don't have permission to force skip.")
 

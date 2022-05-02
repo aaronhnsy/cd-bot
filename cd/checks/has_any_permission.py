@@ -2,8 +2,7 @@
 from __future__ import annotations
 
 # Standard Library
-from collections.abc import Callable
-from typing import TypeVar
+from typing import TYPE_CHECKING, TypeVar
 
 # Packages
 import discord
@@ -11,6 +10,11 @@ from discord.ext import commands
 
 # Local
 from cd import custom
+
+
+if TYPE_CHECKING:
+    # Packages
+    from discord.ext.commands._types import Check
 
 
 __all__ = (
@@ -21,7 +25,7 @@ __all__ = (
 T = TypeVar("T")
 
 
-def has_any_permission(**permissions: bool) -> Callable[[T], T]:
+def has_any_permission(**permissions: bool) -> Check[custom.Context]:
 
     if invalid := set(permissions) - set(discord.Permissions.VALID_FLAGS):
         raise TypeError(f"Invalid permission(s): {', '.join(invalid)}")

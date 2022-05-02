@@ -51,7 +51,7 @@ class Settings(commands.Cog):
         ]
 
         try:
-            await commands.check_any(*_checks).predicate(ctx=ctx)
+            await commands.check_any(*_checks).predicate(ctx)
         except commands.CheckAnyFailure:
             raise exceptions.EmbedError(description=message)
 
