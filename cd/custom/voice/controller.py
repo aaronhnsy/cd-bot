@@ -17,18 +17,17 @@ __all__ = (
 )
 
 
-_MessageBuilder = Callable[..., Awaitable[tuple[str | None, discord.Embed | None]]]
+MessageBuilder = Callable[..., Awaitable[tuple[str | None, discord.Embed | None]]]
 
-
-_SHUFFLE_STATE_EMOJIS: dict[bool, str] = {
+SHUFFLE_STATE_EMOJIS: dict[bool, str] = {
     False: values.PLAYER_SHUFFLE_DISABLED,
     True:  values.PLAYER_SHUFFLE_ENABLED,
 }
-_PAUSE_STATE_EMOJIS: dict[bool, str] = {
+PAUSE_STATE_EMOJIS: dict[bool, str] = {
     False: values.PLAYER_IS_PLAYING,
     True:  values.PLAYER_IS_PAUSED
 }
-_LOOP_MODE_EMOJIS: dict[slate.QueueLoopMode, str] = {
+LOOP_MODE_EMOJIS: dict[slate.QueueLoopMode, str] = {
     slate.QueueLoopMode.DISABLED: values.PLAYER_LOOP_DISABLED,
     slate.QueueLoopMode.ALL:      values.PLAYER_LOOP_ALL,
     slate.QueueLoopMode.CURRENT:  values.PLAYER_LOOP_CURRENT,
@@ -47,15 +46,15 @@ class ShuffleButton(discord.ui.Button["ControllerView"]):
         assert self.view is not None
         await interaction.response.defer()
 
-        voice_client = self.view.voice_client
+        player = self.view.player
 
-        match voice_client.queue.shuffle_state:
+        match player.queue.shuffle_state:
             case True:
-                voice_client.queue.set_shuffle_state(False)
+                player.queue.set_shuffle_state(False)
             case False:
-                voice_client.queue.set_shuffle_state(True)
+                player.queue.set_shuffle_state(True)
 
-        await voice_client.controller.update_current_message()
+        await player.controller.update_current_message()
 
 
 class PreviousButton(discord.ui.Button["ControllerView"]):
@@ -70,21 +69,21 @@ class PreviousButton(discord.ui.Button["ControllerView"]):
         assert self.view is not None
         await interaction.response.defer()
 
-        voice_client = self.view.voice_client
+        player = self.view.player
 
         # Pop the previous track from the queue history and
         # then add it to front of the queue.
-        previous = voice_client.queue.history.pop(0)
-        voice_client.queue.items.insert(0, custom.QueueItem(previous))
+        previous = player.queue.history.pop(0)
+        player.queue.items.insert(0, custom.QueueItem(previous))
 
         # Add the current track to the queue right after the
         # previous track so that it will play again if the
         # 'next' button is pressed after the 'previous' button.
-        assert voice_client.current is not None
-        voice_client.queue.items.insert(1, custom.QueueItem(voice_client.current))
+        assert player.current is not None
+        player.queue.items.insert(1, custom.QueueItem(player.current))
 
         # Trigger the next track in the queue to play.
-        await voice_client.handle_track_end(enums.TrackEndReason.REPLACED)
+        await player.handle_track_end(enums.TrackEndReason.REPLACED)
 
 
 class PauseStateButton(discord.ui.Button["ControllerView"]):
@@ -99,14 +98,15 @@ class PauseStateButton(discord.ui.Button["ControllerView"]):
         assert self.view is not None
         await interaction.response.defer()
 
-        voice_client = self.view.voice_client
+        player = self.view.player
 
-        if voice_client.is_paused():
-            await voice_client.set_pause(False)
-        else:
-            await voice_client.set_pause(True)
+        match player.paused:
+            case True:
+                await player.set_pause(False)
+            case False:
+                await player.set_pause(True)
 
-        await voice_client.controller.update_current_message()
+        await player.controller.update_current_message()
 
 
 class NextButton(discord.ui.Button["ControllerView"]):
@@ -121,7 +121,7 @@ class NextButton(discord.ui.Button["ControllerView"]):
         assert self.view is not None
         await interaction.response.defer()
 
-        await self.view.voice_client.stop()
+        await self.view.player.stop()
 
 
 class LoopButton(discord.ui.Button["ControllerView"]):
@@ -136,55 +136,62 @@ class LoopButton(discord.ui.Button["ControllerView"]):
         assert self.view is not None
         await interaction.response.defer()
 
-        voice_client = self.view.voice_client
+        player = self.view.player
 
-        match voice_client.queue.loop_mode:
+        match player.queue.loop_mode:
             case slate.QueueLoopMode.DISABLED:
-                voice_client.queue.set_loop_mode(slate.QueueLoopMode.ALL)
+                player.queue.set_loop_mode(slate.QueueLoopMode.ALL)
             case slate.QueueLoopMode.ALL:
-                voice_client.queue.set_loop_mode(slate.QueueLoopMode.CURRENT)
+                player.queue.set_loop_mode(slate.QueueLoopMode.CURRENT)
             case slate.QueueLoopMode.CURRENT:
-                voice_client.queue.set_loop_mode(slate.QueueLoopMode.DISABLED)
+                player.queue.set_loop_mode(slate.QueueLoopMode.DISABLED)
 
-        await voice_client.controller.update_current_message()
+        await player.controller.update_current_message()
 
 
 class ControllerView(discord.ui.View):
 
-    def __init__(self, *, voice_client: custom.Player) -> None:
+    def __init__(self, *, player: custom.Player) -> None:
         super().__init__(timeout=None)
 
-        self.voice_client: custom.Player = voice_client
+        self.player: custom.Player = player
 
-        self._shuffle_button: ShuffleButton = ShuffleButton()
-        self._previous_button: PreviousButton = PreviousButton()
-        self._pause_state_button: PauseStateButton = PauseStateButton()
-        self._next_button: NextButton = NextButton()
-        self._loop_button: LoopButton = LoopButton()
+        self.shuffle_button: ShuffleButton = ShuffleButton()
+        self.previous_button: PreviousButton = PreviousButton()
+        self.pause_state_button: PauseStateButton = PauseStateButton()
+        self.next_button: NextButton = NextButton()
+        self.loop_button: LoopButton = LoopButton()
 
-        self.add_item(self._shuffle_button)
-        self.add_item(self._previous_button)
-        self.add_item(self._pause_state_button)
-        self.add_item(self._next_button)
-        self.add_item(self._loop_button)
+        self.add_item(self.shuffle_button)
+        self.add_item(self.previous_button)
+        self.add_item(self.pause_state_button)
+        self.add_item(self.next_button)
+        self.add_item(self.loop_button)
 
     def update_state(self) -> None:
-        self._shuffle_button.emoji = _SHUFFLE_STATE_EMOJIS[self.voice_client.queue.shuffle_state]
-        self._previous_button.disabled = not self.voice_client.queue.history
-        self._pause_state_button.emoji = _PAUSE_STATE_EMOJIS[self.voice_client.paused]
-        self._loop_button.emoji = _LOOP_MODE_EMOJIS[self.voice_client.queue.loop_mode]
+
+        player = self.player
+
+        self.shuffle_button.emoji = SHUFFLE_STATE_EMOJIS[player.queue.shuffle_state]
+        self.previous_button.disabled = not player.queue.history
+        self.pause_state_button.emoji = PAUSE_STATE_EMOJIS[player.paused]
+        self.loop_button.emoji = LOOP_MODE_EMOJIS[player.queue.loop_mode]
 
 
 class Controller:
 
-    def __init__(self, *, voice_client: custom.Player) -> None:
+    def __init__(
+        self,
+        *,
+        player: custom.Player
+    ) -> None:
 
-        self.voice_client: custom.Player = voice_client
+        self.player: custom.Player = player
 
         self.message: discord.Message | None = None
-        self.view: ControllerView = ControllerView(voice_client=self.voice_client)
+        self.view: ControllerView = ControllerView(player=self.player)
 
-        self._MESSAGE_BUILDERS: dict[enums.EmbedSize, _MessageBuilder] = {
+        self._MESSAGE_BUILDERS: dict[enums.EmbedSize, MessageBuilder] = {
             enums.EmbedSize.IMAGE:  self._build_image,
             enums.EmbedSize.SMALL:  self._build_small,
             enums.EmbedSize.MEDIUM: self._build_medium,
@@ -195,7 +202,7 @@ class Controller:
 
     async def _build_image(self) -> tuple[str, None]:
 
-        current = self.voice_client.current
+        current = self.player.current
 
         assert current is not None
         assert current.artwork_url is not None
@@ -203,11 +210,11 @@ class Controller:
         return (
             await utilities.edit_image(
                 url=current.artwork_url,
-                bot=self.voice_client.bot,
+                bot=self.player.bot,
                 function=utilities.spotify,
                 # kwargs
                 length=current.length // 1000,
-                elapsed=self.voice_client.position // 1000,
+                elapsed=self.player.position // 1000,
                 title=current.title,
                 artists=[current.author],
                 format="png",
@@ -217,7 +224,7 @@ class Controller:
 
     async def _build_small(self) -> tuple[None, discord.Embed]:
 
-        current = self.voice_client.current
+        current = self.player.current
         assert current is not None
 
         return (
@@ -233,18 +240,18 @@ class Controller:
 
     async def _build_medium(self) -> tuple[None, discord.Embed]:
 
-        current = self.voice_client.current
+        current = self.player.current
         assert current is not None
 
         _, embed = await self._build_small()
-
         assert embed.description is not None
+
         embed.description += "\n\n" \
-                             f"● **Requested by:** {getattr(current.requester, 'mention', None)}\n" \
+                             f"● **Requested by:** {getattr(current.extras['ctx'].author, 'mention', None)}\n" \
                              f"● **Source:** {current.source.value.title()}\n" \
-                             f"● **Paused:** {utilities.readable_bool(self.voice_client.paused).title()}\n" \
-                             f"● **Effects:** {', '.join([effect.value for effect in self.voice_client.effects] or ['N/A'])}\n" \
-                             f"● **Position:** {utilities.format_seconds(self.voice_client.position // 1000)} / {utilities.format_seconds(current.length // 1000)}\n"
+                             f"● **Paused:** {utilities.readable_bool(self.player.paused).title()}\n" \
+                             f"● **Effects:** {', '.join([effect.value for effect in self.player.effects] or ['N/A'])}\n" \
+                             f"● **Position:** {utilities.format_seconds(self.player.position // 1000)} / {utilities.format_seconds(current.length // 1000)}\n"
 
         return _, embed
 
@@ -252,25 +259,23 @@ class Controller:
 
         _, embed = await self._build_medium()
 
-        if self.voice_client.queue.is_empty():
+        if self.player.queue.is_empty():
             return _, embed
+
+        assert embed.description is not None
 
         entries = [
             f"**{index}. [{discord.utils.escape_markdown(item.track.title)}]({item.track.uri})**\n"
             f"**⤷** by **{discord.utils.escape_markdown(item.track.author)}** | {utilities.format_seconds(item.track.length // 1000, friendly=True)}\n"
-            for index, item in enumerate(self.voice_client.queue.items[:3], start=1)
+            for index, item in enumerate(self.player.queue.items[:3], start=1)
         ]
-
-        assert embed.description is not None
-        embed.description += f"\n● **Up next ({len(self.voice_client.queue)}):**\n{''.join(entries)}"
+        embed.description += f"\n● **Up next ({len(self.player.queue)}):**\n{''.join(entries)}"
 
         return _, embed
 
     async def build_message(self) -> dict[str, str | discord.Embed | None]:
 
-        guild_config = await self.voice_client.bot.manager.get_guild_config(
-            self.voice_client.voice_channel.guild.id
-        )
+        guild_config = await self.player.bot.manager.get_guild_config(self.player.channel.guild.id)
         message = await self._MESSAGE_BUILDERS[guild_config.embed_size]()
 
         return {"content": message[0], "embed": message[1]}
@@ -279,24 +284,24 @@ class Controller:
 
     async def send_new_message(self) -> None:
 
-        if not self.voice_client.current:
+        if not self.player.current:
             return
 
         kwargs = await self.build_message()
         self.view.update_state()
 
-        self.message = await self.voice_client.text_channel.send(**kwargs, view=self.view)
+        self.message = await self.player.text_channel.send(**kwargs, view=self.view)
 
     async def update_current_message(self) -> None:
 
-        if not self.message or not self.voice_client.current:
+        if not self.message or not self.player.current:
             return
 
         kwargs = await self.build_message()
         self.view.update_state()
 
         try:
-            await self.message.edit(**kwargs, view=self.view)
+            self.message = await self.message.edit(**kwargs, view=self.view)
         except (discord.NotFound, discord.HTTPException):
             pass
 
@@ -310,8 +315,8 @@ class Controller:
         if not self.message:
             return
 
-        assert self.voice_client._current is not None
-        track = self.voice_client._current
+        assert self.player._current is not None
+        track = self.player._current
 
         if reason in [enums.TrackEndReason.NORMAL, enums.TrackEndReason.REPLACED]:
             colour = values.MAIN
@@ -320,7 +325,7 @@ class Controller:
         else:
             colour = values.RED
             title = "Something went wrong!"
-            view = discord.ui.View(timeout=None).add_item(
+            view = discord.ui.View().add_item(
                 discord.ui.Button(label="Support Server", url=values.SUPPORT_LINK)
             )
 
@@ -354,11 +359,10 @@ class Controller:
 
     async def handle_track_end(self, reason: enums.TrackEndReason) -> None:
 
-        guild_config = await self.voice_client.bot.manager.get_guild_config(
-            self.voice_client.voice_channel.guild.id
-        )
+        guild_config = await self.player.bot.manager.get_guild_config(self.player.channel.guild.id)
 
-        if guild_config.delete_old_now_playing_messages:
-            await self._delete_old_message()
-        else:
-            await self._edit_old_message(reason)
+        match guild_config.delete_old_now_playing_messages:
+            case True:
+                await self._delete_old_message()
+            case False:
+                await self._edit_old_message(reason)

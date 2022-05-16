@@ -43,7 +43,7 @@ class Queue(commands.Cog):
         Shows the queue.
         """
 
-        assert ctx.voice_client is not None
+        assert ctx.player is not None
 
         paginator = paginators.EmbedPaginator(
             ctx=ctx,
@@ -51,14 +51,14 @@ class Queue(commands.Cog):
                 f"**{index}. [{discord.utils.escape_markdown(item.track.title)}]({item.track.uri})** by **{discord.utils.escape_markdown(item.track.author or 'Unknown')}**\n"
                 f"**⤷** {utilities.format_seconds(item.track.length // 1000, friendly=True)} | "
                 f"{item.track.source.value.title()} | "
-                f"Added by: {getattr(item.track.requester, 'mention', None)}"
-                for index, item in enumerate(ctx.voice_client.queue.items, start=1)
+                f"Added by: {getattr(item.track.extras['ctx'].author, 'mention', None)}"
+                for index, item in enumerate(ctx.player.queue.items, start=1)
             ],
             per_page=5,
             splitter="\n\n",
-            embed_footer=f"{len(ctx.voice_client.queue.items)} tracks | "
-                         f"{utilities.format_seconds(sum(item.track.length for item in ctx.voice_client.queue.items) // 1000, friendly=True)} | "
-                         f"Loop mode: {ctx.voice_client.queue.loop_mode.name.title()} | "
+            embed_footer=f"{len(ctx.player.queue.items)} tracks | "
+                         f"{utilities.format_seconds(sum(item.track.length for item in ctx.player.queue.items) // 1000, friendly=True)} | "
+                         f"Loop mode: {ctx.player.queue.loop_mode.name.title()} | "
                          f"1 = up next",
         )
         await paginator.start()
@@ -71,7 +71,7 @@ class Queue(commands.Cog):
         Shows the queue history.
         """
 
-        assert ctx.voice_client is not None
+        assert ctx.player is not None
 
         paginator = paginators.EmbedPaginator(
             ctx=ctx,
@@ -79,14 +79,14 @@ class Queue(commands.Cog):
                 f"**{index}. [{discord.utils.escape_markdown(track.title)}]({track.uri})** by **{discord.utils.escape_markdown(track.author or 'Unknown')}**\n"
                 f"**⤷** {utilities.format_seconds(track.length // 1000, friendly=True)} | "
                 f"{track.source.value.title()} | "
-                f"Added by: {getattr(track.requester, 'mention', None)}"
-                for index, track in enumerate(ctx.voice_client.queue.history, start=1)
+                f"Added by: {getattr(track.extras['ctx'].author, 'mention', None)}"
+                for index, track in enumerate(ctx.player.queue.history, start=1)
             ],
             per_page=5,
             splitter="\n\n",
-            embed_footer=f"{len(ctx.voice_client.queue.history)} tracks | "
-                         f"{utilities.format_seconds(sum(track.length for track in ctx.voice_client.queue.history) // 1000, friendly=True)} | "
-                         f"Loop mode: {ctx.voice_client.queue.loop_mode.name.title()} | "
+            embed_footer=f"{len(ctx.player.queue.history)} tracks | "
+                         f"{utilities.format_seconds(sum(track.length for track in ctx.player.queue.history) // 1000, friendly=True)} | "
+                         f"Loop mode: {ctx.player.queue.loop_mode.name.title()} | "
                          f"1 = most recent",
         )
         await paginator.start()
@@ -102,16 +102,16 @@ class Queue(commands.Cog):
         Clears the queue.
         """
 
-        assert ctx.voice_client is not None
+        assert ctx.player is not None
 
-        ctx.voice_client.queue.clear()
+        ctx.player.queue.clear()
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,
                 description="Cleared the queue."
             )
         )
-        await ctx.voice_client.controller.update_current_message()
+        await ctx.player.controller.update_current_message()
 
     @commands.hybrid_command(name="reverse")
     @checks.is_queue_not_empty()
@@ -122,16 +122,16 @@ class Queue(commands.Cog):
         Reverses the queue.
         """
 
-        assert ctx.voice_client is not None
+        assert ctx.player is not None
 
-        ctx.voice_client.queue.reverse()
+        ctx.player.queue.reverse()
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,
                 description="Reversed the queue."
             )
         )
-        await ctx.voice_client.controller.update_current_message()
+        await ctx.player.controller.update_current_message()
 
     @commands.hybrid_command(name="sort")
     @checks.is_queue_not_empty()
@@ -157,14 +157,14 @@ class Queue(commands.Cog):
         - `no`/`n`/`false`/`f`/`off`
         """
 
-        assert ctx.voice_client is not None
+        assert ctx.player is not None
 
         if method == "title":
-            ctx.voice_client.queue.items.sort(key=lambda item: item.track.title, reverse=reverse)
+            ctx.player.queue.items.sort(key=lambda item: item.track.title, reverse=reverse)
         elif method == "author":
-            ctx.voice_client.queue.items.sort(key=lambda item: item.track.author, reverse=reverse)
+            ctx.player.queue.items.sort(key=lambda item: item.track.author, reverse=reverse)
         elif method == "length":
-            ctx.voice_client.queue.items.sort(key=lambda item: item.track.length, reverse=reverse)
+            ctx.player.queue.items.sort(key=lambda item: item.track.length, reverse=reverse)
 
         await ctx.reply(
             embed=utilities.embed(
@@ -172,7 +172,7 @@ class Queue(commands.Cog):
                 description=f"{'Inversely sorted' if reverse else 'Sorted'} the queue with method **{method}**."
             )
         )
-        await ctx.voice_client.controller.update_current_message()
+        await ctx.player.controller.update_current_message()
 
     @commands.hybrid_command(name="remove", aliases=["rm"])
     @checks.is_queue_not_empty()
@@ -186,9 +186,9 @@ class Queue(commands.Cog):
         `entry`: The position of the track to remove.
         """
 
-        assert ctx.voice_client is not None
+        assert ctx.player is not None
 
-        length = len(ctx.voice_client.queue)
+        length = len(ctx.player.queue)
 
         if entry < 1 or entry > length:
             raise exceptions.EmbedError(
@@ -196,7 +196,7 @@ class Queue(commands.Cog):
                             f"**{length}** {utilities.pluralize('track', length)}."
             )
 
-        item = ctx.voice_client.queue.get(position=entry - 1)
+        item = ctx.player.queue.get(position=entry - 1)
         assert item is not None
 
         await ctx.reply(
@@ -206,7 +206,7 @@ class Queue(commands.Cog):
                             f"by **{discord.utils.escape_markdown(item.track.author or 'Unknown')}** from the queue."
             )
         )
-        await ctx.voice_client.controller.update_current_message()
+        await ctx.player.controller.update_current_message()
 
     @commands.hybrid_command(name="move", aliases=["mv"])
     @checks.is_queue_not_empty()
@@ -221,9 +221,9 @@ class Queue(commands.Cog):
         `to`: The position to move the track to.
         """
 
-        assert ctx.voice_client is not None
+        assert ctx.player is not None
 
-        length = len(ctx.voice_client.queue)
+        length = len(ctx.player.queue)
 
         if entry < 1 or entry > length:
             raise exceptions.EmbedError(
@@ -236,10 +236,10 @@ class Queue(commands.Cog):
                             f"**{length}** {utilities.pluralize('track', length)}."
             )
 
-        item = ctx.voice_client.queue.get(position=entry - 1)
+        item = ctx.player.queue.get(position=entry - 1)
         assert item is not None
 
-        ctx.voice_client.queue.put(item, position=to - 1)
+        ctx.player.queue.put(item, position=to - 1)
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,
@@ -248,7 +248,7 @@ class Queue(commands.Cog):
                             f"**{entry}** to position **{to}**.",
             )
         )
-        await ctx.voice_client.controller.update_current_message()
+        await ctx.player.controller.update_current_message()
 
     @commands.hybrid_command(
         name="remove-duplicates",
@@ -262,10 +262,10 @@ class Queue(commands.Cog):
         Removes duplicate tracks from the queue.
         """
 
-        assert ctx.voice_client is not None
+        assert ctx.player is not None
 
-        ctx.voice_client.queue.items = list(
-            {item.track.identifier: item for item in ctx.voice_client.queue.items}.values()
+        ctx.player.queue.items = list(
+            {item.track.identifier: item for item in ctx.player.queue.items}.values()
         )
 
         await ctx.reply(
@@ -274,7 +274,7 @@ class Queue(commands.Cog):
                 description="Removed duplicate tracks from the queue."
             )
         )
-        await ctx.voice_client.controller.update_current_message()
+        await ctx.player.controller.update_current_message()
 
     # Toggleable
 
@@ -286,23 +286,23 @@ class Queue(commands.Cog):
         Switches between queue loop modes; disabled, current, and all.
         """
 
-        assert ctx.voice_client is not None
+        assert ctx.player is not None
 
-        match ctx.voice_client.queue.loop_mode:
+        match ctx.player.queue.loop_mode:
             case slate.QueueLoopMode.DISABLED:
-                ctx.voice_client.queue.set_loop_mode(slate.QueueLoopMode.ALL)
+                ctx.player.queue.set_loop_mode(slate.QueueLoopMode.ALL)
             case slate.QueueLoopMode.ALL:
-                ctx.voice_client.queue.set_loop_mode(slate.QueueLoopMode.CURRENT)
+                ctx.player.queue.set_loop_mode(slate.QueueLoopMode.CURRENT)
             case slate.QueueLoopMode.CURRENT:
-                ctx.voice_client.queue.set_loop_mode(slate.QueueLoopMode.DISABLED)
+                ctx.player.queue.set_loop_mode(slate.QueueLoopMode.DISABLED)
 
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description=f"The queue loop mode is now **{ctx.voice_client.queue.loop_mode.name.title()}**.",
+                description=f"The queue loop mode is now **{ctx.player.queue.loop_mode.name.title()}**.",
             )
         )
-        await ctx.voice_client.controller.update_current_message()
+        await ctx.player.controller.update_current_message()
 
     @commands.hybrid_command(name="shuffle")
     @checks.is_author_connected()
@@ -312,14 +312,14 @@ class Queue(commands.Cog):
         Toggles the queue shuffling or not.
         """
 
-        assert ctx.voice_client is not None
+        assert ctx.player is not None
 
-        match ctx.voice_client.queue.shuffle_state:
+        match ctx.player.queue.shuffle_state:
             case True:
-                ctx.voice_client.queue.set_shuffle_state(False)
+                ctx.player.queue.set_shuffle_state(False)
                 description = "The queue will no longer shuffle."
             case False:
-                ctx.voice_client.queue.set_shuffle_state(True)
+                ctx.player.queue.set_shuffle_state(True)
                 description = "The queue will now shuffle."
             case _:
                 raise ValueError
@@ -330,4 +330,4 @@ class Queue(commands.Cog):
                 description=description
             )
         )
-        await ctx.voice_client.controller.update_current_message()
+        await ctx.player.controller.update_current_message()

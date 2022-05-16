@@ -28,7 +28,7 @@ def is_player_playing() -> Check[custom.Context]:
 
     async def predicate(ctx: custom.Context) -> Literal[True]:
 
-        if not ctx.voice_client or not ctx.voice_client.is_playing():
+        if not ctx.player or not ctx.player.is_playing():
             raise exceptions.EmbedError(description="There are no tracks playing.")
 
         return True

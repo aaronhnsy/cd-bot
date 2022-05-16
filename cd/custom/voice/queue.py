@@ -10,9 +10,6 @@ from typing import Any
 # Packages
 import slate
 
-# Local
-from cd import custom
-
 
 __all__ = (
     "QueueItem",
@@ -20,19 +17,16 @@ __all__ = (
 )
 
 
-Track = slate.Track[custom.Context]
-
-
 class QueueItem:
 
     def __init__(
         self,
-        track: Track, /,
+        track: slate.Track, /,
         *,
         start_time: int = 0
     ) -> None:
 
-        self.track: Track = track
+        self.track: slate.Track = track
         self.start_time: int = start_time
 
 
@@ -41,7 +35,7 @@ class Queue:
     def __init__(self) -> None:
 
         self.items: list[QueueItem] = []
-        self.history: list[Track] = []
+        self.history: list[slate.Track] = []
 
         self.loop_mode: slate.QueueLoopMode = slate.QueueLoopMode.DISABLED
         self.shuffle_state: bool = False

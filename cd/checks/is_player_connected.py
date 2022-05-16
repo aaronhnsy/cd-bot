@@ -28,7 +28,7 @@ def is_player_connected() -> Check[custom.Context]:
 
     async def predicate(ctx: custom.Context) -> Literal[True]:
 
-        if not ctx.voice_client or not ctx.voice_client.is_connected():
+        if not ctx.player or not ctx.player.is_connected():
             raise exceptions.EmbedError(description="I'm not connected to any voice channels.")
 
         return True

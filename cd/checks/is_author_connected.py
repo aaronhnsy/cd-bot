@@ -32,7 +32,7 @@ def is_author_connected() -> Check[custom.Context]:
         assert isinstance(ctx.author, discord.Member)
 
         author_channel = ctx.author.voice and ctx.author.voice.channel
-        voice_client_channel = ctx.voice_client and ctx.voice_client.voice_channel
+        voice_client_channel = ctx.player and ctx.player.voice_channel
 
         if voice_client_channel != author_channel:
             raise exceptions.EmbedError(

@@ -16,37 +16,31 @@ __all__ = (
 )
 
 
-Track = slate.Track[custom.Context]
-Search = slate.Search[custom.Context]
+class SearcherSelect(discord.ui.Select["SearcherView"]):
 
+    def __init__(self) -> None:
 
-class TrackSearchSelect(discord.ui.Select["TrackSearchView"]):
-
-    def __init__(
-        self,
-        *,
-        view: "TrackSearchView"
-    ) -> None:
+        assert self.view is not None
 
         super().__init__(
             placeholder="Select some tracks:",
-            max_values=len(view.search.tracks[:25]),
+            max_values=len(self.view.search.tracks[:25]),
             options=[
                 discord.SelectOption(
                     label=f"{track.title[:100]}",
                     value=f"{index}",
                     description=f"by {(track.author or 'Unknown')[:95]}"
-                ) for index, track in enumerate(view.search.tracks[:25])
+                ) for index, track in enumerate(self.view.search.tracks[:25])
             ]
         )
 
     async def callback(self, interaction: discord.Interaction) -> None:
 
         assert self.view is not None
-        assert self.view.ctx.voice_client is not None
+        assert self.view.ctx.player is not None
 
-        # Defer the interaction as we don't actually
-        # respond using it.
+        # Defer the interaction response because we
+        # don't need to it to respond.
         await interaction.response.defer()
 
         # Get the users selected tracks and construct
@@ -54,19 +48,18 @@ class TrackSearchSelect(discord.ui.Select["TrackSearchView"]):
         tracks = [self.view.search.tracks[int(index)] for index in self.values]
 
         if len(tracks) == 1:
-            embed = utilities.embed(
-                colour=values.GREEN,
-                description=f"Added the **{self.view.search.source.value.title()}** track "
-                            f"**[{discord.utils.escape_markdown(tracks[0].title)}]({tracks[0].uri})** "
-                            f"by **{discord.utils.escape_markdown(tracks[0].author or 'Unknown')}** to the queue."
-            )
+            description = f"Added the **{self.view.search.source.value.title()}** track " \
+                          f"**[{discord.utils.escape_markdown(tracks[0].title)}]({tracks[0].uri})** " \
+                          f"by **{discord.utils.escape_markdown(tracks[0].author or 'Unknown')}** to the queue."
         else:
-            embed = utilities.embed(
-                colour=values.GREEN,
-                description="Added your selected tracks to the queue."
-            )
+            description = "Added your selected tracks to the queue."
 
-        # Update this select menus state.
+        embed = utilities.embed(
+            colour=values.GREEN,
+            description=description
+        )
+
+        # Update the select menus state.
         self.disabled = True
         self.placeholder = "Done!"
 
@@ -78,39 +71,39 @@ class TrackSearchSelect(discord.ui.Select["TrackSearchView"]):
             pass
 
         # Add the selected tracks to the queue and
-        # the player's controller state.
-        self.view.ctx.voice_client.queue.extend(
+        # update the players' controller message.
+        self.view.ctx.player.queue.extend(
             [custom.QueueItem(track) for track in tracks],
             position=0 if (self.view.play_next or self.view.play_now) else None
         )
         if self.view.play_now:
-            await self.view.ctx.voice_client.stop()
-        if not self.view.ctx.voice_client.is_playing():
-            await self.view.ctx.voice_client._play_next()
+            await self.view.ctx.player.stop()
+        if not self.view.ctx.player.is_playing():
+            await self.view.ctx.player._play_next()
 
-        await self.view.ctx.voice_client.controller.update_current_message()
+        await self.view.ctx.player.controller.update_current_message()
 
 
-class TrackSearchView(discord.ui.View):
+class SearcherView(discord.ui.View):
 
     def __init__(
         self,
         *,
         ctx: custom.Context,
-        search: Search,
+        search: slate.Search,
         play_next: bool = False,
         play_now: bool = False
     ) -> None:
         super().__init__(timeout=60)
 
         self.ctx: custom.Context = ctx
-        self.search: Search = search
+        self.search: slate.Search = search
         self.play_next: bool = play_next
         self.play_now: bool = play_now
 
         self.message: discord.Message = utilities.MISSING
 
-        self.select: TrackSearchSelect = TrackSearchSelect(view=self)
+        self.select: SearcherSelect = SearcherSelect()
         self.add_item(self.select)
 
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
@@ -121,7 +114,7 @@ class TrackSearchView(discord.ui.View):
         await interaction.response.send_message(
             embed=utilities.embed(
                 colour=values.RED,
-                description="You are not allowed to use this search menu."
+                description="This search menu does not belong to you."
             ),
             ephemeral=True
         )
@@ -143,39 +136,37 @@ class Searcher:
     def __init__(
         self,
         *,
-        voice_client: custom.Player
+        player: custom.Player
     ) -> None:
 
-        self.voice_client: custom.Player = voice_client
+        self.player: custom.Player = player
 
-    async def _search(
+    async def search(
         self,
         query: str,
         /, *,
         source: slate.Source,
-        ctx: custom.Context
-    ) -> Search:
+        ctx: custom.Context,
+    ) -> slate.Search:
 
         if (url := yarl.URL(query)) and url.host and url.scheme:
             source = slate.Source.NONE
 
         try:
-            search = await self.voice_client._node.search(query, source=source, ctx=ctx)
+            search = await self.player.node.search(query, source=source, ctx=ctx)
 
         except slate.NoResultsFound as error:
             raise exceptions.EmbedError(
-                description=f"No **{error.source.value.replace('_', ' ').title()}** {error.type}s were found for your "
-                            f"search.",
+                description=f"No **{error.source.value.replace('_', ' ').title()}** {error.type}s were found for "
+                            f"your search.",
             )
 
         except (slate.SearchFailed, slate.HTTPError):
-
-            view = discord.ui.View()
-            view.add_item(discord.ui.Button(label="Support Server", url=values.SUPPORT_LINK))
-
             raise exceptions.EmbedError(
                 description="There was an error while searching for results, please try again later.",
-                view=view
+                view=discord.ui.View().add_item(
+                    discord.ui.Button(label="Support Server", url=values.SUPPORT_LINK)
+                )
             )
 
         return search
@@ -191,15 +182,15 @@ class Searcher:
         start_time: int = 0,
     ) -> None:
 
-        search = await self._search(query, source=source, ctx=ctx)
+        search = await self.search(query, source=source, ctx=ctx)
         position = 0 if (play_next or play_now) else None
 
         if (
-            isinstance(search.result, (spotipy.Album, spotipy.Playlist, spotipy.Artist, slate.Collection))
+                isinstance(search.result, (spotipy.Album, spotipy.Playlist, spotipy.Artist, slate.Collection))
                 and
-            getattr(search.result, "name", "").startswith("Search result for:") is False
+                getattr(search.result, "name", "").startswith("Search result for:") is False
         ):
-            self.voice_client.queue.extend(
+            self.player.queue.extend(
                 [custom.QueueItem(track) for track in search.tracks],
                 position=position
             )
@@ -209,7 +200,7 @@ class Searcher:
                             f"**[{search.result.name}]({search.result.url})** to the queue."
             )
         else:
-            self.voice_client.queue.put(
+            self.player.queue.put(
                 custom.QueueItem(search.tracks[0], start_time=start_time),
                 position=position
             )
@@ -223,11 +214,11 @@ class Searcher:
         await ctx.reply(embed=embed)
 
         if play_now:
-            await self.voice_client.stop()
-        if not self.voice_client.is_playing():
-            await self.voice_client._play_next()
+            await self.player.stop()
+        if not self.player.is_playing():
+            await self.player._play_next()
 
-        await self.voice_client.controller.update_current_message()
+        await self.player.controller.update_current_message()
 
     async def select(
         self,
@@ -239,8 +230,8 @@ class Searcher:
         play_now: bool = False,
     ) -> None:
 
-        search = await self._search(query, source=source, ctx=ctx)
-        view = TrackSearchView(ctx=ctx, search=search, play_next=play_next, play_now=play_now)
+        search = await self.search(query, source=source, ctx=ctx)
+        view = SearcherView(ctx=ctx, search=search, play_next=play_next, play_now=play_now)
 
         message = await ctx.reply(None, view=view)
         view.message = message

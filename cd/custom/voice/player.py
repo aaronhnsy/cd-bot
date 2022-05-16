@@ -24,10 +24,7 @@ __all__ = (
 )
 
 
-Track = slate.Track[custom.Context]
-
-
-class Player(slate.Player["CD", custom.Context]):
+class Player(slate.Player["CD", "Player"]):
 
     def __init__(
         self,
@@ -38,8 +35,8 @@ class Player(slate.Player["CD", custom.Context]):
 
         self.text_channel: discord.TextChannel = text_channel  # type: ignore
 
-        self.controller: custom.Controller = custom.Controller(voice_client=self)
-        self.searcher: custom.Searcher = custom.Searcher(voice_client=self)
+        self.controller: custom.Controller = custom.Controller(player=self)
+        self.searcher: custom.Searcher = custom.Searcher(player=self)
         self.queue: custom.Queue = custom.Queue()
 
         self.skip_request_ids: set[int] = set()
@@ -70,24 +67,35 @@ class Player(slate.Player["CD", custom.Context]):
         )
         await self.disconnect()
 
-    async def _convert_spotify_track(self, track: Track) -> Track | None:
+    async def _convert_spotify_track(self, track: slate.Track) -> slate.Track | None:
 
-        assert track.ctx is not None
-
+        ctx: custom.Context = track.extras["ctx"]
         search = None
 
         if track.isrc:
             try:
-                search = await self.searcher._search(track.isrc, source=slate.Source.YOUTUBE_MUSIC, ctx=track.ctx)
+                search = await self.searcher.search(
+                    track.isrc,
+                    source=slate.Source.YOUTUBE_MUSIC,
+                    ctx=ctx
+                )
             except exceptions.EmbedError:
                 try:
-                    search = await self.searcher._search(track.isrc, source=slate.Source.YOUTUBE, ctx=track.ctx)
+                    search = await self.searcher.search(
+                        track.isrc,
+                        source=slate.Source.YOUTUBE,
+                        ctx=ctx
+                    )
                 except exceptions.EmbedError:
                     pass
 
         if search is None:
             try:
-                search = await self.searcher._search(f"{track.author} - {track.title}", source=slate.Source.YOUTUBE, ctx=track.ctx)
+                search = await self.searcher.search(
+                    f"{track.author} - {track.title}",
+                    source=slate.Source.YOUTUBE,
+                    ctx=ctx
+                )
             except exceptions.EmbedError:
                 pass
 
@@ -137,14 +145,14 @@ class Player(slate.Player["CD", custom.Context]):
 
     async def handle_track_start(self) -> None:
 
-        self.bot.dispatch("dashboard_track_start", voice_client=self)
+        self.bot.dispatch("dashboard_track_start", player=self)
 
         # Update controller message.
         await self.controller.handle_track_start()
 
     async def handle_track_end(self, reason: enums.TrackEndReason) -> None:
 
-        self.bot.dispatch("dashboard_track_end", voice_client=self)
+        self.bot.dispatch("dashboard_track_end", player=self)
 
         if reason is not enums.TrackEndReason.REPLACED:
 
@@ -180,7 +188,7 @@ class Player(slate.Player["CD", custom.Context]):
             self_deaf=self_deaf,
         )
 
-        self.bot.dispatch("dashboard_player_connect", voice_client=self)
+        self.bot.dispatch("dashboard_player_connect", player=self)
 
     async def disconnect(
         self,
@@ -192,4 +200,4 @@ class Player(slate.Player["CD", custom.Context]):
             force=force
         )
 
-        self.bot.dispatch("dashboard_player_disconnect", voice_client=self)
+        self.bot.dispatch("dashboard_player_disconnect", player=self)

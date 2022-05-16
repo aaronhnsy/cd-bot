@@ -153,7 +153,9 @@ class WebSocket(utilities.WebSocketHandler, abc.ABC):
     # Utilities
 
     @staticmethod
-    def _track_to_dict(track: slate.Track[custom.Context]) -> dict[str, Any]:
+    def _track_to_dict(track: slate.Track) -> dict[str, Any]:
+
+        ctx: custom.Context = track.extras["ctx"]
 
         return {
             "title":       track.title,
@@ -163,7 +165,7 @@ class WebSocket(utilities.WebSocketHandler, abc.ABC):
             "length":      track.length,
             "source":      track.source.name,
             "artwork_url": track.artwork_url,
-            "requester":   track.requester.name if track.requester else None,
+            "requester":   ctx.author.name,
         }
 
     # Tasks

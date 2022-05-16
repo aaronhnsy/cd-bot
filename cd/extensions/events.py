@@ -312,8 +312,9 @@ class Events(commands.Cog):
 
             # Send friendly error message to user.
 
-            view = discord.ui.View(timeout=None)
-            view.add_item(discord.ui.Button(label="Support Server", url=values.SUPPORT_LINK))
+            view = discord.ui.View().add_item(
+                discord.ui.Button(label="Support Server", url=values.SUPPORT_LINK)
+            )
 
             await ctx.reply(
                 embed=utilities.embed(

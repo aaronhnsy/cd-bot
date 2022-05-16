@@ -13,6 +13,9 @@ from cd import checks, custom, enums, utilities, values
 from cd.bot import CD
 
 
+FilterType = slate.Rotation | slate.Timescale | slate.ChannelMix
+
+
 async def setup(bot: CD) -> None:
     await bot.add_cog(Effects(bot))
 
@@ -34,15 +37,15 @@ class Effects(commands.Cog):
 
     # Controls
 
-    EFFECT_MAP: dict[enums.Effect, dict[str, slate.BaseFilter]] = {
-        enums.Effect.ROTATION:  {"rotation": slate.Rotation(rotation_hertz=0.5)},
+    EFFECT_MAP: dict[enums.Effect, dict[str, FilterType]] = {
+        enums.Effect.ROTATION:  {"rotation": slate.Rotation(speed=0.5)},
         enums.Effect.NIGHTCORE: {"timescale": slate.Timescale(speed=1.12, pitch=1.12)},
         enums.Effect.MONO:      {"channel_mix": slate.ChannelMix(left_to_right=1, right_to_left=1)},
         enums.Effect.LEFT_EAR:  {"channel_mix": slate.ChannelMix(right_to_right=0, right_to_left=1)},
         enums.Effect.RIGHT_EAR: {"channel_mix": slate.ChannelMix(left_to_left=0, left_to_right=1)},
     }
 
-    INVERSE_EFFECT_MAP: dict[enums.Effect, dict[str, slate.BaseFilter]] = {
+    INVERSE_EFFECT_MAP: dict[enums.Effect, dict[str, FilterType]] = {
         enums.Effect.ROTATION:  {"rotation": slate.Rotation()},
         enums.Effect.NIGHTCORE: {"timescale": slate.Timescale()},
         enums.Effect.MONO:      {"channel_mix": slate.ChannelMix()},
@@ -58,22 +61,22 @@ class Effects(commands.Cog):
 
     async def _toggle_effect(self, ctx: custom.Context, effect: enums.Effect) -> None:
 
-        assert ctx.voice_client
+        assert ctx.player
 
-        if effect in ctx.voice_client.effects:
+        if effect in ctx.player.effects:
             description = f"Disabled the **{effect.value}** audio effect."
-            ctx.voice_client.effects.remove(effect)
-            await ctx.voice_client.set_filter(slate.Filter(ctx.voice_client.filter, **self.INVERSE_EFFECT_MAP[effect]))
+            ctx.player.effects.remove(effect)
+            await ctx.player.set_filter(slate.Filter(ctx.player.filter, **self.INVERSE_EFFECT_MAP[effect]))
 
         else:
             description = f"Enabled the **{effect.value}** audio effect."
-            ctx.voice_client.effects.add(effect)
-            await ctx.voice_client.set_filter(slate.Filter(ctx.voice_client.filter, **self.EFFECT_MAP[effect]))
+            ctx.player.effects.add(effect)
+            await ctx.player.set_filter(slate.Filter(ctx.player.filter, **self.EFFECT_MAP[effect]))
 
             if effect in self.INCOMPATIBLE_EFFECTS:
                 for incompatible_effect in self.INCOMPATIBLE_EFFECTS[effect]:
                     try:
-                        ctx.voice_client.effects.remove(incompatible_effect)
+                        ctx.player.effects.remove(incompatible_effect)
                     except KeyError:
                         pass
 
@@ -160,10 +163,10 @@ class Effects(commands.Cog):
         Resets all audio effects.
         """
 
-        assert ctx.voice_client is not None
+        assert ctx.player is not None
 
-        ctx.voice_client.effects.clear()
-        await ctx.voice_client.set_filter(slate.Filter())
+        ctx.player.effects.clear()
+        await ctx.player.set_filter(slate.Filter())
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,

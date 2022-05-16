@@ -191,7 +191,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "discord.py"
-version = "2.0.0a4253+gb2929513"
+version = "2.0.0a4269+gb7e25645"
 description = "A Python wrapper for the Discord API"
 category = "main"
 optional = false
@@ -200,7 +200,7 @@ develop = false
 
 [package.dependencies]
 aiodns = {version = ">=1.1", optional = true, markers = "extra == \"speed\""}
-aiohttp = ">=3.6.0,<4"
+aiohttp = ">=3.7.4,<4"
 Brotli = {version = "*", optional = true, markers = "extra == \"speed\""}
 cchardet = {version = "*", optional = true, markers = "extra == \"speed\""}
 orjson = {version = ">=3.5.4", optional = true, markers = "extra == \"speed\""}
@@ -216,7 +216,7 @@ voice = ["PyNaCl (>=1.3.0,<1.6)"]
 type = "git"
 url = "git@github.com:Rapptz/discord.py"
 reference = "master"
-resolved_reference = "b2929513cc63626f03b1c993b5a9b0109d60240b"
+resolved_reference = "b7e25645dc68bbb828bf1ede711d098c6b183237"
 
 [[package]]
 name = "frozenlist"
@@ -460,7 +460,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
 name = "slate"
-version = "0.2.2"
+version = "0.3.1"
 description = "A discord.py compatible wrapper for lavalink-like applications."
 category = "main"
 optional = false
@@ -480,7 +480,7 @@ docs = ["discord.py @ git+https://github.com/Rapptz/discord.py", "sphinx (>=4.5.
 type = "git"
 url = "git@github.com:Axelware/slate"
 reference = "main"
-resolved_reference = "241f782d9109b626ca068bfe439d1970f1663166"
+resolved_reference = "400bf323503dd1a67ac7ebd345771e91aec9d21b"
 
 [[package]]
 name = "spoti.py"

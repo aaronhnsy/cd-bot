@@ -25,7 +25,7 @@ __all__ = (
 class Context(commands.Context["CD"]):
 
     @property
-    def voice_client(self) -> custom.Player | None:
+    def player(self) -> custom.Player | None:
         return getattr(self.guild, "voice_client", None)
 
     async def try_dm(self, *args: Any, **kwargs: Any) -> discord.Message | None:

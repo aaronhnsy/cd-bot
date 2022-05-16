@@ -89,8 +89,9 @@ class Information(commands.Cog):
             url = values.GITHUB_LINK
             description = "You can view my source code in the GitHub repo linked below!"
 
-        view = discord.ui.View()
-        view.add_item(discord.ui.Button(label="GitHub", url=url))
+        view = discord.ui.View().add_item(
+            discord.ui.Button(label="GitHub", url=url)
+        )
 
         await ctx.reply(
             embed=utilities.embed(
@@ -107,9 +108,11 @@ class Information(commands.Cog):
         Shows invite links for the bot.
         """
 
-        view = discord.ui.View()
-        view.add_item(discord.ui.Button(label="Invite", url=values.INVITE_LINK))
-        view.add_item(discord.ui.Button(label="Invite (No Permissions)", url=values.INVITE_LINK_NO_PERMISSIONS))
+        view = discord.ui.View().add_item(
+            discord.ui.Button(label="Invite", url=values.INVITE_LINK)
+        ).add_item(
+            discord.ui.Button(label="Invite (No Permissions)", url=values.INVITE_LINK_NO_PERMISSIONS)
+        )
 
         await ctx.reply(
             embed=utilities.embed(
@@ -126,14 +129,13 @@ class Information(commands.Cog):
         Shows the bots support server invite.
         """
 
-        view = discord.ui.View()
-        view.add_item(discord.ui.Button(label="Discord", url=values.SUPPORT_LINK))
-
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.MAIN,
                 emoji=":inbox_tray:",
                 description="You can join my support server by using the button below!"
             ),
-            view=view
+            view=discord.ui.View().add_item(
+                discord.ui.Button(label="Discord", url=values.SUPPORT_LINK)
+            )
         )
