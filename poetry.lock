@@ -480,7 +480,7 @@ docs = ["discord.py @ git+https://github.com/Rapptz/discord.py", "sphinx (>=4.5.
 type = "git"
 url = "git@github.com:Axelware/slate"
 reference = "main"
-resolved_reference = "400bf323503dd1a67ac7ebd345771e91aec9d21b"
+resolved_reference = "3fcb343ac0ed970aaad61e30d36ce884d3d7576d"
 
 [[package]]
 name = "spoti.py"

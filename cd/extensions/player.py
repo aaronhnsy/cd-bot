@@ -454,6 +454,48 @@ class Player(commands.Cog):
             )
         )
 
+    @commands.hybrid_command(name="volume")
+    @checks.is_author_connected()
+    @checks.is_player_connected()
+    async def _volume(self, ctx: custom.Context, volume: Optional[int] = None) -> None:
+        """
+        Sets the players volume.
+
+        **Arguments:**
+        ● `volume`: The volume to set the player to, must be between 0 and 100.
+        """
+
+        player = ctx.player
+        assert player is not None
+
+        if not volume:
+            await ctx.send(
+                embed=utilities.embed(
+                    colour=values.MAIN,
+                    description=f"The current volume is "
+                                f"**{player.filter.volume.level if player.filter and player.filter.volume else 100}%**."
+                )
+            )
+            return
+
+        if volume < 0 or volume > 100 and ctx.author.id not in values.OWNER_IDS:
+            raise exceptions.EmbedError(
+                description="The volume must be between 0 and 100."
+            )
+
+        await player.set_filter(
+            slate.Filter(
+                filter=player.filter,
+                volume=slate.Volume(level=volume)
+            )
+        )
+        await ctx.send(
+            embed=utilities.embed(
+                colour=values.GREEN,
+                description=f"Set the volume to **{volume}%**."
+            )
+        )
+
     # TODO: Refactor the following.
 
     @commands.command(name="lyrics")
