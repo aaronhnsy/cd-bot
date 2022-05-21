@@ -13,7 +13,6 @@ import aioredis
 import asyncpg
 import discord
 import mystbin
-import psutil
 import slate
 import tornado.httpserver
 import tornado.web
@@ -59,7 +58,6 @@ class CD(commands.AutoShardedBot):
 
         # tracking
         self.socket_stats: collections.Counter[str] = collections.Counter()
-        self.process: psutil.Process = psutil.Process()
         self.manager: managers.Manager = managers.Manager(self)
         self.start_time: float = time.time()
 

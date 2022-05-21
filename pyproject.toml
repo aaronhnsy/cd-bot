@@ -10,22 +10,22 @@ readme      = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10.0"
 
-aiohttp         = { version = "~3.8.0", extras = ["speedups"] }
-aioredis        = { version = "~2.0.0"  }
+aiohttp         = { version = "~3.8.0", extras = ["speedups"]           }
+aioredis        = { version = "~2.0.0", extras = ["hiredis"]            }
+jishaku         = { version = "~2.5.0", extras = ["voice", "procinfo"]  }
+
 asyncpg         = { version = "~0.25.0" }
 colorama        = { version = "~0.4.0"  }
 humanize        = { version = "~4.0.0"  }
 pendulum        = { version = "~2.1.0"  }
-psutil          = { version = "~5.9.0"  }
 pynacl          = { version = "~1.5.0"  }
 rapidfuzz       = { version = "~2.0.0"  }
-wand            = { version = "~0.6.0"  }
 tornado         = { version = "~6.1.0"  }
+wand            = { version = "~0.6.0"  }
 "mystbin.py"    = { version = "~3.1.0"  }
 
 slate           = { git = "git@github.com:Axelware/slate",      branch = "main"                                 }
-jishaku         = { git = "git@github.com:Axelware/jishaku",    branch = "master", extras = ["voice"]           }
-"discord.py"    = { git = "git@github.com:Rapptz/discord.py",   branch = "master", extras = ["voice", "speed"]  }
+"discord.py"    = { git = "git@github.com:Rapptz/discord.py",   branch = "master", extras = ["speed", "voice"]  }
 
 
 [tool.poetry.dev-dependencies]
