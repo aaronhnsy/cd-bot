@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 # Standard Library
-from typing import TYPE_CHECKING, Literal, TypeVar
+from typing import TYPE_CHECKING, Literal
 
 # Packages
 import discord
@@ -20,9 +20,6 @@ if TYPE_CHECKING:
 __all__ = (
     "is_author_connected",
 )
-
-
-T = TypeVar("T")
 
 
 def is_author_connected() -> Check[custom.Context]:

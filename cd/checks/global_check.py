@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 # Packages
-import discord
 from discord.ext import commands
 
 # Local
@@ -18,8 +17,6 @@ async def global_check(ctx: custom.Context) -> bool:
 
     if not ctx.guild:
         return True
-
-    assert not isinstance(ctx.channel, discord.PartialMessageable)
 
     current = dict(ctx.channel.permissions_for(ctx.guild.me))
     needed = {permission: value for permission, value in values.PERMISSIONS if value is True}

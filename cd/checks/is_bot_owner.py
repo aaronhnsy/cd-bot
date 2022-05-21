@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 # Standard Library
-from typing import TYPE_CHECKING, TypeVar
+from typing import TYPE_CHECKING
 
 # Packages
 from discord.ext import commands
@@ -19,9 +19,6 @@ if TYPE_CHECKING:
 __all__ = (
     "is_bot_owner",
 )
-
-
-T = TypeVar("T")
 
 
 def is_bot_owner() -> Check[custom.Context]:

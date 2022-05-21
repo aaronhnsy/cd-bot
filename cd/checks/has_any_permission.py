@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 # Standard Library
-from typing import TYPE_CHECKING, TypeVar
+from typing import TYPE_CHECKING
 
 # Packages
 import discord
@@ -22,9 +22,6 @@ __all__ = (
 )
 
 
-T = TypeVar("T")
-
-
 def has_any_permission(**permissions: bool) -> Check[custom.Context]:
 
     if invalid := set(permissions) - set(discord.Permissions.VALID_FLAGS):
@@ -32,8 +29,8 @@ def has_any_permission(**permissions: bool) -> Check[custom.Context]:
 
     def predicate(ctx: custom.Context) -> bool:
 
-        # permissions_for doesn't exist for certain channel types, but trust me, it's fine.
-        current = dict(ctx.channel.permissions_for(ctx.author))  # type: ignore
+        assert isinstance(ctx.author, discord.Member)
+        current = dict(ctx.channel.permissions_for(ctx.author))
 
         for permission in permissions.keys():
             if current[permission] is True:

@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 # Standard Library
-from typing import TYPE_CHECKING, Literal, TypeVar
+from typing import TYPE_CHECKING, Literal
 
 # Packages
 from discord.ext import commands
@@ -19,9 +19,6 @@ if TYPE_CHECKING:
 __all__ = (
     "is_track_seekable",
 )
-
-
-T = TypeVar("T")
 
 
 def is_track_seekable() -> Check[custom.Context]:

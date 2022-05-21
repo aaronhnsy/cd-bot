@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 # Standard Library
-from typing import TYPE_CHECKING, Literal, TypeVar
+from typing import TYPE_CHECKING, Literal
 
 # Packages
 from discord.ext import commands
@@ -20,9 +20,6 @@ __all__ = (
     "is_queue_not_empty",
     "is_queue_history_not_empty",
 )
-
-
-T = TypeVar("T")
 
 
 def is_queue_not_empty() -> Check[custom.Context]:
