@@ -174,17 +174,17 @@ class WebSocket(utilities.WebSocketHandler, abc.ABC):
 
         while True:
 
-            voice_client: custom.Player | None = self.guild.voice_client  # type: ignore
+            player: custom.Player | None = self.guild.voice_client  # type: ignore
 
-            if voice_client and voice_client.current:
+            if player and player.current:
                 await self.write_message(
                     {
                         "op":   2,
                         "data": {
                             "type":     "POSITION_UPDATE",
-                            "position": voice_client.position,
+                            "position": player.position,
                             "track": {
-                                "length": voice_client.current.length
+                                "length": player.current.length
                             }
                         }
                     }
@@ -213,13 +213,13 @@ class WebSocket(utilities.WebSocketHandler, abc.ABC):
             "connected": None
         }
 
-        voice_client: custom.Player | None = self.guild.voice_client  # type: ignore
+        player: custom.Player | None = self.guild.voice_client  # type: ignore
 
-        if voice_client:
-            data["track"] = self._track_to_dict(voice_client.current) if voice_client.current else None
-            data["position"] = voice_client.position
-            data["paused"] = voice_client.is_paused()
-            data["connected"] = voice_client.is_connected()
+        if player:
+            data["track"] = self._track_to_dict(player.current) if player.current else None
+            data["position"] = player.position
+            data["paused"] = player.is_paused()
+            data["connected"] = player.is_connected()
 
         await self.write_message(
             {
@@ -231,9 +231,9 @@ class WebSocket(utilities.WebSocketHandler, abc.ABC):
             }
         )
 
-    async def _handle_player_update(self, voice_client: custom.Player) -> None:
+    async def _handle_player_update(self, player: custom.Player) -> None:
 
-        if voice_client.channel.guild.id != self.guild_id:
+        if player.channel.guild.id != self.guild_id:
             return
 
         data: dict[str, Any] = {
@@ -243,11 +243,11 @@ class WebSocket(utilities.WebSocketHandler, abc.ABC):
             "connected": None
         }
 
-        if voice_client:
-            data["track"] = self._track_to_dict(voice_client.current) if voice_client.current else None
-            data["position"] = voice_client.position
-            data["paused"] = voice_client.is_paused()
-            data["connected"] = voice_client.is_connected()
+        if player:
+            data["track"] = self._track_to_dict(player.current) if player.current else None
+            data["position"] = player.position
+            data["paused"] = player.is_paused()
+            data["connected"] = player.is_connected()
 
         await self.write_message(
             {
@@ -259,9 +259,9 @@ class WebSocket(utilities.WebSocketHandler, abc.ABC):
             }
         )
 
-    async def _handle_track_end(self, voice_client: custom.Player) -> None:
+    async def _handle_track_end(self, player: custom.Player) -> None:
 
-        if voice_client.channel.guild.id != self.guild_id:
+        if player.channel.guild.id != self.guild_id:
             return
 
         await self.write_message(
@@ -273,9 +273,9 @@ class WebSocket(utilities.WebSocketHandler, abc.ABC):
             }
         )
 
-    async def _handle_player_disconnect(self, voice_client: custom.Player) -> None:
+    async def _handle_player_disconnect(self, player: custom.Player) -> None:
 
-        if voice_client.channel.guild.id != self.guild_id:
+        if player.channel.guild.id != self.guild_id:
             return
 
         await self.write_message(

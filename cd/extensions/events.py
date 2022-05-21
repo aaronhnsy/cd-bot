@@ -344,7 +344,7 @@ class Events(commands.Cog):
     # Voice events
 
     @commands.Cog.listener("on_voice_state_update")
-    async def _handle_voice_client_disconnect(
+    async def _handle_player_disconnect(
         self,
         member: discord.Member,
         before: discord.VoiceState,

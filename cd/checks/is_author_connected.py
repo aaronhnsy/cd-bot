@@ -32,11 +32,11 @@ def is_author_connected() -> Check[custom.Context]:
         assert isinstance(ctx.author, discord.Member)
 
         author_channel = ctx.author.voice and ctx.author.voice.channel
-        voice_client_channel = ctx.player and ctx.player.voice_channel
+        player_channel = ctx.player and ctx.player.voice_channel
 
-        if voice_client_channel != author_channel:
+        if player_channel != author_channel:
             raise exceptions.EmbedError(
-                description=f"You must be connected to {getattr(voice_client_channel, 'mention', None)} to use this "
+                description=f"You must be connected to {getattr(player_channel, 'mention', None)} to use this "
                             f"command."
             )
 
