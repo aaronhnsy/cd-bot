@@ -541,7 +541,7 @@ class Player(commands.Cog):
 
         async with self.bot.session.get(
                 url=f"https://api.openrobot.xyz/api/lyrics/{urllib.parse.quote_plus(query)}",
-                headers={"Authorization": config.LYRIC_API_TOKEN}
+                headers={"Authorization": config.LYRICS_TOKEN}
         ) as response:
 
             match response.status:
@@ -556,7 +556,7 @@ class Player(commands.Cog):
                         description=f"Lyrics are unavailable right now, please try again later."
                     )
 
-        entries = []
+        entries: list[str] = []
 
         for line in data["lyrics"].split("\n\n"):
 

@@ -102,7 +102,7 @@ class WebSocket(utilities.WebSocketHandler, abc.ABC):
 
             # Get token to make sure identifier is valid
 
-            token_data = await self.bot.redis.hget("tokens", identifier or "")
+            token_data: str | None = await self.bot.redis.hget("tokens", identifier or "")
             if not token_data:
                 return self.close(code=4007, reason="You must login with the site at least once.")
 
@@ -113,9 +113,9 @@ class WebSocket(utilities.WebSocketHandler, abc.ABC):
                 async with self.bot.session.post(
                         url="https://discord.com/api/oauth2/token",
                         data={
-                            "client_secret": config.CLIENT_SECRET,
-                            "client_id":     config.CLIENT_ID,
-                            "redirect_uri":  config.REDIRECT_URI,
+                            "client_secret": config.DISCORD_CLIENT_SECRET,
+                            "client_id":     config.DISCORD_CLIENT_ID,
+                            "redirect_uri":  config.DASHBOARD_REDIRECT_URL,
                             "refresh_token": token.refresh_token,
                             "grant_type":    "refresh_token",
                             "scope":         "identify guilds",
@@ -128,12 +128,12 @@ class WebSocket(utilities.WebSocketHandler, abc.ABC):
                     if 200 < response.status > 206:
                         raise exceptions.HTTPException(response, json.dumps(await response.json()))
 
-                    token_data = await response.json()
+                    data = await response.json()
 
-                if token_data.get("error"):
+                if data.get("error"):
                     raise exceptions.HTTPException(response, json.dumps(token_data))
 
-                token = objects.Token(token_data)
+                token = objects.Token(data)
 
                 await self.bot.redis.hset(
                     "tokens",

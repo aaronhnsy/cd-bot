@@ -36,10 +36,10 @@ class DiscordLogin(utilities.HTTPHandler, abc.ABC):
 
             return self.redirect(
                 f"https://discord.com/api/oauth2/authorize?"
-                f"client_id={config.CLIENT_ID}&"
+                f"client_id={config.DISCORD_CLIENT_ID}&"
                 f"response_type=code&"
                 f"scope=identify%20guilds&"
-                f"redirect_uri={config.REDIRECT_URI}&"
+                f"redirect_uri={config.DASHBOARD_REDIRECT_URL}&"
                 f"state={state}"
             )
 
@@ -52,9 +52,9 @@ class DiscordLogin(utilities.HTTPHandler, abc.ABC):
         async with self.bot.session.post(
                 "https://discord.com/api/oauth2/token",
                 data={
-                    "client_secret": config.CLIENT_SECRET,
-                    "client_id":     config.CLIENT_ID,
-                    "redirect_uri":  config.REDIRECT_URI,
+                    "client_secret": config.DISCORD_CLIENT_SECRET,
+                    "client_id":     config.DISCORD_CLIENT_ID,
+                    "redirect_uri":  config.DASHBOARD_REDIRECT_URL,
                     "code":          code,
                     "grant_type":    "authorization_code",
                     "scope":         "identify guilds",

@@ -66,8 +66,8 @@ class CD(commands.AutoShardedBot):
             handlers.setup(bot=self),
             static_path=os.path.join(os.path.dirname(__file__), "dashboard/static/"),
             template_path=os.path.join(os.path.dirname(__file__), "dashboard/templates/"),
-            cookie_secret=config.COOKIE_SECRET,
-            default_host=config.HOST,
+            cookie_secret=config.DASHBOARD_COOKIE_SECRET,
+            default_host=config.DASHBOARD_HOST,
             debug=True
         )
         self.server = tornado.httpserver.HTTPServer(
@@ -140,7 +140,7 @@ class CD(commands.AutoShardedBot):
 
     async def start_dashboard(self) -> None:
 
-        self.server.bind(config.PORT, config.HOST)
+        self.server.bind(config.DASHBOARD_PORT, config.DASHBOARD_HOST)
         self.server.start()
 
         __log__.info("[DASHBOARD] Dashboard has connected.")
@@ -210,10 +210,10 @@ class CD(commands.AutoShardedBot):
     async def get_prefix(self, message: discord.Message) -> list[str]:
 
         if not message.guild:
-            return commands.when_mentioned_or(config.PREFIX)(self, message)
+            return commands.when_mentioned_or(config.DISCORD_PREFIX)(self, message)
 
         guild_config = await self.manager.get_guild_config(message.guild.id)
-        return commands.when_mentioned_or(guild_config.prefix or config.PREFIX)(self, message)
+        return commands.when_mentioned_or(guild_config.prefix or config.DISCORD_PREFIX)(self, message)
 
     async def close(self) -> None:
 

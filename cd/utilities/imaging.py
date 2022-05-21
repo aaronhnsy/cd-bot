@@ -49,7 +49,7 @@ VALID_CONTENT_TYPES: list[str] = [
 ################
 
 def spotify(
-    IMAGE: Image,
+    image: Image,
     length: float,
     elapsed: float,
     title: str,
@@ -58,20 +58,20 @@ def spotify(
 ) -> None:  # sourcery skip: extract-duplicate-method, extract-method
 
     if format == "gif":
-        IMAGE.format = "gif"
-        FRAMES = 50
-        DELAY = 20
-        FPS = 100 / DELAY
+        image.format = "gif"
+        frames = 50
+        delay = 20
+        fps = 100 / delay
     elif format == "smooth_gif":
-        IMAGE.format = "gif"
-        FRAMES = 500
-        DELAY = 2
-        FPS = 100 / DELAY
+        image.format = "gif"
+        frames = 500
+        delay = 2
+        fps = 100 / delay
     else:
-        IMAGE.format = "png"
-        FRAMES = 0
-        DELAY = 0
-        FPS = 0
+        image.format = "png"
+        frames = 0
+        delay = 0
+        fps = 0
 
     ###################
     # PIXEL VARIABLES #
@@ -109,7 +109,7 @@ def spotify(
     #########
     # COVER #
     #########
-    with IMAGE.clone() as COVER, Image(width=COVER_WIDTH, height=COVER_HEIGHT, background=TRANSPARENT) as MASK:
+    with image.clone() as COVER, Image(width=COVER_WIDTH, height=COVER_HEIGHT, background=TRANSPARENT) as MASK:
 
         ##############
         # EDIT COVER #
@@ -122,9 +122,9 @@ def spotify(
         #############
         # DRAW MASK #
         #############
-        with Drawing() as DRAW:
-            DRAW.fill_color = BLACK
-            DRAW.rectangle(
+        with Drawing() as draw:
+            draw.fill_color = BLACK
+            draw.rectangle(
                 left=0,
                 top=0,
                 width=COVER_WIDTH,
@@ -132,55 +132,55 @@ def spotify(
                 xradius=COVER_WIDTH,
                 yradius=COVER_HEIGHT
             )
-            DRAW(MASK)
+            draw(MASK)
 
         #############
         # EDIT BASE #
         #############
-        IMAGE.resize(
+        image.resize(
             width=IMAGE_WIDTH,
             height=IMAGE_HEIGHT
         )
-        IMAGE.crop(
+        image.crop(
             top=IMAGE_CROP_OFFSET,
             bottom=IMAGE_HEIGHT - IMAGE_CROP_OFFSET,
         )
-        IMAGE.blur(
+        image.blur(
             sigma=IMAGE_BLUR_STRENGTH
         )
 
         #############
         # DRAW INFO #
         #############
-        with Drawing() as DRAW:
+        with Drawing() as draw:
 
-            DRAW.font = EXO_FONT
-            DRAW.text_antialias = True
+            draw.font = EXO_FONT
+            draw.text_antialias = True
 
             # draw progress bar base
-            DRAW.fill_color = GRAY
-            DRAW.rectangle(
+            draw.fill_color = GRAY
+            draw.rectangle(
                 left=TRACK_INFO_START_X,
                 right=TRACK_INFO_START_X + PROGRESS_BAR_LENGTH,
                 top=PROGRESS_BAR_Y1,
                 bottom=PROGRESS_BAR_Y2,
-                radius=IMAGE.width * 0.003
+                radius=image.width * 0.003
             )
-            DRAW.fill_color = WHITE
+            draw.fill_color = WHITE
 
             if format == "png":
 
                 # draw progress bar fill
-                DRAW.rectangle(
+                draw.rectangle(
                     left=TRACK_INFO_START_X,
                     right=TRACK_INFO_START_X + (PROGRESS_BAR_LENGTH * (elapsed / length)),
                     top=PROGRESS_BAR_Y1,
                     bottom=PROGRESS_BAR_Y2,
-                    radius=IMAGE.width * 0.003
+                    radius=image.width * 0.003
                 )
 
                 # draw track elapsed time
-                DRAW.text(
+                draw.text(
                     x=TRACK_INFO_START_X,
                     y=PROGRESS_BAR_Y1 - PROGRESS_BAR_HEIGHT,
                     body=utilities.format_seconds(elapsed),
@@ -196,56 +196,56 @@ def spotify(
                 )
 
                 # paste cover onto frame
-                IMAGE.composite(
+                image.composite(
                     image=COVER,
                     left=COVER_PASTE_OFFSET,
                     top=COVER_PASTE_OFFSET
                 )
 
             # draw track length
-            DRAW.text_alignment = "right"
-            DRAW.text(
+            draw.text_alignment = "right"
+            draw.text(
                 x=TRACK_INFO_START_X + PROGRESS_BAR_LENGTH,
                 y=PROGRESS_BAR_Y1 - PROGRESS_BAR_HEIGHT,
                 body=utilities.format_seconds(length),
             )
-            DRAW.text_alignment = "left"
+            draw.text_alignment = "left"
 
             # draw track title
-            DRAW.font_size = TITLE_FONT_SIZE
-            DRAW.text(
+            draw.font_size = TITLE_FONT_SIZE
+            draw.text(
                 x=TRACK_INFO_START_X,
                 y=75,
                 body=title,
             )
 
             # draw track artists
-            DRAW.font_size = ARTISTS_FONT_SIZE
-            DRAW.text(
+            draw.font_size = ARTISTS_FONT_SIZE
+            draw.text(
                 x=TRACK_INFO_START_X,
                 y=95,
                 body=", ".join(artists),
             )
 
-            DRAW(IMAGE)
+            draw(image)
 
         if format != "png":
 
             #######################
             # CREATE IMAGE FRAMES #
             #######################
-            IMAGE.sequence.extend([IMAGE.clone() for _ in range(FRAMES)])
+            image.sequence.extend([image.clone() for _ in range(frames)])
 
             #####################
             # EDIT IMAGE FRAMES #
             #####################
 
-            IMAGE.iterator_reset()
+            image.iterator_reset()
 
             # iterate through frames
-            while IMAGE.iterator_next():
+            while image.iterator_next():
 
-                index = IMAGE.iterator_get() - 1
+                index = image.iterator_get() - 1
 
                 with COVER.clone() as COVER_CLONE:
 
@@ -255,7 +255,7 @@ def spotify(
                         (
                             COVER_WIDTH / 2,
                             COVER_HEIGHT / 2,
-                            (index * (360 / (FPS * 5)))
+                            (index * (360 / (fps * 5)))
                         )
                     )
 
@@ -269,48 +269,48 @@ def spotify(
                     )
 
                     # paste cover onto frame
-                    IMAGE.composite(
+                    image.composite(
                         image=COVER_CLONE,
                         left=COVER_PASTE_OFFSET,
                         top=COVER_PASTE_OFFSET
                     )
 
-                with Drawing() as DRAW:
+                with Drawing() as draw:
 
-                    DRAW.font = EXO_FONT
-                    DRAW.text_antialias = True
-                    DRAW.fill_color = WHITE
+                    draw.font = EXO_FONT
+                    draw.text_antialias = True
+                    draw.fill_color = WHITE
 
                     # draw progress bar fill
-                    DRAW.rectangle(
+                    draw.rectangle(
                         left=TRACK_INFO_START_X,
-                        right=TRACK_INFO_START_X + (PROGRESS_BAR_LENGTH * ((elapsed + (index // FPS)) / length)),
+                        right=TRACK_INFO_START_X + (PROGRESS_BAR_LENGTH * ((elapsed + (index // fps)) / length)),
                         top=PROGRESS_BAR_Y1,
                         bottom=PROGRESS_BAR_Y2,
-                        radius=IMAGE.width * 0.003
+                        radius=image.width * 0.003
                     )
 
                     # draw track elapsed time
-                    DRAW.text(
+                    draw.text(
                         x=TRACK_INFO_START_X,
                         y=PROGRESS_BAR_Y1 - PROGRESS_BAR_HEIGHT,
-                        body=utilities.format_seconds(elapsed + (index // FPS)),
+                        body=utilities.format_seconds(elapsed + (index // fps)),
                     )
 
-                    DRAW(IMAGE)
+                    draw(image)
 
-                IMAGE.delay = DELAY
+                image.delay = delay
 
             ######################
             # DELETE FIRST FRAME #
             ######################
-            del IMAGE.sequence[0]
+            del image.sequence[0]
 
     ############
     # OPTIMIZE #
     ############
     if format != "png":
-        IMAGE.optimize_transparency()
+        image.optimize_transparency()
 
 
 ###########

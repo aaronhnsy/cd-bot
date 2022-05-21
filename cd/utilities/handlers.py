@@ -48,20 +48,21 @@ class HTTPHandler(tornado.web.RequestHandler, abc.ABC):
     async def get_token(self) -> objects.Token | None:
 
         identifier = self.get_identifier()
+        token_data: str | None = await self.bot.redis.hget("tokens", identifier)
 
-        if not (data := await self.bot.redis.hget("tokens", identifier)):
+        if not token_data:
             return None
 
-        token = objects.Token(json.loads(data))
+        token = objects.Token(json.loads(token_data))
 
         if token.has_expired:
 
             async with self.bot.session.post(
                     url="https://discord.com/api/oauth2/token",
                     data={
-                        "client_secret": config.CLIENT_SECRET,
-                        "client_id":     config.CLIENT_ID,
-                        "redirect_uri":  config.REDIRECT_URI,
+                        "client_secret": config.DISCORD_CLIENT_SECRET,
+                        "client_id":     config.DISCORD_CLIENT_ID,
+                        "redirect_uri":  config.DASHBOARD_REDIRECT_URL,
                         "refresh_token": token.refresh_token,
                         "grant_type":    "refresh_token",
                         "scope":         "identify guilds",
@@ -104,7 +105,7 @@ class HTTPHandler(tornado.web.RequestHandler, abc.ABC):
     async def get_user(self) -> objects.User | None:
 
         identifier = self.get_identifier()
-        data = await self.bot.redis.hget("users", identifier)
+        data: str | None = await self.bot.redis.hget("users", identifier)
 
         if data:
             user = objects.User(json.loads(data))
@@ -140,7 +141,7 @@ class HTTPHandler(tornado.web.RequestHandler, abc.ABC):
         if not (user := await self.get_user()):
             return
 
-        data = await self.bot.redis.hget("guilds", user.id)
+        data: str | None = await self.bot.redis.hget("guilds", user.id)
 
         if data:
             guilds = [objects.Guild(json.loads(guild)) for guild in json.loads(data)]

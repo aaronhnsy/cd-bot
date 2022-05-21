@@ -5,15 +5,15 @@ from __future__ import annotations
 import discord
 
 
-NQSP = " "
-ZWSP = "\u200b"
+NQSP: str = " "
+ZWSP: str = "\u200b"
 
-BOT_ID = 905407661716148245
-SUPPORT_SERVER_ID = 240958773122957312
-AXEL_ID = 238356301439041536
-OWNER_IDS = {AXEL_ID}
+BOT_ID: int = 905407661716148245
+SUPPORT_SERVER_ID: int = 240958773122957312
+AXEL_ID: int = 238356301439041536
+OWNER_IDS: set[int] = {AXEL_ID}
 
-EXTENSIONS = [
+EXTENSIONS: list[str] = [
     "jishaku",
     "cd.extensions.effects",
     "cd.extensions.events",
@@ -26,7 +26,7 @@ EXTENSIONS = [
     "cd.extensions.todo",
 ]
 
-PERMISSIONS = discord.Permissions(
+PERMISSIONS: discord.Permissions = discord.Permissions(
     read_messages=True,
     send_messages=True,
     embed_links=True,
@@ -36,44 +36,44 @@ PERMISSIONS = discord.Permissions(
     external_emojis=True,
 )
 
-INVITE_LINK = discord.utils.oauth_url(
+INVITE_LINK: str = discord.utils.oauth_url(
     client_id=BOT_ID,
     permissions=PERMISSIONS,
     scopes=["bot", "applications.commands"]
 )
 
-INVITE_LINK_NO_PERMISSIONS = discord.utils.oauth_url(
+INVITE_LINK_NO_PERMISSIONS: str = discord.utils.oauth_url(
     client_id=BOT_ID,
     scopes=["bot", "applications.commands"]
 )
 
-SUPPORT_LINK = "https://discord.gg/w9f6NkQbde"
-GITHUB_LINK = "https://github.com/Axelware/CD-bot"
+SUPPORT_LINK: str = "https://discord.gg/w9f6NkQbde"
+GITHUB_LINK: str = "https://github.com/Axelware/CD-bot"
 
-MAIN = discord.Colour(0xE91E63)
-RED = discord.Colour.red()
-GREEN = discord.Colour.green()
+MAIN: discord.Colour = discord.Colour(0xE91E63)
+RED: discord.Colour = discord.Colour.red()
+GREEN: discord.Colour = discord.Colour.green()
 
-STOP = "<:s:959624343246241913>"
+STOP: str = "<:s:959624343246241913>"
 
-PAGINATOR_FIRST = "<:pf:959624334127800330>"
-PAGINATOR_PREVIOUS = "<:pp:959624365140492348>"
-PAGINATOR_STOP = STOP
-PAGINATOR_NEXT = "<:pn:959624356558946325>"
-PAGINATOR_LAST = "<:pl:959624322765447218>"
+PAGINATOR_FIRST: str = "<:pf:959624334127800330>"
+PAGINATOR_PREVIOUS: str = "<:pp:959624365140492348>"
+PAGINATOR_STOP: str = STOP
+PAGINATOR_NEXT: str = "<:pn:959624356558946325>"
+PAGINATOR_LAST: str = "<:pl:959624322765447218>"
 
-PLAYER_SHUFFLE_DISABLED = "<:sd:960236752063303850>"
-PLAYER_SHUFFLE_ENABLED = "<:se:959620032562884648>"
-PLAYER_PREVIOUS = "<:pr:959620032537706526>"
-PLAYER_IS_PLAYING = "<:ipl:959620032659349504>"
-PLAYER_IS_PAUSED = "<:ipa:959620032684523530>"
-PLAYER_NEXT = "<:ne:959620032210558978>"
-PLAYER_LOOP_DISABLED = "<:lo:959620032508342292>"
-PLAYER_LOOP_ALL = "<:lq:959620032592232498>"
-PLAYER_LOOP_CURRENT = "<:lc:959620032596430849>"
+PLAYER_SHUFFLE_DISABLED: str = "<:sd:960236752063303850>"
+PLAYER_SHUFFLE_ENABLED: str = "<:se:959620032562884648>"
+PLAYER_PREVIOUS: str = "<:pr:959620032537706526>"
+PLAYER_IS_PLAYING: str = "<:ipl:959620032659349504>"
+PLAYER_IS_PAUSED: str = "<:ipa:959620032684523530>"
+PLAYER_NEXT: str = "<:ne:959620032210558978>"
+PLAYER_LOOP_DISABLED: str = "<:lo:959620032508342292>"
+PLAYER_LOOP_ALL: str = "<:lq:959620032592232498>"
+PLAYER_LOOP_CURRENT: str = "<:lc:959620032596430849>"
 
-CODEBLOCK_START = "```\n"
-ANSI_CODEBLOCK_START = "```ansi\n"
-PYTHON_CODEBLOCK_START = "```py\n"
+CODEBLOCK_START: str = "```\n"
+ANSI_CODEBLOCK_START: str = "```ansi\n"
+PYTHON_CODEBLOCK_START: str = "```py\n"
 
-CODEBLOCK_END = "\n```"
+CODEBLOCK_END: str = "\n```"

@@ -7,7 +7,7 @@ import os
 
 # Local
 from cd.bot import CD
-from cd.config import TOKEN
+from cd.config import DISCORD_TOKEN
 from cd.utilities.logger import setup_logger
 
 
@@ -23,7 +23,7 @@ bot = CD()
 async def main() -> None:
 
     async with bot:
-        await bot.start(token=TOKEN)
+        await bot.start(token=DISCORD_TOKEN)
 
 
 asyncio.run(main())

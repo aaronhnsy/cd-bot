@@ -24,8 +24,8 @@ tornado         = { version = "~6.1.0"  }
 wand            = { version = "~0.6.0"  }
 "mystbin.py"    = { version = "~3.1.0"  }
 
-slate           = { git = "git@github.com:Axelware/slate",      branch = "main"                                 }
-"discord.py"    = { git = "git@github.com:Rapptz/discord.py",   branch = "master", extras = ["speed", "voice"]  }
+slate           = { git = "git@github.com:Axelware/slate"                                   }
+"discord.py"    = { git = "git@github.com:Rapptz/discord.py", extras = ["speed", "voice"]   }
 
 
 [tool.poetry.dev-dependencies]
@@ -40,7 +40,6 @@ combine_star                = true
 star_first                  = true
 include_trailing_comma      = true
 dedup_headings              = true
-src_paths                   = ["cd"]
 import_heading_future       = "Future"
 import_heading_stdlib       = "Standard Library"
 import_heading_thirdparty   = "Packages"
@@ -49,16 +48,17 @@ import_heading_localfolder  = "Local"
 
 
 [tool.pyright]
-include                     = ["cd", "launcher.py"]
-verboseOutput               = false
+include = [
+    "cd",
+    "config_example.py",
+    "launcher.py",
+]
 pythonVersion               = "3.10"
 typeCheckingMode            = "strict"
 useLibraryCodeForTypes      = true
-reportMissingTypeStubs      = false
-reportPrivateImportUsage    = false
 reportPrivateUsage          = false
 reportUnknownMemberType     = false
-reportUnknownVariableType   = false
-reportUnknownArgumentType   = false
+
+reportMissingTypeStubs      = false
+reportPrivateImportUsage    = false
 reportImportCycles          = false
-reportConstantRedefinition  = false
