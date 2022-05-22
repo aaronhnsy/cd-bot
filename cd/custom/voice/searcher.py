@@ -79,7 +79,7 @@ class SearcherSelect(discord.ui.Select["SearcherView"]):
         if self.view.play_now:
             await self.view.ctx.player.stop()
         if not self.view.ctx.player.is_playing():
-            await self.view.ctx.player._play_next()
+            await self.view.ctx.player.play_next()
 
         await self.view.ctx.player.controller.update_current_message()
 
@@ -216,7 +216,7 @@ class Searcher:
         if play_now:
             await self.player.stop()
         if not self.player.is_playing():
-            await self.player._play_next()
+            await self.player.play_next()
 
         await self.player.controller.update_current_message()
 

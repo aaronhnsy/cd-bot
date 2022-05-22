@@ -5,6 +5,29 @@ from __future__ import annotations
 import discord
 
 
+######################
+# DEFAULT BOT KWARGS #
+######################
+STATUS: discord.Status = discord.Status.do_not_disturb
+ACTIVITY: discord.Activity = discord.Activity(
+    type=discord.ActivityType.listening,
+    name="you."
+)
+ALLOWED_MENTIONS: discord.AllowedMentions = discord.AllowedMentions(
+    everyone=False,
+    users=True,
+    roles=False,
+    replied_user=False
+)
+INTENTS: discord.Intents = discord.Intents(
+    guilds=True,
+    members=True,
+    voice_states=True,
+    presences=True,
+    messages=True,
+    message_content=True,
+)
+
 NQSP: str = " "
 ZWSP: str = "\u200b"
 
@@ -54,6 +77,10 @@ MAIN: discord.Colour = discord.Colour(0xE91E63)
 RED: discord.Colour = discord.Colour.red()
 GREEN: discord.Colour = discord.Colour.green()
 
+
+##########
+# EMOJIS #
+##########
 STOP: str = "<:s:959624343246241913>"
 
 PAGINATOR_FIRST: str = "<:pf:959624334127800330>"
@@ -72,7 +99,12 @@ PLAYER_LOOP_DISABLED: str = "<:lo:959620032508342292>"
 PLAYER_LOOP_ALL: str = "<:lq:959620032592232498>"
 PLAYER_LOOP_CURRENT: str = "<:lc:959620032596430849>"
 
+
+##############
+# CODEBLOCKS #
+##############
 CODEBLOCK_START: str = "```\n"
+
 ANSI_CODEBLOCK_START: str = "```ansi\n"
 PYTHON_CODEBLOCK_START: str = "```py\n"
 

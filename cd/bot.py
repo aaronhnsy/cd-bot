@@ -30,31 +30,32 @@ class CD(commands.AutoShardedBot):
 
     def __init__(self) -> None:
         super().__init__(
-            status=discord.Status.dnd,
-            activity=discord.Activity(type=discord.ActivityType.listening, name="you."),
-            allowed_mentions=discord.AllowedMentions(everyone=False, users=True, roles=False, replied_user=False),
+            status=values.STATUS,
+            activity=values.ACTIVITY,
+            allowed_mentions=values.ALLOWED_MENTIONS,
             help_command=custom.HelpCommand(),
-            intents=discord.Intents.all(),
+            intents=values.INTENTS,
             command_prefix=self.__class__.get_prefix,
             case_insensitive=True,
             owner_ids=values.OWNER_IDS,
             owner_id=None,
         )
 
-        # external connections
+        # external services
         self.session: aiohttp.ClientSession = utilities.MISSING
         self.db: asyncpg.Pool = utilities.MISSING
         self.redis: aioredis.Redis = utilities.MISSING
         self.slate: slate.Pool[CD, custom.Player] = utilities.MISSING
         self.mystbin: mystbin.Client = utilities.MISSING
 
-        self._LOG_WEBHOOKS: dict[enums.LogType, discord.Webhook] = {
+        # logging
+        self.logging_webhooks: dict[enums.LogType, discord.Webhook] = {
             enums.LogType.DM:      utilities.MISSING,
             enums.LogType.GUILD:   utilities.MISSING,
             enums.LogType.ERROR:   utilities.MISSING,
             enums.LogType.COMMAND: utilities.MISSING,
         }
-        self._LOG_QUEUE: dict[enums.LogType, list[discord.Embed]] = collections.defaultdict(list)
+        self.logging_queue: dict[enums.LogType, list[discord.Embed]] = collections.defaultdict(list)
 
         # tracking
         self.socket_stats: collections.Counter[str] = collections.Counter()
@@ -75,6 +76,9 @@ class CD(commands.AutoShardedBot):
             xheaders=True
         )
         self.client: utilities.HTTPClient = utilities.MISSING
+
+    def __repr__(self) -> str:
+        return f"<CD id={self.user.id if self.user else values.BOT_ID}, users={len(self.users)}, guilds={self.guilds}>"
 
     # Setup
 
@@ -153,19 +157,19 @@ class CD(commands.AutoShardedBot):
         self.mystbin = mystbin.Client(session=self.session)
         self.client = utilities.HTTPClient(self)
 
-        self._LOG_WEBHOOKS[enums.LogType.DM] = discord.Webhook.from_url(
+        self.logging_webhooks[enums.LogType.DM] = discord.Webhook.from_url(
             session=self.session,
             url=config.DM_WEBHOOK_URL
         )
-        self._LOG_WEBHOOKS[enums.LogType.GUILD] = discord.Webhook.from_url(
+        self.logging_webhooks[enums.LogType.GUILD] = discord.Webhook.from_url(
             session=self.session,
             url=config.GUILD_WEBHOOK_URL
         )
-        self._LOG_WEBHOOKS[enums.LogType.ERROR] = discord.Webhook.from_url(
+        self.logging_webhooks[enums.LogType.ERROR] = discord.Webhook.from_url(
             session=self.session,
             url=config.ERROR_WEBHOOK_URL
         )
-        self._LOG_WEBHOOKS[enums.LogType.COMMAND] = discord.Webhook.from_url(
+        self.logging_webhooks[enums.LogType.COMMAND] = discord.Webhook.from_url(
             session=self.session,
             url=config.COMMAND_WEBHOOK_URL
         )
@@ -182,20 +186,20 @@ class CD(commands.AutoShardedBot):
     @tasks.loop(seconds=4)
     async def log_task(self) -> None:
 
-        for _type, queue in self._LOG_QUEUE.items():
+        for _type, queue in self.logging_queue.items():
 
             if not (embeds := [queue.pop(0) for _ in range(min(10, len(queue)))]):
                 continue
 
-            await self._LOG_WEBHOOKS[_type].send(embeds=embeds)
+            await self.logging_webhooks[_type].send(embeds=embeds)
 
     async def log(
         self,
-        _type: enums.LogType, /,
-        *,
+        _type: enums.LogType,
+        /, *,
         embed: discord.Embed
     ) -> None:
-        self._LOG_QUEUE[_type].append(embed)
+        self.logging_queue[_type].append(embed)
 
     # Overridden methods
 

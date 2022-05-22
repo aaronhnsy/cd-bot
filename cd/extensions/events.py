@@ -263,7 +263,7 @@ class Events(commands.Cog):
     @commands.Cog.listener("on_command_completion")
     async def _log_command_use(self, ctx: custom.Context) -> None:
 
-        await self.bot._LOG_WEBHOOKS[enums.LogType.COMMAND].send(
+        await self.bot.logging_webhooks[enums.LogType.COMMAND].send(
             embed=await self._build_command_information_embed(ctx, colour=values.GREEN),
             username=f"{ctx.guild or ctx.author}",
             avatar_url=utilities.icon(ctx.guild) if ctx.guild else utilities.avatar(ctx.author),
@@ -329,7 +329,7 @@ class Events(commands.Cog):
             webhook_username = f"{ctx.guild or ctx.author}"
             webhook_avatar = utilities.icon(ctx.guild) if ctx.guild else utilities.avatar(ctx.author)
 
-            await self.bot._LOG_WEBHOOKS[enums.LogType.ERROR].send(
+            await self.bot.logging_webhooks[enums.LogType.ERROR].send(
                 await utilities.upload_text(
                     self.bot.mystbin,
                     content=utilities.codeblock(exception, max_characters=2000),

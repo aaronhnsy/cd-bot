@@ -620,7 +620,7 @@ class Player(commands.Cog):
 
         assert isinstance(activity, discord.Spotify)
 
-        await Play._ensure_connected(ctx)
+        await Play.ensure_connected(ctx)
 
         assert ctx.player is not None
         await ctx.player.searcher.queue(

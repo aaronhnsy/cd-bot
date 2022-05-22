@@ -34,7 +34,7 @@ class Play(commands.Cog):
         return True
 
     @staticmethod
-    async def _ensure_connected(ctx: custom.Context) -> None:
+    async def ensure_connected(ctx: custom.Context) -> None:
 
         assert isinstance(ctx.author, discord.Member)
 
@@ -69,7 +69,7 @@ class Play(commands.Cog):
         This command supports all sources providing you use a direct URL. When using a search query with this command you will always get a YouTube track.
         """
 
-        await self._ensure_connected(ctx)
+        await self.ensure_connected(ctx)
 
         assert ctx.player is not None
         await ctx.player.searcher.queue(query, source=slate.Source.YOUTUBE, ctx=ctx)
@@ -86,7 +86,7 @@ class Play(commands.Cog):
         This command supports all sources providing you use a direct URL. When using a search query with this command you will always get a YouTube track.
         """
 
-        await self._ensure_connected(ctx)
+        await self.ensure_connected(ctx)
 
         assert ctx.player is not None
         await ctx.player.searcher.queue(query, source=slate.Source.YOUTUBE, ctx=ctx, play_next=True)
@@ -103,7 +103,7 @@ class Play(commands.Cog):
         This command supports all sources providing you use a direct URL. When using a search query with this command you will always get a YouTube track.
         """
 
-        await self._ensure_connected(ctx)
+        await self.ensure_connected(ctx)
 
         assert ctx.player is not None
         await ctx.player.searcher.queue(query, source=slate.Source.YOUTUBE, ctx=ctx, play_now=True)
@@ -122,7 +122,7 @@ class Play(commands.Cog):
         This command supports all sources providing you use a direct URL. When using a search query with this command you will always get a YouTube track.
         """
 
-        await self._ensure_connected(ctx)
+        await self.ensure_connected(ctx)
 
         assert ctx.player is not None
         await ctx.player.searcher.select(query, source=slate.Source.YOUTUBE, ctx=ctx)
@@ -139,7 +139,7 @@ class Play(commands.Cog):
         This command supports all sources providing you use a direct URL. When using a search query with this command you will always get a YouTube track.
         """
 
-        await self._ensure_connected(ctx)
+        await self.ensure_connected(ctx)
 
         assert ctx.player is not None
         await ctx.player.searcher.select(query, source=slate.Source.YOUTUBE, ctx=ctx, play_next=True)
@@ -156,7 +156,7 @@ class Play(commands.Cog):
         This command supports all sources providing you use a direct URL. When using a search query with this command you will always get a YouTube track.
         """
 
-        await self._ensure_connected(ctx)
+        await self.ensure_connected(ctx)
 
         assert ctx.player is not None
         await ctx.player.searcher.select(query, source=slate.Source.YOUTUBE, ctx=ctx, play_now=True)
@@ -226,7 +226,7 @@ class Play(commands.Cog):
         ● `query`: The track to search for. Can be a URL or search query.
         """
 
-        await self._ensure_connected(ctx)
+        await self.ensure_connected(ctx)
 
         assert ctx.player is not None
         await ctx.player.searcher.queue(query, source=slate.Source.YOUTUBE_MUSIC, ctx=ctx)
@@ -238,7 +238,7 @@ class Play(commands.Cog):
     )
     async def youtube_music_next(self, ctx: custom.Context, *, query: str) -> None:
 
-        await self._ensure_connected(ctx)
+        await self.ensure_connected(ctx)
 
         assert ctx.player is not None
         await ctx.player.searcher.queue(query, source=slate.Source.YOUTUBE_MUSIC, ctx=ctx, play_next=True)
@@ -250,7 +250,7 @@ class Play(commands.Cog):
     )
     async def youtube_music_now(self, ctx: custom.Context, *, query: str) -> None:
 
-        await self._ensure_connected(ctx)
+        await self.ensure_connected(ctx)
 
         assert ctx.player is not None
         await ctx.player.searcher.queue(query, source=slate.Source.YOUTUBE_MUSIC, ctx=ctx, play_now=True)
@@ -269,7 +269,7 @@ class Play(commands.Cog):
         ● `query`: The track to search for. Can be a URL or search query.
         """
 
-        await self._ensure_connected(ctx)
+        await self.ensure_connected(ctx)
 
         assert ctx.player is not None
         await ctx.player.searcher.select(query, source=slate.Source.YOUTUBE_MUSIC, ctx=ctx)
@@ -281,7 +281,7 @@ class Play(commands.Cog):
     )
     async def youtube_music_search_next(self, ctx: custom.Context, *, query: str) -> None:
 
-        await self._ensure_connected(ctx)
+        await self.ensure_connected(ctx)
 
         assert ctx.player is not None
         await ctx.player.searcher.select(query, source=slate.Source.YOUTUBE_MUSIC, ctx=ctx, play_next=True)
@@ -293,7 +293,7 @@ class Play(commands.Cog):
     )
     async def youtube_music_search_now(self, ctx: custom.Context, *, query: str) -> None:
 
-        await self._ensure_connected(ctx)
+        await self.ensure_connected(ctx)
 
         assert ctx.player is not None
         await ctx.player.searcher.select(query, source=slate.Source.YOUTUBE_MUSIC, ctx=ctx, play_now=True)
@@ -312,7 +312,7 @@ class Play(commands.Cog):
         ● `query`: The track to search for. Can be a URL or search query.
         """
 
-        await self._ensure_connected(ctx)
+        await self.ensure_connected(ctx)
 
         assert ctx.player is not None
         await ctx.player.searcher.queue(query, source=slate.Source.SOUNDCLOUD, ctx=ctx)
@@ -324,7 +324,7 @@ class Play(commands.Cog):
     )
     async def soundcloud_next(self, ctx: custom.Context, *, query: str) -> None:
 
-        await self._ensure_connected(ctx)
+        await self.ensure_connected(ctx)
 
         assert ctx.player is not None
         await ctx.player.searcher.queue(query, source=slate.Source.SOUNDCLOUD, ctx=ctx, play_next=True)
@@ -336,7 +336,7 @@ class Play(commands.Cog):
     )
     async def soundcloud_now(self, ctx: custom.Context, *, query: str) -> None:
 
-        await self._ensure_connected(ctx)
+        await self.ensure_connected(ctx)
 
         assert ctx.player is not None
         await ctx.player.searcher.queue(query, source=slate.Source.SOUNDCLOUD, ctx=ctx, play_now=True)
@@ -355,7 +355,7 @@ class Play(commands.Cog):
         ● `query`: The track to search for. Can be a URL or search query.
         """
 
-        await self._ensure_connected(ctx)
+        await self.ensure_connected(ctx)
 
         assert ctx.player is not None
         await ctx.player.searcher.select(query, source=slate.Source.SOUNDCLOUD, ctx=ctx)
@@ -367,7 +367,7 @@ class Play(commands.Cog):
     )
     async def soundcloud_search_next(self, ctx: custom.Context, *, query: str) -> None:
 
-        await self._ensure_connected(ctx)
+        await self.ensure_connected(ctx)
 
         assert ctx.player is not None
         await ctx.player.searcher.select(query, source=slate.Source.SOUNDCLOUD, ctx=ctx, play_next=True)
@@ -379,7 +379,7 @@ class Play(commands.Cog):
     )
     async def soundcloud_search_now(self, ctx: custom.Context, *, query: str) -> None:
 
-        await self._ensure_connected(ctx)
+        await self.ensure_connected(ctx)
 
         assert ctx.player is not None
         await ctx.player.searcher.select(query, source=slate.Source.SOUNDCLOUD, ctx=ctx, play_now=True)
@@ -390,7 +390,7 @@ class Play(commands.Cog):
     @checks.is_bot_owner()
     async def local(self, ctx: custom.Context, *, query: str) -> None:
 
-        await self._ensure_connected(ctx)
+        await self.ensure_connected(ctx)
 
         assert ctx.player is not None
         await ctx.player.searcher.queue(query, source=slate.Source.LOCAL, ctx=ctx)
@@ -399,7 +399,7 @@ class Play(commands.Cog):
     @checks.is_bot_owner()
     async def local_next(self, ctx: custom.Context, *, query: str) -> None:
 
-        await self._ensure_connected(ctx)
+        await self.ensure_connected(ctx)
 
         assert ctx.player is not None
         await ctx.player.searcher.queue(query, source=slate.Source.LOCAL, ctx=ctx, play_next=True)
@@ -408,7 +408,7 @@ class Play(commands.Cog):
     @checks.is_bot_owner()
     async def local_now(self, ctx: custom.Context, *, query: str) -> None:
 
-        await self._ensure_connected(ctx)
+        await self.ensure_connected(ctx)
 
         assert ctx.player is not None
         await ctx.player.searcher.queue(query, source=slate.Source.LOCAL, ctx=ctx, play_now=True)
@@ -419,7 +419,7 @@ class Play(commands.Cog):
     @checks.is_bot_owner()
     async def http(self, ctx: custom.Context, *, query: str) -> None:
 
-        await self._ensure_connected(ctx)
+        await self.ensure_connected(ctx)
 
         assert ctx.player is not None
         await ctx.player.searcher.queue(query, source=slate.Source.NONE, ctx=ctx)
@@ -428,7 +428,7 @@ class Play(commands.Cog):
     @checks.is_bot_owner()
     async def http_next(self, ctx: custom.Context, *, query: str) -> None:
 
-        await self._ensure_connected(ctx)
+        await self.ensure_connected(ctx)
 
         assert ctx.player is not None
         await ctx.player.searcher.queue(query, source=slate.Source.NONE, ctx=ctx, play_next=True)
@@ -437,7 +437,7 @@ class Play(commands.Cog):
     @checks.is_bot_owner()
     async def http_now(self, ctx: custom.Context, *, query: str) -> None:
 
-        await self._ensure_connected(ctx)
+        await self.ensure_connected(ctx)
 
         assert ctx.player is not None
         await ctx.player.searcher.queue(query, source=slate.Source.NONE, ctx=ctx, play_now=True)

@@ -36,7 +36,7 @@ from urllib.parse import quote
 
 # Packages
 from discord.http import MaybeUnlock, json_or_text
-from discord.utils import _parse_ratelimit_header
+from discord.utils import _parse_ratelimit_header  # type: ignore
 
 # Local
 from cd import exceptions

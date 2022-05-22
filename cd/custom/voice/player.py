@@ -101,7 +101,7 @@ class Player(slate.Player["CD", "Player"]):
 
         return search.tracks[0] if search else None
 
-    async def _play_next(self) -> None:
+    async def play_next(self) -> None:
 
         if self.is_playing() or self.waiting:
             return
@@ -133,7 +133,7 @@ class Player(slate.Player["CD", "Player"]):
                     )
                 )
                 self.waiting = False
-                await self._play_next()
+                await self.play_next()
                 return
 
             track = _track
@@ -168,7 +168,7 @@ class Player(slate.Player["CD", "Player"]):
         self._current = None
 
         # Play the next track.
-        await self._play_next()
+        await self.play_next()
 
     # Overrides
 

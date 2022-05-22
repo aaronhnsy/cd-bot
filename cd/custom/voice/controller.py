@@ -315,8 +315,8 @@ class Controller:
         if not self.message:
             return
 
-        assert self.player._current is not None
-        track = self.player._current
+        assert self.player.current is not None
+        track = self.player.current
 
         if reason in [enums.TrackEndReason.NORMAL, enums.TrackEndReason.REPLACED]:
             colour = values.MAIN
