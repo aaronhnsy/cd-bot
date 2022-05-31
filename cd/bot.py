@@ -63,7 +63,7 @@ class CD(commands.AutoShardedBot):
         self.start_time: float = time.time()
 
         # dashboard
-        self.application = tornado.web.Application(
+        self.dashboard = tornado.web.Application(
             handlers.setup(bot=self),
             static_path=os.path.join(os.path.dirname(__file__), "dashboard/static/"),
             template_path=os.path.join(os.path.dirname(__file__), "dashboard/templates/"),
@@ -72,7 +72,7 @@ class CD(commands.AutoShardedBot):
             debug=True
         )
         self.server = tornado.httpserver.HTTPServer(
-            self.application,
+            self.dashboard,
             xheaders=True
         )
         self.client: utilities.HTTPClient = utilities.MISSING
