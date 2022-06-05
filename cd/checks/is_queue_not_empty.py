@@ -26,7 +26,7 @@ def is_queue_not_empty() -> Check[custom.Context]:
 
     async def predicate(ctx: custom.Context) -> Literal[True]:
 
-        if not ctx.player or not ctx.player.queue.items:
+        if not ctx.player or ctx.player.queue.is_empty():
             raise exceptions.EmbedError(description="The queue is empty.")
 
         return True
@@ -38,7 +38,7 @@ def is_queue_history_not_empty() -> Check[custom.Context]:
 
     async def predicate(ctx: custom.Context) -> Literal[True]:
 
-        if not ctx.player or not ctx.player.queue.history:
+        if not ctx.player or ctx.player.queue.is_history_empty():
             raise exceptions.EmbedError(description="The queue history is empty.")
 
         return True

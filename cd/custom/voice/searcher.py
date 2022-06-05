@@ -1,6 +1,9 @@
 # Future
 from __future__ import annotations
 
+# Standard Library
+import contextlib
+
 # Packages
 import discord
 import slate
@@ -65,17 +68,16 @@ class SearcherSelect(discord.ui.Select["SearcherView"]):
 
         # Update the original message response with
         # the new embed and view.
-        try:
+        with contextlib.suppress(discord.NotFound, discord.HTTPException):
             await self.view.message.edit(embed=embed, view=self.view)
-        except (discord.NotFound, discord.HTTPException):
-            pass
 
         # Add the selected tracks to the queue and
         # update the players' controller message.
-        self.view.ctx.player.queue.extend(
-            [custom.QueueItem(track) for track in tracks],
-            position=0 if (self.view.play_next or self.view.play_now) else None
-        )
+        if self.view.play_next or self.view.play_now:
+            self.view.ctx.player.queue.put_at_front(items=tracks)
+        else:
+            self.view.ctx.player.queue.put_at_end(items=tracks)
+
         if self.view.play_now:
             await self.view.ctx.player.stop()
         if not self.view.ctx.player.is_playing():
@@ -125,10 +127,8 @@ class SearcherView(discord.ui.View):
         self.select.disabled = True
         self.select.placeholder = "Timed out!"
 
-        try:
+        with contextlib.suppress(discord.NotFound, discord.HTTPException):
             await self.message.edit(view=self)
-        except (discord.NotFound, discord.HTTPException):
-            pass
 
 
 class Searcher:
@@ -147,13 +147,14 @@ class Searcher:
         /, *,
         source: slate.Source,
         ctx: custom.Context,
+        start_time: int | None = None
     ) -> slate.Search:
 
         if (url := yarl.URL(query)) and url.host and url.scheme:
             source = slate.Source.NONE
 
         try:
-            search = await self.player.node.search(query, source=source, ctx=ctx)
+            search = await self.player.node.search(query, source=source, ctx=ctx, start_time=start_time)
 
         except slate.NoResultsFound as error:
             raise exceptions.EmbedError(
@@ -179,31 +180,33 @@ class Searcher:
         ctx: custom.Context,
         play_next: bool = False,
         play_now: bool = False,
-        start_time: int = 0,
+        start_time: int | None = None,
     ) -> None:
 
-        search = await self.search(query, source=source, ctx=ctx)
-        position = 0 if (play_next or play_now) else None
+        search = await self.search(query, source=source, ctx=ctx, start_time=start_time)
 
         if (
                 isinstance(search.result, (spotipy.Album, spotipy.Playlist, spotipy.Artist, slate.Collection))
                 and
                 getattr(search.result, "name", "").startswith("Search result for:") is False
         ):
-            self.player.queue.extend(
-                [custom.QueueItem(track) for track in search.tracks],
-                position=position
-            )
+            if play_next or play_now:
+                self.player.queue.put_at_front(items=search.tracks)
+            else:
+                self.player.queue.put_at_end(items=search.tracks)
+
             embed = utilities.embed(
                 colour=values.GREEN,
                 description=f"Added the **{search.source.value.title()}** {search.type.lower()} "
                             f"**[{search.result.name}]({search.result.url})** to the queue."
             )
+
         else:
-            self.player.queue.put(
-                custom.QueueItem(search.tracks[0], start_time=start_time),
-                position=position
-            )
+            if play_next or play_now:
+                self.player.queue.put_at_front(item=search.tracks[0])
+            else:
+                self.player.queue.put_at_end(item=search.tracks[0])
+
             embed = utilities.embed(
                 colour=values.GREEN,
                 description=f"Added the **{search.source.value.title()}** track "

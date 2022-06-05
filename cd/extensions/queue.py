@@ -48,16 +48,16 @@ class Queue(commands.Cog):
         paginator = paginators.EmbedPaginator(
             ctx=ctx,
             entries=[
-                f"**{index}. [{discord.utils.escape_markdown(item.track.title)}]({item.track.uri})** by **{discord.utils.escape_markdown(item.track.author or 'Unknown')}**\n"
-                f"**⤷** {utilities.format_seconds(item.track.length // 1000, friendly=True)} | "
-                f"{item.track.source.value.title()} | "
-                f"Added by: {getattr(item.track.extras['ctx'].author, 'mention', None)}"
-                for index, item in enumerate(ctx.player.queue.items, start=1)
+                f"**{index}. [{discord.utils.escape_markdown(track.title)}]({track.uri})** by **{discord.utils.escape_markdown(track.author or 'Unknown')}**\n"
+                f"**⤷** {utilities.format_seconds(track.length // 1000, friendly=True)} | "
+                f"{track.source.value.title()} | "
+                f"Added by: {getattr(track.extras['ctx'].author, 'mention', None)}"
+                for index, track in enumerate(ctx.player.queue, start=1)
             ],
             per_page=5,
             splitter="\n\n",
-            embed_footer=f"{len(ctx.player.queue.items)} tracks | "
-                         f"{utilities.format_seconds(sum(item.track.length for item in ctx.player.queue.items) // 1000, friendly=True)} | "
+            embed_footer=f"{len(ctx.player.queue)} tracks | "
+                         f"{utilities.format_seconds(sum(track.length for track in ctx.player.queue) // 1000, friendly=True)} | "
                          f"Loop mode: {ctx.player.queue.loop_mode.name.title()} | "
                          f"1 = up next",
         )
@@ -80,12 +80,12 @@ class Queue(commands.Cog):
                 f"**⤷** {utilities.format_seconds(track.length // 1000, friendly=True)} | "
                 f"{track.source.value.title()} | "
                 f"Added by: {getattr(track.extras['ctx'].author, 'mention', None)}"
-                for index, track in enumerate(ctx.player.queue.history, start=1)
+                for index, track in enumerate(ctx.player.queue._history, start=1)
             ],
             per_page=5,
             splitter="\n\n",
-            embed_footer=f"{len(ctx.player.queue.history)} tracks | "
-                         f"{utilities.format_seconds(sum(track.length for track in ctx.player.queue.history) // 1000, friendly=True)} | "
+            embed_footer=f"{len(ctx.player.queue._history)} tracks | "
+                         f"{utilities.format_seconds(sum(track.length for track in ctx.player.queue._history) // 1000, friendly=True)} | "
                          f"Loop mode: {ctx.player.queue.loop_mode.name.title()} | "
                          f"1 = most recent",
         )
@@ -160,11 +160,11 @@ class Queue(commands.Cog):
         assert ctx.player is not None
 
         if method == "title":
-            ctx.player.queue.items.sort(key=lambda item: item.track.title, reverse=reverse)
+            ctx.player.queue._items.sort(key=lambda track: track.title, reverse=reverse)
         elif method == "author":
-            ctx.player.queue.items.sort(key=lambda item: item.track.author, reverse=reverse)
+            ctx.player.queue._items.sort(key=lambda track: track.author, reverse=reverse)
         elif method == "length":
-            ctx.player.queue.items.sort(key=lambda item: item.track.length, reverse=reverse)
+            ctx.player.queue._items.sort(key=lambda track: track.length, reverse=reverse)
 
         await ctx.reply(
             embed=utilities.embed(
@@ -196,14 +196,14 @@ class Queue(commands.Cog):
                             f"**{length}** {utilities.pluralize('track', length)}."
             )
 
-        item = ctx.player.queue.get(position=entry - 1)
-        assert item is not None
+        track = ctx.player.queue.get_from_position(entry - 1, put_into_history=False)
+        assert track is not None
 
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description=f"Removed **[{discord.utils.escape_markdown(item.track.title)}]({item.track.uri})** "
-                            f"by **{discord.utils.escape_markdown(item.track.author or 'Unknown')}** from the queue."
+                description=f"Removed **[{discord.utils.escape_markdown(track.title)}]({track.uri})** "
+                            f"by **{discord.utils.escape_markdown(track.author or 'Unknown')}** from the queue."
             )
         )
         await ctx.player.controller.update_current_message()
@@ -236,15 +236,15 @@ class Queue(commands.Cog):
                             f"**{length}** {utilities.pluralize('track', length)}."
             )
 
-        item = ctx.player.queue.get(position=entry - 1)
-        assert item is not None
+        track = ctx.player.queue.get_from_position(entry - 1, put_into_history=False)
+        assert track is not None
 
-        ctx.player.queue.put(item, position=to - 1)
+        ctx.player.queue.put_at_position(to - 1, item=track)
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description=f"Moved **[{discord.utils.escape_markdown(item.track.title)}]({item.track.uri})** "
-                            f"by **{discord.utils.escape_markdown(item.track.author or 'Unknown')}** from position "
+                description=f"Moved **[{discord.utils.escape_markdown(track.title)}]({track.uri})** "
+                            f"by **{discord.utils.escape_markdown(track.author or 'Unknown')}** from position "
                             f"**{entry}** to position **{to}**.",
             )
         )
@@ -264,8 +264,8 @@ class Queue(commands.Cog):
 
         assert ctx.player is not None
 
-        ctx.player.queue.items = list(
-            {item.track.identifier: item for item in ctx.player.queue.items}.values()
+        ctx.player.queue._items = list(
+            {track.identifier: track for track in ctx.player.queue._items}.values()
         )
 
         await ctx.reply(

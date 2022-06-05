@@ -16,7 +16,7 @@ jishaku         = { version = "~2.5.0", extras = ["voice", "procinfo"]  }
 
 asyncpg         = { version = "~0.25.0" }
 colorama        = { version = "~0.4.0"  }
-humanize        = { version = "~4.0.0"  }
+humanize        = { version = "~4.1.0"  }
 pendulum        = { version = "~2.1.0"  }
 pynacl          = { version = "~1.5.0"  }
 rapidfuzz       = { version = "~2.0.0"  }
@@ -24,8 +24,8 @@ tornado         = { version = "~6.1.0"  }
 wand            = { version = "~0.6.0"  }
 "mystbin.py"    = { version = "~3.1.0"  }
 
-slate           = { git = "git@github.com:Axelware/slate"                                   }
-"discord.py"    = { git = "git@github.com:Rapptz/discord.py", extras = ["speed", "voice"]   }
+slate           = { git = "https://github.com/Axelware/slate",      branch = "documentation"        }
+"discord.py"    = { git = "https://github.com/Rapptz/discord.py",   extras = ["speed", "voice"]     }
 
 
 [tool.poetry.dev-dependencies]
@@ -57,6 +57,7 @@ pythonVersion               = "3.10"
 typeCheckingMode            = "strict"
 useLibraryCodeForTypes      = true
 reportUnknownMemberType     = false
+reportPrivateUsage          = false
 
 reportMissingTypeStubs      = false
 reportPrivateImportUsage    = false

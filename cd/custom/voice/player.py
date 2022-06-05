@@ -3,6 +3,7 @@ from __future__ import annotations
 
 # Standard Library
 import asyncio
+import contextlib
 from typing import TYPE_CHECKING
 
 # Packages
@@ -70,6 +71,7 @@ class Player(slate.Player["CD", "Player"]):
     async def _convert_spotify_track(self, track: slate.Track) -> slate.Track | None:
 
         ctx: custom.Context = track.extras["ctx"]
+        start_time: int = track.extras["start_time"]
         search = None
 
         if track.isrc:
@@ -77,27 +79,26 @@ class Player(slate.Player["CD", "Player"]):
                 search = await self.searcher.search(
                     track.isrc,
                     source=slate.Source.YOUTUBE_MUSIC,
-                    ctx=ctx
+                    ctx=ctx,
+                    start_time=start_time
                 )
             except exceptions.EmbedError:
-                try:
+                with contextlib.suppress(exceptions.EmbedError):
                     search = await self.searcher.search(
                         track.isrc,
                         source=slate.Source.YOUTUBE,
-                        ctx=ctx
+                        ctx=ctx,
+                        start_time=start_time
                     )
-                except exceptions.EmbedError:
-                    pass
 
         if search is None:
-            try:
+            with contextlib.suppress(exceptions.EmbedError):
                 search = await self.searcher.search(
                     f"{track.author} - {track.title}",
                     source=slate.Source.YOUTUBE,
-                    ctx=ctx
+                    ctx=ctx,
+                    start_time=start_time
                 )
-            except exceptions.EmbedError:
-                pass
 
         return search.tracks[0] if search else None
 
@@ -108,18 +109,15 @@ class Player(slate.Player["CD", "Player"]):
         self.waiting = True
 
         if self.queue.is_empty() is False:
-            item = self.queue.get()
-            assert item is not None
+            track = self.queue.get_from_front(put_into_history=False)
 
         else:
             try:
                 with async_timeout.timeout(180):
-                    item = await self.queue.get_wait()
+                    track = await self.queue.wait_for_item(put_into_history=False)
             except asyncio.TimeoutError:
                 await self._disconnect_on_timeout()
                 return
-
-        track = item.track
 
         if track.source is slate.Source.SPOTIFY:
 
@@ -138,7 +136,7 @@ class Player(slate.Player["CD", "Player"]):
 
             track = _track
 
-        await self.play(track, start_time=item.start_time)
+        await self.play(track, start_time=track.extras["start_time"])
         self.waiting = False
 
     # Events
@@ -158,7 +156,7 @@ class Player(slate.Player["CD", "Player"]):
 
             # Add current track to the queue history.
             assert self._current is not None
-            self.queue.history.insert(0, self._current)
+            self.queue.put_into_history(position=0, item=self._current)
 
         # Update controller message.
         await self.controller.handle_track_end(reason)

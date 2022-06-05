@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 # Standard Library
+import contextlib
 from collections.abc import Awaitable, Callable
 
 # Packages
@@ -73,14 +74,14 @@ class PreviousButton(discord.ui.Button["ControllerView"]):
 
         # Pop the previous track from the queue history and
         # then add it to front of the queue.
-        previous = player.queue.history.pop(0)
-        player.queue.items.insert(0, custom.QueueItem(previous))
+        previous = player.queue.pop_from_history(position=0)
+        player.queue.put_at_position(0, item=previous)
 
         # Add the current track to the queue right after the
         # previous track so that it will play again if the
         # 'next' button is pressed after the 'previous' button.
         assert player.current is not None
-        player.queue.items.insert(1, custom.QueueItem(player.current))
+        player.queue.put_at_position(1, item=player.current)
 
         # Trigger the next track in the queue to play.
         await player.handle_track_end(enums.TrackEndReason.REPLACED)
@@ -173,7 +174,7 @@ class ControllerView(discord.ui.View):
         player = self.player
 
         self.shuffle_button.emoji = SHUFFLE_STATE_EMOJIS[player.queue.shuffle_state]
-        self.previous_button.disabled = not player.queue.history
+        self.previous_button.disabled = player.queue.is_history_empty() is True
         self.pause_state_button.emoji = PAUSE_STATE_EMOJIS[player.paused]
         self.loop_button.emoji = LOOP_MODE_EMOJIS[player.queue.loop_mode]
 
@@ -265,9 +266,9 @@ class Controller:
         assert embed.description is not None
 
         entries = [
-            f"**{index}. [{discord.utils.escape_markdown(item.track.title)}]({item.track.uri})**\n"
-            f"**⤷** by **{discord.utils.escape_markdown(item.track.author)}** | {utilities.format_seconds(item.track.length // 1000, friendly=True)}\n"
-            for index, item in enumerate(self.player.queue.items[:3], start=1)
+            f"**{index}. [{discord.utils.escape_markdown(track.title)}]({track.uri})**\n"
+            f"**⤷** by **{discord.utils.escape_markdown(track.author)}** | {utilities.format_seconds(track.length // 1000, friendly=True)}\n"
+            for index, track in enumerate(self.player.queue[:3], start=1)
         ]
         embed.description += f"\n● **Up next ({len(self.player.queue)}):**\n{''.join(entries)}"
 
@@ -300,10 +301,8 @@ class Controller:
         kwargs = await self.build_message()
         self.view.update_state()
 
-        try:
+        with contextlib.suppress(discord.NotFound, discord.HTTPException):
             self.message = await self.message.edit(**kwargs, view=self.view)
-        except (discord.NotFound, discord.HTTPException):
-            pass
 
     async def handle_track_start(self) -> None:
         await self.send_new_message()
@@ -329,7 +328,7 @@ class Controller:
                 discord.ui.Button(label="Support Server", url=values.SUPPORT_LINK)
             )
 
-        try:
+        with contextlib.suppress(discord.NotFound, discord.HTTPException):
             await self.message.edit(
                 embed=utilities.embed(
                     colour=colour,
@@ -340,9 +339,6 @@ class Controller:
                 ),
                 view=view
             )
-        except (discord.NotFound, discord.HTTPException):
-            pass
-
         self.message = None
 
     async def _delete_old_message(self) -> None:
@@ -350,10 +346,8 @@ class Controller:
         if not self.message:
             return
 
-        try:
+        with contextlib.suppress(discord.NotFound, discord.HTTPException):
             await self.message.delete()
-        except (discord.NotFound, discord.HTTPException):
-            pass
 
         self.message = None
 
