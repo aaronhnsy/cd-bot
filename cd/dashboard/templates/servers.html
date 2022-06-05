@@ -5,5 +5,78 @@
 
 {% block content %}
 
+<div class="container">
+
+    {% if shared_guilds %}
+        <div class="container mt-3">
+
+            <h2>
+                I am in these servers:
+                <small class="text-muted">Click on a card to go that servers dashboard.</small>
+            </h2>
+
+            <div class="row masonry">
+                {% for _guild in shared_guilds %}
+                    <div class="col-4 col-sm-3 col-md-3 col-lg-2 col-xl-2 p-2">
+                        <div class="card p-2">
+                            <img class="card-img-top img-fluid rounded-2" src="{{ _guild.icon or static_url('/images/no_image100x100.png') }}" alt="server icon">
+                            <div class="card-body p-0 pt-2">
+                                {{ _guild.name }}
+                            </div>
+                            <a class="stretched-link" href="/servers/{{ _guild.id }}"></a>
+                        </div>
+                    </div>
+                {% end %}
+            </div>
+
+        </div>
+    {% end %}
+
+    {% if non_shared_guilds %}
+        <div class="container mt-3">
+
+            <h2>
+                I am not in any of these servers:
+                <small class="text-muted">Click on a card to invite it to that server.</small>
+            </h2>
+
+            <div class="row masonry">
+                {% for _guild in non_shared_guilds %}
+                    <div class="col-4 col-sm-3 col-md-3 col-lg-2 col-xl-2 p-2">
+                        <div class="card p-2">
+                            <img class="card-img-top img-fluid rounded-2" src="{{ _guild.icon or static_url('/images/no_image100x100.png') }}" alt="server icon">
+                            <div class="card-body p-0 pt-2">
+                                {{ _guild.name }}
+                            </div>
+                            {% if _guild.permissions.manage_guild or _guild.permissions.administrator %}
+                                <a class="stretched-link" href="/api/discord/invite/{{ _guild.id }}"></a>
+                            {% else %}
+                                <a class="stretched-link no-permission-toast"></a>
+                            {% end %}
+                        </div>
+                    </div>
+                {% end %}
+            </div>
+
+        </div>
+    {% end %}
+
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 10">
+        <div id="noPermissionToast" class="toast border-0" role="alert" aria-live="assertive" aria-atomic="true">
+
+            <div class="toast-header">
+                <img src="{{ static('/images/error.png') }}" class="rounded me-2" alt="logo" width="24" height="24">
+                <strong class="me-auto">No permissions</strong>
+                <button class="btn-close btn-close-white" type="button" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+
+            <div class="toast-body">
+                Sorry, that server doesn't allow you to invite bots.
+            </div>
+
+        </div>
+    </div>
+
+</div>
 
 {% end content %}
