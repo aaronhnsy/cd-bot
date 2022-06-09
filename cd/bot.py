@@ -118,7 +118,6 @@ class CD(commands.AutoShardedBot):
             try:
                 await self.slate.create_node(
                     bot=self,
-                    session=self.session,
                     provider=slate.Provider.OBSIDIAN,
                     identifier=node["identifier"],
                     host=node["host"],

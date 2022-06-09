@@ -24,8 +24,8 @@ tornado         = { version = "~6.1.0"  }
 wand            = { version = "~0.6.0"  }
 "mystbin.py"    = { version = "~3.1.0"  }
 
-slate           = { git = "https://github.com/Axelware/slate",      branch = "documentation"        }
-"discord.py"    = { git = "https://github.com/Rapptz/discord.py",   extras = ["speed", "voice"]     }
+slate           = { git = "https://github.com/Axelware/slate",    branch = "main" }
+"discord.py"    = { git = "https://github.com/Rapptz/discord.py", branch = "master", extras = ["speed", "voice"] }
 
 
 [tool.poetry.dev-dependencies]

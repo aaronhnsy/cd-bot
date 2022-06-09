@@ -2,7 +2,7 @@
 name = "aiodns"
 version = "3.0.0"
 description = "Simple DNS resolver for asyncio"
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -13,7 +13,7 @@ pycares = ">=4.0.0"
 name = "aiohttp"
 version = "3.8.1"
 description = "Async http client/server framework (asyncio)"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -36,7 +36,7 @@ speedups = ["aiodns", "brotli", "cchardet"]
 name = "aioredis"
 version = "2.0.1"
 description = "asyncio (PEP 3156) Redis support"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -52,7 +52,7 @@ hiredis = ["hiredis (>=1.0)"]
 name = "aiosignal"
 version = "1.2.0"
 description = "aiosignal: a list of registered asynchronous callbacks"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -63,7 +63,7 @@ frozenlist = ">=1.1.0"
 name = "astunparse"
 version = "1.6.3"
 description = "An AST unparser for Python"
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -75,7 +75,7 @@ wheel = ">=0.23.0,<1.0"
 name = "async-timeout"
 version = "4.0.2"
 description = "Timeout context manager for asyncio programs"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -83,7 +83,7 @@ python-versions = ">=3.6"
 name = "asyncpg"
 version = "0.25.0"
 description = "An asyncio PostgreSQL driver"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6.0"
 
@@ -96,7 +96,7 @@ test = ["pycodestyle (>=2.7.0,<2.8.0)", "flake8 (>=3.9.2,<3.10.0)", "uvloop (>=0
 name = "attrs"
 version = "21.4.0"
 description = "Classes Without Boilerplate"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
@@ -110,7 +110,7 @@ tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>
 name = "braceexpand"
 version = "0.1.7"
 description = "Bash-style brace expansion for Python"
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -118,7 +118,7 @@ python-versions = "*"
 name = "brotli"
 version = "1.0.9"
 description = "Python bindings for the Brotli compression library"
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -126,7 +126,7 @@ python-versions = "*"
 name = "brotlicffi"
 version = "1.0.9.2"
 description = "Python CFFI bindings to the Brotli library"
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -137,7 +137,7 @@ cffi = ">=1.0.0"
 name = "cchardet"
 version = "2.1.7"
 description = "cChardet is high speed universal character encoding detector."
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -145,7 +145,7 @@ python-versions = "*"
 name = "certifi"
 version = "2022.5.18.1"
 description = "Python package for providing Mozilla's CA Bundle."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -153,7 +153,7 @@ python-versions = ">=3.6"
 name = "cffi"
 version = "1.15.0"
 description = "Foreign Function Interface for Python calling C code."
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -164,7 +164,7 @@ pycparser = "*"
 name = "charset-normalizer"
 version = "2.0.12"
 description = "The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.5.0"
 
@@ -175,7 +175,7 @@ unicode_backport = ["unicodedata2"]
 name = "click"
 version = "8.1.3"
 description = "Composable command line interface toolkit"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 
@@ -186,15 +186,15 @@ colorama = {version = "*", markers = "platform_system == \"Windows\""}
 name = "colorama"
 version = "0.4.4"
 description = "Cross-platform colored terminal text."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "discord.py"
-version = "2.0.0a4325+ga106201a"
+version = "2.0.0a4337+gbe6db202"
 description = "A Python wrapper for the Discord API"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.8.0"
 develop = false
@@ -208,7 +208,7 @@ orjson = {version = ">=3.5.4", optional = true, markers = "extra == \"speed\""}
 PyNaCl = {version = ">=1.3.0,<1.6", optional = true, markers = "extra == \"voice\""}
 
 [package.extras]
-docs = ["sphinx (==4.4.0)", "sphinxcontrib-trio (==1.1.2)", "sphinxcontrib-websupport", "typing-extensions"]
+docs = ["sphinx (==4.4.0)", "sphinxcontrib_trio (==1.1.2)", "sphinxcontrib-websupport", "typing-extensions"]
 speed = ["orjson (>=3.5.4)", "aiodns (>=1.1)", "brotli", "cchardet"]
 test = ["coverage", "pytest", "pytest-asyncio", "pytest-cov", "pytest-mock"]
 voice = ["PyNaCl (>=1.3.0,<1.6)"]
@@ -216,14 +216,14 @@ voice = ["PyNaCl (>=1.3.0,<1.6)"]
 [package.source]
 type = "git"
 url = "https://github.com/Rapptz/discord.py"
-reference = "HEAD"
-resolved_reference = "a106201ad394c207df222521842de796a460f27f"
+reference = "master"
+resolved_reference = "be6db2025580fd9e6298e5ad2bc0b93919f6c6a9"
 
 [[package]]
 name = "frozenlist"
 version = "1.3.0"
 description = "A list-like structure which implements collections.abc.MutableSequence"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 
@@ -231,7 +231,7 @@ python-versions = ">=3.7"
 name = "hiredis"
 version = "2.0.0"
 description = "Python wrapper for hiredis"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -239,7 +239,7 @@ python-versions = ">=3.6"
 name = "humanize"
 version = "4.1.0"
 description = "Python humanize utilities"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 
@@ -250,7 +250,7 @@ tests = ["freezegun", "pytest", "pytest-cov"]
 name = "idna"
 version = "3.3"
 description = "Internationalized Domain Names in Applications (IDNA)"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.5"
 
@@ -258,7 +258,7 @@ python-versions = ">=3.5"
 name = "import-expression"
 version = "1.1.4"
 description = "Parses a superset of Python allowing for inline module import expressions"
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -286,7 +286,7 @@ plugins = ["setuptools"]
 name = "jarowinkler"
 version = "1.0.2"
 description = "library for fast approximate string matching using Jaro and Jaro-Winkler similarity"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -294,7 +294,7 @@ python-versions = ">=3.6"
 name = "jishaku"
 version = "2.5.0"
 description = "A discord.py extension including useful tools for bot development and debugging."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.8.0"
 
@@ -317,7 +317,7 @@ voice = ["yt-dlp (>=2022.3.8)"]
 name = "multidict"
 version = "6.0.2"
 description = "multidict implementation"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 
@@ -325,7 +325,7 @@ python-versions = ">=3.7"
 name = "mutagen"
 version = "1.45.1"
 description = "read and write audio tags for many formats"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.5, <4"
 
@@ -333,7 +333,7 @@ python-versions = ">=3.5, <4"
 name = "mystbin-py"
 version = "3.1.1"
 description = "A small simple wrapper around the mystb.in API."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.9,<4.0"
 
@@ -346,9 +346,9 @@ docs = ["sphinx (>=4.0.0,<5.0.0)", "sphinxcontrib-trio", "furo"]
 
 [[package]]
 name = "orjson"
-version = "3.7.1"
+version = "3.7.2"
 description = "Fast, correct Python JSON library supporting dataclasses, datetimes, and numpy"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 
@@ -356,7 +356,7 @@ python-versions = ">=3.7"
 name = "pendulum"
 version = "2.1.2"
 description = "Python datetimes made easy"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
@@ -368,7 +368,7 @@ pytzdata = ">=2020.1"
 name = "psutil"
 version = "5.9.1"
 description = "Cross-platform lib for process and system monitoring in Python."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
@@ -379,7 +379,7 @@ test = ["ipaddress", "mock", "enum34", "pywin32", "wmi"]
 name = "pycares"
 version = "4.1.2"
 description = "Python interface for c-ares"
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -393,7 +393,7 @@ idna = ["idna (>=2.1)"]
 name = "pycparser"
 version = "2.21"
 description = "C parser in Python"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
@@ -401,7 +401,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 name = "pycryptodomex"
 version = "3.14.1"
 description = "Cryptographic library for Python"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
@@ -409,7 +409,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 name = "pynacl"
 version = "1.5.0"
 description = "Python binding to the Networking and Cryptography (NaCl) library"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -424,7 +424,7 @@ tests = ["pytest (>=3.2.1,!=3.3.0)", "hypothesis (>=3.27.0)"]
 name = "python-dateutil"
 version = "2.8.2"
 description = "Extensions to the standard Python datetime module"
-category = "dev"
+category = "main"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
 
@@ -435,7 +435,7 @@ six = ">=1.5"
 name = "pytzdata"
 version = "2020.1"
 description = "The Olson timezone database for Python."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
@@ -443,7 +443,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 name = "rapidfuzz"
 version = "2.0.11"
 description = "rapid fuzzy string matching"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -457,7 +457,7 @@ full = ["numpy"]
 name = "six"
 version = "1.16.0"
 description = "Python 2 and 3 compatibility utilities"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 
@@ -465,31 +465,31 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 name = "slate"
 version = "0.3.1"
 description = "A discord.py compatible wrapper for lavalink-like applications."
-category = "dev"
+category = "main"
 optional = false
 python-versions = "^3.10.0"
 develop = false
 
 [package.dependencies]
 aiohttp = "^3.8.0"
-spoti-py = "^0.1.0"
+"discord.py" = {git = "https://github.com/Rapptz/discord.py"}
+"spoti.py" = "^0.1.0"
 typing_extensions = "^4.2.0"
 
 [package.extras]
-dev = ["discord-py @ git+https://github.com/Rapptz/discord.py"]
 docs = ["sphinx (>=5.0.0,<6.0.0)", "sphinxcontrib-trio", "sphinx-copybutton", "sphinx-inline-tabs", "furo"]
 
 [package.source]
 type = "git"
 url = "https://github.com/Axelware/slate"
-reference = "documentation"
-resolved_reference = "5f826ced87a755a38c87260b726f049edd0a323c"
+reference = "main"
+resolved_reference = "6d098d0a02b36aeb7b1b446422d2b5032fbe0c24"
 
 [[package]]
 name = "spoti-py"
 version = "0.1.3"
 description = "An async wrapper for the Spotify Web API."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.10.0,<4.0.0"
 
@@ -504,7 +504,7 @@ docs = ["sphinx (>=4.3.1,<5.0.0)", "sphinxcontrib-trio (>=1.1.2,<2.0.0)", "sphin
 name = "tornado"
 version = "6.1"
 description = "Tornado is a Python web framework and asynchronous networking library, originally developed at FriendFeed."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">= 3.5"
 
@@ -512,7 +512,7 @@ python-versions = ">= 3.5"
 name = "typing-extensions"
 version = "4.2.0"
 description = "Backported and Experimental Type Hints for Python 3.7+"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 
@@ -520,7 +520,7 @@ python-versions = ">=3.7"
 name = "wand"
 version = "0.6.7"
 description = "Ctypes-based simple MagickWand API binding for Python"
-category = "dev"
+category = "main"
 optional = false
 python-versions = "*"
 
@@ -532,7 +532,7 @@ test = ["pytest (>=5.3.5)"]
 name = "websockets"
 version = "10.3"
 description = "An implementation of the WebSocket Protocol (RFC 6455 & 7692)"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 
@@ -540,7 +540,7 @@ python-versions = ">=3.7"
 name = "wheel"
 version = "0.37.1"
 description = "A built-package format for Python"
-category = "dev"
+category = "main"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
 
@@ -551,7 +551,7 @@ test = ["pytest (>=3.0.0)", "pytest-cov"]
 name = "yarl"
 version = "1.7.2"
 description = "Yet another URL library"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -563,7 +563,7 @@ multidict = ">=4.0"
 name = "yt-dlp"
 version = "2022.5.18"
 description = "A youtube-dl fork with additional features and patches"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -578,7 +578,7 @@ websockets = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10.0"
-content-hash = "5b5cfa34dc46cde534a0db377952eb0020ba3255fb622f9b703cddb1ca8f139f"
+content-hash = "3a76c03130ce82da6678be69d73e880eac41ee2c801604baed5738ae3694582e"
 
 [metadata.files]
 aiodns = [
@@ -1186,38 +1186,39 @@ mystbin-py = [
     {file = "mystbin.py-3.1.1.tar.gz", hash = "sha256:09d27b21c9ca5bc5483a9f095cd273118a5168bf6e51685303dd93ac3ac90d13"},
 ]
 orjson = [
-    {file = "orjson-3.7.1-cp310-cp310-macosx_10_7_x86_64.whl", hash = "sha256:4175929ca77338e6a57ff232c0e80443411ac0b489bfff755988ae70e3f62a97"},
-    {file = "orjson-3.7.1-cp310-cp310-macosx_10_9_x86_64.macosx_11_0_arm64.macosx_10_9_universal2.whl", hash = "sha256:349514d69ce089b0e39014345907318ddba8ceca32a187635601c391c36ecdd6"},
-    {file = "orjson-3.7.1-cp310-cp310-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:d4a380c164f8c40660ce8f96791695aa74d32a2a45d4038a2a4826d9ec2c61f6"},
-    {file = "orjson-3.7.1-cp310-cp310-manylinux_2_24_aarch64.whl", hash = "sha256:26c64da280c9e097081d12047f13b4adba776b19885da5e488c093d4a1461056"},
-    {file = "orjson-3.7.1-cp310-cp310-manylinux_2_28_x86_64.whl", hash = "sha256:3a1e2dfa7ba8adb7511f3560e968ff2a66e7d0cd2f454219a0ab778c3c2e1a5c"},
-    {file = "orjson-3.7.1-cp310-cp310-musllinux_1_1_x86_64.whl", hash = "sha256:8d877467096dc117500a5ed38238085a81518252db3991793a8468ca97445e6c"},
-    {file = "orjson-3.7.1-cp310-none-win_amd64.whl", hash = "sha256:b71915140261916e50dbf62dec1b448c159a789e23bc89b3ad1e6516f677036f"},
-    {file = "orjson-3.7.1-cp37-cp37m-macosx_10_7_x86_64.whl", hash = "sha256:033dd5f91a8a967a007d3d05cbabec67040d6ff3e159ea17d3f681c3114a0d78"},
-    {file = "orjson-3.7.1-cp37-cp37m-macosx_10_9_x86_64.macosx_11_0_arm64.macosx_10_9_universal2.whl", hash = "sha256:7e309db07b13d84bc5eb6ffdfd46f00b2301ce78871809e177f599db3f31fe24"},
-    {file = "orjson-3.7.1-cp37-cp37m-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:aa0919735afbdeada9687347fa7963ca9732c60b1005832ac9d4853a9cb48be9"},
-    {file = "orjson-3.7.1-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:31367b5d8389373aff1742b66608c4bff318a9015d94981a8c1919e82fe983ca"},
-    {file = "orjson-3.7.1-cp37-cp37m-manylinux_2_24_aarch64.whl", hash = "sha256:a23292d6093748eee3f7ed85dbe6c9abd24d4d399d7044bc323ff39834966d6c"},
-    {file = "orjson-3.7.1-cp37-cp37m-manylinux_2_28_x86_64.whl", hash = "sha256:ad0faec8ee89cd50a486804b7d9a97016a1d2074298ceadbc75efc6691030b36"},
-    {file = "orjson-3.7.1-cp37-cp37m-musllinux_1_1_x86_64.whl", hash = "sha256:43b9a44b42c67adbc02fc86efacf27a374b09971cd58e0cd9739b8a748d19be5"},
-    {file = "orjson-3.7.1-cp37-none-win_amd64.whl", hash = "sha256:6fdef8939f528dd9386c4941e88227a3ccf124c8278ebc7e98533294ae446ef1"},
-    {file = "orjson-3.7.1-cp38-cp38-macosx_10_7_x86_64.whl", hash = "sha256:f65b7d87534c567136d73f9bcdff46ad5ded2aabe8e89be7ba97395129d48e72"},
-    {file = "orjson-3.7.1-cp38-cp38-macosx_10_9_x86_64.macosx_11_0_arm64.macosx_10_9_universal2.whl", hash = "sha256:37b41c8869347388b1794a1c92c5e981ab764638f62e026252026a650b1b266c"},
-    {file = "orjson-3.7.1-cp38-cp38-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:6165914b1a209458201bf0a99dcf5f44f58477ba23ac71d7b5e4ca197e174f30"},
-    {file = "orjson-3.7.1-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c4d9d1edd7c92d0b35082ae3a230705206d6beb3c07a8c72ebdd980820598f9c"},
-    {file = "orjson-3.7.1-cp38-cp38-manylinux_2_24_aarch64.whl", hash = "sha256:42376b0330cbbe5864b480de16a48f4c82aae95dca9cdcf81490e7ca87cc131a"},
-    {file = "orjson-3.7.1-cp38-cp38-manylinux_2_28_x86_64.whl", hash = "sha256:454a4d8c81882cbff19eaed90d0a4e42602970c686c8cd34071c8097e3dfdb5c"},
-    {file = "orjson-3.7.1-cp38-cp38-musllinux_1_1_x86_64.whl", hash = "sha256:f6e691fcf0e03575bef7efd24b331282ad3c1df75855be368e4c3c2cfba6967f"},
-    {file = "orjson-3.7.1-cp38-none-win_amd64.whl", hash = "sha256:4f657a16f81b0497e5c67b3c151d9eb8c99d2d3a7ab996500e9ae453e8b0e0fe"},
-    {file = "orjson-3.7.1-cp39-cp39-macosx_10_7_x86_64.whl", hash = "sha256:fc7ecc7b38ebf6ac072efa209c5b8d02eb7af393a8a2c812fc01dcb037a86c48"},
-    {file = "orjson-3.7.1-cp39-cp39-macosx_10_9_x86_64.macosx_11_0_arm64.macosx_10_9_universal2.whl", hash = "sha256:f7b628f4dcfc0b726ede7d2024cf79107d54851451e15edeae2f4ee55554f3c6"},
-    {file = "orjson-3.7.1-cp39-cp39-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:696661c6b6e58361aba0b14a2c5977c049f481bc7fe41759a55e86b13b361905"},
-    {file = "orjson-3.7.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:32f384ff9dd555ee21508887b12316d8bd04921b396c876b4d4c87a30a3c8a13"},
-    {file = "orjson-3.7.1-cp39-cp39-manylinux_2_24_aarch64.whl", hash = "sha256:7b03a3f32cd5fcdd8460de690579d1dfa1965bd333b89bd3d202907c7b49ada4"},
-    {file = "orjson-3.7.1-cp39-cp39-manylinux_2_28_x86_64.whl", hash = "sha256:71c285488c5f767e102a389f9efb11e93e6345247d60043efeffa616a3056945"},
-    {file = "orjson-3.7.1-cp39-cp39-musllinux_1_1_x86_64.whl", hash = "sha256:906a33c2fe834cb47daafd09d77405260caa5fa1354219bec5df9ac2b4e909fa"},
-    {file = "orjson-3.7.1-cp39-none-win_amd64.whl", hash = "sha256:5730e44fc20891cadea7d163a2dad723f95cf81199e1a02dac339a11437a999d"},
-    {file = "orjson-3.7.1.tar.gz", hash = "sha256:3ae89fd45bc9c72dcc0a489aa2411f139ee8a32468c387188be21d25f20f83d3"},
+    {file = "orjson-3.7.2-cp310-cp310-macosx_10_7_x86_64.whl", hash = "sha256:4c6bdb0a7dfe53cca965a40371c7b8e72a0441c8bc4949c9015600f1c7fae408"},
+    {file = "orjson-3.7.2-cp310-cp310-macosx_10_9_x86_64.macosx_11_0_arm64.macosx_10_9_universal2.whl", hash = "sha256:6e6fc60775bb0a050846710c4a110e8ad17f41e443ff9d0d05145d8f3a74b577"},
+    {file = "orjson-3.7.2-cp310-cp310-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:e4b70bb1f746a9c9afb1f861a0496920b5833ff06f9d1b25b6a7d292cb7e8a06"},
+    {file = "orjson-3.7.2-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:99bb2127ee174dd6e68255db26dbef0bd6c4330377a17867ecfa314d47bfac82"},
+    {file = "orjson-3.7.2-cp310-cp310-manylinux_2_28_aarch64.whl", hash = "sha256:26306d988401cc34ac94dd38873b8c0384276a5ad80cdf50e266e06083284975"},
+    {file = "orjson-3.7.2-cp310-cp310-manylinux_2_28_x86_64.whl", hash = "sha256:34a67d810dbcec77d00d764ab730c5bbb0bee1d75a037c8d8e981506e8fba560"},
+    {file = "orjson-3.7.2-cp310-cp310-musllinux_1_1_x86_64.whl", hash = "sha256:14bc727f41ce0dd93d1a6a9fc06076e2401e71b00d0bf107bf64d88d2d963b77"},
+    {file = "orjson-3.7.2-cp310-none-win_amd64.whl", hash = "sha256:4c686cbb73ccce02929dd799427897f0a0b2dd597d2f5b6b434917ecc3774146"},
+    {file = "orjson-3.7.2-cp37-cp37m-macosx_10_7_x86_64.whl", hash = "sha256:12eb683ddbdddd6847ca2b3b074f42574afc0fbf1aff33d8fdf3a4329167762a"},
+    {file = "orjson-3.7.2-cp37-cp37m-macosx_10_9_x86_64.macosx_11_0_arm64.macosx_10_9_universal2.whl", hash = "sha256:993550e6e451a2b71435142d4824a09f8db80d497abae23dc9f3fe62b6ca24c0"},
+    {file = "orjson-3.7.2-cp37-cp37m-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:54cfa4d915a98209366dcf500ee5c3f66408cc9e2b4fd777c8508f69a8f519a1"},
+    {file = "orjson-3.7.2-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f735999d49e2fff2c9812f1ea330b368349f77726894e2a06d17371e61d771bb"},
+    {file = "orjson-3.7.2-cp37-cp37m-manylinux_2_28_aarch64.whl", hash = "sha256:b2b660790b0804624c569ddb8ca9d31bac6f94f880fd54b8cdff4198735a9fec"},
+    {file = "orjson-3.7.2-cp37-cp37m-manylinux_2_28_x86_64.whl", hash = "sha256:590bc5f33e54eb2261de65e4026876e57d04437bab8dcade9514557e31d84537"},
+    {file = "orjson-3.7.2-cp37-cp37m-musllinux_1_1_x86_64.whl", hash = "sha256:8ac61c5c98cbcdcf7a3d0a4b62c873bbd9a996a69eaa44f8356a9e10aa29ef49"},
+    {file = "orjson-3.7.2-cp37-none-win_amd64.whl", hash = "sha256:662bda15edf4d25d520945660873e730e3a6d9975041ba9c32f0ce93b632ee0d"},
+    {file = "orjson-3.7.2-cp38-cp38-macosx_10_7_x86_64.whl", hash = "sha256:19eb800811a53efc7111ff7536079fb2f62da7098df0a42756ba91e7bdd01aff"},
+    {file = "orjson-3.7.2-cp38-cp38-macosx_10_9_x86_64.macosx_11_0_arm64.macosx_10_9_universal2.whl", hash = "sha256:54a1e4e39c89d37d3dbc74dde36d09eebcde365ec6803431af9c86604bbbaf3a"},
+    {file = "orjson-3.7.2-cp38-cp38-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:fbd3b46ac514cbe29ecebcee3882383022acf84aa4d3338f26d068c6fbdf56a0"},
+    {file = "orjson-3.7.2-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:891640d332c8c7a1478ea6d13b676d239dc86451afa46000c4e8d0990a0d72dd"},
+    {file = "orjson-3.7.2-cp38-cp38-manylinux_2_28_aarch64.whl", hash = "sha256:9778a7ec4c72d6814f1e116591f351404a4df2e1dc52d282ff678781f45b509b"},
+    {file = "orjson-3.7.2-cp38-cp38-manylinux_2_28_x86_64.whl", hash = "sha256:b0b2483f8ad1f93ae4aa43bcf6a985e6ec278e931d0118bae605ffd811b614a1"},
+    {file = "orjson-3.7.2-cp38-cp38-musllinux_1_1_x86_64.whl", hash = "sha256:2d90ca4e74750c7adfb7708deb096f835f7e6c4b892bdf703fe871565bb04ad7"},
+    {file = "orjson-3.7.2-cp38-none-win_amd64.whl", hash = "sha256:b0f4e92bdfe86a0da57028e669bc1f50f48d810ef6f661e63dc6593c450314bf"},
+    {file = "orjson-3.7.2-cp39-cp39-macosx_10_7_x86_64.whl", hash = "sha256:b705132b2827d33291684067cca6baa451a499b459e46761d30fcf4d6ce21a9a"},
+    {file = "orjson-3.7.2-cp39-cp39-macosx_10_9_x86_64.macosx_11_0_arm64.macosx_10_9_universal2.whl", hash = "sha256:c589d00b4fb0777f222b35925e4fa030c4777f16d1623669f44bdc191570be66"},
+    {file = "orjson-3.7.2-cp39-cp39-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:7e197e6779b230e74333e06db804ff876b27306470f68692ec70c27310e7366f"},
+    {file = "orjson-3.7.2-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a82089ec9e1f7e9b992ff5ab98b4c3c2f98e7bbfdc6fadbef046c5aaafec2b54"},
+    {file = "orjson-3.7.2-cp39-cp39-manylinux_2_28_aarch64.whl", hash = "sha256:3ff49c219b30d715c8baae17c7c5839fe3f2c2db10a66c61d6b91bda80bf8789"},
+    {file = "orjson-3.7.2-cp39-cp39-manylinux_2_28_x86_64.whl", hash = "sha256:299a743576aaa04f5c7994010608f96df5d4a924d584a686c6e263cee732cb00"},
+    {file = "orjson-3.7.2-cp39-cp39-musllinux_1_1_x86_64.whl", hash = "sha256:d3ae3ed52c875ce1a6c607f852ca177057445289895483b0247f0dc57b481241"},
+    {file = "orjson-3.7.2-cp39-none-win_amd64.whl", hash = "sha256:796914f7463277d371402775536fb461948c0d34a67d20a57dc4ec49a48a8613"},
+    {file = "orjson-3.7.2.tar.gz", hash = "sha256:1cf9690a0b7c51a988221376741a31087bc1dc2ac327bb2dde919806dfa59444"},
 ]
 pendulum = [
     {file = "pendulum-2.1.2-cp27-cp27m-macosx_10_15_x86_64.whl", hash = "sha256:b6c352f4bd32dff1ea7066bd31ad0f71f8d8100b9ff709fb343f3b86cee43efe"},
