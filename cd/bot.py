@@ -19,7 +19,7 @@ import tornado.web
 from discord.ext import commands, tasks
 
 # Local
-from cd import checks, config, custom, dashboard, enums, managers, utilities, values
+from cd import checks, config, custom, dashboard, enums, manager, utilities, values
 from cd.dashboard.utilities import http
 
 
@@ -59,7 +59,7 @@ class CD(commands.AutoShardedBot):
 
         # tracking
         self.socket_stats: collections.Counter[str] = collections.Counter()
-        self.manager: managers.Manager = managers.Manager(self)
+        self.manager: manager.Manager = manager.Manager(self)
         self.start_time: float = time.time()
 
         # dashboard
