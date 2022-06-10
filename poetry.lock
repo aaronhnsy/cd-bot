@@ -483,7 +483,7 @@ docs = ["sphinx (>=5.0.0,<6.0.0)", "sphinxcontrib-trio", "sphinx-copybutton", "s
 type = "git"
 url = "https://github.com/Axelware/slate"
 reference = "main"
-resolved_reference = "c0ad9c32b1946d647fdb73b2bd028d767b0c898f"
+resolved_reference = "885692ae53846416ebb7e927047bcdbbdaa5564e"
 
 [[package]]
 name = "spoti-py"
