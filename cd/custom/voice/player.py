@@ -77,7 +77,7 @@ class Player(slate.Player["CD", "Player"]):
         if track.isrc:
             try:
                 search = await self.searcher.search(
-                    track.isrc,
+                    f"\"{track.isrc}\"",
                     source=slate.Source.YOUTUBE_MUSIC,
                     ctx=ctx,
                     start_time=start_time
