@@ -19,8 +19,8 @@ import tornado.web
 from discord.ext import commands, tasks
 
 # Local
-from cd import checks, config, custom, enums, managers, utilities, values
-from cd.dashboard import handlers
+from cd import checks, config, custom, dashboard, enums, managers, utilities, values
+from cd.dashboard.utilities import http
 
 
 __log__: logging.Logger = logging.getLogger("cd.bot")
@@ -63,19 +63,19 @@ class CD(commands.AutoShardedBot):
         self.start_time: float = time.time()
 
         # dashboard
-        self.dashboard = tornado.web.Application(
-            handlers.setup(bot=self),
+        self.dashboard: tornado.web.Application = tornado.web.Application(
+            dashboard.setup_handlers(bot=self),
             static_path=os.path.join(os.path.dirname(__file__), "dashboard/static/"),
             template_path=os.path.join(os.path.dirname(__file__), "dashboard/templates/"),
             cookie_secret=config.DASHBOARD_COOKIE_SECRET,
             default_host=config.DASHBOARD_HOST,
             debug=True
         )
-        self.server = tornado.httpserver.HTTPServer(
+        self.server: tornado.httpserver.HTTPServer = tornado.httpserver.HTTPServer(
             self.dashboard,
             xheaders=True
         )
-        self.client: utilities.HTTPClient = utilities.MISSING
+        self.client: http.HTTPClient = utilities.MISSING
 
     def __repr__(self) -> str:
         return f"<CD id={self.user.id if self.user else values.BOT_ID}, users={len(self.users)}, guilds={self.guilds}>"
@@ -154,7 +154,7 @@ class CD(commands.AutoShardedBot):
 
         self.session = aiohttp.ClientSession()
         self.mystbin = mystbin.Client(session=self.session)
-        self.client = utilities.HTTPClient(self)
+        self.client = http.HTTPClient(self)
 
         self.logging_webhooks[enums.LogType.DM] = discord.Webhook.from_url(
             session=self.session,

@@ -8,7 +8,8 @@ import json
 import os
 
 # Local
-from cd import config, exceptions, objects, utilities
+from cd import config, dashboard, exceptions
+from cd.dashboard.utilities import handlers
 
 
 __all__ = (
@@ -16,7 +17,7 @@ __all__ = (
 )
 
 
-class DiscordLogin(utilities.HTTPHandler, abc.ABC):
+class DiscordLogin(handlers.HTTPHandler, abc.ABC):
 
     async def get(self) -> None:  # type: ignore
 
@@ -71,7 +72,7 @@ class DiscordLogin(utilities.HTTPHandler, abc.ABC):
         if data.get("error"):
             raise exceptions.HTTPException(response, json.dumps(data))
 
-        token_response = objects.Token(data)
+        token_response = dashboard.Token(data)
         await self.bot.redis.hset("tokens", identifier, token_response.json)
 
         return self.redirect("/profile")

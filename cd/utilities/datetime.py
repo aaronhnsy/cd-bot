@@ -6,7 +6,6 @@ import datetime as dt
 from collections.abc import Sequence
 
 # Packages
-import discord
 import humanize
 import pendulum
 
@@ -22,11 +21,9 @@ __all__ = (
 )
 
 
-discord.utils.utcnow()
-
-
 def convert_datetime(
-    _to_convert: dt.datetime | pendulum.DateTime, /
+    _to_convert: dt.datetime | pendulum.DateTime,
+    /
 ) -> pendulum.DateTime:
 
     if type(_to_convert) is dt.datetime and _to_convert.tzinfo is None:
@@ -36,8 +33,8 @@ def convert_datetime(
 
 
 def format_datetime(
-    _to_format: dt.datetime | pendulum.DateTime | pendulum.Date | pendulum.Time, /,
-    *,
+    _to_format: dt.datetime | pendulum.DateTime | pendulum.Date | pendulum.Time,
+    /, *,
     format: enums.DateTimeFormat,
 ) -> str:
 
@@ -48,8 +45,8 @@ def format_datetime(
 
 
 def format_difference(
-    _datetime: dt.datetime | pendulum.DateTime, /,
-    *,
+    _datetime: dt.datetime | pendulum.DateTime,
+    /, *,
     suppress: Sequence[str] = ("seconds",)
 ) -> str:
 
@@ -62,8 +59,8 @@ def format_difference(
 
 
 def format_seconds(
-    _seconds: float, /,
-    *,
+    _seconds: float,
+    /, *,
     friendly: bool = False
 ) -> str:
 

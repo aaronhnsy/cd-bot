@@ -10,7 +10,7 @@ from cd.dashboard.handlers.pages import *
 from cd.dashboard.handlers.websocket import *
 
 
-def setup(**kwargs: Any) -> Any:
+def setup_handlers(**kwargs: Any) -> Any:
     return [
         (r"/", Index, kwargs),
         (r"/timezones", Timezones, kwargs),

@@ -13,7 +13,8 @@ import tornado.web
 import tornado.websocket
 
 # Local
-from cd import config, custom, exceptions, objects, utilities
+from cd import config, custom, dashboard, exceptions
+from cd.dashboard.utilities import handlers
 
 
 __all__ = (
@@ -22,7 +23,7 @@ __all__ = (
 
 
 # noinspection PyAttributeOutsideInit
-class WebSocket(utilities.WebSocketHandler, abc.ABC):
+class WebSocket(handlers.WebSocketHandler, abc.ABC):
 
     # Overrides
 
@@ -106,7 +107,7 @@ class WebSocket(utilities.WebSocketHandler, abc.ABC):
             if not token_data:
                 return self.close(code=4007, reason="You must login with the site at least once.")
 
-            token = objects.Token(json.loads(token_data))
+            token = dashboard.Token(json.loads(token_data))
 
             if token.has_expired:
 
@@ -133,7 +134,7 @@ class WebSocket(utilities.WebSocketHandler, abc.ABC):
                 if data.get("error"):
                     raise exceptions.HTTPException(response, json.dumps(token_data))
 
-                token = objects.Token(data)
+                token = dashboard.Token(data)
 
                 await self.bot.redis.hset(
                     "tokens",

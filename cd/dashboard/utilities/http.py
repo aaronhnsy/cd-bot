@@ -104,7 +104,6 @@ class HTTPClient:
         self._global_over.set()
 
     async def request(self, route: Route, **kwargs: Any) -> Any:
-        # sourcery no-metrics
 
         bucket = route.bucket
 

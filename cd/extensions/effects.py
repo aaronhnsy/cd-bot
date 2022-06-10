@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 # Standard Library
+import contextlib
 from typing import Literal
 
 # Packages
@@ -75,10 +76,8 @@ class Effects(commands.Cog):
 
             if effect in self.INCOMPATIBLE_EFFECTS:
                 for incompatible_effect in self.INCOMPATIBLE_EFFECTS[effect]:
-                    try:
+                    with contextlib.suppress(KeyError):
                         ctx.player.effects.remove(incompatible_effect)
-                    except KeyError:
-                        pass
 
         await ctx.reply(
             embed=utilities.embed(

@@ -17,6 +17,7 @@ from cd import custom, enums, exceptions, utilities, values
 
 if TYPE_CHECKING:
     # Local
+    # noinspection PyUnresolvedReferences
     from cd.bot import CD
 
 

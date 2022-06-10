@@ -10,7 +10,8 @@ import discord
 import pendulum
 
 # Local
-from cd import objects, utilities
+from cd import dashboard
+from cd.dashboard.utilities import handlers
 
 
 __all__ = (
@@ -23,11 +24,11 @@ __all__ = (
 
 
 # noinspection PyAsyncCall
-class BasePage(utilities.HTTPHandler, abc.ABC):
+class BasePage(handlers.HTTPHandler, abc.ABC):
 
     async def get_page_render_info(
         self,
-        guild: objects.Guild | discord.Guild | None = None
+        guild: dashboard.Guild | discord.Guild | None = None
     ) -> dict[str, Any]:
 
         user = await self.get_user()

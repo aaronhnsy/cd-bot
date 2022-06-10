@@ -3,21 +3,23 @@ from __future__ import annotations
 
 # Standard Library
 import asyncio
-import os
+
+# Packages
+import jishaku
 
 # Local
 from cd.bot import CD
 from cd.config import DISCORD_TOKEN
-from cd.utilities.logger import setup_logger
+from cd.utilities.logging import setup_logger
 
 
 setup_logger()
 
-os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
-os.environ["JISHAKU_HIDE"] = "True"
-os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
+jishaku.Flags.HIDE = True
+jishaku.Flags.NO_UNDERSCORE = True
+jishaku.Flags.NO_DM_TRACEBACK = True
 
-bot = CD()
+bot: CD = CD()
 
 
 async def main() -> None:

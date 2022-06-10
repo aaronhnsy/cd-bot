@@ -3,6 +3,7 @@ from __future__ import annotations
 
 # Standard Library
 import abc
+import contextlib
 from typing import Any
 
 # Packages
@@ -92,14 +93,12 @@ class BasePaginator(abc.ABC):
         if not self.message:
             return
 
-        try:
+        with contextlib.suppress(discord.NotFound, discord.HTTPException):
             await self.message.edit(
                 content=self.content,
                 embed=self.embed,
                 view=self.view
             )
-        except (discord.NotFound, discord.HTTPException):
-            pass
 
     async def stop(self) -> None:
 
@@ -108,7 +107,7 @@ class BasePaginator(abc.ABC):
 
         self.view.stop()
 
-        try:
+        with contextlib.suppress(discord.NotFound, discord.HTTPException):
             if self.delete_message_when_done:
                 await self.message.delete()
 
@@ -124,9 +123,6 @@ class BasePaginator(abc.ABC):
                     button.disabled = True
 
                 await self.message.edit(view=self.view)
-
-        except (discord.NotFound, discord.HTTPException):
-            pass
 
         self.view = utilities.MISSING
         self.message = None

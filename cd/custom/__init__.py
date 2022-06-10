@@ -2,9 +2,9 @@
 from __future__ import annotations
 
 # Local
-from cd.custom.context import *
-from cd.custom.help import *
-from cd.custom.voice.controller import *
-from cd.custom.voice.player import *
-from cd.custom.voice.queue import *
-from cd.custom.voice.searcher import *
+from .context import *
+from .help import *
+from .voice.controller import *
+from .voice.player import *
+from .voice.queue import *
+from .voice.searcher import *

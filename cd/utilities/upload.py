@@ -19,8 +19,8 @@ __all__ = (
 
 
 async def upload_file(
-    session: aiohttp.ClientSession, /,
-    *,
+    session: aiohttp.ClientSession,
+    /, *,
     fp: bytes | io.BytesIO,
     format: str
 ) -> str:
@@ -43,11 +43,11 @@ async def upload_file(
 
 
 async def upload_text(
-    client: mystbin.Client, /,
-    *,
+    client: mystbin.Client,
+    /, *,
     content: str,
     format: str,
-    max_characters: int = 1536
+    max_characters: int = 1750
 ) -> str:
 
     if len(content) <= max_characters:

@@ -13,7 +13,8 @@ import tornado.web
 import tornado.websocket
 
 # Local
-from cd import config, exceptions, objects, utilities
+from cd import config, dashboard, exceptions
+from cd.dashboard.utilities import http
 
 
 if TYPE_CHECKING:
@@ -45,7 +46,7 @@ class HTTPHandler(tornado.web.RequestHandler, abc.ABC):
 
         return identifier
 
-    async def get_token(self) -> objects.Token | None:
+    async def get_token(self) -> dashboard.Token | None:
 
         identifier = self.get_identifier()
         token_data: str | None = await self.bot.redis.hget("tokens", identifier)
@@ -53,7 +54,7 @@ class HTTPHandler(tornado.web.RequestHandler, abc.ABC):
         if not token_data:
             return None
 
-        token = objects.Token(json.loads(token_data))
+        token = dashboard.Token(json.loads(token_data))
 
         if token.has_expired:
 
@@ -80,35 +81,35 @@ class HTTPHandler(tornado.web.RequestHandler, abc.ABC):
             if data.get("error"):
                 raise exceptions.HTTPException(response, json.dumps(data))
 
-            token = objects.Token(data)
+            token = dashboard.Token(data)
             await self.bot.redis.hset("tokens", identifier, token.json)
 
         return token
 
     # Users
 
-    async def fetch_user(self) -> objects.User | None:
+    async def fetch_user(self) -> dashboard.User | None:
 
         if not (token := await self.get_token()):
             return None
 
         data = await self.bot.client.request(
-            utilities.Route("GET", "/users/@me", token=token.access_token)
+            http.Route("GET", "/users/@me", token=token.access_token)
         )
-        user = objects.User(data)
+        user = dashboard.User(data)
 
         identifier = self.get_identifier()
         await self.bot.redis.hset("users", identifier, user.json)
 
         return user
 
-    async def get_user(self) -> objects.User | None:
+    async def get_user(self) -> dashboard.User | None:
 
         identifier = self.get_identifier()
         data: str | None = await self.bot.redis.hget("users", identifier)
 
         if data:
-            user = objects.User(json.loads(data))
+            user = dashboard.User(json.loads(data))
             if user.has_expired:
                 user = await self.fetch_user()
 
@@ -119,7 +120,7 @@ class HTTPHandler(tornado.web.RequestHandler, abc.ABC):
 
     # Guilds
 
-    async def fetch_guilds(self) -> list[objects.Guild] | None:
+    async def fetch_guilds(self) -> list[dashboard.Guild] | None:
 
         if not (token := await self.get_token()):
             return None
@@ -128,15 +129,15 @@ class HTTPHandler(tornado.web.RequestHandler, abc.ABC):
             return
 
         data = await self.bot.client.request(
-            utilities.Route("GET", "/users/@me/guilds", token=token.access_token)
+            http.Route("GET", "/users/@me/guilds", token=token.access_token)
         )
-        guilds = [objects.Guild(guild) for guild in data]
+        guilds = [dashboard.Guild(guild) for guild in data]
 
         await self.bot.redis.hset("guilds", user.id, json.dumps([guild.json for guild in guilds]))
 
         return guilds
 
-    async def get_guilds(self) -> list[objects.Guild] | None:
+    async def get_guilds(self) -> list[dashboard.Guild] | None:
 
         if not (user := await self.get_user()):
             return
@@ -144,7 +145,7 @@ class HTTPHandler(tornado.web.RequestHandler, abc.ABC):
         data: str | None = await self.bot.redis.hget("guilds", user.id)
 
         if data:
-            guilds = [objects.Guild(json.loads(guild)) for guild in json.loads(data)]
+            guilds = [dashboard.Guild(json.loads(guild)) for guild in json.loads(data)]
             if any(guild.has_expired for guild in guilds):
                 guilds = await self.fetch_guilds()
 
@@ -153,7 +154,7 @@ class HTTPHandler(tornado.web.RequestHandler, abc.ABC):
 
         return guilds
 
-    async def get_related_guilds(self) -> dict[str, list[objects.Guild]]:
+    async def get_related_guilds(self) -> dict[str, list[dashboard.Guild]]:
 
         user_guilds = await self.get_guilds() or []
         bot_guild_ids = [guild.id for guild in self.bot.guilds]

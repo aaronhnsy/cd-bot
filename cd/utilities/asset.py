@@ -15,6 +15,7 @@ __all__ = (
     "splash"
 )
 
+
 ImageFormat = Literal["webp", "jpeg", "jpg", "png", "gif"]
 
 

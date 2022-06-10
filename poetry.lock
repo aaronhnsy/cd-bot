@@ -217,7 +217,7 @@ voice = ["PyNaCl (>=1.3.0,<1.6)"]
 type = "git"
 url = "https://github.com/Rapptz/discord.py"
 reference = "master"
-resolved_reference = "be6db2025580fd9e6298e5ad2bc0b93919f6c6a9"
+resolved_reference = "b0cb458f9f76072db3d9e40a33b70ce5349b0235"
 
 [[package]]
 name = "frozenlist"

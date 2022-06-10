@@ -14,6 +14,7 @@ from cd import custom
 
 if TYPE_CHECKING:
     # Local
+    # noinspection PyUnresolvedReferences
     from cd.bot import CD
 
 

@@ -98,12 +98,10 @@ class Events(commands.Cog):
         assert ctx.command is not None
 
         if ctx.guild:
-            channel_url = utilities.guild_channel_url(ctx.guild.id, ctx.channel.id)
             guild_info = f"**● [Guild:]({utilities.guild_url(ctx.guild.id)})**\n" \
                          f"{values.NQSP * 2}**● Name:** {ctx.guild}\n" \
                          f"{values.NQSP * 2}**● ID:** `{ctx.guild.id}`\n"
         else:
-            channel_url = utilities.dm_channel_url(ctx.author.id)
             guild_info = ""
 
         now = ctx.message.created_at or pendulum.now(tz="UTC")
@@ -113,7 +111,7 @@ class Events(commands.Cog):
             title=f"{ctx.prefix}{ctx.command.qualified_name}",
             description=f"{await utilities.upload_text(ctx.bot.mystbin, content=ctx.message.content, format='txt', max_characters=1000)}\n\n"
                         f"{guild_info}"
-                        f"**● [Channel:]({channel_url})**\n"
+                        f"**● [Channel:]({ctx.channel.jump_url})**\n"
                         f"{values.NQSP * 2}**● Name:** {ctx.channel}\n"
                         f"{values.NQSP * 2}**● ID:** `{ctx.channel.id}`\n"
                         f"**● [User:]({utilities.user_url(ctx.author.id)})**\n"

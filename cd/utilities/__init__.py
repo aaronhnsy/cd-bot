@@ -2,16 +2,13 @@
 from __future__ import annotations
 
 # Local
-from cd.utilities.asset import *
-from cd.utilities.datetime import *
-from cd.utilities.embed import *
-from cd.utilities.handlers import *
-from cd.utilities.http import *
-from cd.utilities.imaging import *
-from cd.utilities.links import *
-from cd.utilities.logger import *
-from cd.utilities.missing import *
-from cd.utilities.upload import *
+from .asset import *
+from .datetime import *
+from .embed import *
+from .images import *
+from .logging import *
+from .missing import *
+from .upload import *
 
 
 def readable_bool(value: bool) -> str:
@@ -35,3 +32,11 @@ def truncate(text: str | int, characters: int) -> str:
 
 def pluralize(text: str, count: int) -> str:
     return f"{text}{'s' if count > 1 else ''}"
+
+
+def guild_url(guild_id: int) -> str:
+    return f"https://discord.com/channels/{guild_id}"
+
+
+def user_url(user_id: int) -> str:
+    return f"https://discord.com/users/{user_id}"
