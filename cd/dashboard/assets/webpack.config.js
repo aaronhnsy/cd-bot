@@ -1,36 +1,19 @@
 const path = require("path");
-const glob = require("glob");
 
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const CopyWebpackPlugin = require("copy-webpack-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
-const TerserPlugin = require("terser-webpack-plugin");
 
 
 module.exports = (env, options) => {
 
-    const devMode = options.mode !== "production";
+    const isDevMode = options.mode === "development"
 
     return {
-        optimization: {
-            minimizer: [
-                new TerserPlugin(),
-                new CssMinimizerPlugin(),
-            ],
-        },
-
         entry: {
             app: "./js/app.js",
-            websocket: "./js/websocket.js",
+            websocket: "./js/websocket.js"
         },
-
-        output: {
-            path: path.resolve(__dirname, "../static/js"),
-            filename: "[name].js",
-            publicPath: "/js/",
-        },
-
-        devtool: devMode ? "eval-cheap-module-source-map" : undefined,
 
         module: {
             rules: [
@@ -39,31 +22,45 @@ module.exports = (env, options) => {
                     exclude: /node_modules/,
                     use: {
                         loader: "babel-loader",
-                    },
+                    }
                 },
                 {
-                    test: /\.s?css$/i,
+                    test: /\.(sa|sc|c)ss$/,
                     use: [
-                        MiniCssExtractPlugin.loader,
+                        isDevMode ? "style-loader" : MiniCssExtractPlugin.loader,
                         "css-loader",
-                        "sass-loader",
-                    ],
-                },
-            ],
+                        "postcss-loader",
+                        "sass-loader"
+                    ]
+                }
+            ]
+        },
+
+        output: {
+            filename: `[name].${isDevMode ? "" : "[contenthash]."}bundle.js`,
+            path: path.resolve(__dirname, "../static/js"),
+            publicPath: "/js/"
         },
 
         plugins: [
-            new MiniCssExtractPlugin({
-                filename: "../css/app.css",
-            }),
-            new CopyWebpackPlugin({
-                patterns: [
-                    {
-                        from: "images/",
-                        to: "../images",
-                    },
-                ],
-            }),
+            new CopyPlugin({
+                    patterns: [
+                        {
+                            from: "images/",
+                            to: "../images"
+                        },
+                    ]
+                }
+            ),
+            ...(isDevMode ? [] : [new MiniCssExtractPlugin()])
         ],
-    };
-};
+
+
+        optimization: {
+            minimizer: [
+                new CssMinimizerPlugin()
+            ]
+        },
+
+    }
+}
