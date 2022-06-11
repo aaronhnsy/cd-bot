@@ -79,7 +79,7 @@ class HelpCommand(commands.HelpCommand):
         paginator = paginators.FieldsPaginator(
             ctx=self.context,
             entries=entries,
-            per_page=8,
+            per_page=5,
             embed_title=f"{self.context.bot.user.name if self.context.bot.user else 'CD'} - Commands",
             embed_footer=f"Total commands: {len(self.filter_command_list(list(self.context.bot.walk_commands())))}",
             embed_thumbnail=utilities.avatar(self.context.bot.user) if self.context.bot.user else None,
@@ -100,7 +100,7 @@ class HelpCommand(commands.HelpCommand):
                     False
                 ) for command in cog_commands
             ],
-            per_page=8,
+            per_page=7,
             embed_title=f"{cog.qualified_name} - Commands",
             embed_description=f"{cog.description or 'No description provided for this category.'}\n",
             embed_footer=f"Total commands: {len(cog_commands)}"
