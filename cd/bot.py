@@ -66,8 +66,8 @@ class CD(commands.AutoShardedBot):
         # dashboard
         self.dashboard: tornado.web.Application = tornado.web.Application(
             dashboard.setup_routes(bot=self),
-            static_path=os.path.join(os.path.dirname(__file__), "dashboard/static/"),
-            template_path=os.path.join(os.path.dirname(__file__), "dashboard/templates/"),
+            static_path=os.path.join(os.path.dirname(__file__), "modules/dashboard/static/"),
+            template_path=os.path.join(os.path.dirname(__file__), "modules/dashboard/templates/"),
             cookie_secret=config.DASHBOARD_COOKIE_SECRET,
             default_host=config.DASHBOARD_HOST,
             debug=True
