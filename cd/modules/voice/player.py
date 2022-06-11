@@ -87,7 +87,7 @@ class Player(slate.Player["CD", "Player"]):
             except exceptions.EmbedError:
                 with contextlib.suppress(exceptions.EmbedError):
                     search = await self.searcher.search(
-                        track.isrc,
+                        f"\"{track.isrc}\"",
                         source=slate.Source.YOUTUBE,
                         ctx=ctx,
                         start_time=start_time
