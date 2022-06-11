@@ -2,18 +2,14 @@
 from __future__ import annotations
 
 # Standard Library
-from typing import TYPE_CHECKING, Literal
+from typing import Literal
 
 # Packages
 from discord.ext import commands
+from discord.ext.commands._types import Check
 
 # Local
 from cd import custom, exceptions
-
-
-if TYPE_CHECKING:
-    # Packages
-    from discord.ext.commands._types import Check
 
 
 __all__ = (

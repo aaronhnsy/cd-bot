@@ -15,7 +15,6 @@ from discord.ext import commands
 # Local
 from cd import checks, config, converters, custom, exceptions, paginators, utilities, values
 from cd.modules import voice
-from cd.modules.voice.cogs import Play
 
 
 if TYPE_CHECKING:
@@ -626,7 +625,7 @@ class Player(commands.Cog):
 
         assert isinstance(activity, discord.Spotify)
 
-        await Play.ensure_connected(ctx)
+        await voice.Play.ensure_connected(ctx)
 
         assert ctx.player is not None
         await ctx.player.searcher.queue(
