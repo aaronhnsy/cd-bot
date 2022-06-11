@@ -125,8 +125,7 @@ function set_position(data) {
         document.getElementById("trackPosition").innerHTML = `Position: ${formatMilliseconds(data.position)}`
         document.getElementById("trackProgress").style.width = `${(100 / (data.track.length / 1000)) * (data.position / 1000)}%`
         document.getElementById("trackProgressBar").classList.remove("invisible")
-    }
-    else {
+    } else {
         document.getElementById("trackPosition").innerHTML = ""
         document.getElementById("trackProgress").style.width = "0%"
         document.getElementById("trackProgressBar").classList.add("invisible")

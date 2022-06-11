@@ -44,7 +44,6 @@ class GuildConfig:
     # Config
 
     async def set_prefix(self, prefix: str | None) -> None:
-
         data: dict[str, Any] = await self.bot.db.fetchrow(
             "UPDATE guilds SET prefix = $1 WHERE id = $2 RETURNING prefix",
             prefix, self.id
@@ -52,7 +51,6 @@ class GuildConfig:
         self.prefix = data["prefix"]
 
     async def set_dj_role_id(self, role_id: int | None) -> None:
-
         data: dict[str, Any] = await self.bot.db.fetchrow(
             "UPDATE guilds SET dj_role_id = $1 WHERE id = $2 RETURNING dj_role_id",
             role_id, self.id
@@ -60,7 +58,6 @@ class GuildConfig:
         self.dj_role_id = data["dj_role_id"]
 
     async def set_embed_size(self, embed_size: enums.EmbedSize) -> None:
-
         data: dict[str, Any] = await self.bot.db.fetchrow(
             "UPDATE guilds SET embed_size = $1 WHERE id = $2 RETURNING embed_size",
             embed_size.value, self.id

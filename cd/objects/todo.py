@@ -52,7 +52,6 @@ class Todo:
         content: str, /,
         *, jump_url: str
     ) -> None:
-
         data: TodoData = await self.bot.db.fetchrow(
             "UPDATE todos SET content = $1, jump_url = $2 WHERE id = $3 RETURNING *",
             content, jump_url, self.id,

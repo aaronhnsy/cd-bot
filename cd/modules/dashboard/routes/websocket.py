@@ -185,7 +185,7 @@ class WebSocket(handlers.WebSocketHandler, abc.ABC):
                         "data": {
                             "type":     "POSITION_UPDATE",
                             "position": player.position,
-                            "track": {
+                            "track":    {
                                 "length": player.current.length
                             }
                         }

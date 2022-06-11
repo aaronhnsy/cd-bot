@@ -35,8 +35,8 @@ class BasePage(handlers.HTTPHandler, abc.ABC):
         related_guilds = await self.get_related_guilds() if user is not None else {}
 
         return {
-            "bot": self.bot,
-            "user": user,
+            "bot":   self.bot,
+            "user":  user,
             "guild": guild,
             **related_guilds,
         }
