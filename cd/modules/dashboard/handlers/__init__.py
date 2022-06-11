@@ -5,9 +5,9 @@ from __future__ import annotations
 from typing import Any
 
 # Local
-from cd.dashboard.handlers.discord import *
-from cd.dashboard.handlers.pages import *
-from cd.dashboard.handlers.websocket import *
+from .discord import *
+from .pages import *
+from .websocket import *
 
 
 def setup_handlers(**kwargs: Any) -> Any:

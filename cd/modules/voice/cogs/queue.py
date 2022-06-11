@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 # Standard Library
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 # Packages
 import discord
@@ -10,12 +10,18 @@ import slate
 from discord.ext import commands
 
 # Local
-from cd import checks, custom, exceptions, paginators, utilities, values
-from cd.bot import CD
+from cd import custom, exceptions, paginators, utilities, values
+from cd.modules import voice
 
 
-async def setup(bot: CD) -> None:
-    await bot.add_cog(Queue(bot))
+if TYPE_CHECKING:
+    # Local
+    from cd.bot import CD
+
+
+__all__ = (
+    "Queue",
+)
 
 
 class Queue(commands.Cog):
@@ -36,8 +42,8 @@ class Queue(commands.Cog):
     # Queue
 
     @commands.hybrid_command(name="queue", aliases=["q"])
-    @checks.is_queue_not_empty()
-    @checks.is_player_connected()
+    @voice.is_queue_not_empty()
+    @voice.is_player_connected()
     async def queue(self, ctx: custom.Context) -> None:
         """
         Shows the queue.
@@ -64,8 +70,8 @@ class Queue(commands.Cog):
         await paginator.start()
 
     @commands.hybrid_command(name="history", aliases=["hist"])
-    @checks.is_queue_history_not_empty()
-    @checks.is_player_connected()
+    @voice.is_queue_history_not_empty()
+    @voice.is_player_connected()
     async def history(self, ctx: custom.Context) -> None:
         """
         Shows the queue history.
@@ -94,9 +100,9 @@ class Queue(commands.Cog):
     # General
 
     @commands.hybrid_command(name="clear", aliases=["clr"])
-    @checks.is_queue_not_empty()
-    @checks.is_author_connected()
-    @checks.is_player_connected()
+    @voice.is_queue_not_empty()
+    @voice.is_author_connected()
+    @voice.is_player_connected()
     async def clear(self, ctx: custom.Context) -> None:
         """
         Clears the queue.
@@ -114,9 +120,9 @@ class Queue(commands.Cog):
         await ctx.player.controller.update_current_message()
 
     @commands.hybrid_command(name="reverse")
-    @checks.is_queue_not_empty()
-    @checks.is_author_connected()
-    @checks.is_player_connected()
+    @voice.is_queue_not_empty()
+    @voice.is_author_connected()
+    @voice.is_player_connected()
     async def reverse(self, ctx: custom.Context) -> None:
         """
         Reverses the queue.
@@ -134,9 +140,9 @@ class Queue(commands.Cog):
         await ctx.player.controller.update_current_message()
 
     @commands.hybrid_command(name="sort")
-    @checks.is_queue_not_empty()
-    @checks.is_author_connected()
-    @checks.is_player_connected()
+    @voice.is_queue_not_empty()
+    @voice.is_author_connected()
+    @voice.is_player_connected()
     async def sort(
         self,
         ctx: custom.Context,
@@ -175,9 +181,9 @@ class Queue(commands.Cog):
         await ctx.player.controller.update_current_message()
 
     @commands.hybrid_command(name="remove", aliases=["rm"])
-    @checks.is_queue_not_empty()
-    @checks.is_author_connected()
-    @checks.is_player_connected()
+    @voice.is_queue_not_empty()
+    @voice.is_author_connected()
+    @voice.is_player_connected()
     async def remove(self, ctx: custom.Context, entry: int) -> None:
         """
         Removes a track from the queue.
@@ -209,9 +215,9 @@ class Queue(commands.Cog):
         await ctx.player.controller.update_current_message()
 
     @commands.hybrid_command(name="move", aliases=["mv"])
-    @checks.is_queue_not_empty()
-    @checks.is_author_connected()
-    @checks.is_player_connected()
+    @voice.is_queue_not_empty()
+    @voice.is_author_connected()
+    @voice.is_player_connected()
     async def move(self, ctx: custom.Context, entry: int, to: int) -> None:
         """
         Moves a track in the queue.
@@ -254,9 +260,9 @@ class Queue(commands.Cog):
         name="remove-duplicates",
         aliases=["remove_duplicates", "removeduplicates", "deduplicate", "dedupe"]
     )
-    @checks.is_queue_not_empty()
-    @checks.is_author_connected()
-    @checks.is_player_connected()
+    @voice.is_queue_not_empty()
+    @voice.is_author_connected()
+    @voice.is_player_connected()
     async def remove_duplicates(self, ctx: custom.Context) -> None:
         """
         Removes duplicate tracks from the queue.
@@ -279,8 +285,8 @@ class Queue(commands.Cog):
     # Toggleable
 
     @commands.hybrid_command(name="loop")
-    @checks.is_author_connected()
-    @checks.is_player_connected()
+    @voice.is_author_connected()
+    @voice.is_player_connected()
     async def loop(self, ctx: custom.Context) -> None:
         """
         Switches between queue loop modes; disabled, current, and all.
@@ -305,8 +311,8 @@ class Queue(commands.Cog):
         await ctx.player.controller.update_current_message()
 
     @commands.hybrid_command(name="shuffle")
-    @checks.is_author_connected()
-    @checks.is_player_connected()
+    @voice.is_author_connected()
+    @voice.is_player_connected()
     async def shuffle(self, ctx: custom.Context) -> None:
         """
         Toggles the queue shuffling or not.

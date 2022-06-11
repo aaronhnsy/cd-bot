@@ -8,14 +8,12 @@ from typing import TYPE_CHECKING, Any
 import discord
 from discord.ext import commands
 
-# Local
-from cd import custom
-
 
 if TYPE_CHECKING:
     # Local
     # noinspection PyUnresolvedReferences
     from cd.bot import CD
+    from cd.modules import voice
 
 
 __all__ = (
@@ -26,7 +24,7 @@ __all__ = (
 class Context(commands.Context["CD"]):
 
     @property
-    def player(self) -> custom.Player | None:
+    def player(self) -> voice.Player | None:
         return getattr(self.guild, "voice_client", None)
 
     async def try_dm(self, *args: Any, **kwargs: Any) -> discord.Message | None:

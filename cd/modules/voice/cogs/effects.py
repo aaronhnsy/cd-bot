@@ -3,22 +3,28 @@ from __future__ import annotations
 
 # Standard Library
 import contextlib
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 # Packages
 import slate
 from discord.ext import commands
 
 # Local
-from cd import checks, custom, enums, utilities, values
-from cd.bot import CD
+from cd import custom, enums, utilities, values
+from cd.modules import voice
+
+
+if TYPE_CHECKING:
+    # Local
+    from cd.bot import CD
+
+
+__all__ = (
+    "Effects",
+)
 
 
 FilterType = slate.Rotation | slate.Timescale | slate.ChannelMix
-
-
-async def setup(bot: CD) -> None:
-    await bot.add_cog(Effects(bot))
 
 
 class Effects(commands.Cog):
@@ -89,8 +95,8 @@ class Effects(commands.Cog):
     # Commands
 
     @commands.hybrid_command(name="8d")
-    @checks.is_author_connected()
-    @checks.is_player_connected()
+    @voice.is_author_connected()
+    @voice.is_player_connected()
     async def _8d(self, ctx: custom.Context) -> None:
         """
         Toggles an 8D audio effect.
@@ -101,8 +107,8 @@ class Effects(commands.Cog):
         await self._toggle_effect(ctx, enums.Effect.ROTATION)
 
     @commands.hybrid_command(name="nightcore", aliases=["night-core", "night_core", "nc"])
-    @checks.is_author_connected()
-    @checks.is_player_connected()
+    @voice.is_author_connected()
+    @voice.is_player_connected()
     async def night_core(self, ctx: custom.Context) -> None:
         """
         Toggles a nightcore audio effect.
@@ -113,8 +119,8 @@ class Effects(commands.Cog):
         await self._toggle_effect(ctx, enums.Effect.NIGHTCORE)
 
     @commands.hybrid_command(name="mono")
-    @checks.is_author_connected()
-    @checks.is_player_connected()
+    @voice.is_author_connected()
+    @voice.is_player_connected()
     async def mono(self, ctx: custom.Context) -> None:
         """
         Toggles a mono audio effect.
@@ -127,8 +133,8 @@ class Effects(commands.Cog):
         await self._toggle_effect(ctx, enums.Effect.MONO)
 
     @commands.hybrid_command(name="left-ear", aliases=["left_ear", "leftear", "left"])
-    @checks.is_author_connected()
-    @checks.is_player_connected()
+    @voice.is_author_connected()
+    @voice.is_player_connected()
     async def left_ear(self, ctx: custom.Context) -> None:
         """
         Toggles a left ear audio effect.
@@ -141,8 +147,8 @@ class Effects(commands.Cog):
         await self._toggle_effect(ctx, enums.Effect.LEFT_EAR)
 
     @commands.hybrid_command(name="right-ear", aliases=["right_ear", "rightear", "right"])
-    @checks.is_author_connected()
-    @checks.is_player_connected()
+    @voice.is_author_connected()
+    @voice.is_player_connected()
     async def right_ear(self, ctx: custom.Context) -> None:
         """
         Toggles a right ear audio effect.
@@ -155,8 +161,8 @@ class Effects(commands.Cog):
         await self._toggle_effect(ctx, enums.Effect.RIGHT_EAR)
 
     @commands.hybrid_command(name="reset-effects", aliases=["reset_effects", "reseteffects"])
-    @checks.is_author_connected()
-    @checks.is_player_connected()
+    @voice.is_author_connected()
+    @voice.is_player_connected()
     async def reset_effects(self, ctx: custom.Context) -> None:
         """
         Resets all audio effects.

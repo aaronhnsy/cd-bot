@@ -38,12 +38,9 @@ OWNER_IDS: set[int] = {AXEL_ID}
 
 EXTENSIONS: list[str] = [
     "jishaku",
-    "cd.extensions.effects",
+    "cd.modules.voice",
     "cd.extensions.events",
     "cd.extensions.information",
-    "cd.extensions.play",
-    "cd.extensions.player",
-    "cd.extensions.queue",
     "cd.extensions.reloader",
     "cd.extensions.settings",
     "cd.extensions.todo",

@@ -13,8 +13,9 @@ import tornado.web
 import tornado.websocket
 
 # Local
-from cd import config, custom, dashboard, exceptions
-from cd.dashboard.utilities import handlers
+from cd import config, custom, exceptions
+from cd.modules import dashboard, voice
+from cd.modules.dashboard.utilities import handlers
 
 
 __all__ = (
@@ -175,7 +176,7 @@ class WebSocket(handlers.WebSocketHandler, abc.ABC):
 
         while True:
 
-            player: custom.Player | None = self.guild.voice_client  # type: ignore
+            player: voice.Player | None = self.guild.voice_client  # type: ignore
 
             if player and player.current:
                 await self.write_message(
@@ -214,7 +215,7 @@ class WebSocket(handlers.WebSocketHandler, abc.ABC):
             "connected": None
         }
 
-        player: custom.Player | None = self.guild.voice_client  # type: ignore
+        player: voice.Player | None = self.guild.voice_client  # type: ignore
 
         if player:
             data["track"] = self._track_to_dict(player.current) if player.current else None
@@ -232,7 +233,7 @@ class WebSocket(handlers.WebSocketHandler, abc.ABC):
             }
         )
 
-    async def _handle_player_update(self, player: custom.Player) -> None:
+    async def _handle_player_update(self, player: voice.Player) -> None:
 
         if player.channel.guild.id != self.guild_id:
             return
@@ -260,7 +261,7 @@ class WebSocket(handlers.WebSocketHandler, abc.ABC):
             }
         )
 
-    async def _handle_track_end(self, player: custom.Player) -> None:
+    async def _handle_track_end(self, player: voice.Player) -> None:
 
         if player.channel.guild.id != self.guild_id:
             return
@@ -274,7 +275,7 @@ class WebSocket(handlers.WebSocketHandler, abc.ABC):
             }
         )
 
-    async def _handle_player_disconnect(self, player: custom.Player) -> None:
+    async def _handle_player_disconnect(self, player: voice.Player) -> None:
 
         if player.channel.guild.id != self.guild_id:
             return

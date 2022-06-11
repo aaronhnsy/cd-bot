@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 # Standard Library
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 # Packages
 import discord
@@ -11,11 +11,17 @@ from discord.ext import commands
 
 # Local
 from cd import checks, custom, exceptions
-from cd.bot import CD
+from cd.modules import voice
 
 
-async def setup(bot: CD) -> None:
-    await bot.add_cog(Play(bot))
+if TYPE_CHECKING:
+    # Local
+    from cd.bot import CD
+
+
+__all__ = (
+    "Play",
+)
 
 
 class Play(commands.Cog):
@@ -53,7 +59,7 @@ class Play(commands.Cog):
                 description="You must be connected to a voice channel to use this command."
             )
 
-        await author_voice_channel.connect(cls=custom.Player(text_channel=ctx.channel))
+        await author_voice_channel.connect(cls=voice.Player(text_channel=ctx.channel))
 
     # Play
 

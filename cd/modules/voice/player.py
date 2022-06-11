@@ -13,6 +13,7 @@ import slate
 
 # Local
 from cd import custom, enums, exceptions, utilities, values
+from cd.modules import voice
 
 
 if TYPE_CHECKING:
@@ -37,9 +38,9 @@ class Player(slate.Player["CD", "Player"]):
 
         self.text_channel: discord.TextChannel = text_channel  # type: ignore
 
-        self.controller: custom.Controller = custom.Controller(player=self)
-        self.searcher: custom.Searcher = custom.Searcher(player=self)
-        self.queue: custom.Queue = custom.Queue()
+        self.controller: voice.Controller = voice.Controller(player=self)
+        self.searcher: voice.Searcher = voice.Searcher(player=self)
+        self.queue: voice.Queue = voice.Queue()
 
         self.skip_request_ids: set[int] = set()
         self.effects: set[enums.Effect] = set()

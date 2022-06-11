@@ -10,7 +10,8 @@ import discord
 import slate
 
 # Local
-from cd import custom, enums, utilities, values
+from cd import enums, utilities, values
+from cd.modules import voice
 
 
 __all__ = (
@@ -152,10 +153,10 @@ class LoopButton(discord.ui.Button["ControllerView"]):
 
 class ControllerView(discord.ui.View):
 
-    def __init__(self, *, player: custom.Player) -> None:
+    def __init__(self, *, player: voice.Player) -> None:
         super().__init__(timeout=None)
 
-        self.player: custom.Player = player
+        self.player: voice.Player = player
 
         self.shuffle_button: ShuffleButton = ShuffleButton()
         self.previous_button: PreviousButton = PreviousButton()
@@ -184,10 +185,10 @@ class Controller:
     def __init__(
         self,
         *,
-        player: custom.Player
+        player: voice.Player
     ) -> None:
 
-        self.player: custom.Player = player
+        self.player: voice.Player = player
 
         self.message: discord.Message | None = None
         self.view: ControllerView = ControllerView(player=self.player)

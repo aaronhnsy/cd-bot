@@ -8,8 +8,9 @@ import json
 import os
 
 # Local
-from cd import config, dashboard, exceptions
-from cd.dashboard.utilities import handlers
+from cd import config, exceptions
+from cd.modules import dashboard
+from cd.modules.dashboard.utilities import handlers
 
 
 __all__ = (

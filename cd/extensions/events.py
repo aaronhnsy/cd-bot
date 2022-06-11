@@ -15,6 +15,7 @@ from discord.ext import commands
 # Local
 from cd import config, custom, enums, exceptions, utilities, values
 from cd.bot import CD
+from cd.modules import voice
 
 
 __log__: logging.Logger = logging.getLogger("extensions.events")
@@ -362,11 +363,11 @@ class Events(commands.Cog):
             await before.channel.guild.voice_client.disconnect(force=True)
 
     @commands.Cog.listener("on_slate_track_start")
-    async def _handle_track_start(self, player: custom.Player, _: slate.TrackStart) -> None:
+    async def _handle_track_start(self, player: voice.Player, _: slate.TrackStart) -> None:
         await player.handle_track_start()
 
     @commands.Cog.listener("on_slate_track_end")
-    async def _handle_track_end(self, player: custom.Player, event: slate.TrackEnd) -> None:
+    async def _handle_track_end(self, player: voice.Player, event: slate.TrackEnd) -> None:
 
         if event.reason == "REPLACED":
             return
@@ -374,9 +375,9 @@ class Events(commands.Cog):
         await player.handle_track_end(enums.TrackEndReason.NORMAL)
 
     @commands.Cog.listener("on_slate_track_stuck")
-    async def _handle_track_stuck(self, player: custom.Player, _: slate.TrackStuck) -> None:
+    async def _handle_track_stuck(self, player: voice.Player, _: slate.TrackStuck) -> None:
         await player.handle_track_end(enums.TrackEndReason.STUCK)
 
     @commands.Cog.listener("on_slate_track_exception")
-    async def _handle_track_exception(self, player: custom.Player, _: slate.TrackException) -> None:
+    async def _handle_track_exception(self, player: voice.Player, _: slate.TrackException) -> None:
         await player.handle_track_end(enums.TrackEndReason.EXCEPTION)

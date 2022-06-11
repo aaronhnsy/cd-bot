@@ -5,7 +5,7 @@ from __future__ import annotations
 import datetime
 import math
 import urllib.parse
-from typing import Literal, Optional
+from typing import TYPE_CHECKING, Literal, Optional
 
 # Packages
 import discord
@@ -14,12 +14,18 @@ from discord.ext import commands
 
 # Local
 from cd import checks, config, converters, custom, exceptions, paginators, utilities, values
-from cd.bot import CD
-from cd.extensions.play import Play
+from cd.modules import voice
+from cd.modules.voice.cogs import Play
 
 
-async def setup(bot: CD) -> None:
-    await bot.add_cog(Player(bot))
+if TYPE_CHECKING:
+    # Local
+    from cd.bot import CD
+
+
+__all__ = (
+    "Player",
+)
 
 
 class Player(commands.Cog):
@@ -57,7 +63,7 @@ class Player(commands.Cog):
                 description=f"I'm already connected to {ctx.player.voice_channel.mention}."
             )
 
-        await ctx.author.voice.channel.connect(cls=custom.Player(text_channel=ctx.channel))
+        await ctx.author.voice.channel.connect(cls=voice.Player(text_channel=ctx.channel))
         await ctx.send(
             embed=utilities.embed(
                 colour=values.GREEN,
@@ -66,8 +72,8 @@ class Player(commands.Cog):
         )
 
     @commands.hybrid_command(name="disconnect", aliases=["dc", "leave", "destroy"])
-    @checks.is_author_connected()
-    @checks.is_player_connected()
+    @voice.is_author_connected()
+    @voice.is_player_connected()
     async def _disconnect(self, ctx: custom.Context) -> None:
         """
         Disconnects the bot from its voice channel.
@@ -86,8 +92,8 @@ class Player(commands.Cog):
     # Pausing
 
     @commands.hybrid_command(name="pause", aliases=["stop"])
-    @checks.is_author_connected()
-    @checks.is_player_connected()
+    @voice.is_author_connected()
+    @voice.is_player_connected()
     async def _pause(self, ctx: custom.Context) -> None:
         """
         Pauses the player.
@@ -107,8 +113,8 @@ class Player(commands.Cog):
         )
 
     @commands.hybrid_command(name="resume", aliases=["continue", "unpause"])
-    @checks.is_author_connected()
-    @checks.is_player_connected()
+    @voice.is_author_connected()
+    @voice.is_player_connected()
     async def _resume(self, ctx: custom.Context) -> None:
         """
         Resumes the player.
@@ -132,10 +138,10 @@ class Player(commands.Cog):
     _TIME_CONVERTER = commands.parameter(converter=converters.TimeConverter)
 
     @commands.hybrid_command(name="seek", aliases=["scrub"])
-    @checks.is_track_seekable()
-    @checks.is_player_playing()
-    @checks.is_author_connected()
-    @checks.is_player_connected()
+    @voice.is_track_seekable()
+    @voice.is_player_playing()
+    @voice.is_author_connected()
+    @voice.is_player_connected()
     async def _seek(self, ctx: custom.Context, *, position: int = _TIME_CONVERTER) -> None:
         """
         Seeks to a position in the current track.
@@ -178,10 +184,10 @@ class Player(commands.Cog):
         )
 
     @commands.hybrid_command(name="fast-forward", aliases=["fast_forward", "fastforward", "ff", "forward", "fwd"])
-    @checks.is_track_seekable()
-    @checks.is_player_playing()
-    @checks.is_author_connected()
-    @checks.is_player_connected()
+    @voice.is_track_seekable()
+    @voice.is_player_playing()
+    @voice.is_author_connected()
+    @voice.is_player_connected()
     async def _fast_forward(self, ctx: custom.Context, *, time: int = _TIME_CONVERTER) -> None:
         """
         Fast-forwards the current track by an amount of time.
@@ -226,10 +232,10 @@ class Player(commands.Cog):
         )
 
     @commands.hybrid_command(name="rewind", aliases=["rwd", "backward", "bwd"])
-    @checks.is_track_seekable()
-    @checks.is_player_playing()
-    @checks.is_author_connected()
-    @checks.is_player_connected()
+    @voice.is_track_seekable()
+    @voice.is_player_playing()
+    @voice.is_author_connected()
+    @voice.is_player_connected()
     async def _rewind(self, ctx: custom.Context, *, time: int = _TIME_CONVERTER) -> None:
         """
         Rewinds the current track by an amount of time.
@@ -274,10 +280,10 @@ class Player(commands.Cog):
         )
 
     @commands.hybrid_command(name="replay", aliases=["restart"])
-    @checks.is_track_seekable()
-    @checks.is_player_playing()
-    @checks.is_author_connected()
-    @checks.is_player_connected()
+    @voice.is_track_seekable()
+    @voice.is_player_playing()
+    @voice.is_author_connected()
+    @voice.is_player_connected()
     async def _replay(self, ctx: custom.Context) -> None:
         """
         Replays the current track.
@@ -297,8 +303,8 @@ class Player(commands.Cog):
     # Now playing
 
     @commands.hybrid_command(name="now-playing", aliases=["now_playing", "nowplaying", "np"])
-    @checks.is_player_playing()
-    @checks.is_player_connected()
+    @voice.is_player_playing()
+    @voice.is_player_connected()
     async def _now_playing(self, ctx: custom.Context) -> None:
         """
         Shows the current track.
@@ -342,9 +348,9 @@ class Player(commands.Cog):
             raise exceptions.EmbedError(description="You don't have permission to force skip.")
 
     @commands.hybrid_command(name="force-skip", aliases=["force_skip", "forceskip", "fs", "skipto"])
-    @checks.is_player_playing()
-    @checks.is_author_connected()
-    @checks.is_player_connected()
+    @voice.is_player_playing()
+    @voice.is_author_connected()
+    @voice.is_player_connected()
     async def _force_skip(self, ctx: custom.Context, amount: int = 0) -> None:
         """
         Force skips tracks in the queue.
@@ -383,9 +389,9 @@ class Player(commands.Cog):
         ctx.player.skip_request_ids.clear()
 
     @commands.hybrid_command(name="skip", aliases=["vote-skip", "vote_skip", "voteskip", "vs"])
-    @checks.is_player_playing()
-    @checks.is_author_connected()
-    @checks.is_player_connected()
+    @voice.is_player_playing()
+    @voice.is_author_connected()
+    @voice.is_player_connected()
     async def _skip(self, ctx: custom.Context) -> None:
         """
         Starts a vote-skip for the current track.
@@ -455,8 +461,8 @@ class Player(commands.Cog):
         )
 
     @commands.hybrid_command(name="volume")
-    @checks.is_author_connected()
-    @checks.is_player_connected()
+    @voice.is_author_connected()
+    @voice.is_player_connected()
     async def _volume(self, ctx: custom.Context, volume: Optional[int] = None) -> None:
         """
         Sets the players volume.

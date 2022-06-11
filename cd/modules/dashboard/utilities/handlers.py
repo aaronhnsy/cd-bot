@@ -13,8 +13,9 @@ import tornado.web
 import tornado.websocket
 
 # Local
-from cd import config, dashboard, exceptions
-from cd.dashboard.utilities import http
+from cd import config, exceptions
+from cd.modules import dashboard
+from cd.modules.dashboard.utilities import http
 
 
 if TYPE_CHECKING:

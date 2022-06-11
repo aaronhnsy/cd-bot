@@ -12,6 +12,7 @@ import yarl
 
 # Local
 from cd import custom, exceptions, utilities, values
+from cd.modules import voice
 
 
 __all__ = (
@@ -136,10 +137,10 @@ class Searcher:
     def __init__(
         self,
         *,
-        player: custom.Player
+        player: voice.Player
     ) -> None:
 
-        self.player: custom.Player = player
+        self.player: voice.Player = player
 
     async def search(
         self,

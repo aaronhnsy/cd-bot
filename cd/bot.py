@@ -19,8 +19,9 @@ import tornado.web
 from discord.ext import commands, tasks
 
 # Local
-from cd import checks, config, custom, dashboard, enums, manager, utilities, values
-from cd.dashboard.utilities import http
+from cd import checks, config, custom, enums, manager, utilities, values
+from cd.modules import dashboard, voice
+from cd.modules.dashboard.utilities import http
 
 
 __log__: logging.Logger = logging.getLogger("cd.bot")
@@ -45,7 +46,7 @@ class CD(commands.AutoShardedBot):
         self.session: aiohttp.ClientSession = utilities.MISSING
         self.db: asyncpg.Pool = utilities.MISSING
         self.redis: aioredis.Redis = utilities.MISSING
-        self.slate: slate.Pool[CD, custom.Player] = utilities.MISSING
+        self.slate: slate.Pool[CD, voice.Player] = utilities.MISSING
         self.mystbin: mystbin.Client = utilities.MISSING
 
         # logging

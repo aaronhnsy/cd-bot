@@ -10,8 +10,8 @@ import discord
 import pendulum
 
 # Local
-from cd import dashboard
-from cd.dashboard.utilities import handlers
+from cd.modules import dashboard
+from cd.modules.dashboard.utilities import handlers
 
 
 __all__ = (
