@@ -31,10 +31,11 @@ from __future__ import annotations
 # Standard Library
 import asyncio
 import weakref
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, ClassVar
 from urllib.parse import quote
 
 # Packages
+import aiohttp
 from discord.http import MaybeUnlock, json_or_text
 from discord.utils import _parse_ratelimit_header  # type: ignore
 
@@ -43,17 +44,8 @@ from cd import exceptions
 
 
 if TYPE_CHECKING:
-
-    # Standard Library
-    from typing import Any, ClassVar
-
-    # Packages
-    import aiohttp
-
     # Local
     from cd.bot import CD
-
-    Snowflake = str | int
 
 
 __all__ = (
@@ -84,9 +76,9 @@ class Route:
 
         self.url: str = url
 
-        self.channel_id: Snowflake | None = parameters.get("channel_id")
-        self.guild_id: Snowflake | None = parameters.get("guild_id")
-        self.webhook_id: Snowflake | None = parameters.get("webhook_id")
+        self.channel_id: str | int | None = parameters.get("channel_id")
+        self.guild_id: str | int | None = parameters.get("guild_id")
+        self.webhook_id: str | int | None = parameters.get("webhook_id")
         self.webhook_token: str | None = parameters.get("webhook_token")
 
     @property
