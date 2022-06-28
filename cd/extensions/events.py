@@ -18,7 +18,7 @@ from cd.bot import CD
 from cd.modules import voice
 
 
-__log__: logging.Logger = logging.getLogger("extensions.events")
+LOG: logging.Logger = logging.getLogger("extensions.events")
 
 
 COOLDOWN_BUCKETS = {
@@ -216,7 +216,7 @@ class Events(commands.Cog):
         bots = sum(1 for member in guild.members if member.bot)
         bots_percent = round((bots / total) * 100, 2)
 
-        __log__.info(
+        LOG.info(
             f"Joined a guild. {guild.name} ({guild.id}) | Members: {len(guild.members)} | Bots: {bots} ({bots_percent}%)"
         )
         await self.bot.log(
@@ -241,7 +241,7 @@ class Events(commands.Cog):
         bots = sum(1 for member in guild.members if member.bot)
         bots_percent = round((bots / total) * 100, 2)
 
-        __log__.info(
+        LOG.info(
             f"Left a guild. {guild.name} ({guild.id}) | Members: {len(guild.members)} | Bots: {bots} ({bots_percent}%)"
         )
         await self.bot.log(
@@ -305,7 +305,7 @@ class Events(commands.Cog):
             # Format exception and log to console.
 
             exception = "".join(traceback.format_exception(type(error), error, error.__traceback__))
-            __log__.error(
+            LOG.error(
                 f"Error running command '{ctx.command.qualified_name if ctx.command else 'Unknown'}':\n{exception}"
             )
 

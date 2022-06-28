@@ -13,7 +13,7 @@ from discord.ext import commands, tasks
 from cd.bot import CD
 
 
-__log__: logging.Logger = logging.getLogger("cd.extensions.reloader")
+LOG: logging.Logger = logging.getLogger("cd.extensions.reloader")
 
 
 async def setup(bot: CD):
@@ -54,9 +54,9 @@ class Reloader(commands.Cog):
             try:
                 await self.bot.reload_extension(extension)
             except commands.ExtensionError:
-                __log__.error(f"[EXTENSIONS] Reload failed - {extension}")
+                LOG.error(f"[EXTENSIONS] Reload failed - {extension}")
             else:
-                __log__.info(f"[EXTENSIONS] Reloaded - {extension}")
+                LOG.info(f"[EXTENSIONS] Reloaded - {extension}")
 
             self.last_modified_times[extension] = modified_time
 

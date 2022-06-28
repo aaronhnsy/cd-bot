@@ -24,7 +24,7 @@ from cd.modules import dashboard, voice
 from cd.modules.dashboard.utilities import http
 
 
-__log__: logging.Logger = logging.getLogger("cd.bot")
+LOG: logging.Logger = logging.getLogger("cd.bot")
 
 
 class CD(commands.AutoShardedBot):
@@ -86,29 +86,29 @@ class CD(commands.AutoShardedBot):
     async def connect_postgresql(self) -> None:
 
         try:
-            __log__.debug("[POSTGRESQL] Attempting connection.")
+            LOG.debug("[POSTGRESQL] Attempting connection.")
             db = await asyncpg.create_pool(**config.POSTGRESQL, max_inactive_connection_lifetime=0)
 
         except Exception as e:
-            __log__.critical(f"[POSTGRESQL] Error while connecting.\n{e}\n")
+            LOG.critical(f"[POSTGRESQL] Error while connecting.\n{e}\n")
             raise ConnectionError()
 
         assert db is not None
 
-        __log__.info("[POSTGRESQL] Successful connection.")
+        LOG.info("[POSTGRESQL] Successful connection.")
         self.db = db
 
     async def connect_redis(self) -> None:
 
         try:
-            __log__.debug("[REDIS] Attempting connection.")
+            LOG.debug("[REDIS] Attempting connection.")
             redis = aioredis.from_url(url=config.REDIS, decode_responses=True, retry_on_timeout=True)
 
         except Exception as e:
-            __log__.critical(f"[REDIS] Error while connecting.\n{e}\n")
+            LOG.critical(f"[REDIS] Error while connecting.\n{e}\n")
             raise ConnectionError()
 
-        __log__.info("[REDIS] Successful connection.")
+        LOG.info("[REDIS] Successful connection.")
         self.redis = redis
 
     async def connect_slate(self) -> None:
@@ -128,7 +128,7 @@ class CD(commands.AutoShardedBot):
                     spotify_client_secret=config.SPOTIFY_CLIENT_SECRET,
                 )
             except Exception as error:
-                __log__.error(f"[SLATE] Error while connecting to node '{node['identifier']}'.")
+                LOG.error(f"[SLATE] Error while connecting to node '{node['identifier']}'.")
                 raise error
 
     async def setup_extensions(self) -> None:
@@ -137,17 +137,17 @@ class CD(commands.AutoShardedBot):
             try:
                 await self.load_extension(extension)
             except Exception as error:
-                __log__.warning(f"[EXTENSIONS] Failed - {extension}")
+                LOG.warning(f"[EXTENSIONS] Failed - {extension}")
                 raise error
 
-            __log__.info(f"[EXTENSIONS] Loaded - {extension}")
+            LOG.info(f"[EXTENSIONS] Loaded - {extension}")
 
     async def start_dashboard(self) -> None:
 
         self.server.bind(config.DASHBOARD_PORT, config.DASHBOARD_HOST)
         self.server.start()
 
-        __log__.info("[DASHBOARD] Dashboard has connected.")
+        LOG.info("[DASHBOARD] Dashboard has connected.")
 
     async def setup_hook(self) -> None:
 
