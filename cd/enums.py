@@ -16,11 +16,10 @@ __all__ = (
     "DateTimeFormat",
     "LogType",
     "Effect",
-    "EmbedSize",
     "TrackEndReason",
+    "EmbedSize"
 )
 
-NL = "\n"
 EnumType = TypeVar("EnumType", bound=Enum)
 
 
@@ -84,7 +83,7 @@ def convert_enum(
     try:
         return cls[argument.replace(" ", "_").upper()]
     except KeyError:
-        options = NL.join(
+        options = "\n".join(
             [f'- **{option.title()}**' for option in [enum.name.replace('_', ' ').lower() for enum in cls]]
         )
         raise exceptions.EmbedError(
