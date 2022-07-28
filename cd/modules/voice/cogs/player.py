@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 # Standard Library
+import contextlib
 import datetime
 import math
 import urllib.parse
@@ -404,12 +405,10 @@ class Player(commands.Cog):
         - You are the requester of the current track.
         """
 
-        try:
+        with contextlib.suppress(exceptions.EmbedError):
             await self._check_force_skip_permissions(ctx)
             await self._force_skip(ctx, amount=0)
             return
-        except exceptions.EmbedError:
-            pass
 
         assert ctx.player is not None
         assert ctx.player.current is not None
@@ -435,7 +434,6 @@ class Player(commands.Cog):
             return
 
         if ctx.author.id in ctx.player.skip_request_ids:
-
             ctx.player.skip_request_ids.remove(ctx.author.id)
             await ctx.reply(
                 embed=utilities.embed(
@@ -447,7 +445,7 @@ class Player(commands.Cog):
 
         skips_needed = math.floor(75 * len(ctx.player.listeners) / 100)
 
-        if len(ctx.player.listeners) < 3 or (len(ctx.player.skip_request_ids) + 1) >= skips_needed:
+        if len(ctx.player.listeners) < 3 or len(ctx.player.skip_request_ids) + 1 >= skips_needed:
             await skip()
             return
 

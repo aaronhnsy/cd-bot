@@ -95,7 +95,7 @@ class Todo(commands.Cog):
         Edits a todo.
 
         **Arguments:**
-        ● `todo`: The id of the todo to edit.
+        ● `todo`: The ID of the todo to edit.
         ● `content`: The new content of your todo.
         """
 

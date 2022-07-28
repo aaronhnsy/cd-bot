@@ -101,5 +101,5 @@ class EmbedSize(Enum):
     IMAGE = 3
 
     @classmethod
-    async def convert(cls, ctx: custom.Context, argument: str) -> EmbedSize:
+    async def convert(cls, _: custom.Context, argument: str) -> EmbedSize:
         return convert_enum(cls, "embed size", argument)

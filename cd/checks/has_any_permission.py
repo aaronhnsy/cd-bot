@@ -25,7 +25,7 @@ def has_any_permission(**permissions: bool) -> Check[custom.Context]:
         assert isinstance(ctx.author, discord.Member)
         current = dict(ctx.channel.permissions_for(ctx.author))
 
-        for permission in permissions.keys():
+        for permission in permissions:
             if current[permission] is True:
                 return True
 
