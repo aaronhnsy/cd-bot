@@ -1,27 +1,24 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 import collections
 import logging
-import os
+# import os
 import time
 
-# Packages
 import aiohttp
 import aioredis
 import asyncpg
 import discord
 import mystbin
 import slate
-import tornado.httpserver
-import tornado.web
+# import tornado.httpserver
+# import tornado.web
 from discord.ext import commands, tasks
 
-# Local
 from cd import checks, config, custom, enums, manager, utilities, values
-from cd.modules import dashboard, voice
-from cd.modules.dashboard.utilities import http
+from cd.modules import voice
+# from cd.modules import dashboard
+# from cd.modules.dashboard.utilities import http
 
 
 LOG: logging.Logger = logging.getLogger("cd.bot")
@@ -63,6 +60,7 @@ class SkeletonClique(commands.AutoShardedBot):
         self.manager: manager.Manager = manager.Manager(self)
         self.start_time: float = time.time()
 
+        """
         # dashboard
         self.dashboard: tornado.web.Application = tornado.web.Application(
             dashboard.setup_routes(bot=self),
@@ -77,6 +75,7 @@ class SkeletonClique(commands.AutoShardedBot):
             xheaders=True
         )
         self.client: http.HTTPClient = utilities.MISSING
+        """
 
     def __repr__(self) -> str:
         return f"<SkeletonClique id={self.user.id if self.user else values.BOT_ID}, users={len(self.users)}, guilds={self.guilds}>"
@@ -142,12 +141,14 @@ class SkeletonClique(commands.AutoShardedBot):
 
             LOG.info(f"[EXTENSIONS] Loaded - {extension}")
 
+    """
     async def start_dashboard(self) -> None:
 
         self.server.bind(config.DASHBOARD_PORT, config.DASHBOARD_HOST)
         self.server.start()
 
         LOG.info("[DASHBOARD] Dashboard has connected.")
+    """
 
     async def setup_hook(self) -> None:
 
@@ -155,7 +156,7 @@ class SkeletonClique(commands.AutoShardedBot):
 
         self.session = aiohttp.ClientSession()
         self.mystbin = mystbin.Client(session=self.session)
-        self.client = http.HTTPClient(self)
+        # self.client = http.HTTPClient(self)
 
         self.logging_webhooks[enums.LogType.DM] = discord.Webhook.from_url(
             session=self.session,
@@ -178,7 +179,7 @@ class SkeletonClique(commands.AutoShardedBot):
         await self.connect_postgresql()
         await self.connect_redis()
         await self.connect_slate()
-        await self.start_dashboard()
+        # await self.start_dashboard()
         await self.setup_extensions()
 
     # Logging
