@@ -14,7 +14,7 @@ from cd import utilities
 
 if TYPE_CHECKING:
     # Local
-    from cd.bot import CD
+    from cd.bot import SkeletonClique
 
 
 __all__ = (
@@ -33,8 +33,8 @@ class TodoData(TypedDict):
 
 class Todo:
 
-    def __init__(self, bot: CD, data: TodoData) -> None:
-        self.bot: CD = bot
+    def __init__(self, bot: SkeletonClique, data: TodoData) -> None:
+        self.bot: SkeletonClique = bot
 
         self.id: int = data["id"]
         self.user_id: int = data["user_id"]

@@ -14,7 +14,7 @@ from discord.ext import commands
 
 # Local
 from cd import config, custom, enums, exceptions, utilities, values
-from cd.bot import CD
+from cd.bot import SkeletonClique
 from cd.modules import voice
 
 
@@ -84,14 +84,14 @@ ERRORS: dict[type[commands.CommandError], str] = {
 NL = "\n"
 
 
-async def setup(bot: CD) -> None:
+async def setup(bot: SkeletonClique) -> None:
     await bot.add_cog(Events(bot))
 
 
 class Events(commands.Cog):
 
-    def __init__(self, bot: CD) -> None:
-        self.bot: CD = bot
+    def __init__(self, bot: SkeletonClique) -> None:
+        self.bot: SkeletonClique = bot
 
     @staticmethod
     async def _build_command_information_embed(ctx: custom.Context, colour: discord.Colour) -> discord.Embed:

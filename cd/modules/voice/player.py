@@ -19,7 +19,7 @@ from cd.modules import voice
 if TYPE_CHECKING:
     # Local
     # noinspection PyUnresolvedReferences
-    from cd.bot import CD
+    from cd.bot import SkeletonClique
 
 
 __all__ = (
@@ -27,7 +27,7 @@ __all__ = (
 )
 
 
-class Player(slate.Player["CD", "Player"]):
+class Player(slate.Player["SkeletonClique", "Player"]):
 
     def __init__(
         self,

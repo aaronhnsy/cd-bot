@@ -8,10 +8,10 @@ from discord.ext import commands
 
 # Local
 from cd import converters, custom, exceptions, objects, paginators, utilities, values
-from cd.bot import CD
+from cd.bot import SkeletonClique
 
 
-async def setup(bot: CD) -> None:
+async def setup(bot: SkeletonClique) -> None:
     await bot.add_cog(Todo(bot))
 
 
@@ -20,8 +20,8 @@ class Todo(commands.Cog):
     Manage your todos.
     """
 
-    def __init__(self, bot: CD) -> None:
-        self.bot: CD = bot
+    def __init__(self, bot: SkeletonClique) -> None:
+        self.bot: SkeletonClique = bot
 
     _TODO_CONTENT_CONVERTER = commands.parameter(converter=converters.TodoContentConverter)
     _TODO_OPTIONAL_CONTENT_CONVERTER = commands.parameter(converter=converters.TodoContentConverter, default=None)

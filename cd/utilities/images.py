@@ -18,7 +18,7 @@ from cd import exceptions, utilities
 
 if TYPE_CHECKING:
     # Local
-    from cd.bot import CD
+    from cd.bot import SkeletonClique
 
 
 __all__ = (
@@ -319,7 +319,7 @@ def spotify(
 
 async def edit_image(
     url: str,
-    bot: CD,
+    bot: SkeletonClique,
     function: Callable[Concatenate[Image, P], None],
     *args: P.args,
     **kwargs: P.kwargs

@@ -10,7 +10,7 @@ from cd import objects
 
 if TYPE_CHECKING:
     # Local
-    from cd.bot import CD
+    from cd.bot import SkeletonClique
 
 
 __all__ = (
@@ -20,8 +20,8 @@ __all__ = (
 
 class Manager:
 
-    def __init__(self, bot: CD) -> None:
-        self.bot: CD = bot
+    def __init__(self, bot: SkeletonClique) -> None:
+        self.bot: SkeletonClique = bot
 
         self.guild_configs: dict[int, objects.GuildConfig] = {}
         self.user_configs: dict[int, objects.UserConfig] = {}

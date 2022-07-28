@@ -45,7 +45,7 @@ from cd import exceptions
 
 if TYPE_CHECKING:
     # Local
-    from cd.bot import CD
+    from cd.bot import SkeletonClique
 
 
 __all__ = (
@@ -88,8 +88,8 @@ class Route:
 
 class HTTPClient:
 
-    def __init__(self, bot: CD) -> None:
-        self.bot: CD = bot
+    def __init__(self, bot: SkeletonClique) -> None:
+        self.bot: SkeletonClique = bot
 
         self._locks: weakref.WeakValueDictionary[str, asyncio.Lock] = weakref.WeakValueDictionary()
         self._global_over: asyncio.Event = asyncio.Event()

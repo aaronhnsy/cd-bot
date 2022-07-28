@@ -8,7 +8,7 @@ import asyncio
 import jishaku
 
 # Local
-from cd.bot import CD
+from cd.bot import SkeletonClique
 from cd.config import DISCORD_TOKEN
 from cd.utilities.logging import setup_logger
 
@@ -19,7 +19,7 @@ jishaku.Flags.HIDE = True
 jishaku.Flags.NO_UNDERSCORE = True
 jishaku.Flags.NO_DM_TRACEBACK = True
 
-bot: CD = CD()
+bot: SkeletonClique = SkeletonClique()
 
 
 async def main() -> None:

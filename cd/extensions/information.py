@@ -13,10 +13,10 @@ from discord.ext import commands
 
 # Local
 from cd import custom, exceptions, utilities, values
-from cd.bot import CD
+from cd.bot import SkeletonClique
 
 
-async def setup(bot: CD) -> None:
+async def setup(bot: SkeletonClique) -> None:
     await bot.add_cog(Information(bot))
 
 
@@ -25,8 +25,8 @@ class Information(commands.Cog):
     Information about the bot.
     """
 
-    def __init__(self, bot: CD) -> None:
-        self.bot: CD = bot
+    def __init__(self, bot: SkeletonClique) -> None:
+        self.bot: SkeletonClique = bot
 
     # Commands (Supports slash commands)
 

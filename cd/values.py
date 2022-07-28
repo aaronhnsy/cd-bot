@@ -68,7 +68,7 @@ INVITE_LINK_NO_PERMISSIONS: str = discord.utils.oauth_url(
 )
 
 SUPPORT_LINK: str = "https://discord.gg/w9f6NkQbde"
-GITHUB_LINK: str = "https://github.com/Axelware/CD-bot"
+GITHUB_LINK: str = "https://github.com/Axelware/cd-bot"
 
 MAIN: discord.Colour = discord.Colour(0xE91E63)
 RED: discord.Colour = discord.Colour.red()

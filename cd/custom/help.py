@@ -80,7 +80,7 @@ class HelpCommand(commands.HelpCommand):
             ctx=self.context,
             entries=entries,
             per_page=5,
-            embed_title=f"{self.context.bot.user.name if self.context.bot.user else 'CD'} - Commands",
+            embed_title=f"{self.context.bot.user.name if self.context.bot.user else 'SkeletonClique'} - Commands",
             embed_footer=f"Total commands: {len(self.filter_command_list(list(self.context.bot.walk_commands())))}",
             embed_thumbnail=utilities.avatar(self.context.bot.user) if self.context.bot.user else None,
         )

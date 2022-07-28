@@ -20,7 +20,7 @@ from cd.modules.dashboard.utilities import http
 
 if TYPE_CHECKING:
     # Local
-    from cd.bot import CD
+    from cd.bot import SkeletonClique
 
 
 __all__ = (
@@ -32,8 +32,8 @@ __all__ = (
 # noinspection PyAttributeOutsideInit
 class HTTPHandler(tornado.web.RequestHandler, abc.ABC):
 
-    def initialize(self, bot: CD) -> None:  # type: ignore
-        self.bot: CD = bot
+    def initialize(self, bot: SkeletonClique) -> None:  # type: ignore
+        self.bot: SkeletonClique = bot
 
     # Tokens
 
@@ -169,5 +169,5 @@ class HTTPHandler(tornado.web.RequestHandler, abc.ABC):
 # noinspection PyAttributeOutsideInit
 class WebSocketHandler(tornado.websocket.WebSocketHandler, abc.ABC):
 
-    def initialize(self, bot: CD) -> None:  # type: ignore
-        self.bot: CD = bot
+    def initialize(self, bot: SkeletonClique) -> None:  # type: ignore
+        self.bot: SkeletonClique = bot

@@ -10,20 +10,20 @@ import pathlib
 from discord.ext import commands, tasks
 
 # Local
-from cd.bot import CD
+from cd.bot import SkeletonClique
 
 
 LOG: logging.Logger = logging.getLogger("cd.extensions.reloader")
 
 
-async def setup(bot: CD):
+async def setup(bot: SkeletonClique):
     await bot.add_cog(Reloader(bot=bot))
 
 
 class Reloader(commands.Cog):
 
-    def __init__(self, bot: CD) -> None:
-        self.bot: CD = bot
+    def __init__(self, bot: SkeletonClique) -> None:
+        self.bot: SkeletonClique = bot
 
         self.last_modified_times: dict[str, float] = {}
 

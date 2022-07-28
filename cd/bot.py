@@ -27,7 +27,7 @@ from cd.modules.dashboard.utilities import http
 LOG: logging.Logger = logging.getLogger("cd.bot")
 
 
-class CD(commands.AutoShardedBot):
+class SkeletonClique(commands.AutoShardedBot):
 
     def __init__(self) -> None:
         super().__init__(
@@ -46,7 +46,7 @@ class CD(commands.AutoShardedBot):
         self.session: aiohttp.ClientSession = utilities.MISSING
         self.db: asyncpg.Pool = utilities.MISSING
         self.redis: aioredis.Redis = utilities.MISSING
-        self.slate: slate.Pool[CD, voice.Player] = utilities.MISSING
+        self.slate: slate.Pool[SkeletonClique, voice.Player] = utilities.MISSING
         self.mystbin: mystbin.Client = utilities.MISSING
 
         # logging
@@ -79,7 +79,7 @@ class CD(commands.AutoShardedBot):
         self.client: http.HTTPClient = utilities.MISSING
 
     def __repr__(self) -> str:
-        return f"<CD id={self.user.id if self.user else values.BOT_ID}, users={len(self.users)}, guilds={self.guilds}>"
+        return f"<SkeletonClique id={self.user.id if self.user else values.BOT_ID}, users={len(self.users)}, guilds={self.guilds}>"
 
     # Setup
 
@@ -207,8 +207,8 @@ class CD(commands.AutoShardedBot):
         self,
         message: discord.Message | discord.Interaction,
         *,
-        cls: type[commands.Context[CD]] = utilities.MISSING
-    ) -> commands.Context[CD]:
+        cls: type[commands.Context[SkeletonClique]] = utilities.MISSING
+    ) -> commands.Context[SkeletonClique]:
         return await super().get_context(message, cls=custom.Context)
 
     async def get_prefix(self, message: discord.Message) -> list[str]:

@@ -10,7 +10,7 @@ from cd.modules.voice.cogs import Effects, Play, Player, Queue
 
 if TYPE_CHECKING:
     # Local
-    from cd.bot import CD
+    from cd.bot import SkeletonClique
 
 
 __all__ = (
@@ -18,7 +18,7 @@ __all__ = (
 )
 
 
-async def setup(bot: CD) -> None:
+async def setup(bot: SkeletonClique) -> None:
     await bot.add_cog(Effects(bot))
     await bot.add_cog(Play(bot))
     await bot.add_cog(Player(bot))
