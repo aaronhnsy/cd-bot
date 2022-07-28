@@ -1,64 +1,42 @@
+[build-system]
+requires = ['poetry-core>=1.0.0']
+build-backend = 'poetry.core.masonry.api'
+
+
 [tool.poetry]
-name        = "CD-bot"
-version     = "0.0.1"
+name = "CD-bot"
+version = "0.0.1"
 description = "A general purpose music bot."
-authors     = ["Axel <axelancerr@gmail.com>"]
-license     = "MIT"
-readme      = "README.md"
+authors = ["Axel <axelancerr@gmail.com>"]
 
 
 [tool.poetry.dependencies]
-python = "^3.10.0"
+python          = "^3.10"
+asyncpg         = "~0.26.0"
+colorama        = "~0.4.0"
+humanize        = "~4.2.0"
+pendulum        = "~2.1.0"
+rapidfuzz       = "~2.3.0"
+tornado         = "~6.2.0"
+wand            = "~0.6.0"
+mystbin-py      = "~4.0.0"
 
-aiohttp         = { version = "~3.8.0", extras = ["speedups"]           }
-aioredis        = { version = "~2.0.0", extras = ["hiredis"]            }
-jishaku         = { version = "~2.5.0", extras = ["voice", "procinfo"]  }
+aiohttp         = { version = "~3.8.0", extras = ["speedups"] }
+aioredis        = { version = "~2.0.0", extras = ["hiredis"] }
+jishaku         = { version = "~2.5.0", extras = ["voice", "procinfo"] }
 
-asyncpg         = { version = "~0.25.0" }
-colorama        = { version = "~0.4.0"  }
-humanize        = { version = "~4.1.0"  }
-pendulum        = { version = "~2.1.0"  }
-pynacl          = { version = "~1.5.0"  }
-rapidfuzz       = { version = "~2.0.0"  }
-tornado         = { version = "~6.1.0"  }
-wand            = { version = "~0.6.0"  }
-"mystbin.py"    = { version = "~3.1.0"  }
-
-slate           = { git = "https://github.com/Axelware/slate",    branch = "main" }
-"discord.py"    = { git = "https://github.com/Rapptz/discord.py", branch = "master", extras = ["speed", "voice"] }
-
-
-[tool.poetry.dev-dependencies]
-isort = "*"
-
-
-[tool.isort]
-line_length                 = 120
-multi_line_output           = 3
-lines_after_imports         = 2
-combine_star                = true
-star_first                  = true
-include_trailing_comma      = true
-dedup_headings              = true
-import_heading_future       = "Future"
-import_heading_stdlib       = "Standard Library"
-import_heading_thirdparty   = "Packages"
-import_heading_firstparty   = "Local"
-import_heading_localfolder  = "Local"
+slate           = { git = "https://github.com/Axelware/slate", branch = "main" }
+discord-py      = { git = "https://github.com/Rapptz/discord.py", branch = "master", extras = ["voice"] }
 
 
 [tool.pyright]
-include = [
-    "cd",
-    "config_example.py",
-    "launcher.py",
-]
-pythonVersion               = "3.10"
-typeCheckingMode            = "strict"
-useLibraryCodeForTypes      = true
-reportUnknownMemberType     = false
-reportPrivateUsage          = false
+include = [ "cd", "launcher.py" ]
+pythonVersion = "3.10"
+typeCheckingMode = "strict"
+useLibraryCodeForTypes = true
 
-reportMissingTypeStubs      = false
-reportPrivateImportUsage    = false
-reportImportCycles          = false
+reportUnknownMemberType = false
+reportPrivateUsage = false
+reportImportCycles = false
+reportMissingTypeStubs = false
+reportPrivateImportUsage = false
