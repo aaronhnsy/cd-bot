@@ -1,15 +1,11 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 import contextlib
 from collections.abc import Awaitable, Callable
 
-# Packages
 import discord
 import slate
 
-# Local
 from cd import enums, utilities, values
 from cd.modules import voice
 

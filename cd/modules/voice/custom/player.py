@@ -1,23 +1,17 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 import asyncio
 import contextlib
 from typing import TYPE_CHECKING
 
-# Packages
 import async_timeout
 import discord
 import slate
 
-# Local
 from cd import custom, enums, exceptions, utilities, values
 from cd.modules import voice
 
-
 if TYPE_CHECKING:
-    # Local
     # noinspection PyUnresolvedReferences
     from cd.bot import SkeletonClique
 

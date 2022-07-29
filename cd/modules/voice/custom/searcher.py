@@ -1,16 +1,12 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 import contextlib
 
-# Packages
 import discord
 import slate
 import spotipy
 import yarl
 
-# Local
 from cd import custom, exceptions, utilities, values
 from cd.modules import voice
 

@@ -1,21 +1,15 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 from typing import TYPE_CHECKING, Literal
 
-# Packages
 import discord
 import slate
 from discord.ext import commands
 
-# Local
 from cd import checks, custom, exceptions
 from cd.modules import voice
 
-
 if TYPE_CHECKING:
-    # Local
     from cd.bot import SkeletonClique
 
 

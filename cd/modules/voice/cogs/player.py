@@ -1,25 +1,19 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 import contextlib
 import datetime
 import math
 import urllib.parse
 from typing import TYPE_CHECKING, Literal, Optional
 
-# Packages
 import discord
 import slate
 from discord.ext import commands
 
-# Local
 from cd import checks, config, converters, custom, exceptions, paginators, utilities, values
 from cd.modules import voice
 
-
 if TYPE_CHECKING:
-    # Local
     from cd.bot import SkeletonClique
 
 
