@@ -194,13 +194,8 @@ class SkeletonClique(commands.AutoShardedBot):
 
             await self.logging_webhooks[_type].send(embeds=embeds)
 
-    async def log(
-        self,
-        _type: enums.LogType,
-        /, *,
-        embed: discord.Embed
-    ) -> None:
-        self.logging_queue[_type].append(embed)
+    async def log(self, log_type: enums.LogType, /, *, embed: discord.Embed) -> None:
+        self.logging_queue[log_type].append(embed)
 
     # Overridden methods
 

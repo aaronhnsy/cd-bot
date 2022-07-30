@@ -1,7 +1,6 @@
-# Future
 from __future__ import annotations
 
-# Local
-from .guild import *
+from .guild_config import *
 from .todo import *
-from .user import *
+from .user_config import *
+from .member_config import *

@@ -39,6 +39,7 @@ OWNER_IDS: set[int] = {AXEL_ID}
 EXTENSIONS: list[str] = [
     "jishaku",
     "cd.modules.voice",
+    "cd.modules.economy",
     "cd.extensions.events",
     "cd.extensions.information",
     "cd.extensions.reloader",

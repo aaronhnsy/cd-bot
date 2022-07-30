@@ -1,15 +1,10 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 from typing import TYPE_CHECKING, Any, Optional, TypedDict
 
-# Local
 from cd import enums
 
-
 if TYPE_CHECKING:
-    # Local
     from cd.bot import SkeletonClique
 
 
@@ -41,7 +36,7 @@ class GuildConfig:
     def __repr__(self) -> str:
         return f"<GuildConfig id={self.id}>"
 
-    # Config
+    # Methods
 
     async def set_prefix(self, prefix: str | None) -> None:
         data: dict[str, Any] = await self.bot.db.fetchrow(

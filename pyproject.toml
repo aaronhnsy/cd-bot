@@ -31,6 +31,7 @@ discord-py      = { git = "https://github.com/Rapptz/discord.py", branch = "mast
 
 [tool.pyright]
 include = [ "cd", "launcher.py" ]
+exclude = [ "cd/modules/dashboard/" ]
 pythonVersion = "3.10"
 typeCheckingMode = "strict"
 useLibraryCodeForTypes = true

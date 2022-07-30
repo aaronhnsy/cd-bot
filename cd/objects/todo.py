@@ -1,19 +1,13 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 import datetime
 from typing import TYPE_CHECKING, TypedDict
 
-# Packages
 import pendulum
 
-# Local
 from cd import utilities
 
-
 if TYPE_CHECKING:
-    # Local
     from cd.bot import SkeletonClique
 
 
@@ -47,11 +41,7 @@ class Todo:
 
     # Methods
 
-    async def update_content(
-        self,
-        content: str, /,
-        *, jump_url: str
-    ) -> None:
+    async def update_content(self, content: str, /, *, jump_url: str) -> None:
         data: TodoData = await self.bot.db.fetchrow(
             "UPDATE todos SET content = $1, jump_url = $2 WHERE id = $3 RETURNING *",
             content, jump_url, self.id,
