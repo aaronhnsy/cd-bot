@@ -20,7 +20,7 @@ class GuildConfigData(TypedDict):
     prefix: Optional[str]
     dj_role_id: Optional[int]
     embed_size: int
-    delete_old_now_playing_messages: bool
+    delete_old_controller_messages: bool
 
 
 class GuildConfig:
@@ -32,7 +32,7 @@ class GuildConfig:
         self.prefix: str | None = data["prefix"]
         self.dj_role_id: int | None = data["dj_role_id"]
         self.embed_size: enums.EmbedSize = enums.EmbedSize(data["embed_size"])
-        self.delete_old_now_playing_messages: bool = data["delete_old_now_playing_messages"]
+        self.delete_old_controller_messages: bool = data["delete_old_controller_messages"]
 
     def __repr__(self) -> str:
         return f"<GuildConfig id={self.id}>"

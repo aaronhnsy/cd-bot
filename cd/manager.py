@@ -52,10 +52,36 @@ class Manager:
             "SELECT * FROM todos WHERE user_id = $1",
             user_id
         )
-        config.todos = {todo["id"]: objects.Todo(bot=self.bot, data=todo) for todo in todos}
+        config.todos = {
+            todo["id"]: objects.Todo(bot=self.bot, data=todo) for todo in todos
+        }
+
+        members: list[objects.MemberConfigData] = await self.bot.db.fetch(
+            "SELECT * FROM members WHERE user_id = $1",
+            user_id
+        )
+        config.member_configs = {
+            member["guild_id"]: objects.MemberConfig(bot=self.bot, data=member) for member in members
+        }
 
         self.user_configs[user_id] = config
         return config
 
     async def get_member_config(self, guild_id: int, user_id: int) -> objects.MemberConfig:
-        ...
+
+        user_config = await self.get_user_config(user_id)
+
+        if guild_id in user_config.member_configs:
+            return user_config.member_configs[guild_id]
+
+        data: objects.MemberConfigData = await self.bot.db.fetchrow(
+            "INSERT INTO members (user_id, guild_id) values ($1, $2) "
+            "ON CONFLICT (user_id, guild_id) "
+            "DO UPDATE SET user_id = excluded.user_id, guild_id = excluded.guild_id "
+            "RETURNING *",
+            user_id, guild_id
+        )
+        config = objects.MemberConfig(bot=self.bot, data=data)
+        user_config.member_configs[guild_id] = config
+
+        return config

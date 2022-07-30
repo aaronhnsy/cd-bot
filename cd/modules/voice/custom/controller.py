@@ -352,7 +352,7 @@ class Controller:
 
         guild_config = await self.player.bot.manager.get_guild_config(self.player.channel.guild.id)
 
-        match guild_config.delete_old_now_playing_messages:
+        match guild_config.delete_old_controller_messages:
             case True:
                 await self._delete_old_message()
             case False:

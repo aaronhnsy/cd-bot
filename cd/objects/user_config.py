@@ -22,10 +22,10 @@ __all__ = (
 class UserConfigData(TypedDict):
     id: int
     timezone: str | None
-    private_timezone: bool
+    timezone_private: bool
     birthday: datetime.date | None
-    private_birthday: bool
-    is_restricted: bool
+    birthday_private: bool
+    restricted: bool
     restricted_reason: str | None
 
 
@@ -48,10 +48,10 @@ class UserConfig:
             day=birthday.day
         ) if birthday else None
 
-        self.private_timezone: bool = data["private_timezone"]
-        self.private_birthday: bool = data["private_birthday"]
+        self.timezone_private: bool = data["timezone_private"]
+        self.birthday_private: bool = data["birthday_private"]
 
-        self.is_restricted: bool = data["is_restricted"]
+        self.restricted: bool = data["restricted"]
         self.restricted_reason: str | None = data["restricted_reason"]
 
         self.todos: dict[int, objects.Todo] = {}
@@ -71,10 +71,10 @@ class UserConfig:
 
     async def set_timezone_privacy_state(self, state: bool, /) -> None:
         await self.bot.db.execute(
-            "UPDATE users SET private_timezone = $1 WHERE id = $2",
+            "UPDATE users SET timezone_private = $1 WHERE id = $2",
             state, self.id
         )
-        self.private_timezone = state
+        self.timezone_private = state
 
     async def set_birthday(self, birthday: pendulum.Date | None, /) -> None:
         await self.bot.db.execute(
@@ -85,17 +85,17 @@ class UserConfig:
 
     async def set_birthday_privacy_state(self, state: bool, /) -> None:
         await self.bot.db.execute(
-            "UPDATE users SET private_birthday = $1 WHERE id = $2",
+            "UPDATE users SET birthday_private = $1 WHERE id = $2",
             state, self.id
         )
-        self.private_birthday = state
+        self.birthday_private = state
 
     async def set_restricted_state(self, state: bool, /, *, reason: str | None = None) -> None:
         await self.bot.db.execute(
-            "UPDATE users SET is_restricted = $1, restricted_reason = $2 WHERE id = $3",
+            "UPDATE users SET restricted = $1, restricted_reason = $2 WHERE id = $3",
             state, reason, self.id
         )
-        self.is_restricted = state
+        self.restricted = state
         self.restricted_reason = reason
 
     # Todos
