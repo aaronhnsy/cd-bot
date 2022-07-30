@@ -23,4 +23,6 @@ class Economy(commands.Cog):
 
     @commands.command(name="balance", aliases=["bal"])
     async def balance(self, ctx: custom.Context) -> None:
-        ...
+
+        member_config = await self.bot.manager.get_member_config(user_id=ctx.author.id, guild_id=ctx.guild.id)
+        await ctx.send(f"You have £{member_config.money}")

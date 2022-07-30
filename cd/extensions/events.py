@@ -117,8 +117,8 @@ class Events(commands.Cog):
                         f"**● [Message:]({ctx.message.jump_url})**\n"
                         f"{values.NQSP * 2}**● ID:** `{ctx.message.id}`\n"
                         f"{values.NQSP * 2}**● Command:** {ctx.command.qualified_name}\n"
-                        f"{values.NQSP * 2}**● Date:** {utilities.format_datetime(now, format=enums.DateTimeFormat.FULL_LONG_DATE)}\n"
-                        f"{values.NQSP * 2}**● Time:** {utilities.format_datetime(now, format=enums.DateTimeFormat.FULL_TIME)}\n\n",
+                        f"{values.NQSP * 2}**● Date:** {utilities.format_datetime(now, format=enums.DateTimeFormat.FullLongDate)}\n"
+                        f"{values.NQSP * 2}**● Time:** {utilities.format_datetime(now, format=enums.DateTimeFormat.FullTime)}\n\n",
             thumbnail=utilities.avatar(ctx.author),
         )
 
@@ -186,19 +186,19 @@ class Events(commands.Cog):
     @commands.Cog.listener("on_message")
     async def _log_dm(self, message: discord.Message) -> None:
 
-        if config.ENV is enums.Environment.DEVELOPMENT or message.guild or message.is_system() or not message.content:
+        if config.ENV is enums.Environment.Development or message.guild or message.is_system() or not message.content:
             return
 
         content = await utilities.upload_text(self.bot.mystbin, content=message.content, format="txt")
 
         await self.bot.log(
-            enums.LogType.DM,
+            enums.LogType.Dm,
             embed=utilities.embed(
                 colour=values.GREEN,
                 title=f"**{message.author}**",
                 description=f"{content}\n\n"
                             f"**Author:** {message.author} (`{message.author.id}`)\n"
-                            f"**Created:** {utilities.format_datetime(message.created_at, format=enums.DateTimeFormat.PARTIAL_LONG_DATETIME)}\n"
+                            f"**Created:** {utilities.format_datetime(message.created_at, format=enums.DateTimeFormat.PartialLongDatetime)}\n"
                             f"**Jump:** [Click here]({message.jump_url})",
                 thumbnail=utilities.avatar(message.author),
                 footer=f"ID: {message.id}",
@@ -216,13 +216,13 @@ class Events(commands.Cog):
             f"Joined a guild. {guild.name} ({guild.id}) | Members: {len(guild.members)} | Bots: {bots} ({bots_percent}%)"
         )
         await self.bot.log(
-            enums.LogType.GUILD,
+            enums.LogType.Guild,
             embed=utilities.embed(
                 colour=values.GREEN,
                 title=f"Joined: **{guild}**",
                 description=f"**Owner:** {guild.owner} (`{guild.owner_id}`)\n"
-                            f"**Created:** {utilities.format_datetime(guild.created_at, format=enums.DateTimeFormat.PARTIAL_LONG_DATETIME)}\n"
-                            f"**Joined:** {utilities.format_datetime(guild.me.joined_at, format=enums.DateTimeFormat.PARTIAL_LONG_DATETIME) if guild.me.joined_at else None}\n"
+                            f"**Created:** {utilities.format_datetime(guild.created_at, format=enums.DateTimeFormat.PartialLongDatetime)}\n"
+                            f"**Joined:** {utilities.format_datetime(guild.me.joined_at, format=enums.DateTimeFormat.PartialLongDatetime) if guild.me.joined_at else None}\n"
                             f"**Members:** {total}\n"
                             f"**Bots:** {bots} `{bots_percent}%`\n",
                 thumbnail=utilities.icon(guild),
@@ -241,13 +241,13 @@ class Events(commands.Cog):
             f"Left a guild. {guild.name} ({guild.id}) | Members: {len(guild.members)} | Bots: {bots} ({bots_percent}%)"
         )
         await self.bot.log(
-            enums.LogType.GUILD,
+            enums.LogType.Guild,
             embed=utilities.embed(
                 colour=values.RED,
                 title=f"Left: **{guild}**",
                 description=f"**Owner:** {guild.owner} (`{guild.owner_id}`)\n"
-                            f"**Created:** {utilities.format_datetime(guild.created_at, format=enums.DateTimeFormat.PARTIAL_LONG_DATETIME)}\n"
-                            f"**Joined:** {utilities.format_datetime(guild.me.joined_at, format=enums.DateTimeFormat.PARTIAL_LONG_DATETIME) if guild.me.joined_at else None}\n"
+                            f"**Created:** {utilities.format_datetime(guild.created_at, format=enums.DateTimeFormat.PartialLongDatetime)}\n"
+                            f"**Joined:** {utilities.format_datetime(guild.me.joined_at, format=enums.DateTimeFormat.PartialLongDatetime) if guild.me.joined_at else None}\n"
                             f"**Members:** {total}\n"
                             f"**Bots:** {bots} `{bots_percent}%`\n",
                 thumbnail=utilities.icon(guild),
@@ -258,7 +258,7 @@ class Events(commands.Cog):
     @commands.Cog.listener("on_command_completion")
     async def _log_command_use(self, ctx: custom.Context) -> None:
 
-        await self.bot.logging_webhooks[enums.LogType.COMMAND].send(
+        await self.bot.logging_webhooks[enums.LogType.Command].send(
             embed=await self._build_command_information_embed(ctx, colour=values.GREEN),
             username=f"{ctx.guild or ctx.author}",
             avatar_url=utilities.icon(ctx.guild) if ctx.guild else utilities.avatar(ctx.author),
@@ -324,7 +324,7 @@ class Events(commands.Cog):
             webhook_username = f"{ctx.guild or ctx.author}"
             webhook_avatar = utilities.icon(ctx.guild) if ctx.guild else utilities.avatar(ctx.author)
 
-            await self.bot.logging_webhooks[enums.LogType.ERROR].send(
+            await self.bot.logging_webhooks[enums.LogType.Error].send(
                 await utilities.upload_text(
                     self.bot.mystbin,
                     content=utilities.codeblock(exception, max_characters=2000),
@@ -368,12 +368,12 @@ class Events(commands.Cog):
         if event.reason == "REPLACED":
             return
 
-        await player.handle_track_end(enums.TrackEndReason.NORMAL)
+        await player.handle_track_end(enums.TrackEndReason.Normal)
 
     @commands.Cog.listener("on_slate_track_stuck")
     async def _handle_track_stuck(self, player: voice.Player, _: slate.TrackStuck) -> None:
-        await player.handle_track_end(enums.TrackEndReason.STUCK)
+        await player.handle_track_end(enums.TrackEndReason.Stuck)
 
     @commands.Cog.listener("on_slate_track_exception")
     async def _handle_track_exception(self, player: voice.Player, _: slate.TrackException) -> None:
-        await player.handle_track_end(enums.TrackEndReason.EXCEPTION)
+        await player.handle_track_end(enums.TrackEndReason.Exception)

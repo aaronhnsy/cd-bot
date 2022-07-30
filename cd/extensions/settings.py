@@ -274,4 +274,4 @@ class Settings(commands.Cog):
         - You are the owner of this server.
         - You have the `Manage Channels`, `Manage Roles`, `Manage Guild`, `Kick Members`, `Ban Members`, or `Administrator` permissions.
         """
-        await self._embed_size_set(ctx, enums.EmbedSize.LARGE)
+        await self._embed_size_set(ctx, enums.EmbedSize.Large)

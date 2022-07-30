@@ -67,7 +67,7 @@ class Manager:
         self.user_configs[user_id] = config
         return config
 
-    async def get_member_config(self, guild_id: int, user_id: int) -> objects.MemberConfig:
+    async def get_member_config(self, user_id: int, guild_id: int) -> objects.MemberConfig:
 
         user_config = await self.get_user_config(user_id)
 

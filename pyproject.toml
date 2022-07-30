@@ -30,7 +30,7 @@ discord-py = { git = "https://github.com/Rapptz/discord.py", branch = "master", 
 
 
 [tool.pyright]
-include                = ["cd", "launcher.py"]
+include                = ["cd", "launcher.py", "config_example.py"]
 exclude                = ["cd/modules/dashboard/"]
 pythonVersion          = "3.10"
 typeCheckingMode       = "strict"

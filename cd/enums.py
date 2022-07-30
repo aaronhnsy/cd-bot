@@ -20,54 +20,54 @@ EnumType = TypeVar("EnumType", bound=Enum)
 
 
 class Environment(Enum):
-    PRODUCTION = 0
-    DEVELOPMENT = 1
+    Production = 0
+    Development = 1
 
 
 class DateTimeFormat(Enum):
 
     # Dates
-    FULL_LONG_DATE = "dddd [the] Do [of] MMMM YYYY"
-    PARTIAL_LONG_DATE = "dddd Do [of] MMMM YYYY"
-    LONG_DATE = "dddd Do MMMM YYYY"
-    FULL_SHORT_DATE = "DD/MM/YYYY"
-    PARTIAL_SHORT_DATE = "D/M/YY"
-    FULL_COMPUTER_DATE = "YYYY/MM/DD"
-    PARTIAL_COMPUTER_DATE = "YY/M/D"
+    FullLongDate = "dddd [the] Do [of] MMMM YYYY"
+    PartialLongDate = "dddd Do [of] MMMM YYYY"
+    LongDate = "dddd Do MMMM YYYY"
+    FullShortDate = "DD/MM/YYYY"
+    PartialShortDate = "D/M/YY"
+    FullComputerDate = "YYYY/MM/DD"
+    PartialComputerDate = "YY/M/D"
 
     # Times
-    FULL_TIME = "hh:mm:ss A"
-    PARTIAL_TIME = "hh:mm A"
+    FullTime = "hh:mm:ss A"
+    PartialTime = "hh:mm A"
 
     # Dates and times
-    FULL_LONG_DATETIME = "dddd [the] Do [of] MMMM YYYY [at] hh:mm A"
-    FULL_LONG_DATETIME_WITH_SECONDS = "dddd [the] Do [of] MMMM YYYY [at] hh:mm:ss A"
-    PARTIAL_LONG_DATETIME = "dddd Do [of] MMMM YYYY [at] hh:mm A"
-    PARTIAL_LONG_DATETIME_WITH_SECONDS = "dddd Do [of] MMMM YYYY [at] hh:mm:ss A"
-    SHORT_DATETIME = "dddd Do MMMM YYYY [at] hh:mm A"
-    SHORT_DATETIME_WITH_SECONDS = "dddd Do MMMM YYYY [at] hh:mm:ss A"
+    FullLongDatetime = "dddd [the] Do [of] MMMM YYYY [at] hh:mm A"
+    FullLongDatetimeWithSeconds = "dddd [the] Do [of] MMMM YYYY [at] hh:mm:ss A"
+    PartialLongDatetime = "dddd Do [of] MMMM YYYY [at] hh:mm A"
+    PartialLongDatetimeWithSeconds = "dddd Do [of] MMMM YYYY [at] hh:mm:ss A"
+    ShortDatetime = "dddd Do MMMM YYYY [at] hh:mm A"
+    ShortDatetimeWithSeconds = "dddd Do MMMM YYYY [at] hh:mm:ss A"
 
 
 class LogType(Enum):
-    DM = 0
-    GUILD = 1
-    ERROR = 2
-    COMMAND = 3
+    Dm = 0
+    Guild = 1
+    Error = 2
+    Command = 3
 
 
 class Effect(Enum):
-    ROTATION = "8d"
-    NIGHTCORE = "nightcore"
-    MONO = "mono"
-    LEFT_EAR = "left-ear"
-    RIGHT_EAR = "right-ear"
+    Rotation = "8d"
+    Nightcore = "nightcore"
+    Mono = "mono"
+    LeftEar = "left-ear"
+    RightEar = "right-ear"
 
 
 class TrackEndReason(Enum):
-    NORMAL = 0
-    STUCK = 1
-    EXCEPTION = 2
-    REPLACED = 3
+    Normal = 0
+    Stuck = 1
+    Exception = 2
+    Replaced = 3
 
 
 def convert_enum(
@@ -90,11 +90,10 @@ def convert_enum(
 
 
 class EmbedSize(Enum):
-
-    LARGE = 0
-    MEDIUM = 1
-    SMALL = 2
-    IMAGE = 3
+    Large = 0
+    Medium = 1
+    Small = 2
+    Image = 3
 
     @classmethod
     async def convert(cls, _: custom.Context, argument: str) -> EmbedSize:

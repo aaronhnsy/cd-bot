@@ -149,7 +149,7 @@ class Player(slate.Player["SkeletonClique", "Player"]):
 
         self.bot.dispatch("dashboard_track_end", player=self)
 
-        if reason is not enums.TrackEndReason.REPLACED:
+        if reason is not enums.TrackEndReason.Replaced:
 
             # Add current track to the queue history.
             assert self._current is not None

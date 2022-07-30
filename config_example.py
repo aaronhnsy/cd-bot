@@ -3,8 +3,8 @@ from __future__ import annotations
 from cd.enums import Environment
 
 
-ENV: Environment = Environment.DEVELOPMENT
-IS_DEV: bool = ENV is Environment.DEVELOPMENT
+ENV: Environment = Environment.Development
+IS_DEV: bool = ENV is Environment.Development
 
 
 ###########

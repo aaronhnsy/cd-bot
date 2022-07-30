@@ -32,3 +32,5 @@ class MemberConfig:
 
     def __repr__(self) -> str:
         return f"<Member user_id={self.user_id}, guild_id={self.guild_id}>"
+
+    # Methods

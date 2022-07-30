@@ -48,10 +48,10 @@ class SkeletonClique(commands.AutoShardedBot):
 
         # logging
         self.logging_webhooks: dict[enums.LogType, discord.Webhook] = {
-            enums.LogType.DM:      utilities.MISSING,
-            enums.LogType.GUILD:   utilities.MISSING,
-            enums.LogType.ERROR:   utilities.MISSING,
-            enums.LogType.COMMAND: utilities.MISSING,
+            enums.LogType.Dm:      utilities.MISSING,
+            enums.LogType.Guild:   utilities.MISSING,
+            enums.LogType.Error:   utilities.MISSING,
+            enums.LogType.Command: utilities.MISSING,
         }
         self.logging_queue: dict[enums.LogType, list[discord.Embed]] = collections.defaultdict(list)
 
@@ -158,19 +158,19 @@ class SkeletonClique(commands.AutoShardedBot):
         self.mystbin = mystbin.Client(session=self.session)
         # self.client = http.HTTPClient(self)
 
-        self.logging_webhooks[enums.LogType.DM] = discord.Webhook.from_url(
+        self.logging_webhooks[enums.LogType.Dm] = discord.Webhook.from_url(
             session=self.session,
             url=config.DM_WEBHOOK_URL
         )
-        self.logging_webhooks[enums.LogType.GUILD] = discord.Webhook.from_url(
+        self.logging_webhooks[enums.LogType.Guild] = discord.Webhook.from_url(
             session=self.session,
             url=config.GUILD_WEBHOOK_URL
         )
-        self.logging_webhooks[enums.LogType.ERROR] = discord.Webhook.from_url(
+        self.logging_webhooks[enums.LogType.Error] = discord.Webhook.from_url(
             session=self.session,
             url=config.ERROR_WEBHOOK_URL
         )
-        self.logging_webhooks[enums.LogType.COMMAND] = discord.Webhook.from_url(
+        self.logging_webhooks[enums.LogType.Command] = discord.Webhook.from_url(
             session=self.session,
             url=config.COMMAND_WEBHOOK_URL
         )
