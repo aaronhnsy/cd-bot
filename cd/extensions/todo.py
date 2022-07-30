@@ -1,12 +1,9 @@
-# Future
 from __future__ import annotations
 
-# Packages
 import discord
 from discord import app_commands
 from discord.ext import commands
 
-# Local
 from cd import converters, custom, exceptions, objects, paginators, utilities, values
 from cd.bot import SkeletonClique
 

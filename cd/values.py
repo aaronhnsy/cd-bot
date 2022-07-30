@@ -1,7 +1,5 @@
-# Future
 from __future__ import annotations
 
-# Packages
 import discord
 
 

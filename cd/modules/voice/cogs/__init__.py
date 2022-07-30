@@ -7,6 +7,7 @@ from .play import *
 from .player import *
 from .queue import *
 
+
 if TYPE_CHECKING:
     from cd.bot import SkeletonClique
 

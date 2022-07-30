@@ -1,14 +1,10 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 from collections.abc import Mapping
 from typing import Any
 
-# Packages
 from discord.ext import commands
 
-# Local
 from cd import custom, exceptions, paginators, utilities, values
 
 

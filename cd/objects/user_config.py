@@ -8,6 +8,7 @@ from pendulum.tz.timezone import Timezone
 
 from cd import objects
 
+
 if TYPE_CHECKING:
     from cd.bot import SkeletonClique
 

@@ -1,10 +1,7 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 from typing import Literal
 
-# Packages
 import discord
 
 

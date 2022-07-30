@@ -1,14 +1,10 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 import datetime
 
-# Packages
 import discord
 from discord.ext import commands
 
-# Local
 from cd import utilities, values
 
 

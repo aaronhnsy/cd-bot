@@ -1,25 +1,20 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 import abc
 import binascii
 import json
 import os
 from typing import TYPE_CHECKING
 
-# Packages
 import tornado.web
 import tornado.websocket
 
-# Local
 from cd import config, exceptions
 from cd.modules import dashboard
 from cd.modules.dashboard.utilities import http
 
 
 if TYPE_CHECKING:
-    # Local
     from cd.bot import SkeletonClique
 
 

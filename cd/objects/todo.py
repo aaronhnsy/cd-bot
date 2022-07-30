@@ -7,6 +7,7 @@ import pendulum
 
 from cd import utilities
 
+
 if TYPE_CHECKING:
     from cd.bot import SkeletonClique
 

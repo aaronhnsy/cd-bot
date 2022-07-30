@@ -1,17 +1,13 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 import inspect
 import os
 import time
 from typing import Optional
 
-# Packages
 import discord
 from discord.ext import commands
 
-# Local
 from cd import custom, exceptions, utilities, values
 from cd.bot import SkeletonClique
 

@@ -11,6 +11,7 @@ import slate
 from cd import custom, enums, exceptions, utilities, values
 from cd.modules import voice
 
+
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences
     from cd.bot import SkeletonClique

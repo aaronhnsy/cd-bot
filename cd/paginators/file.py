@@ -1,11 +1,8 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 import functools
 import io
 
-# Local
 from cd import custom, utilities
 from cd.paginators.base import BasePaginator
 

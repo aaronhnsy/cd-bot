@@ -1,12 +1,9 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 import logging
 import logging.handlers
 import os
 
-# Packages
 import colorama
 
 

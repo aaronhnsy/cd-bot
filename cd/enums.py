@@ -1,13 +1,9 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 from typing import TypeVar
 
-# Packages
 from discord.enums import Enum
 
-# Local
 from cd import custom, exceptions, utilities
 
 

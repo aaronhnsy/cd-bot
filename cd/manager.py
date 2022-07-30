@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 from cd import objects
 
+
 if TYPE_CHECKING:
     from cd.bot import SkeletonClique
 

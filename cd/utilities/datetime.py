@@ -1,15 +1,11 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 import datetime as dt
 from collections.abc import Sequence
 
-# Packages
 import humanize
 import pendulum
 
-# Local
 from cd import enums
 
 

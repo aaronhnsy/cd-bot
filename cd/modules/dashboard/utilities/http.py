@@ -25,26 +25,21 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
-# Future
 from __future__ import annotations
 
-# Standard Library
 import asyncio
 import weakref
 from typing import TYPE_CHECKING, Any, ClassVar
 from urllib.parse import quote
 
-# Packages
 import aiohttp
 from discord.http import MaybeUnlock, json_or_text
-from discord.utils import _parse_ratelimit_header  # type: ignore
+from discord.utils import _parse_ratelimit_header
 
-# Local
 from cd import exceptions
 
 
 if TYPE_CHECKING:
-    # Local
     from cd.bot import SkeletonClique
 
 

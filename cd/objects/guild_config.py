@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Any, Optional, TypedDict
 
 from cd import enums
 
+
 if TYPE_CHECKING:
     from cd.bot import SkeletonClique
 

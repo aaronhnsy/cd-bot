@@ -1,18 +1,14 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 import asyncio
 import logging
 import traceback
 
-# Packages
 import discord
 import pendulum
 import slate
 from discord.ext import commands
 
-# Local
 from cd import config, custom, enums, exceptions, utilities, values
 from cd.bot import SkeletonClique
 from cd.modules import voice

@@ -1,12 +1,9 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 import json
 import time
 from typing import TypedDict
 
-# Packages
 from typing_extensions import NotRequired
 
 

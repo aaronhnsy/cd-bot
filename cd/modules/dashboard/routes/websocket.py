@@ -1,18 +1,14 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 import abc
 import asyncio
 import json
 from typing import Any
 
-# Packages
 import slate
 import tornado.web
 import tornado.websocket
 
-# Local
 from cd import config, custom, exceptions
 from cd.modules import dashboard, voice
 from cd.modules.dashboard.utilities import handlers

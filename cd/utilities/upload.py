@@ -1,14 +1,10 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 import io
 
-# Packages
 import aiohttp
 import mystbin
 
-# Local
 from cd import config, exceptions
 
 

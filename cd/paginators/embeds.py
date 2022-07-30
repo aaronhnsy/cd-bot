@@ -1,10 +1,7 @@
-# Future
 from __future__ import annotations
 
-# Packages
 import discord
 
-# Local
 from cd import custom
 from cd.paginators.base import BasePaginator
 

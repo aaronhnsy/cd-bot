@@ -1,15 +1,11 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 import logging
 import os
 import pathlib
 
-# Packages
 from discord.ext import commands, tasks
 
-# Local
 from cd.bot import SkeletonClique
 
 

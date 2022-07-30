@@ -1,15 +1,11 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 import abc
 import contextlib
 from typing import Any
 
-# Packages
 import discord
 
-# Local
 from cd import custom, utilities
 from cd.paginators.view import PaginatorView
 

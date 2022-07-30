@@ -5,6 +5,8 @@ from typing import TYPE_CHECKING
 from discord.ext import commands
 
 from cd import custom
+
+
 if TYPE_CHECKING:
     from cd.bot import SkeletonClique
 

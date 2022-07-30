@@ -1,14 +1,10 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 from typing import Literal
 
-# Packages
 import discord
 from discord.ext import commands
 
-# Local
 from cd import checks, config, converters, custom, enums, exceptions, utilities, values
 from cd.bot import SkeletonClique
 

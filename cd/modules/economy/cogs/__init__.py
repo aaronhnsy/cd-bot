@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 from .economy import *
 
+
 if TYPE_CHECKING:
     from cd.bot import SkeletonClique
 

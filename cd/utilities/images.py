@@ -1,23 +1,18 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 import functools
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Concatenate, Literal, ParamSpec, TypeVar
 
-# Packages
 import humanize
 from wand.color import Color
 from wand.drawing import Drawing
 from wand.image import Image
 
-# Local
 from cd import exceptions, utilities
 
 
 if TYPE_CHECKING:
-    # Local
     from cd.bot import SkeletonClique
 
 

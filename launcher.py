@@ -1,13 +1,9 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 import asyncio
 
-# Packages
 import jishaku
 
-# Local
 from cd.bot import SkeletonClique
 from cd.config import DISCORD_TOKEN
 from cd.utilities.logging import setup_logger

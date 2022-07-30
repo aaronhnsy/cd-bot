@@ -1,14 +1,10 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 import datetime
 from typing import Any
 
-# Packages
 import discord
 
-# Local
 from cd import custom, utilities, values
 from cd.paginators.base import BasePaginator
 

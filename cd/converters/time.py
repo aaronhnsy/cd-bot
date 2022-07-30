@@ -1,13 +1,9 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 import re
 
-# Packages
 from discord.ext import commands
 
-# Local
 from cd import custom, exceptions
 
 

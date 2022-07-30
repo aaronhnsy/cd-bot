@@ -1,15 +1,11 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 import abc
 from typing import Any
 
-# Packages
 import discord
 import pendulum
 
-# Local
 from cd.modules import dashboard
 from cd.modules.dashboard.utilities import handlers
 

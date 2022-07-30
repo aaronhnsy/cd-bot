@@ -1,16 +1,12 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 from typing import TYPE_CHECKING, Any
 
-# Packages
 import discord
 from discord.ext import commands
 
 
 if TYPE_CHECKING:
-    # Local
     # noinspection PyUnresolvedReferences
     from cd.bot import SkeletonClique
     from cd.modules import voice

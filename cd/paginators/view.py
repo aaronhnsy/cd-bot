@@ -1,18 +1,13 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 from typing import TYPE_CHECKING
 
-# Packages
 import discord
 
-# Local
 from cd import utilities, values
 
 
 if TYPE_CHECKING:
-    # Local
     from cd.paginators.base import BasePaginator
 
 

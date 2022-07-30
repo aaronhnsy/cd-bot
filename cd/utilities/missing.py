@@ -25,10 +25,8 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
-# Future
 from __future__ import annotations
 
-# Standard Library
 from typing import Any, Literal
 
 

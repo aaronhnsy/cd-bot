@@ -1,10 +1,7 @@
-# Future
 from __future__ import annotations
 
-# Standard Library
 from typing import Any
 
-# Local
 from cd import custom, values
 from cd.paginators.base import BasePaginator
 
