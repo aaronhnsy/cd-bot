@@ -13,6 +13,7 @@ __all__ = (
     "LogType",
     "Effect",
     "TrackEndReason",
+    "Operation",
     "EmbedSize"
 )
 
@@ -68,6 +69,13 @@ class TrackEndReason(Enum):
     Stuck = 1
     Exception = 2
     Replaced = 3
+
+
+class Operation(Enum):
+    Reset = 0
+    Set = 1
+    Add = 2
+    Minus = 3
 
 
 def convert_enum(

@@ -7,6 +7,7 @@ from .images import *
 from .logging import *
 from .missing import *
 from .upload import *
+from .levels import *
 
 
 def readable_bool(value: bool) -> str:
