@@ -23,6 +23,11 @@ class GuildConfigData(TypedDict):
     delete_old_controller_messages: bool
 
 
+class RankData(TypedDict):
+    user_id: int
+    rank: int
+
+
 class GuildConfig:
 
     def __init__(self, bot: SkeletonClique, data: GuildConfigData) -> None:
@@ -59,3 +64,10 @@ class GuildConfig:
             embed_size.value, self.id
         )
         self.embed_size = enums.EmbedSize(data["embed_size"])
+
+    async def ranks(self) -> dict[int, int]:
+        data: list[RankData] = await self.bot.db.fetch(
+            "SELECT user_id, row_number() OVER (ORDER BY xp DESC) AS rank FROM members WHERE guild_id = $1",
+            self.id
+        )
+        return {x["user_id"]: x["rank"] for x in data}

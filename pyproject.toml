@@ -14,12 +14,15 @@ authors     = ["Axel <axelancerr@gmail.com>"]
 python     = "^3.10"
 asyncpg    = "~0.26.0"
 colorama   = "~0.4.0"
-humanize   = "~4.2.0"
+humanize   = "~4.3.0"
 pendulum   = "~2.1.0"
-rapidfuzz  = "~2.3.0"
+rapidfuzz  = "~2.4.0"
 tornado    = "~6.2.0"
 wand       = "~0.6.0"
 mystbin-py = "~4.0.0"
+pillow     = "~9.2.0"
+colorthief = "~0.2.0"
+matplotlib = "~3.5.0"
 
 aiohttp    = { version = "~3.8.0", extras = ["speedups"] }
 aioredis   = { version = "~2.0.0", extras = ["hiredis"] }

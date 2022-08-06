@@ -22,6 +22,11 @@ class MemberConfigData(TypedDict):
     money: float
 
 
+class RankData(TypedDict):
+    user_id: int
+    rank: int
+
+
 class MemberConfig:
 
     def __init__(self, bot: SkeletonClique, data: MemberConfigData) -> None:
@@ -42,12 +47,26 @@ class MemberConfig:
         return utilities.level(self.xp)
 
     @property
-    def needed_xp(self) -> int:
-        return utilities.needed_xp(self.level, self.xp)
+    def xp_until_next_level(self) -> int:
+        return utilities.xp_needed_for_level(self.level + 1) - self.xp
 
     # Methods
 
-    async def change_xp(self, operation: enums.Operation, /, amount: int) -> None:
+    async def rank(self) -> int:
+        data: RankData = await self.bot.db.fetchrow(
+            """
+            SELECT * FROM ( 
+                SELECT user_id, row_number() OVER (ORDER BY xp DESC) AS rank 
+                FROM members 
+                WHERE guild_id = $1 
+            ) AS x 
+            WHERE user_id = $2
+            """,
+            self.guild_id, self.user_id
+        )
+        return data["rank"]
+
+    async def change_xp(self, operation: enums.Operation, /, *, amount: int) -> None:
 
         operations = [enums.Operation.Set, enums.Operation.Add, enums.Operation.Minus]
         if operation not in operations:
