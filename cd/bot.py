@@ -4,9 +4,10 @@ import collections
 import logging
 # import os
 import time
+from typing import Any
 
 import aiohttp
-import aioredis
+from redis import asyncio as aioredis
 import asyncpg
 import discord
 import mystbin
@@ -42,7 +43,7 @@ class SkeletonClique(commands.AutoShardedBot):
         # external services
         self.session: aiohttp.ClientSession = utilities.MISSING
         self.db: asyncpg.Pool = utilities.MISSING
-        self.redis: aioredis.Redis = utilities.MISSING
+        self.redis: aioredis.Redis[Any] = utilities.MISSING
         self.slate: slate.Pool[SkeletonClique, voice.Player] = utilities.MISSING
         self.mystbin: mystbin.Client = utilities.MISSING
 
