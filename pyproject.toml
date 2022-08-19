@@ -1,46 +1,43 @@
 [build-system]
-requires      = ['poetry-core>=1.0.0']
+requires = ['poetry-core>=1.0.0']
 build-backend = 'poetry.core.masonry.api'
 
 
 [tool.poetry]
-name        = "CD-bot"
-version     = "0.0.1"
+name = "CD-bot"
+version = "0.0.1"
 description = "A general purpose music bot."
-authors     = ["Axel <axelancerr@gmail.com>"]
+authors = ["Axel <axelancerr@gmail.com>"]
 
 
 [tool.poetry.dependencies]
-python     = "^3.10"
-asyncpg    = "~0.26.0"
-colorama   = "~0.4.0"
-humanize   = "~4.3.0"
-pendulum   = "~2.1.0"
-rapidfuzz  = "~2.4.0"
-tornado    = "~6.2.0"
-wand       = "~0.6.0"
-mystbin-py = "~4.0.0"
-pillow     = "~9.2.0"
-colorthief = "~0.2.0"
-matplotlib = "~3.5.0"
+python          = "^3.10"
+asyncpg         = "~0.26.0"
+colorama        = "~0.4.0"
+humanize        = "~4.3.0"
+pendulum        = "~2.1.0"
+rapidfuzz       = "~2.6.0"
+tornado         = "~6.2.0"
+wand            = "~0.6.0"
+mystbin-py      = "~5.0.0"
+pillow          = "~9.2.0"
+colorthief      = "~0.2.0"
+discord-ext-lava = "~0.5.0"
 
-aiohttp    = { version = "~3.8.0", extras = ["speedups"] }
-redis      = { version = "~4.3.0", extras = ["hiredis"] }
-jishaku    = { version = "~2.5.0", extras = ["voice", "procinfo"] }
-
-slate      = { git = "https://github.com/Axelware/slate", branch = "main" }
-discord-py = { git = "https://github.com/Rapptz/discord.py", branch = "master", extras = ["voice"] }
+aiohttp         = { version = "~3.8.0", extras = ["speedups"] }
+redis           = { version = "~4.3.0", extras = ["hiredis"] }
+jishaku         = { version = "~2.5.0", extras = ["voice", "procinfo"] }
+discord-py      = { version = "~2.0.0", extras = ["voice", "speed"] }
 
 
 [tool.pyright]
-include                = ["cd", "launcher.py", "config_example.py"]
-exclude                = ["cd/modules/dashboard/"]
-pythonVersion          = "3.10"
-typeCheckingMode       = "strict"
+include = [ "cd", "launcher.py" ]
+pythonVersion = "3.10"
+typeCheckingMode = "strict"
 useLibraryCodeForTypes = true
 
-reportUnknownMemberType  = false
-reportPrivateUsage       = false
-reportImportCycles       = false
-reportMissingTypeStubs   = false
+reportUnknownMemberType = false
+reportPrivateUsage = false
+reportImportCycles = false
+reportMissingTypeStubs = false
 reportPrivateImportUsage = false
