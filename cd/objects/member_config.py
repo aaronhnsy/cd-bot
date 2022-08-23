@@ -6,7 +6,7 @@ from cd import enums, utilities
 
 
 if TYPE_CHECKING:
-    from cd.bot import SkeletonClique
+    from cd.bot import CD
 
 
 __all__ = (
@@ -29,8 +29,8 @@ class RankData(TypedDict):
 
 class MemberConfig:
 
-    def __init__(self, bot: SkeletonClique, data: MemberConfigData) -> None:
-        self.bot: SkeletonClique = bot
+    def __init__(self, bot: CD, data: MemberConfigData) -> None:
+        self.bot: CD = bot
 
         self.user_id: int = data["user_id"]
         self.guild_id: int = data["guild_id"]

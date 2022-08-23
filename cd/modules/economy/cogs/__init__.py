@@ -6,8 +6,8 @@ from .economy import *
 
 
 if TYPE_CHECKING:
-    from cd.bot import SkeletonClique
+    from cd.bot import CD
 
 
-async def setup(bot: SkeletonClique) -> None:
+async def setup(bot: CD) -> None:
     await bot.add_cog(Economy(bot))

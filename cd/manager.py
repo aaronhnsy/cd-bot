@@ -13,7 +13,7 @@ from cd import objects, utilities, enums
 
 
 if TYPE_CHECKING:
-    from cd.bot import SkeletonClique
+    from cd.bot import CD
 
 
 __all__ = (
@@ -27,8 +27,8 @@ EXO_BOLD = str(RESOURCES / "Exo-Bold.ttf")
 
 class Manager:
 
-    def __init__(self, bot: SkeletonClique) -> None:
-        self.bot: SkeletonClique = bot
+    def __init__(self, bot: CD) -> None:
+        self.bot: CD = bot
 
         self.guild_configs: dict[int, objects.GuildConfig] = {}
         self.user_configs: dict[int, objects.UserConfig] = {}

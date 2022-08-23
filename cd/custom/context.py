@@ -8,7 +8,7 @@ from discord.ext import commands
 
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences
-    from cd.bot import SkeletonClique
+    from cd.bot import CD
     from cd.modules import voice
 
 
@@ -17,7 +17,7 @@ __all__ = (
 )
 
 
-class Context(commands.Context["SkeletonClique"]):
+class Context(commands.Context["CD"]):
 
     @property
     def player(self) -> voice.Player | None:

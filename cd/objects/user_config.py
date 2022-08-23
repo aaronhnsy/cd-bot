@@ -10,7 +10,7 @@ from cd import objects
 
 
 if TYPE_CHECKING:
-    from cd.bot import SkeletonClique
+    from cd.bot import CD
 
 
 __all__ = (
@@ -31,8 +31,8 @@ class UserConfigData(TypedDict):
 
 class UserConfig:
 
-    def __init__(self, bot: SkeletonClique, data: UserConfigData) -> None:
-        self.bot: SkeletonClique = bot
+    def __init__(self, bot: CD, data: UserConfigData) -> None:
+        self.bot: CD = bot
 
         self.id: int = data["id"]
 

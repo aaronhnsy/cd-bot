@@ -11,7 +11,7 @@ from cd.modules import voice
 
 
 if TYPE_CHECKING:
-    from cd.bot import SkeletonClique
+    from cd.bot import CD
 
 
 __all__ = (
@@ -24,8 +24,8 @@ class Queue(commands.Cog):
     Queue management commands.
     """
 
-    def __init__(self, bot: SkeletonClique) -> None:
-        self.bot: SkeletonClique = bot
+    def __init__(self, bot: CD) -> None:
+        self.bot: CD = bot
 
     def cog_check(self, ctx: custom.Context) -> Literal[True]:  # pyright: reportIncompatibleMethodOverride=false
 

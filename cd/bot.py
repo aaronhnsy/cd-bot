@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import collections
 import logging
-# import os
+import os
 import time
 from typing import Any
 
@@ -12,20 +12,20 @@ import asyncpg
 import discord
 import mystbin
 import slate
-# import tornado.httpserver
-# import tornado.web
+import tornado.httpserver
+import tornado.web
 from discord.ext import commands, tasks
 
 from cd import checks, config, custom, enums, manager, utilities, values
 from cd.modules import voice
-# from cd.modules import dashboard
-# from cd.modules.dashboard.utilities import http
+from cd.modules import dashboard
+from cd.modules.dashboard.utilities import http
 
 
 LOG: logging.Logger = logging.getLogger("cd.bot")
 
 
-class SkeletonClique(commands.AutoShardedBot):
+class CD(commands.AutoShardedBot):
 
     def __init__(self) -> None:
         super().__init__(
@@ -44,7 +44,7 @@ class SkeletonClique(commands.AutoShardedBot):
         self.session: aiohttp.ClientSession = utilities.MISSING
         self.db: asyncpg.Pool = utilities.MISSING
         self.redis: aioredis.Redis[Any] = utilities.MISSING
-        self.slate: slate.Pool[SkeletonClique, voice.Player] = utilities.MISSING
+        self.slate: slate.Pool[CD, voice.Player] = utilities.MISSING
         self.mystbin: mystbin.Client = utilities.MISSING
 
         # logging
@@ -61,7 +61,6 @@ class SkeletonClique(commands.AutoShardedBot):
         self.manager: manager.Manager = manager.Manager(self)
         self.start_time: float = time.time()
 
-        """
         # dashboard
         self.dashboard: tornado.web.Application = tornado.web.Application(
             dashboard.setup_routes(bot=self),
@@ -76,10 +75,9 @@ class SkeletonClique(commands.AutoShardedBot):
             xheaders=True
         )
         self.client: http.HTTPClient = utilities.MISSING
-        """
 
     def __repr__(self) -> str:
-        return f"<SkeletonClique id={self.user.id if self.user else values.BOT_ID}, users={len(self.users)}, guilds={self.guilds}>"
+        return f"<CD id={self.user.id if self.user else values.BOT_ID}, users={len(self.users)}, guilds={self.guilds}>"
 
     # Setup
 
@@ -91,7 +89,7 @@ class SkeletonClique(commands.AutoShardedBot):
 
         except Exception as e:
             LOG.critical(f"[POSTGRESQL] Error while connecting.\n{e}\n")
-            raise ConnectionError()
+            raise ConnectionError() from e
 
         assert db is not None
 
@@ -142,14 +140,12 @@ class SkeletonClique(commands.AutoShardedBot):
 
             LOG.info(f"[EXTENSIONS] Loaded - {extension}")
 
-    """
     async def start_dashboard(self) -> None:
 
         self.server.bind(config.DASHBOARD_PORT, config.DASHBOARD_HOST)
         self.server.start()
 
         LOG.info("[DASHBOARD] Dashboard has connected.")
-    """
 
     async def setup_hook(self) -> None:
 
@@ -180,7 +176,7 @@ class SkeletonClique(commands.AutoShardedBot):
         await self.connect_postgresql()
         await self.connect_redis()
         await self.connect_slate()
-        # await self.start_dashboard()
+        await self.start_dashboard()
         await self.setup_extensions()
 
     # Logging
@@ -204,8 +200,8 @@ class SkeletonClique(commands.AutoShardedBot):
         self,
         message: discord.Message | discord.Interaction,
         *,
-        cls: type[commands.Context[SkeletonClique]] = utilities.MISSING
-    ) -> commands.Context[SkeletonClique]:
+        cls: type[commands.Context[CD]] = utilities.MISSING
+    ) -> commands.Context[CD]:
         return await super().get_context(message, cls=custom.Context)
 
     async def get_prefix(self, message: discord.Message) -> list[str]:

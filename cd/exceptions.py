@@ -9,7 +9,7 @@ from cd import utilities, values
 
 
 __all__ = (
-    "SkeletonCliqueError",
+    "CDError",
     "EmbedError",
     "HTTPException",
     "HTTPForbidden",
@@ -18,11 +18,11 @@ __all__ = (
 )
 
 
-class SkeletonCliqueError(commands.CommandError):
+class CDError(commands.CommandError):
     pass
 
 
-class EmbedError(SkeletonCliqueError):
+class EmbedError(CDError):
 
     def __init__(
         self,

@@ -9,7 +9,7 @@ from cd import utilities
 
 
 if TYPE_CHECKING:
-    from cd.bot import SkeletonClique
+    from cd.bot import CD
 
 
 __all__ = (
@@ -28,8 +28,8 @@ class TodoData(TypedDict):
 
 class Todo:
 
-    def __init__(self, bot: SkeletonClique, data: TodoData) -> None:
-        self.bot: SkeletonClique = bot
+    def __init__(self, bot: CD, data: TodoData) -> None:
+        self.bot: CD = bot
 
         self.id: int = data["id"]
         self.user_id: int = data["user_id"]
