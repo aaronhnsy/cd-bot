@@ -48,10 +48,13 @@ def setup_logger() -> None:
     colorama.init(autoreset=True)
 
     loggers: dict[str, logging.Logger] = {
-        "cd":    logging.getLogger("cd"),
-        "slate": logging.getLogger("slate"),
+        "cd":      logging.getLogger("cd"),
+        "discord": logging.getLogger("discord"),
+        "slate":   logging.getLogger("slate"),
+
     }
     loggers["cd"].setLevel(logging.DEBUG)
+    loggers["discord"].setLevel(logging.INFO)
     loggers["slate"].setLevel(logging.INFO)
 
     for name, logger in loggers.items():
