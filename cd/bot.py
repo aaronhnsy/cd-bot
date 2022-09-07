@@ -7,19 +7,16 @@ import time
 from typing import Any
 
 import aiohttp
-from redis import asyncio as aioredis
 import asyncpg
 import discord
 import mystbin
-import slate
 import tornado.httpserver
 import tornado.web
-from discord.ext import commands, tasks
+from discord.ext import lava, commands, tasks
+from redis import asyncio as aioredis
 
 from cd import checks, config, custom, enums, manager, utilities, values
-from cd.modules import voice
-from cd.modules import dashboard
-from cd.modules.dashboard.utilities import http
+from cd.modules import voice, dashboard
 
 
 LOG: logging.Logger = logging.getLogger("cd.bot")
@@ -44,7 +41,7 @@ class CD(commands.AutoShardedBot):
         self.session: aiohttp.ClientSession = utilities.MISSING
         self.db: asyncpg.Pool = utilities.MISSING
         self.redis: aioredis.Redis[Any] = utilities.MISSING
-        self.slate: slate.Pool[CD, voice.Player] = utilities.MISSING
+        self.lava: lava.Pool[CD, voice.Player] = utilities.MISSING
         self.mystbin: mystbin.Client = utilities.MISSING
 
         # logging
@@ -65,16 +62,16 @@ class CD(commands.AutoShardedBot):
         self.dashboard: tornado.web.Application = tornado.web.Application(
             dashboard.setup_routes(bot=self),
             static_path=os.path.join(os.path.dirname(__file__), "modules/dashboard/static/"),
-            template_path=os.path.join(os.path.dirname(__file__), "modules/dashboard/templates/"),
+            template_path=os.path.join(os.path.dirname(__file__), "modules/dashboard/src/html/"),
             cookie_secret=config.DASHBOARD_COOKIE_SECRET,
             default_host=config.DASHBOARD_HOST,
             debug=True
         )
-        self.server: tornado.httpserver.HTTPServer = tornado.httpserver.HTTPServer(
+        self.http_server: tornado.httpserver.HTTPServer = tornado.httpserver.HTTPServer(
             self.dashboard,
             xheaders=True
         )
-        self.client: http.HTTPClient = utilities.MISSING
+        self.http_client: dashboard.HTTPClient = utilities.MISSING
 
     def __repr__(self) -> str:
         return f"<CD id={self.user.id if self.user else values.BOT_ID}, users={len(self.users)}, guilds={self.guilds}>"
@@ -104,20 +101,20 @@ class CD(commands.AutoShardedBot):
 
         except Exception as e:
             LOG.critical(f"[REDIS] Error while connecting.\n{e}\n")
-            raise ConnectionError()
+            raise ConnectionError() from e
 
         LOG.info("[REDIS] Successful connection.")
         self.redis = redis
 
-    async def connect_slate(self) -> None:
+    async def connect_lava(self) -> None:
 
-        self.slate = slate.Pool()
+        self.lava = lava.Pool()
 
         for node in config.NODES:
             try:
-                await self.slate.create_node(
+                await self.lava.create_node(
                     bot=self,
-                    provider=slate.Provider.OBSIDIAN,
+                    provider=lava.Provider.LAVALINK,
                     identifier=node["identifier"],
                     host=node["host"],
                     port=node["port"],
@@ -129,7 +126,7 @@ class CD(commands.AutoShardedBot):
                 LOG.error(f"[SLATE] Error while connecting to node '{node['identifier']}'.")
                 raise error
 
-    async def setup_extensions(self) -> None:
+    async def load_extensions(self) -> None:
 
         for extension in values.EXTENSIONS:
             try:
@@ -142,8 +139,8 @@ class CD(commands.AutoShardedBot):
 
     async def start_dashboard(self) -> None:
 
-        self.server.bind(config.DASHBOARD_PORT, config.DASHBOARD_HOST)
-        self.server.start()
+        self.http_server.bind(config.DASHBOARD_PORT, config.DASHBOARD_HOST)
+        self.http_server.start()
 
         LOG.info("[DASHBOARD] Dashboard has connected.")
 
@@ -153,7 +150,9 @@ class CD(commands.AutoShardedBot):
 
         self.session = aiohttp.ClientSession()
         self.mystbin = mystbin.Client(session=self.session)
-        # self.client = http.HTTPClient(self)
+
+        self.http_client = dashboard.HTTPClient(self.loop)
+        await self.http_client.setup()
 
         self.logging_webhooks[enums.LogType.Dm] = discord.Webhook.from_url(
             session=self.session,
@@ -175,9 +174,9 @@ class CD(commands.AutoShardedBot):
 
         await self.connect_postgresql()
         await self.connect_redis()
-        await self.connect_slate()
+        await self.connect_lava()
+        await self.load_extensions()
         await self.start_dashboard()
-        await self.setup_extensions()
 
     # Logging
 
