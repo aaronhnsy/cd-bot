@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import io
+import random
+import string
 
 import aiohttp
 import mystbin
@@ -50,8 +52,11 @@ async def upload_text(
         return content
 
     try:
-        paste = await client.post(content, syntax=format)
-    except mystbin.APIError:
+        paste = await client.create_paste(
+            filename=f"{''.join(random.sample(string.ascii_lowercase, 20))}.{format}",
+            content=content
+        )
+    except mystbin.APIException:
         return content[:max_characters]
 
-    return paste.url
+    return str(paste)
