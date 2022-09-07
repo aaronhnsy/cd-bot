@@ -11,10 +11,6 @@ from cd import utilities, values
 __all__ = (
     "CDError",
     "EmbedError",
-    "HTTPException",
-    "HTTPForbidden",
-    "HTTPNotFound",
-    "HTTPServerError",
 )
 
 
@@ -64,19 +60,3 @@ class EmbedError(CDError):
             emoji=emoji,
         )
         self.view: discord.ui.View | None = view
-
-
-class HTTPException(discord.HTTPException):
-    pass
-
-
-class HTTPForbidden(discord.Forbidden):
-    pass
-
-
-class HTTPNotFound(discord.NotFound):
-    pass
-
-
-class HTTPServerError(discord.DiscordServerError):
-    pass

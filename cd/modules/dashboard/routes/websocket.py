@@ -5,11 +5,12 @@ import asyncio
 import json
 from typing import Any
 
-import slate
+import discord
 import tornado.web
 import tornado.websocket
 
-from cd import config, custom, exceptions
+from discord.ext import lava
+from cd import config, custom
 from cd.modules import dashboard, voice
 from cd.modules.dashboard.utilities import handlers
 
@@ -50,7 +51,7 @@ class WebSocket(handlers.WebSocketHandler, abc.ABC):
 
         self._position_update_task.cancel()
 
-    async def on_message(self, message: str | bytes) -> None:  # sourcery no-metrics
+    async def on_message(self, message: str | bytes) -> None:  # sourcery skip low-code-quality
 
         try:
             payload = json.loads(message)
@@ -96,11 +97,11 @@ class WebSocket(handlers.WebSocketHandler, abc.ABC):
                 secret=self.application.settings["cookie_secret"],
                 name="identifier",
                 value=identifier.strip("\"")
-            )
+            ) or ""
 
             # Get token to make sure identifier is valid
 
-            token_data: str | None = await self.bot.redis.hget("tokens", identifier or "")
+            token_data: str | None = await self.bot.redis.hget("tokens", identifier)
             if not token_data:
                 return self.close(code=4007, reason="You must login with the site at least once.")
 
@@ -124,12 +125,12 @@ class WebSocket(handlers.WebSocketHandler, abc.ABC):
                 ) as response:
 
                     if 200 < response.status > 206:
-                        raise exceptions.HTTPException(response, json.dumps(await response.json()))
+                        raise discord.HTTPException(response, json.dumps(await response.json()))
 
                     data = await response.json()
 
                 if data.get("error"):
-                    raise exceptions.HTTPException(response, json.dumps(token_data))
+                    raise discord.HTTPException(response, json.dumps(token_data))
 
                 token = dashboard.Token(data)
 
@@ -151,7 +152,7 @@ class WebSocket(handlers.WebSocketHandler, abc.ABC):
     # Utilities
 
     @staticmethod
-    def _track_to_dict(track: slate.Track) -> dict[str, Any]:
+    def _track_to_dict(track: lava.Track) -> dict[str, Any]:
 
         ctx: custom.Context = track.extras["ctx"]
 

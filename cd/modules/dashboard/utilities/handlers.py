@@ -6,10 +6,11 @@ import json
 import os
 from typing import TYPE_CHECKING
 
+import discord
 import tornado.web
 import tornado.websocket
 
-from cd import config, exceptions
+from cd import config
 from cd.modules import dashboard
 from cd.modules.dashboard.utilities import http
 
@@ -70,12 +71,12 @@ class HTTPHandler(tornado.web.RequestHandler, abc.ABC):
             ) as response:
 
                 if 200 < response.status > 206:
-                    raise exceptions.HTTPException(response, json.dumps(await response.json()))
+                    raise discord.HTTPException(response, json.dumps(await response.json()))
 
                 data = await response.json()
 
             if data.get("error"):
-                raise exceptions.HTTPException(response, json.dumps(data))
+                raise discord.HTTPException(response, json.dumps(data))
 
             token = dashboard.Token(data)
             await self.bot.redis.hset("tokens", identifier, token.json)
@@ -89,7 +90,7 @@ class HTTPHandler(tornado.web.RequestHandler, abc.ABC):
         if not (token := await self.get_token()):
             return None
 
-        data = await self.bot.client.request(
+        data = await self.bot.http_client.request(
             http.Route("GET", "/users/@me", token=token.access_token)
         )
         user = dashboard.User(data)
@@ -124,12 +125,12 @@ class HTTPHandler(tornado.web.RequestHandler, abc.ABC):
         if not (user := await self.get_user()):
             return
 
-        data = await self.bot.client.request(
+        data = await self.bot.http_client.request(
             http.Route("GET", "/users/@me/guilds", token=token.access_token)
         )
         guilds = [dashboard.Guild(guild) for guild in data]
 
-        await self.bot.redis.hset("guilds", user.id, json.dumps([guild.json for guild in guilds]))
+        await self.bot.redis.hset("guilds", str(user.id), json.dumps([guild.json for guild in guilds]))
 
         return guilds
 
@@ -138,7 +139,7 @@ class HTTPHandler(tornado.web.RequestHandler, abc.ABC):
         if not (user := await self.get_user()):
             return
 
-        data: str | None = await self.bot.redis.hget("guilds", user.id)
+        data: str | None = await self.bot.redis.hget("guilds", str(user.id))
 
         if data:
             guilds = [dashboard.Guild(json.loads(guild)) for guild in json.loads(data)]

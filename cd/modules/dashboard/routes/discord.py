@@ -5,7 +5,9 @@ import binascii
 import json
 import os
 
-from cd import config, exceptions
+import discord
+
+from cd import config
 from cd.modules import dashboard
 from cd.modules.dashboard.utilities import handlers
 
@@ -63,12 +65,12 @@ class DiscordLogin(handlers.HTTPHandler, abc.ABC):
                 }
         ) as response:
             if 200 < response.status > 206:
-                raise exceptions.HTTPException(response, json.dumps(await response.json()))
+                raise discord.HTTPException(response, json.dumps(await response.json()))
 
             data = await response.json()
 
         if data.get("error"):
-            raise exceptions.HTTPException(response, json.dumps(data))
+            raise discord.HTTPException(response, json.dumps(data))
 
         token_response = dashboard.Token(data)
         await self.bot.redis.hset("tokens", identifier, token_response.json)
