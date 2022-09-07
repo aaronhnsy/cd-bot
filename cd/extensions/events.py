@@ -6,11 +6,10 @@ import traceback
 
 import discord
 import pendulum
-from discord.ext import commands, lava
+from discord.ext import commands
 
 from cd import config, custom, enums, exceptions, utilities, values
 from cd.bot import CD
-from cd.modules import voice
 
 
 LOG: logging.Logger = logging.getLogger("extensions.events")
@@ -334,45 +333,3 @@ class Events(commands.Cog):
                 username=webhook_username,
                 avatar_url=webhook_avatar,
             )
-
-    # Voice events
-
-    @commands.Cog.listener("on_voice_state_update")
-    async def _handle_player_disconnect(
-        self,
-        member: discord.Member,
-        before: discord.VoiceState,
-        after: discord.VoiceState
-    ) -> None:
-
-        assert self.bot.user is not None
-
-        if member.id != self.bot.user.id:
-            return
-
-        if (
-                before.channel is not None and
-                after.channel is None and
-                before.channel.guild.voice_client is not None
-        ):
-            await before.channel.guild.voice_client.disconnect(force=True)
-
-    @commands.Cog.listener("on_slate_track_start")
-    async def _handle_track_start(self, player: voice.Player, _: lava.TrackStart) -> None:
-        await player.handle_track_start()
-
-    @commands.Cog.listener("on_slate_track_end")
-    async def _handle_track_end(self, player: voice.Player, event: lava.TrackEnd) -> None:
-
-        if event.reason == "REPLACED":
-            return
-
-        await player.handle_track_end(enums.TrackEndReason.Normal)
-
-    @commands.Cog.listener("on_slate_track_stuck")
-    async def _handle_track_stuck(self, player: voice.Player, _: lava.TrackStuck) -> None:
-        await player.handle_track_end(enums.TrackEndReason.Stuck)
-
-    @commands.Cog.listener("on_slate_track_exception")
-    async def _handle_track_exception(self, player: voice.Player, _: lava.TrackException) -> None:
-        await player.handle_track_end(enums.TrackEndReason.Exception)

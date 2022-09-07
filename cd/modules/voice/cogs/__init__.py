@@ -6,6 +6,7 @@ from .effects import *
 from .play import *
 from .player import *
 from .queue import *
+from .events import *
 
 
 if TYPE_CHECKING:
@@ -17,3 +18,4 @@ async def setup(bot: CD) -> None:
     await bot.add_cog(Play(bot))
     await bot.add_cog(Player(bot))
     await bot.add_cog(Queue(bot))
+    await bot.add_cog(VoiceEvents(bot))
