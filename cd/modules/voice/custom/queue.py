@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import slate
+from discord.ext import lava
 
 
 __all__ = (
@@ -8,7 +8,7 @@ __all__ = (
 )
 
 
-class Queue(slate.Queue[slate.Track]):
+class Queue(lava.Queue[lava.Track]):
 
     def __init__(self) -> None:
         super().__init__()
@@ -36,7 +36,7 @@ class Queue(slate.Queue[slate.Track]):
         *,
         position: int,
         put_into_history: bool
-    ) -> slate.Track:
+    ) -> lava.Track:
 
         if len(self) >= 2 and self.shuffle_state:
             self.shuffle()

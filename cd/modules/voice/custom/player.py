@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 import async_timeout
 import discord
-import slate
+from discord.ext import lava
 
 from cd import custom, enums, exceptions, utilities, values
 from cd.modules import voice
@@ -22,7 +22,7 @@ __all__ = (
 )
 
 
-class Player(slate.Player["CD", "Player"]):
+class Player(lava.Player["CD", "Player"]):
 
     def __init__(
         self,
@@ -65,7 +65,7 @@ class Player(slate.Player["CD", "Player"]):
         )
         await self.disconnect()
 
-    async def _convert_spotify_track(self, track: slate.Track) -> slate.Track | None:
+    async def _convert_spotify_track(self, track: lava.Track) -> lava.Track | None:
 
         ctx: custom.Context = track.extras["ctx"]
         start_time: int = track.extras["start_time"]
@@ -75,7 +75,7 @@ class Player(slate.Player["CD", "Player"]):
             try:
                 search = await self.searcher.search(
                     f"\"{track.isrc}\"",
-                    source=slate.Source.YOUTUBE_MUSIC,
+                    source=lava.Source.YOUTUBE_MUSIC,
                     ctx=ctx,
                     start_time=start_time
                 )
@@ -83,7 +83,7 @@ class Player(slate.Player["CD", "Player"]):
                 with contextlib.suppress(exceptions.EmbedError):
                     search = await self.searcher.search(
                         f"\"{track.isrc}\"",
-                        source=slate.Source.YOUTUBE,
+                        source=lava.Source.YOUTUBE,
                         ctx=ctx,
                         start_time=start_time
                     )
@@ -92,7 +92,7 @@ class Player(slate.Player["CD", "Player"]):
             with contextlib.suppress(exceptions.EmbedError):
                 search = await self.searcher.search(
                     f"{track.author} - {track.title}",
-                    source=slate.Source.YOUTUBE,
+                    source=lava.Source.YOUTUBE,
                     ctx=ctx,
                     start_time=start_time
                 )
@@ -116,7 +116,7 @@ class Player(slate.Player["CD", "Player"]):
                 await self._disconnect_on_timeout()
                 return
 
-        if track.source is slate.Source.SPOTIFY:
+        if track.source is lava.Source.SPOTIFY:
 
             if not (_track := await self._convert_spotify_track(track)):
                 await self.text_channel.send(
@@ -139,15 +139,9 @@ class Player(slate.Player["CD", "Player"]):
     # Events
 
     async def handle_track_start(self) -> None:
-
-        self.bot.dispatch("dashboard_track_start", player=self)
-
-        # Update controller message.
         await self.controller.handle_track_start()
 
     async def handle_track_end(self, reason: enums.TrackEndReason) -> None:
-
-        self.bot.dispatch("dashboard_track_end", player=self)
 
         if reason is not enums.TrackEndReason.Replaced:
 
@@ -183,8 +177,6 @@ class Player(slate.Player["CD", "Player"]):
             self_deaf=self_deaf,
         )
 
-        self.bot.dispatch("dashboard_player_connect", player=self)
-
     async def disconnect(
         self,
         *,
@@ -194,5 +186,3 @@ class Player(slate.Player["CD", "Player"]):
         await super().disconnect(
             force=force
         )
-
-        self.bot.dispatch("dashboard_player_disconnect", player=self)

@@ -3,8 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Literal
 
 import discord
-import slate
-from discord.ext import commands
+from discord.ext import commands, lava
 
 from cd import custom, exceptions, paginators, utilities, values
 from cd.modules import voice
@@ -290,12 +289,12 @@ class Queue(commands.Cog):
         assert ctx.player is not None
 
         match ctx.player.queue.loop_mode:
-            case slate.QueueLoopMode.DISABLED:
-                ctx.player.queue.set_loop_mode(slate.QueueLoopMode.ALL)
-            case slate.QueueLoopMode.ALL:
-                ctx.player.queue.set_loop_mode(slate.QueueLoopMode.CURRENT)
-            case slate.QueueLoopMode.CURRENT:
-                ctx.player.queue.set_loop_mode(slate.QueueLoopMode.DISABLED)
+            case lava.QueueLoopMode.DISABLED:
+                ctx.player.queue.set_loop_mode(lava.QueueLoopMode.ALL)
+            case lava.QueueLoopMode.ALL:
+                ctx.player.queue.set_loop_mode(lava.QueueLoopMode.CURRENT)
+            case lava.QueueLoopMode.CURRENT:
+                ctx.player.queue.set_loop_mode(lava.QueueLoopMode.DISABLED)
 
         await ctx.reply(
             embed=utilities.embed(

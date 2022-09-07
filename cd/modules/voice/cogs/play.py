@@ -3,8 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Literal
 
 import discord
-import slate
-from discord.ext import commands
+from discord.ext import commands, lava
 
 from cd import checks, custom, exceptions
 from cd.modules import voice
@@ -73,7 +72,7 @@ class Play(commands.Cog):
         await self.ensure_connected(ctx)
 
         assert ctx.player is not None
-        await ctx.player.searcher.queue(query, source=slate.Source.YOUTUBE, ctx=ctx)
+        await ctx.player.searcher.queue(query, source=lava.Source.YOUTUBE, ctx=ctx)
 
     @commands.hybrid_command(name="play-next", aliases=["play_next", "playnext", "pne"])
     async def play_next(self, ctx: custom.Context, *, query: str) -> None:
@@ -90,7 +89,7 @@ class Play(commands.Cog):
         await self.ensure_connected(ctx)
 
         assert ctx.player is not None
-        await ctx.player.searcher.queue(query, source=slate.Source.YOUTUBE, ctx=ctx, play_next=True)
+        await ctx.player.searcher.queue(query, source=lava.Source.YOUTUBE, ctx=ctx, play_next=True)
 
     @commands.hybrid_command(name="play-now", aliases=["play_now", "playnow", "pno"])
     async def play_now(self, ctx: custom.Context, *, query: str) -> None:
@@ -107,7 +106,7 @@ class Play(commands.Cog):
         await self.ensure_connected(ctx)
 
         assert ctx.player is not None
-        await ctx.player.searcher.queue(query, source=slate.Source.YOUTUBE, ctx=ctx, play_now=True)
+        await ctx.player.searcher.queue(query, source=lava.Source.YOUTUBE, ctx=ctx, play_now=True)
 
     # Search
 
@@ -126,7 +125,7 @@ class Play(commands.Cog):
         await self.ensure_connected(ctx)
 
         assert ctx.player is not None
-        await ctx.player.searcher.select(query, source=slate.Source.YOUTUBE, ctx=ctx)
+        await ctx.player.searcher.select(query, source=lava.Source.YOUTUBE, ctx=ctx)
 
     @commands.hybrid_command(name="search-next", aliases=["search_next", "searchnext", "sne"])
     async def search_next(self, ctx: custom.Context, *, query: str) -> None:
@@ -143,7 +142,7 @@ class Play(commands.Cog):
         await self.ensure_connected(ctx)
 
         assert ctx.player is not None
-        await ctx.player.searcher.select(query, source=slate.Source.YOUTUBE, ctx=ctx, play_next=True)
+        await ctx.player.searcher.select(query, source=lava.Source.YOUTUBE, ctx=ctx, play_next=True)
 
     @commands.hybrid_command(name="search-now", aliases=["search_now", "searchnow", "sno"])
     async def search_now(self, ctx: custom.Context, *, query: str) -> None:
@@ -160,7 +159,7 @@ class Play(commands.Cog):
         await self.ensure_connected(ctx)
 
         assert ctx.player is not None
-        await ctx.player.searcher.select(query, source=slate.Source.YOUTUBE, ctx=ctx, play_now=True)
+        await ctx.player.searcher.select(query, source=lava.Source.YOUTUBE, ctx=ctx, play_now=True)
 
     # Youtube
 
@@ -230,7 +229,7 @@ class Play(commands.Cog):
         await self.ensure_connected(ctx)
 
         assert ctx.player is not None
-        await ctx.player.searcher.queue(query, source=slate.Source.YOUTUBE_MUSIC, ctx=ctx)
+        await ctx.player.searcher.queue(query, source=lava.Source.YOUTUBE_MUSIC, ctx=ctx)
 
     @commands.command(
         name="youtube-music-next",
@@ -242,7 +241,7 @@ class Play(commands.Cog):
         await self.ensure_connected(ctx)
 
         assert ctx.player is not None
-        await ctx.player.searcher.queue(query, source=slate.Source.YOUTUBE_MUSIC, ctx=ctx, play_next=True)
+        await ctx.player.searcher.queue(query, source=lava.Source.YOUTUBE_MUSIC, ctx=ctx, play_next=True)
 
     @commands.command(
         name="youtube-music-now",
@@ -254,7 +253,7 @@ class Play(commands.Cog):
         await self.ensure_connected(ctx)
 
         assert ctx.player is not None
-        await ctx.player.searcher.queue(query, source=slate.Source.YOUTUBE_MUSIC, ctx=ctx, play_now=True)
+        await ctx.player.searcher.queue(query, source=lava.Source.YOUTUBE_MUSIC, ctx=ctx, play_now=True)
 
     # YouTube Music search
 
@@ -273,7 +272,7 @@ class Play(commands.Cog):
         await self.ensure_connected(ctx)
 
         assert ctx.player is not None
-        await ctx.player.searcher.select(query, source=slate.Source.YOUTUBE_MUSIC, ctx=ctx)
+        await ctx.player.searcher.select(query, source=lava.Source.YOUTUBE_MUSIC, ctx=ctx)
 
     @commands.command(
         name="youtube-music-search-next",
@@ -285,7 +284,7 @@ class Play(commands.Cog):
         await self.ensure_connected(ctx)
 
         assert ctx.player is not None
-        await ctx.player.searcher.select(query, source=slate.Source.YOUTUBE_MUSIC, ctx=ctx, play_next=True)
+        await ctx.player.searcher.select(query, source=lava.Source.YOUTUBE_MUSIC, ctx=ctx, play_next=True)
 
     @commands.command(
         name="youtube-music-search-now",
@@ -297,7 +296,7 @@ class Play(commands.Cog):
         await self.ensure_connected(ctx)
 
         assert ctx.player is not None
-        await ctx.player.searcher.select(query, source=slate.Source.YOUTUBE_MUSIC, ctx=ctx, play_now=True)
+        await ctx.player.searcher.select(query, source=lava.Source.YOUTUBE_MUSIC, ctx=ctx, play_now=True)
 
     # Soundcloud
 
@@ -316,7 +315,7 @@ class Play(commands.Cog):
         await self.ensure_connected(ctx)
 
         assert ctx.player is not None
-        await ctx.player.searcher.queue(query, source=slate.Source.SOUNDCLOUD, ctx=ctx)
+        await ctx.player.searcher.queue(query, source=lava.Source.SOUNDCLOUD, ctx=ctx)
 
     @commands.command(
         name="soundcloud-next",
@@ -328,7 +327,7 @@ class Play(commands.Cog):
         await self.ensure_connected(ctx)
 
         assert ctx.player is not None
-        await ctx.player.searcher.queue(query, source=slate.Source.SOUNDCLOUD, ctx=ctx, play_next=True)
+        await ctx.player.searcher.queue(query, source=lava.Source.SOUNDCLOUD, ctx=ctx, play_next=True)
 
     @commands.command(
         name="soundcloud-now",
@@ -340,7 +339,7 @@ class Play(commands.Cog):
         await self.ensure_connected(ctx)
 
         assert ctx.player is not None
-        await ctx.player.searcher.queue(query, source=slate.Source.SOUNDCLOUD, ctx=ctx, play_now=True)
+        await ctx.player.searcher.queue(query, source=lava.Source.SOUNDCLOUD, ctx=ctx, play_now=True)
 
     # Soundcloud search
 
@@ -359,7 +358,7 @@ class Play(commands.Cog):
         await self.ensure_connected(ctx)
 
         assert ctx.player is not None
-        await ctx.player.searcher.select(query, source=slate.Source.SOUNDCLOUD, ctx=ctx)
+        await ctx.player.searcher.select(query, source=lava.Source.SOUNDCLOUD, ctx=ctx)
 
     @commands.command(
         name="soundcloud-search-next",
@@ -371,7 +370,7 @@ class Play(commands.Cog):
         await self.ensure_connected(ctx)
 
         assert ctx.player is not None
-        await ctx.player.searcher.select(query, source=slate.Source.SOUNDCLOUD, ctx=ctx, play_next=True)
+        await ctx.player.searcher.select(query, source=lava.Source.SOUNDCLOUD, ctx=ctx, play_next=True)
 
     @commands.command(
         name="soundcloud-search-now",
@@ -383,7 +382,7 @@ class Play(commands.Cog):
         await self.ensure_connected(ctx)
 
         assert ctx.player is not None
-        await ctx.player.searcher.select(query, source=slate.Source.SOUNDCLOUD, ctx=ctx, play_now=True)
+        await ctx.player.searcher.select(query, source=lava.Source.SOUNDCLOUD, ctx=ctx, play_now=True)
 
     # Local
 
@@ -394,7 +393,7 @@ class Play(commands.Cog):
         await self.ensure_connected(ctx)
 
         assert ctx.player is not None
-        await ctx.player.searcher.queue(query, source=slate.Source.LOCAL, ctx=ctx)
+        await ctx.player.searcher.queue(query, source=lava.Source.LOCAL, ctx=ctx)
 
     @commands.command(name="local-next", aliases=["local_next", "localnext", "lne"], hidden=True)
     @checks.is_bot_owner()
@@ -403,7 +402,7 @@ class Play(commands.Cog):
         await self.ensure_connected(ctx)
 
         assert ctx.player is not None
-        await ctx.player.searcher.queue(query, source=slate.Source.LOCAL, ctx=ctx, play_next=True)
+        await ctx.player.searcher.queue(query, source=lava.Source.LOCAL, ctx=ctx, play_next=True)
 
     @commands.command(name="local-now", aliases=["local_now", "localnow", "lno"], hidden=True)
     @checks.is_bot_owner()
@@ -412,7 +411,7 @@ class Play(commands.Cog):
         await self.ensure_connected(ctx)
 
         assert ctx.player is not None
-        await ctx.player.searcher.queue(query, source=slate.Source.LOCAL, ctx=ctx, play_now=True)
+        await ctx.player.searcher.queue(query, source=lava.Source.LOCAL, ctx=ctx, play_now=True)
 
     # HTTP
 
@@ -423,7 +422,7 @@ class Play(commands.Cog):
         await self.ensure_connected(ctx)
 
         assert ctx.player is not None
-        await ctx.player.searcher.queue(query, source=slate.Source.NONE, ctx=ctx)
+        await ctx.player.searcher.queue(query, source=lava.Source.NONE, ctx=ctx)
 
     @commands.command(name="http-next", aliases=["http_next", "httpnext", "hne"], hidden=True)
     @checks.is_bot_owner()
@@ -432,7 +431,7 @@ class Play(commands.Cog):
         await self.ensure_connected(ctx)
 
         assert ctx.player is not None
-        await ctx.player.searcher.queue(query, source=slate.Source.NONE, ctx=ctx, play_next=True)
+        await ctx.player.searcher.queue(query, source=lava.Source.NONE, ctx=ctx, play_next=True)
 
     @commands.command(name="http-now", aliases=["http_now", "httpnow", "hno"], hidden=True)
     @checks.is_bot_owner()
@@ -441,4 +440,4 @@ class Play(commands.Cog):
         await self.ensure_connected(ctx)
 
         assert ctx.player is not None
-        await ctx.player.searcher.queue(query, source=slate.Source.NONE, ctx=ctx, play_now=True)
+        await ctx.player.searcher.queue(query, source=lava.Source.NONE, ctx=ctx, play_now=True)

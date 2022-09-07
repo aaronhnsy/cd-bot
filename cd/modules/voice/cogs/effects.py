@@ -3,8 +3,7 @@ from __future__ import annotations
 import contextlib
 from typing import TYPE_CHECKING, Literal
 
-import slate
-from discord.ext import commands
+from discord.ext import commands, lava
 
 from cd import custom, enums, utilities, values
 from cd.modules import voice
@@ -19,7 +18,7 @@ __all__ = (
 )
 
 
-FilterType = slate.Rotation | slate.Timescale | slate.ChannelMix
+FilterType = lava.Rotation | lava.Timescale | lava.ChannelMix
 
 
 class Effects(commands.Cog):
@@ -40,19 +39,19 @@ class Effects(commands.Cog):
     # Controls
 
     EFFECT_MAP: dict[enums.Effect, dict[str, FilterType]] = {
-        enums.Effect.Rotation:  {"rotation": slate.Rotation(speed=0.5)},
-        enums.Effect.Nightcore: {"timescale": slate.Timescale(speed=1.12, pitch=1.12)},
-        enums.Effect.Mono:      {"channel_mix": slate.ChannelMix(left_to_right=1, right_to_left=1)},
-        enums.Effect.LeftEar:   {"channel_mix": slate.ChannelMix(right_to_right=0, right_to_left=1)},
-        enums.Effect.RightEar:  {"channel_mix": slate.ChannelMix(left_to_left=0, left_to_right=1)},
+        enums.Effect.Rotation:  {"rotation": lava.Rotation(speed=0.5)},
+        enums.Effect.Nightcore: {"timescale": lava.Timescale(speed=1.12, pitch=1.12)},
+        enums.Effect.Mono:      {"channel_mix": lava.ChannelMix(left_to_right=1, right_to_left=1)},
+        enums.Effect.LeftEar:   {"channel_mix": lava.ChannelMix(right_to_right=0, right_to_left=1)},
+        enums.Effect.RightEar:  {"channel_mix": lava.ChannelMix(left_to_left=0, left_to_right=1)},
     }
 
     INVERSE_EFFECT_MAP: dict[enums.Effect, dict[str, FilterType]] = {
-        enums.Effect.Rotation:  {"rotation": slate.Rotation()},
-        enums.Effect.Nightcore: {"timescale": slate.Timescale()},
-        enums.Effect.Mono:      {"channel_mix": slate.ChannelMix()},
-        enums.Effect.LeftEar:   {"channel_mix": slate.ChannelMix()},
-        enums.Effect.RightEar:  {"channel_mix": slate.ChannelMix()},
+        enums.Effect.Rotation:  {"rotation": lava.Rotation()},
+        enums.Effect.Nightcore: {"timescale": lava.Timescale()},
+        enums.Effect.Mono:      {"channel_mix": lava.ChannelMix()},
+        enums.Effect.LeftEar:   {"channel_mix": lava.ChannelMix()},
+        enums.Effect.RightEar:  {"channel_mix": lava.ChannelMix()},
     }
 
     INCOMPATIBLE_EFFECTS: dict[enums.Effect, list[enums.Effect]] = {
@@ -68,12 +67,12 @@ class Effects(commands.Cog):
         if effect in ctx.player.effects:
             description = f"Disabled the **{effect.value}** audio effect."
             ctx.player.effects.remove(effect)
-            await ctx.player.set_filter(slate.Filter(ctx.player.filter, **self.INVERSE_EFFECT_MAP[effect]))
+            await ctx.player.set_filter(lava.Filter(ctx.player.filter, **self.INVERSE_EFFECT_MAP[effect]))
 
         else:
             description = f"Enabled the **{effect.value}** audio effect."
             ctx.player.effects.add(effect)
-            await ctx.player.set_filter(slate.Filter(ctx.player.filter, **self.EFFECT_MAP[effect]))
+            await ctx.player.set_filter(lava.Filter(ctx.player.filter, **self.EFFECT_MAP[effect]))
 
             if effect in self.INCOMPATIBLE_EFFECTS:
                 for incompatible_effect in self.INCOMPATIBLE_EFFECTS[effect]:
@@ -166,7 +165,7 @@ class Effects(commands.Cog):
         assert ctx.player is not None
 
         ctx.player.effects.clear()
-        await ctx.player.set_filter(slate.Filter())
+        await ctx.player.set_filter(lava.Filter())
         await ctx.reply(
             embed=utilities.embed(
                 colour=values.GREEN,

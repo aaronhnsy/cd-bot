@@ -7,8 +7,7 @@ import urllib.parse
 from typing import TYPE_CHECKING, Literal, Optional
 
 import discord
-import slate
-from discord.ext import commands
+from discord.ext import commands, lava
 
 from cd import checks, config, converters, custom, exceptions, paginators, utilities, values
 from cd.modules import voice
@@ -482,9 +481,9 @@ class Player(commands.Cog):
             )
 
         await player.set_filter(
-            slate.Filter(
+            lava.Filter(
                 filter=player.filter,
-                volume=slate.Volume(level=volume)
+                volume=lava.Volume(level=volume)
             )
         )
         await ctx.send(
@@ -623,7 +622,7 @@ class Player(commands.Cog):
         assert ctx.player is not None
         await ctx.player.searcher.queue(
             activity.track_url,
-            source=slate.Source.YOUTUBE,
+            source=lava.Source.YOUTUBE,
             ctx=ctx,
             play_now=True,
             start_time=(datetime.datetime.now(tz=datetime.timezone.utc) - activity.start).seconds * 1000,

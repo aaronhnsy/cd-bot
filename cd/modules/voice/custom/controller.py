@@ -4,7 +4,7 @@ import contextlib
 from collections.abc import Awaitable, Callable
 
 import discord
-import slate
+from discord.ext import lava
 
 from cd import enums, utilities, values
 from cd.modules import voice
@@ -25,10 +25,10 @@ PAUSE_STATE_EMOJIS: dict[bool, str] = {
     False: values.PLAYER_IS_PLAYING,
     True:  values.PLAYER_IS_PAUSED
 }
-LOOP_MODE_EMOJIS: dict[slate.QueueLoopMode, str] = {
-    slate.QueueLoopMode.DISABLED: values.PLAYER_LOOP_DISABLED,
-    slate.QueueLoopMode.ALL:      values.PLAYER_LOOP_ALL,
-    slate.QueueLoopMode.CURRENT:  values.PLAYER_LOOP_CURRENT,
+LOOP_MODE_EMOJIS: dict[lava.QueueLoopMode, str] = {
+    lava.QueueLoopMode.DISABLED: values.PLAYER_LOOP_DISABLED,
+    lava.QueueLoopMode.ALL:      values.PLAYER_LOOP_ALL,
+    lava.QueueLoopMode.CURRENT:  values.PLAYER_LOOP_CURRENT,
 }
 
 
@@ -137,12 +137,12 @@ class LoopButton(discord.ui.Button["ControllerView"]):
         player = self.view.player
 
         match player.queue.loop_mode:
-            case slate.QueueLoopMode.DISABLED:
-                player.queue.set_loop_mode(slate.QueueLoopMode.ALL)
-            case slate.QueueLoopMode.ALL:
-                player.queue.set_loop_mode(slate.QueueLoopMode.CURRENT)
-            case slate.QueueLoopMode.CURRENT:
-                player.queue.set_loop_mode(slate.QueueLoopMode.DISABLED)
+            case lava.QueueLoopMode.DISABLED:
+                player.queue.set_loop_mode(lava.QueueLoopMode.ALL)
+            case lava.QueueLoopMode.ALL:
+                player.queue.set_loop_mode(lava.QueueLoopMode.CURRENT)
+            case lava.QueueLoopMode.CURRENT:
+                player.queue.set_loop_mode(lava.QueueLoopMode.DISABLED)
 
         await player.controller.update_current_message()
 

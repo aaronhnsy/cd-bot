@@ -3,9 +3,9 @@ from __future__ import annotations
 import contextlib
 
 import discord
-import slate
 import spotipy
 import yarl
+from discord.ext import lava
 
 from cd import custom, exceptions, utilities, values
 from cd.modules import voice
@@ -22,13 +22,13 @@ class SearcherSelect(discord.ui.Select["SearcherView"]):
         self,
         *,
         player: voice.Player,
-        search: slate.Search,
+        search: lava.Search,
         play_next: bool = False,
         play_now: bool = False,
     ) -> None:
 
         self.player: voice.Player = player
-        self.search: slate.Search = search
+        self.search: lava.Search = search
         self.play_next: bool = play_next
         self.play_now: bool = play_now
 
@@ -50,8 +50,8 @@ class SearcherSelect(discord.ui.Select["SearcherView"]):
         assert self.view is not None
         await interaction.response.defer()
 
-        tracks: list[slate.Track] | None = None
-        track: slate.Track | None = None
+        tracks: list[lava.Track] | None = None
+        track: lava.Track | None = None
 
         if len(self.values) > 1:
             tracks = [self.search.tracks[int(index)] for index in self.values]
@@ -95,7 +95,7 @@ class SearcherView(discord.ui.View):
         self,
         *,
         player: voice.Player,
-        search: slate.Search,
+        search: lava.Search,
         play_next: bool = False,
         play_now: bool = False
     ) -> None:
@@ -148,13 +148,13 @@ class Searcher:
         self,
         query: str,
         /, *,
-        source: slate.Source,
+        source: lava.Source,
         ctx: custom.Context,
         start_time: int | None = None
-    ) -> slate.Search:
+    ) -> lava.Search:
 
         if (url := yarl.URL(query)) and url.host and url.scheme:
-            source = slate.Source.NONE
+            source = lava.Source.NONE
 
         try:
             search = await self.player.node.search(
@@ -164,13 +164,13 @@ class Searcher:
                 start_time=start_time
             )
 
-        except slate.NoResultsFound as error:
+        except lava.NoResultsFound as error:
             raise exceptions.EmbedError(
                 description=f"No **{error.source.value.replace('_', ' ').title()}** {error.type.lower()}s were found "
                             f"for your search."
             )
 
-        except (slate.SearchFailed, slate.HTTPError):
+        except (lava.SearchFailed, lava.HTTPError):
             raise exceptions.EmbedError(
                 description="There was an error while searching for results, please try again later.",
                 view=discord.ui.View().add_item(
@@ -187,7 +187,7 @@ class Searcher:
         self,
         query: str,
         /, *,
-        source: slate.Source,
+        source: lava.Source,
         ctx: custom.Context,
         play_next: bool = False,
         play_now: bool = False,
@@ -201,11 +201,11 @@ class Searcher:
             start_time=start_time
         )
 
-        tracks: list[slate.Track] | None = None
-        track: slate.Track | None = None
+        tracks: list[lava.Track] | None = None
+        track: lava.Track | None = None
 
         if (
-            isinstance(search.result, (spotipy.Album, spotipy.Playlist, spotipy.Artist, slate.Collection))
+            isinstance(search.result, (spotipy.Album, spotipy.Playlist, spotipy.Artist, lava.Collection))
             and
             getattr(search.result, "name", "").startswith("Search result for:") is False
         ):
@@ -242,7 +242,7 @@ class Searcher:
         self,
         query: str,
         /, *,
-        source: slate.Source,
+        source: lava.Source,
         ctx: custom.Context,
         play_next: bool = False,
         play_now: bool = False,
