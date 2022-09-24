@@ -1,13 +1,13 @@
 [build-system]
-requires = ["poetry-core"]
+requires      = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 
 [tool.poetry]
-name = "CD-bot"
-version = "0.0.1"
+name        = "CD-bot"
+version     = "0.0.1"
 description = "A general purpose music bot."
-authors = ["Axel <axelancerr@gmail.com>"]
+authors     = ["Axel <axelancerr@gmail.com>"]
 
 
 [tool.poetry.dependencies]
@@ -32,13 +32,13 @@ redis      = { version = "~4.3.0", extras = ["hiredis"] }
 
 
 [tool.pyright]
-include = ["cd", "launcher.py"]
-pythonVersion = "3.10"
-typeCheckingMode = "strict"
+include                = ["cd", "launcher.py", "config_example.py"]
+pythonVersion          = "3.10"
+typeCheckingMode       = "strict"
 useLibraryCodeForTypes = true
 
-reportUnknownMemberType = false
-reportPrivateUsage = false
-reportImportCycles = false
-reportMissingTypeStubs = false
+reportPrivateUsage       = false
+reportUnknownMemberType  = false
+reportImportCycles       = false
+reportMissingTypeStubs   = false
 reportPrivateImportUsage = false

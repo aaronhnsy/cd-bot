@@ -620,8 +620,8 @@ websockets = "*"
 
 [metadata]
 lock-version = "1.1"
-python-versions = "^3.10"
-content-hash = "1f1d340a5509dfd3d543c9cdfb352eb5ee4f570501aaa41466e956097890067b"
+python-versions = "^3.10.0"
+content-hash = "ee32cf97ed434762b29c0a6df82ecb498b2535181846ff8f1a24aad6bbac12eb"
 
 [metadata.files]
 aiodns = [
