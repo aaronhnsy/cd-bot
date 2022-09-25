@@ -7,4 +7,4 @@ venv/
 build/
 .idea/
 
-cd/config.py
+config.toml

@@ -5,8 +5,9 @@ from typing import Literal
 import discord
 from discord.ext import commands
 
-from cd import checks, config, converters, custom, enums, exceptions, utilities, values
+from cd import checks, converters, custom, enums, exceptions, utilities, values
 from cd.bot import CD
+from cd.config import CONFIG
 
 
 async def setup(bot: CD) -> None:
@@ -67,7 +68,7 @@ class Settings(commands.Cog):
         await ctx.send(
             embed=utilities.embed(
                 colour=values.MAIN,
-                description=f"This servers prefix is `{guild_config.prefix or config.DISCORD_PREFIX}`",
+                description=f"This servers prefix is `{guild_config.prefix or CONFIG.discord.prefix}`",
             )
         )
 
@@ -129,7 +130,7 @@ class Settings(commands.Cog):
         await ctx.send(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description=f"This servers prefix is now `{config.DISCORD_PREFIX}`",
+                description=f"This servers prefix is now `{CONFIG.discord.prefix}`",
             )
         )
 

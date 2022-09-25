@@ -10,7 +10,7 @@ import discord
 import tornado.web
 import tornado.websocket
 
-from cd import config
+from cd.config import CONFIG
 from cd.modules import dashboard
 from cd.modules.dashboard.utilities import http
 
@@ -58,9 +58,9 @@ class HTTPHandler(tornado.web.RequestHandler, abc.ABC):
             async with self.bot.session.post(
                     url="https://discord.com/api/oauth2/token",
                     data={
-                        "client_secret": config.DISCORD_CLIENT_SECRET,
-                        "client_id":     config.DISCORD_CLIENT_ID,
-                        "redirect_uri":  config.DASHBOARD_REDIRECT_URL,
+                        "client_secret": CONFIG.discord.client_secret,
+                        "client_id":     CONFIG.discord.client_id,
+                        "redirect_uri":  CONFIG.dashboard.redirect_url,
                         "refresh_token": token.refresh_token,
                         "grant_type":    "refresh_token",
                         "scope":         "identify guilds",
@@ -157,8 +157,8 @@ class HTTPHandler(tornado.web.RequestHandler, abc.ABC):
         bot_guild_ids = [guild.id for guild in self.bot.guilds]
 
         return {
-            "shared_guilds":     [guild for guild in user_guilds if guild.id in bot_guild_ids and guild.id not in config.BAD_GUILDS],
-            "non_shared_guilds": [guild for guild in user_guilds if guild.id not in bot_guild_ids and guild.id not in config.BAD_GUILDS],
+            "shared_guilds":     [guild for guild in user_guilds if guild.id in bot_guild_ids and guild.id not in CONFIG.dashboard.excluded_guild_ids],
+            "non_shared_guilds": [guild for guild in user_guilds if guild.id not in bot_guild_ids and guild.id not in CONFIG.dashboard.excluded_guild_ids],
         }
 
 

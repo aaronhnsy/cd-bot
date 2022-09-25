@@ -7,7 +7,8 @@ import string
 import aiohttp
 import mystbin
 
-from cd import config, exceptions
+from cd import exceptions
+from cd.config import CONFIG
 
 
 __all__ = (
@@ -28,7 +29,7 @@ async def upload_file(
 
     async with session.post(
             "https://cdn.axelancerr.xyz/api/v1/files",
-            headers={"Authorization": config.CDN_TOKEN},
+            headers={"Authorization": CONFIG.tokens.uploader_token},
             data=data
     ) as response:
 

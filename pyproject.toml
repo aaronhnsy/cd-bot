@@ -16,12 +16,14 @@ async-timeout    = "~4.0.0"
 asyncpg          = "~0.26.0"
 colorama         = "~0.4.0"
 colorthief       = "~0.2.0"
+dacite           = "~1.6.0"
 discord-ext-lava = "~0.5.0"
 humanize         = "~4.4.0"
 mystbin-py       = "~5.0.0"
 pendulum         = "~2.1.0"
 pillow           = "~9.2.0"
 rapidfuzz        = "~2.10.0"
+toml             = "~0.10.0"
 tornado          = "~6.2.0"
 wand             = "~0.6.0"
 
@@ -32,7 +34,7 @@ redis      = { version = "~4.3.0", extras = ["hiredis"] }
 
 
 [tool.pyright]
-include                = ["cd", "launcher.py", "config_example.py"]
+include                = ["cd", "launcher.py"]
 pythonVersion          = "3.10"
 typeCheckingMode       = "strict"
 useLibraryCodeForTypes = true

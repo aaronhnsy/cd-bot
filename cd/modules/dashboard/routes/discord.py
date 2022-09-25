@@ -7,7 +7,7 @@ import os
 
 import discord
 
-from cd import config
+from cd.config import CONFIG
 from cd.modules import dashboard
 from cd.modules.dashboard.utilities import handlers
 
@@ -37,10 +37,10 @@ class DiscordLogin(handlers.HTTPHandler, abc.ABC):
 
             return self.redirect(
                 f"https://discord.com/api/oauth2/authorize?"
-                f"client_id={config.DISCORD_CLIENT_ID}&"
+                f"client_id={CONFIG.discord.client_id}&"
                 f"response_type=code&"
                 f"scope=identify%20guilds&"
-                f"redirect_uri={config.DASHBOARD_REDIRECT_URL}&"
+                f"redirect_uri={CONFIG.dashboard.redirect_url}&"
                 f"state={state}"
             )
 
@@ -53,9 +53,9 @@ class DiscordLogin(handlers.HTTPHandler, abc.ABC):
         async with self.bot.session.post(
                 "https://discord.com/api/oauth2/token",
                 data={
-                    "client_secret": config.DISCORD_CLIENT_SECRET,
-                    "client_id":     config.DISCORD_CLIENT_ID,
-                    "redirect_uri":  config.DASHBOARD_REDIRECT_URL,
+                    "client_secret": CONFIG.discord.client_secret,
+                    "client_id":     int(CONFIG.discord.client_id),
+                    "redirect_uri":  CONFIG.dashboard.redirect_url,
                     "code":          code,
                     "grant_type":    "authorization_code",
                     "scope":         "identify guilds",

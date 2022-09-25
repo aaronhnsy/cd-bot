@@ -15,7 +15,8 @@ import tornado.web
 from discord.ext import lava, commands, tasks
 from redis import asyncio as aioredis
 
-from cd import checks, config, custom, enums, manager, utilities, values
+from cd import checks, custom, enums, manager, utilities, values
+from cd.config import CONFIG
 from cd.modules import voice, dashboard
 
 
@@ -63,8 +64,8 @@ class CD(commands.AutoShardedBot):
             dashboard.setup_routes(bot=self),
             static_path=os.path.join(os.path.dirname(__file__), "modules/dashboard/static/"),
             template_path=os.path.join(os.path.dirname(__file__), "modules/dashboard/src/html/"),
-            cookie_secret=config.DASHBOARD_COOKIE_SECRET,
-            default_host=config.DASHBOARD_HOST,
+            cookie_secret=CONFIG.dashboard.cookie_secret,
+            default_host=CONFIG.dashboard.host,
             debug=True
         )
         self.http_server: tornado.httpserver.HTTPServer = tornado.httpserver.HTTPServer(
@@ -82,7 +83,7 @@ class CD(commands.AutoShardedBot):
 
         try:
             LOG.debug("[POSTGRESQL] Attempting connection.")
-            db = await asyncpg.create_pool(**config.POSTGRESQL, max_inactive_connection_lifetime=0)
+            db = await asyncpg.create_pool(CONFIG.connections.postgres_dsn, max_inactive_connection_lifetime=0)
 
         except Exception as e:
             LOG.critical(f"[POSTGRESQL] Error while connecting.\n{e}\n")
@@ -97,7 +98,7 @@ class CD(commands.AutoShardedBot):
 
         try:
             LOG.debug("[REDIS] Attempting connection.")
-            redis = aioredis.from_url(url=config.REDIS, decode_responses=True, retry_on_timeout=True)
+            redis = aioredis.from_url(CONFIG.connections.redis_dsn, decode_responses=True, retry_on_timeout=True)
 
         except Exception as e:
             LOG.critical(f"[REDIS] Error while connecting.\n{e}\n")
@@ -110,20 +111,20 @@ class CD(commands.AutoShardedBot):
 
         self.lava = lava.Pool()
 
-        for node in config.NODES:
+        for node in CONFIG.connections.lava_nodes:
             try:
                 await self.lava.create_node(
                     bot=self,
-                    provider=lava.Provider.LAVALINK,
-                    identifier=node["identifier"],
-                    host=node["host"],
-                    port=node["port"],
-                    password=node["password"],
-                    spotify_client_id=config.SPOTIFY_CLIENT_ID,
-                    spotify_client_secret=config.SPOTIFY_CLIENT_SECRET,
+                    provider=node.provider,
+                    identifier=node.identifier,
+                    host=node.host,
+                    port=f"{node.port}",
+                    password=node.password,
+                    spotify_client_id=CONFIG.spotify.client_id,
+                    spotify_client_secret=CONFIG.spotify.client_secret,
                 )
             except Exception as error:
-                LOG.error(f"[SLATE] Error while connecting to node '{node['identifier']}'.")
+                LOG.error(f"[SLATE] Error while connecting to node '{node.identifier}'.")
                 raise error
 
     async def load_extensions(self) -> None:
@@ -139,7 +140,7 @@ class CD(commands.AutoShardedBot):
 
     async def start_dashboard(self) -> None:
 
-        self.http_server.bind(config.DASHBOARD_PORT, config.DASHBOARD_HOST)
+        self.http_server.bind(CONFIG.dashboard.port, CONFIG.dashboard.host)
         self.http_server.start()
 
         LOG.info("[DASHBOARD] Dashboard has connected.")
@@ -154,21 +155,17 @@ class CD(commands.AutoShardedBot):
         self.http_client = dashboard.HTTPClient(self.loop)
         await self.http_client.setup()
 
-        self.logging_webhooks[enums.LogType.Dm] = discord.Webhook.from_url(
-            session=self.session,
-            url=config.DM_WEBHOOK_URL
-        )
         self.logging_webhooks[enums.LogType.Guild] = discord.Webhook.from_url(
             session=self.session,
-            url=config.GUILD_WEBHOOK_URL
+            url=CONFIG.discord.guild_log_webhook
         )
         self.logging_webhooks[enums.LogType.Error] = discord.Webhook.from_url(
             session=self.session,
-            url=config.ERROR_WEBHOOK_URL
+            url=CONFIG.discord.error_log_webhook
         )
         self.logging_webhooks[enums.LogType.Command] = discord.Webhook.from_url(
             session=self.session,
-            url=config.COMMAND_WEBHOOK_URL
+            url=CONFIG.discord.command_log_webhook
         )
         self.log_task.start()
 
@@ -206,10 +203,10 @@ class CD(commands.AutoShardedBot):
     async def get_prefix(self, message: discord.Message) -> list[str]:
 
         if not message.guild:
-            return commands.when_mentioned_or(config.DISCORD_PREFIX)(self, message)
+            return commands.when_mentioned_or(CONFIG.discord.prefix)(self, message)
 
         guild_config = await self.manager.get_guild_config(message.guild.id)
-        return commands.when_mentioned_or(guild_config.prefix or config.DISCORD_PREFIX)(self, message)
+        return commands.when_mentioned_or(guild_config.prefix or CONFIG.discord.prefix)(self, message)
 
     async def close(self) -> None:
 

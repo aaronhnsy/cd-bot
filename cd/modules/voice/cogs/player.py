@@ -9,7 +9,8 @@ from typing import TYPE_CHECKING, Literal, Optional
 import discord
 from discord.ext import commands, lava
 
-from cd import checks, config, converters, custom, exceptions, paginators, utilities, values
+from cd import checks, converters, custom, exceptions, paginators, utilities, values
+from cd.config import CONFIG
 from cd.modules import voice
 
 
@@ -538,7 +539,7 @@ class Player(commands.Cog):
 
         async with self.bot.session.get(
                 url=f"https://api.openrobot.xyz/api/lyrics/{urllib.parse.quote_plus(query)}",
-                headers={"Authorization": config.LYRICS_TOKEN}
+                headers={"Authorization": CONFIG.tokens.lyrics_token}
         ) as response:
 
             match response.status:

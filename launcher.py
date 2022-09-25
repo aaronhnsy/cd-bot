@@ -5,7 +5,7 @@ import asyncio
 import jishaku
 
 from cd.bot import CD
-from cd.config import DISCORD_TOKEN
+from cd.config import CONFIG
 from cd.utilities.logging import setup_logger
 
 
@@ -21,7 +21,7 @@ bot: CD = CD()
 async def main() -> None:
 
     async with bot:
-        await bot.start(token=DISCORD_TOKEN)
+        await bot.start(token=CONFIG.discord.token)
 
 
 asyncio.run(main())

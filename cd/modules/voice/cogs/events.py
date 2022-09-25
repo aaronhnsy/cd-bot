@@ -8,8 +8,14 @@ from discord.ext import commands, lava
 from cd import enums
 from cd.modules import voice
 
+
 if TYPE_CHECKING:
     from cd.bot import CD
+
+
+__all__ = (
+    "VoiceEvents",
+)
 
 
 class VoiceEvents(commands.Cog):
