@@ -1,0 +1,38 @@
+[discord]
+token               = ""
+prefix              = ""
+client_id           = 00000
+client_secret       = ""
+guild_log_webhook   = ""
+error_log_webhook   = ""
+command_log_webhook = ""
+
+[connections]
+postgres_dsn = "postgres://USER:PASSWORD@HOST:PORT/DB"
+redis_dsn    = "redis://PASSWORD@HOST:PORT/0"
+
+[[connections.lava_nodes]]
+host       = ""
+port       = 00000
+identifier = ""
+password   = ""
+provider   = "LAVALINK"
+
+[spotify]
+client_id     = ""
+client_secret = ""
+
+[lastfm]
+api_key    = ""
+api_secret = ""
+
+[tokens]
+uploader_token = ""
+lyrics_token   = ""
+
+[dashboard]
+host               = "127.0.0.1"
+port               = 8000
+cookie_secret      = ""
+redirect_url       = "http://127.0.0.1:8000/discord/login"
+excluded_guild_ids = []
