@@ -8,7 +8,7 @@ import discord
 import pendulum
 from discord.ext import commands
 
-from cd import config, custom, enums, exceptions, utilities, values
+from cd import custom, enums, exceptions, utilities, values
 from cd.bot import CD
 
 
@@ -180,28 +180,6 @@ class Events(commands.Cog):
         await self.bot.process_commands(after)
 
     # Logging
-
-    @commands.Cog.listener("on_message")
-    async def _log_dm(self, message: discord.Message) -> None:
-
-        if config.ENV is enums.Environment.Development or message.guild or message.is_system() or not message.content:
-            return
-
-        content = await utilities.upload_text(self.bot.mystbin, content=message.content, format="txt")
-
-        await self.bot.log(
-            enums.LogType.Dm,
-            embed=utilities.embed(
-                colour=values.GREEN,
-                title=f"**{message.author}**",
-                description=f"{content}\n\n"
-                            f"**Author:** {message.author} (`{message.author.id}`)\n"
-                            f"**Created:** {utilities.format_datetime(message.created_at, format=enums.DateTimeFormat.PartialLongDatetime)}\n"
-                            f"**Jump:** [Click here]({message.jump_url})",
-                thumbnail=utilities.avatar(message.author),
-                footer=f"ID: {message.id}",
-            )
-        )
 
     @commands.Cog.listener("on_guild_join")
     async def _log_guild_join(self, guild: discord.Guild) -> None:
