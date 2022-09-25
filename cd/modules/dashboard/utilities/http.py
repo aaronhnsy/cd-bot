@@ -117,14 +117,11 @@ class HTTPClient(discord.http.HTTPClient):
                         if discord_hash is not None:
                             if bucket_hash != discord_hash:
                                 if bucket_hash is not None:
-                                    fmt = "A route (%s) has changed hashes: %s -> %s."
-
                                     self._bucket_hashes[route_key] = discord_hash
                                     recalculated_key = discord_hash + route.major_parameters
                                     self._buckets[recalculated_key] = ratelimit
                                     self._buckets.pop(key, None)
                                 elif route_key not in self._bucket_hashes:
-                                    fmt = "%s has found its initial rate limit bucket hash (%s)."
                                     self._bucket_hashes[route_key] = discord_hash
                                     self._buckets[discord_hash + route.major_parameters] = ratelimit
 
