@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import functools
 import io
+from collections.abc import Coroutine
+from typing import Any
 
 from cd import custom, utilities
 from cd.paginators.base import BasePaginator
@@ -19,7 +21,7 @@ class FilePaginator(BasePaginator):
         *,
         # base
         ctx: custom.Context,
-        entries: list[functools.partial[bytes | io.BytesIO]],
+        entries: list[functools.partial[Coroutine[Any, Any, io.BytesIO]]],
         start_page: int = 0,
         edit_message_when_done: bool = True,
         delete_message_when_done: bool = False,
@@ -39,11 +41,14 @@ class FilePaginator(BasePaginator):
         )
 
         self.header: str = header or ""
+        self._cache: dict[int, str] = {}
 
     async def update_state(self) -> None:
 
-        buffer = await self.entries[self.page]()
-        url = await utilities.upload_file(self.ctx.bot.session, fp=buffer, format="png")
-        buffer.close()
+        if not (url := self._cache.get(self.page)):
+            buffer = await self.entries[self.page]()
+            url = await utilities.upload_file(self.ctx.bot.session, fp=buffer, format="png")
+            buffer.close()
+            self._cache[self.page] = url
 
         self.content = f"{self.header}{url}"
