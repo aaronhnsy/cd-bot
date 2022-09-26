@@ -35,7 +35,7 @@ class EconomyEvents(commands.Cog):
         xp = random.randint(10, 20)
         member_config = await self.bot.manager.get_member_config(guild_id=message.guild.id, user_id=message.author.id)
 
-        if xp >= member_config.xp_until_next_level:
+        if xp >= member_config.xp_until_next_level and member_config.level_up_notifications is True:
             await message.reply(f"You are now level `{member_config.level + 1}`!")
 
         await member_config.change_xp(enums.Operation.Add, amount=xp)

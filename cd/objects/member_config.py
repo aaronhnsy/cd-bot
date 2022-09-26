@@ -20,6 +20,7 @@ class MemberConfigData(TypedDict):
     guild_id: int
     xp: int
     money: float
+    level_up_notifications: bool
 
 
 class RankData(TypedDict):
@@ -36,6 +37,7 @@ class MemberConfig:
         self.guild_id: int = data["guild_id"]
         self.xp: int = data["xp"]
         self.money: float = data["money"]
+        self.level_up_notifications: bool = data["level_up_notifications"]
 
     def __repr__(self) -> str:
         return f"<Member user_id={self.user_id}, guild_id={self.guild_id}>"
