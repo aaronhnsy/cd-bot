@@ -2,14 +2,13 @@ from __future__ import annotations
 
 import io
 import pathlib
-import random
 from typing import TYPE_CHECKING
 
 import colorthief
 import discord
 from PIL import ImageFont, Image, ImageDraw
 
-from cd import objects, utilities, enums
+from cd import objects, utilities
 
 
 if TYPE_CHECKING:
@@ -33,27 +32,6 @@ class Manager:
         self.guild_configs: dict[int, objects.GuildConfig] = {}
         self.user_configs: dict[int, objects.UserConfig] = {}
         self.member_configs: dict[int, objects.MemberConfig] = {}
-
-        self.bot.add_listener(self.on_message, name="on_message")
-
-    # Events
-
-    async def on_message(self, message: discord.Message) -> None:
-
-        if message.guild is None or message.author.bot is True:
-            return
-
-        if (await self.bot.redis.exists(f"{message.author.id}_{message.guild.id}_xp_gain")) == 1:
-            return
-
-        xp = random.randint(10, 20)
-        member_config = await self.get_member_config(guild_id=message.guild.id, user_id=message.author.id)
-
-        if xp >= member_config.xp_until_next_level:
-            await message.reply(f"You are now level `{member_config.level + 1}`!")
-
-        await member_config.change_xp(enums.Operation.Add, amount=xp)
-        await self.bot.redis.setex(name=f"{message.author.id}_{message.guild.id}_xp_gain", time=60, value="")
 
     # Configs
 
@@ -201,8 +179,7 @@ class Manager:
             )
 
             xp_bar_length = int(
-                length
-                * (
+                length * (
                     (member_config.xp - previous_level_xp) /
                     (utilities.xp_needed_for_level(member_config.level + 1) - previous_level_xp)
                 )

@@ -3,10 +3,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from .effects import *
+from .events import *
 from .play import *
 from .player import *
 from .queue import *
-from .events import *
 
 
 if TYPE_CHECKING:
