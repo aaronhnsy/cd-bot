@@ -19,7 +19,6 @@ bot: CD = CD()
 
 
 async def main() -> None:
-
     async with bot:
         await bot.start(token=CONFIG.discord.token)
 

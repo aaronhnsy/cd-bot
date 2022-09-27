@@ -162,15 +162,16 @@ class Todo(commands.Cog):
     ) -> list[app_commands.Choice[str]]:
 
         user_config = await self.bot.manager.get_user_config(interaction.user.id)
-        if not user_config.todos:
-            return [app_commands.Choice(name="You don't have any todos.", value="No todos.")]
-
         return [
             app_commands.Choice(
                 name=f"{todo.id}: {todo.content}",
                 value=str(todo.id)
+            ) for todo in user_config.todos.values() if current in str(todo.id)
+        ] if user_config.todos else [
+            app_commands.Choice(
+                name="You don't have any todos.",
+                value="No todos."
             )
-            for todo in user_config.todos.values() if current in str(todo.id)
         ]
 
     @_todo_edit.autocomplete("todo")

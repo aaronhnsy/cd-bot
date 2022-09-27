@@ -168,9 +168,9 @@ class Searcher:
             raise exceptions.EmbedError(
                 description=f"No **{error.source.value.replace('_', ' ').title()}** {error.type.lower()}s were found "
                             f"for your search."
-            )
+            ) from error
 
-        except (lava.SearchFailed, lava.HTTPError):
+        except (lava.SearchFailed, lava.HTTPError) as e:
             raise exceptions.EmbedError(
                 description="There was an error while searching for results, please try again later.",
                 view=discord.ui.View().add_item(
@@ -179,7 +179,7 @@ class Searcher:
                         url=values.SUPPORT_LINK
                     )
                 )
-            )
+            ) from e
 
         return search
 

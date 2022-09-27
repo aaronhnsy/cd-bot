@@ -17,6 +17,7 @@ __all__ = (
     "EmbedSize"
 )
 
+
 EnumType = TypeVar("EnumType", bound=Enum)
 
 
@@ -86,7 +87,7 @@ def convert_enum(
 
     try:
         return cls[argument.replace(" ", "_").upper()]
-    except KeyError:
+    except KeyError as e:
         options = "\n".join(
             [f'- **{option.title()}**' for option in [enum.name.replace('_', ' ').lower() for enum in cls]]
         )
@@ -94,7 +95,7 @@ def convert_enum(
             description=f"**{utilities.truncate(argument, 10)}** is not a valid {name}.\n\n"
                         f"Valid options are:\n"
                         f"{options}"
-        )
+        ) from e
 
 
 class EmbedSize(Enum):

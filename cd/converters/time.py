@@ -61,7 +61,7 @@ class TimeConverter(commands.Converter[int]):
 
             try:
                 seconds = int(argument)
-            except ValueError:
-                raise exceptions.EmbedError(description="That time format was not recognized.")
+            except ValueError as e:
+                raise exceptions.EmbedError(description="That time format was not recognized.") from e
 
         return seconds

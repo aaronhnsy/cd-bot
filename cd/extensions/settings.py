@@ -49,8 +49,8 @@ class Settings(commands.Cog):
 
         try:
             await commands.check_any(*_checks).predicate(ctx)
-        except commands.CheckAnyFailure:
-            raise exceptions.EmbedError(description=message)
+        except commands.CheckAnyFailure as e:
+            raise exceptions.EmbedError(description=message) from e
 
     # Prefix
 

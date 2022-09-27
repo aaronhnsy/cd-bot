@@ -21,8 +21,8 @@ class TodoConverter(commands.Converter[objects.Todo]):
 
         try:
             todo_id = int(argument)
-        except ValueError:
-            raise exceptions.EmbedError(description=f"**{utilities.truncate(argument, 10)}** is not a valid todo id.")
+        except ValueError as e:
+            raise exceptions.EmbedError(description=f"**{utilities.truncate(argument, 10)}** is not a valid todo id.") from e
 
         user_config = await ctx.bot.manager.get_user_config(ctx.author.id)
 

@@ -122,7 +122,7 @@ class Events(commands.Cog):
 
     @staticmethod
     def _get_error_message(ctx: custom.Context, error: commands.CommandError) -> str | None:
-        # sourcery no-metrics
+        # sourcery skip: low-code-quality
 
         if message := ERRORS.get(type(error)):
             return message

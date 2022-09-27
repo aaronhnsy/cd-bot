@@ -153,7 +153,7 @@ class Player(commands.Cog):
         - `1 hour 30 minutes 30 seconds`
         - `1 hour, 30 minutes, 30 seconds`
         - `1 hour and 30 minutes and 30 seconds`
-        - etc, most permutations of these will work.
+        - etc. most permutations of these will work.
         """
 
         assert ctx.player is not None
@@ -199,7 +199,7 @@ class Player(commands.Cog):
         - `1 hour 30 minutes 30 seconds`
         - `1 hour, 30 minutes, 30 seconds`
         - `1 hour and 30 minutes and 30 seconds`
-        - etc, most permutations of these will work.
+        - etc. most permutations of these will work.
         """
 
         assert ctx.player is not None
@@ -247,7 +247,7 @@ class Player(commands.Cog):
         - `1 hour 30 minutes 30 seconds`
         - `1 hour, 30 minutes, 30 seconds`
         - `1 hour and 30 minutes and 30 seconds`
-        - etc, most permutations of these will work.
+        - etc. most permutations of these will work.
         """
 
         assert ctx.player is not None
@@ -339,8 +339,8 @@ class Player(commands.Cog):
 
         try:
             await commands.check_any(*_checks).predicate(ctx)
-        except (commands.CheckAnyFailure, commands.MissingRole):
-            raise exceptions.EmbedError(description="You don't have permission to force skip.")
+        except (commands.CheckAnyFailure, commands.MissingRole) as e:
+            raise exceptions.EmbedError(description="You don't have permission to force skip.") from e
 
     @commands.hybrid_command(name="force-skip", aliases=["force_skip", "forceskip", "fs", "skipto"])
     @voice.is_player_playing()

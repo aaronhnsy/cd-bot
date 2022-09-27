@@ -388,5 +388,4 @@ def do_edit_image(
             raise exceptions.EmbedError(description="Something went wrong while editing that image.")
 
         image_format: str = image.format
-
         return edited_bytes, image_format
