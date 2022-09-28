@@ -9,16 +9,17 @@ from cd.config import CONFIG
 from cd.utilities.logging import setup_logger
 
 
-setup_logger()
-
 jishaku.Flags.HIDE = True
 jishaku.Flags.NO_UNDERSCORE = True
 jishaku.Flags.NO_DM_TRACEBACK = True
 
+setup_logger()
+bot = CD()
+
 
 async def main() -> None:
-    async with CD() as bot:
-        await bot.start(token=CONFIG.discord.token)
+    async with bot:
+        await bot.start(CONFIG.discord.token)
 
 
 asyncio.run(main())
