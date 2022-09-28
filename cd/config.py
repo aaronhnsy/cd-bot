@@ -1,4 +1,6 @@
+import argparse
 import dataclasses
+import io
 import sys
 
 import dacite
@@ -75,18 +77,30 @@ class Config:
     dashboard: Dashboard
 
 
-def load_config() -> Config:
-
+def load_config(file: io.TextIOWrapper) -> Config:
     try:
         return dacite.from_dict(
-            Config,
-            toml.load("config.toml"),
+            Config, toml.load(file),
             dacite.Config(type_hooks={lava.Provider: lava.Provider.__getitem__})
         )
-    except (toml.TomlDecodeError, FileNotFoundError):
-        sys.exit("Could not find or parse config.toml")
+    except toml.TomlDecodeError as error:
+        sys.exit(f"'{file.name}' is not a valid TOML file: {error}")
     except dacite.DaciteError as error:
-        sys.exit(f"config.toml file is invalid: {str(error).capitalize()}.")
+        sys.exit(f"'{file.name}' is invalid: {str(error).capitalize()}.")
 
 
-CONFIG: Config = load_config()
+parser = argparse.ArgumentParser(
+    prog="launcher.py",
+    description="CLI options for running cd-bot."
+)
+parser.add_argument(
+    "-c", "--config",
+    default="cd-config.toml",
+    type=open,
+    required=False,
+    help="Choose a custom config.toml for the bot to run with."
+)
+namespace = parser.parse_args()
+
+
+CONFIG: Config = load_config(namespace.config)

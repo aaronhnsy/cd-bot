@@ -15,11 +15,9 @@ jishaku.Flags.HIDE = True
 jishaku.Flags.NO_UNDERSCORE = True
 jishaku.Flags.NO_DM_TRACEBACK = True
 
-bot: CD = CD()
-
 
 async def main() -> None:
-    async with bot:
+    async with CD() as bot:
         await bot.start(token=CONFIG.discord.token)
 
 
