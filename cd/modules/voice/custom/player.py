@@ -143,7 +143,7 @@ class Player(lava.Player["CD", "Player"]):
 
     async def handle_track_end(self, reason: enums.TrackEndReason) -> None:
 
-        if reason is not enums.TrackEndReason.Replaced:
+        if reason is not enums.TrackEndReason.REPLACED:
 
             # Add current track to the queue history.
             assert self._current is not None

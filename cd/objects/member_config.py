@@ -66,15 +66,15 @@ class MemberConfig:
 
     async def change_xp(self, operation: enums.Operation, /, *, amount: int) -> None:
 
-        operations = [enums.Operation.Set, enums.Operation.Add, enums.Operation.Minus]
+        operations = [enums.Operation.SET, enums.Operation.ADD, enums.Operation.MINUS]
         if operation not in operations:
             raise ValueError(f"'change_xp' expects one of {operations}, got '{operation!r}'.")
 
-        if operation == enums.Operation.Set:
+        if operation == enums.Operation.SET:
             self.xp = amount
-        elif operation == enums.Operation.Add:
+        elif operation == enums.Operation.ADD:
             self.xp += amount
-        elif operation == enums.Operation.Minus:
+        elif operation == enums.Operation.MINUS:
             self.xp -= amount
 
         await self.bot.db.execute(

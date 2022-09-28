@@ -53,12 +53,12 @@ class VoiceEvents(commands.Cog):
         if event.reason == "REPLACED":
             return
 
-        await player.handle_track_end(enums.TrackEndReason.Normal)
+        await player.handle_track_end(enums.TrackEndReason.NORMAL)
 
     @commands.Cog.listener("on_lava_track_stuck")
     async def _handle_track_stuck(self, player: voice.Player, _: lava.TrackStuck) -> None:
-        await player.handle_track_end(enums.TrackEndReason.Stuck)
+        await player.handle_track_end(enums.TrackEndReason.STUCK)
 
     @commands.Cog.listener("on_lava_track_exception")
     async def _handle_track_exception(self, player: voice.Player, _: lava.TrackException) -> None:
-        await player.handle_track_end(enums.TrackEndReason.Exception)
+        await player.handle_track_end(enums.TrackEndReason.EXCEPTION)

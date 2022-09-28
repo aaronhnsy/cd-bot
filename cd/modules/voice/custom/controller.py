@@ -81,7 +81,7 @@ class PreviousButton(discord.ui.Button["ControllerView"]):
         player.queue.put_at_position(1, item=player.current)
 
         # Trigger the next track in the queue to play.
-        await player.handle_track_end(enums.TrackEndReason.Replaced)
+        await player.handle_track_end(enums.TrackEndReason.REPLACED)
 
 
 class PauseStateButton(discord.ui.Button["ControllerView"]):
@@ -190,10 +190,10 @@ class Controller:
         self.view: ControllerView = ControllerView(player=self.player)
 
         self._MESSAGE_BUILDERS: dict[enums.EmbedSize, MessageBuilder] = {
-            enums.EmbedSize.Image:  self._build_image,
-            enums.EmbedSize.Small:  self._build_small,
-            enums.EmbedSize.Medium: self._build_medium,
-            enums.EmbedSize.Large:  self._build_large,
+            enums.EmbedSize.IMAGE:  self._build_image,
+            enums.EmbedSize.SMALL:  self._build_small,
+            enums.EmbedSize.MEDIUM: self._build_medium,
+            enums.EmbedSize.LARGE:  self._build_large,
         }
 
     # Message building
@@ -314,7 +314,7 @@ class Controller:
         assert self.player.current is not None
         track = self.player.current
 
-        if reason in [enums.TrackEndReason.Normal, enums.TrackEndReason.Replaced]:
+        if reason in [enums.TrackEndReason.NORMAL, enums.TrackEndReason.REPLACED]:
             colour = values.MAIN
             title = "Track ended:"
             view = None

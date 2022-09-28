@@ -38,5 +38,5 @@ class EconomyEvents(commands.Cog):
         if xp >= member_config.xp_until_next_level and member_config.level_up_notifications is True:
             await message.reply(f"You are now level `{member_config.level + 1}`!")
 
-        await member_config.change_xp(enums.Operation.Add, amount=xp)
+        await member_config.change_xp(enums.Operation.ADD, amount=xp)
         await self.bot.redis.setex(name=f"{message.author.id}_{message.guild.id}_xp_gain", time=60, value="")

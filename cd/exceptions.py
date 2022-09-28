@@ -43,20 +43,11 @@ class EmbedError(CDError):
         emoji: str | None = None,
         view: discord.ui.View | None = None,
     ) -> None:
-
         self.embed: discord.Embed = utilities.embed(
-            colour=colour,
-            title=title,
-            url=url,
-            description=description,
-            timestamp=timestamp,
-            footer=footer,
-            footer_icon_url=footer_icon_url,
-            image=image,
-            thumbnail=thumbnail,
-            author=author,
-            author_url=author_url,
-            author_icon_url=author_icon_url,
+            colour=colour, title=title, url=url, description=description, timestamp=timestamp,
+            footer=footer, footer_icon_url=footer_icon_url,
+            image=image, thumbnail=thumbnail,
+            author=author, author_url=author_url, author_icon_url=author_icon_url,
             emoji=emoji,
         )
         self.view: discord.ui.View | None = view

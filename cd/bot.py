@@ -47,10 +47,9 @@ class CD(commands.AutoShardedBot):
 
         # logging
         self.logging_webhooks: dict[enums.LogType, discord.Webhook] = {
-            enums.LogType.Dm:      utilities.MISSING,
-            enums.LogType.Guild:   utilities.MISSING,
-            enums.LogType.Error:   utilities.MISSING,
-            enums.LogType.Command: utilities.MISSING,
+            enums.LogType.GUILD:   utilities.MISSING,
+            enums.LogType.ERROR:   utilities.MISSING,
+            enums.LogType.COMMAND: utilities.MISSING,
         }
         self.logging_queue: dict[enums.LogType, list[discord.Embed]] = collections.defaultdict(list)
 
@@ -155,15 +154,15 @@ class CD(commands.AutoShardedBot):
         self.http_client = dashboard.HTTPClient(self.loop)
         await self.http_client.setup()
 
-        self.logging_webhooks[enums.LogType.Guild] = discord.Webhook.from_url(
+        self.logging_webhooks[enums.LogType.GUILD] = discord.Webhook.from_url(
             session=self.session,
             url=CONFIG.discord.guild_log_webhook
         )
-        self.logging_webhooks[enums.LogType.Error] = discord.Webhook.from_url(
+        self.logging_webhooks[enums.LogType.ERROR] = discord.Webhook.from_url(
             session=self.session,
             url=CONFIG.discord.error_log_webhook
         )
-        self.logging_webhooks[enums.LogType.Command] = discord.Webhook.from_url(
+        self.logging_webhooks[enums.LogType.COMMAND] = discord.Webhook.from_url(
             session=self.session,
             url=CONFIG.discord.command_log_webhook
         )

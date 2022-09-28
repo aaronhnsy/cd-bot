@@ -39,25 +39,25 @@ class Effects(commands.Cog):
     # Controls
 
     EFFECT_MAP: dict[enums.Effect, dict[str, FilterType]] = {
-        enums.Effect.Rotation:  {"rotation": lava.Rotation(speed=0.5)},
-        enums.Effect.Nightcore: {"timescale": lava.Timescale(speed=1.12, pitch=1.12)},
-        enums.Effect.Mono:      {"channel_mix": lava.ChannelMix(left_to_right=1, right_to_left=1)},
-        enums.Effect.LeftEar:   {"channel_mix": lava.ChannelMix(right_to_right=0, right_to_left=1)},
-        enums.Effect.RightEar:  {"channel_mix": lava.ChannelMix(left_to_left=0, left_to_right=1)},
+        enums.Effect.ROTATION:  {"rotation": lava.Rotation(speed=0.5)},
+        enums.Effect.NIGHTCORE: {"timescale": lava.Timescale(speed=1.12, pitch=1.12)},
+        enums.Effect.MONO:      {"channel_mix": lava.ChannelMix(left_to_right=1, right_to_left=1)},
+        enums.Effect.LEFT_EAR:  {"channel_mix": lava.ChannelMix(right_to_right=0, right_to_left=1)},
+        enums.Effect.RIGHT_EAR: {"channel_mix": lava.ChannelMix(left_to_left=0, left_to_right=1)},
     }
 
     INVERSE_EFFECT_MAP: dict[enums.Effect, dict[str, FilterType]] = {
-        enums.Effect.Rotation:  {"rotation": lava.Rotation()},
-        enums.Effect.Nightcore: {"timescale": lava.Timescale()},
-        enums.Effect.Mono:      {"channel_mix": lava.ChannelMix()},
-        enums.Effect.LeftEar:   {"channel_mix": lava.ChannelMix()},
-        enums.Effect.RightEar:  {"channel_mix": lava.ChannelMix()},
+        enums.Effect.ROTATION:  {"rotation": lava.Rotation()},
+        enums.Effect.NIGHTCORE: {"timescale": lava.Timescale()},
+        enums.Effect.MONO:      {"channel_mix": lava.ChannelMix()},
+        enums.Effect.LEFT_EAR:  {"channel_mix": lava.ChannelMix()},
+        enums.Effect.RIGHT_EAR: {"channel_mix": lava.ChannelMix()},
     }
 
     INCOMPATIBLE_EFFECTS: dict[enums.Effect, list[enums.Effect]] = {
-        enums.Effect.Mono:     [enums.Effect.LeftEar, enums.Effect.RightEar],
-        enums.Effect.LeftEar:  [enums.Effect.Mono, enums.Effect.RightEar],
-        enums.Effect.RightEar: [enums.Effect.Mono, enums.Effect.LeftEar],
+        enums.Effect.MONO:      [enums.Effect.LEFT_EAR, enums.Effect.RIGHT_EAR],
+        enums.Effect.LEFT_EAR:  [enums.Effect.MONO, enums.Effect.RIGHT_EAR],
+        enums.Effect.RIGHT_EAR: [enums.Effect.MONO, enums.Effect.LEFT_EAR],
     }
 
     async def _toggle_effect(self, ctx: custom.Context, effect: enums.Effect) -> None:
@@ -98,7 +98,7 @@ class Effects(commands.Cog):
         This effect makes the audio sound like its rotating around your head.
         """
 
-        await self._toggle_effect(ctx, enums.Effect.Rotation)
+        await self._toggle_effect(ctx, enums.Effect.ROTATION)
 
     @commands.hybrid_command(name="nightcore", aliases=["night-core", "night_core", "nc"])
     @voice.is_author_connected()
@@ -110,7 +110,7 @@ class Effects(commands.Cog):
         This effect slightly increases the speed and pitch of the audio.
         """
 
-        await self._toggle_effect(ctx, enums.Effect.Nightcore)
+        await self._toggle_effect(ctx, enums.Effect.NIGHTCORE)
 
     @commands.hybrid_command(name="mono")
     @voice.is_author_connected()
@@ -124,7 +124,7 @@ class Effects(commands.Cog):
         **Note:** Enabling this effect will disable the `left-ear` and `right-ear` effects.
         """
 
-        await self._toggle_effect(ctx, enums.Effect.Mono)
+        await self._toggle_effect(ctx, enums.Effect.MONO)
 
     @commands.hybrid_command(name="left-ear", aliases=["left_ear", "leftear", "left"])
     @voice.is_author_connected()
@@ -138,7 +138,7 @@ class Effects(commands.Cog):
         **Note:** Enabling this effect will disable the `mono` and `right-ear` effects.
         """
 
-        await self._toggle_effect(ctx, enums.Effect.LeftEar)
+        await self._toggle_effect(ctx, enums.Effect.LEFT_EAR)
 
     @commands.hybrid_command(name="right-ear", aliases=["right_ear", "rightear", "right"])
     @voice.is_author_connected()
@@ -152,7 +152,7 @@ class Effects(commands.Cog):
         **Note:** Enabling this effect will disable the `mono` and `left-ear` effects.
         """
 
-        await self._toggle_effect(ctx, enums.Effect.RightEar)
+        await self._toggle_effect(ctx, enums.Effect.RIGHT_EAR)
 
     @commands.hybrid_command(name="reset-effects", aliases=["reset_effects", "reseteffects"])
     @voice.is_author_connected()
