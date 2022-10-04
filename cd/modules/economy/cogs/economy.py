@@ -53,13 +53,15 @@ class Economy(commands.Cog):
 
         assert ctx.guild is not None
 
-        count: dict[Literal["count"], int] = await self.bot.db.fetchrow("SELECT count(*) FROM members WHERE guild_id = $1", ctx.guild.id)
+        count: dict[Literal["count"], int] = await self.bot.db.fetchrow(
+            "SELECT count(*) FROM members WHERE guild_id = $1",
+            ctx.guild.id
+        )
         pages = (count["count"] // 10) + 1
 
         guild_config = await self.bot.manager.get_guild_config(ctx.guild.id)
 
-        paginator = paginators.FilePaginator(
+        await paginators.FilePaginator(
             ctx=ctx,
             entries=[functools.partial(guild_config.create_leaderboard, page=page) for page in range(pages)]
-        )
-        await paginator.start()
+        ).start()

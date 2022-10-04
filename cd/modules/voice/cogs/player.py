@@ -563,14 +563,13 @@ class Player(commands.Cog):
             else:
                 entries[-1] += f"\n\n{line}"
 
-        paginator = paginators.EmbedPaginator(
+        await paginators.EmbedPaginator(
             ctx=ctx,
             entries=entries,
             per_page=1,
             title=f"{data['title']} *by* {data['artist']}",
             thumbnail=data["images"].get("track", None),
-        )
-        await paginator.start()
+        ).start()
 
     @staticmethod
     async def _do_status(ctx: custom.Context, *, format: Literal["png", "gif", "smooth_gif"]) -> None:

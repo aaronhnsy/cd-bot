@@ -50,13 +50,12 @@ class Todo(commands.Cog):
         if not user_config.todos:
             raise exceptions.EmbedError(description="You don't have any todos.")
 
-        paginator = paginators.EmbedPaginator(
+        await paginators.EmbedPaginator(
             ctx=ctx,
             entries=[f"[**{todo.id}:**]({todo.jump_url}) {todo.content}" for todo in user_config.todos.values()],
             per_page=10,
             title=f"Todo list for **{ctx.author}**:",
-        )
-        await paginator.start()
+        ).start()
 
     @_todo.command(name="create")
     async def _todo_create(self, ctx: custom.Context, *, content: str = _TODO_CONTENT_CONVERTER) -> None:
@@ -124,14 +123,13 @@ class Todo(commands.Cog):
         for todo in todos:
             await user_config.delete_todo(todo.id)
 
-        paginator = paginators.EmbedPaginator(
+        await paginators.EmbedPaginator(
             ctx=ctx,
             entries=[f"[**{todo.id}:**]({todo.jump_url}) {todo.content}" for todo in todos],
             per_page=10,
             colour=values.GREEN,
             title=f"Deleted **{len(todos)}** {utilities.pluralize('todo', len(todos))}:",
-        )
-        await paginator.start()
+        ).start()
 
     @_todo.command(name="clear")
     async def _todo_clear(self, ctx: custom.Context) -> None:

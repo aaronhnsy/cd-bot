@@ -45,7 +45,7 @@ class Queue(commands.Cog):
 
         assert ctx.player is not None
 
-        paginator = paginators.EmbedPaginator(
+        await paginators.EmbedPaginator(
             ctx=ctx,
             entries=[
                 f"**{index}. [{discord.utils.escape_markdown(track.title)}]({track.uri})** by **{discord.utils.escape_markdown(track.author or 'Unknown')}**\n"
@@ -60,8 +60,7 @@ class Queue(commands.Cog):
                          f"{utilities.format_seconds(sum(track.length for track in ctx.player.queue) // 1000, friendly=True)} | "
                          f"Loop mode: {ctx.player.queue.loop_mode.name.title()} | "
                          f"1 = up next",
-        )
-        await paginator.start()
+        ).start()
 
     @commands.hybrid_command(name="history", aliases=["hist"])
     @voice.is_queue_history_not_empty()
@@ -73,7 +72,7 @@ class Queue(commands.Cog):
 
         assert ctx.player is not None
 
-        paginator = paginators.EmbedPaginator(
+        await paginators.EmbedPaginator(
             ctx=ctx,
             entries=[
                 f"**{index}. [{discord.utils.escape_markdown(track.title)}]({track.uri})** by **{discord.utils.escape_markdown(track.author or 'Unknown')}**\n"
@@ -88,8 +87,7 @@ class Queue(commands.Cog):
                          f"{utilities.format_seconds(sum(track.length for track in ctx.player.queue._history) // 1000, friendly=True)} | "
                          f"Loop mode: {ctx.player.queue.loop_mode.name.title()} | "
                          f"1 = most recent",
-        )
-        await paginator.start()
+        ).start()
 
     # General
 
