@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import io
 import pathlib
+import random
 from typing import TYPE_CHECKING, TypedDict, Any
 
 import discord
@@ -20,7 +21,8 @@ __all__ = (
 )
 
 RESOURCES = pathlib.Path("cd/resources")
-EXO_BOLD = str(RESOURCES / "Exo-Bold.ttf")
+LEADERBOARD_BACKGROUNDS = RESOURCES / "images" / "leaderboard"
+EXO_BOLD = str(RESOURCES / "fonts" / "Exo-Bold.ttf")
 
 
 class GuildConfigData(TypedDict):
@@ -79,11 +81,7 @@ class GuildConfig:
     @staticmethod
     def create_leaderboard_image(data: list[tuple[discord.Member | discord.User, int, int, io.BytesIO]]) -> io.BytesIO:
 
-        with Image.new(
-                mode="RGBA",
-                size=(700, 1000),
-                color=(0, 0, 0, 0)
-        ) as image:
+        with Image.open(fp=random.choice([*LEADERBOARD_BACKGROUNDS.iterdir()])) as image:
 
             draw = ImageDraw.Draw(image)
             y = 100

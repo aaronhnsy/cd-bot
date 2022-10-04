@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import io
 import pathlib
+import random
 from typing import TYPE_CHECKING, TypedDict
 
 import colorthief
@@ -22,7 +23,8 @@ __all__ = (
 
 
 RESOURCES = pathlib.Path("cd/resources")
-EXO_BOLD = str(RESOURCES / "Exo-Bold.ttf")
+LEVEL_BACKGROUNDS = RESOURCES / "images" / "level"
+EXO_BOLD = str(RESOURCES / "fonts" / "Exo-Bold.ttf")
 
 
 class MemberConfigData(TypedDict):
@@ -100,11 +102,7 @@ class MemberConfig:
 
     def create_level_card_image(self, member: discord.Member, rank: int, avatar_buffer: io.BytesIO) -> io.BytesIO:
 
-        with Image.new(
-                mode="RGBA",
-                size=(1000, 300),
-                color=(0, 0, 0, 0)
-        ) as card:
+        with Image.open(fp=random.choice([*LEVEL_BACKGROUNDS.iterdir()])) as card:
 
             # Paste avatar onto card
             with Image.open(avatar_buffer) as avatar:

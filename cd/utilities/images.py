@@ -96,7 +96,7 @@ def spotify(
     GRAY = Color("#565859")
     WHITE = Color("#FFFFFF")
 
-    EXO_FONT = "cd/resources/Exo-Bold.ttf"
+    EXO_FONT = "cd/resources/fonts/Exo-Bold.ttf"
 
     TITLE_FONT_SIZE = 20
     ARTISTS_FONT_SIZE = 15
