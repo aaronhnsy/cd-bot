@@ -33,7 +33,7 @@ class Economy(commands.Cog):
 
         return True
 
-    @commands.hybrid_command(name="level", aliases=["lvl"])
+    @commands.hybrid_command(name="level", aliases=["lvl", "rank"])
     async def level(self, ctx: custom.Context, person: discord.Member = _MEMBER_CONVERTER) -> None:
         """
         Shows yours, or another member's level card.
