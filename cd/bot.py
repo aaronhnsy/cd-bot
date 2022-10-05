@@ -202,10 +202,10 @@ class CD(commands.AutoShardedBot):
     async def get_prefix(self, message: discord.Message) -> list[str]:
 
         if not message.guild:
-            return commands.when_mentioned_or(CONFIG.discord.prefix)(self, message)
+            return commands.when_mentioned_or(CONFIG.general.prefix)(self, message)
 
         guild_config = await self.manager.get_guild_config(message.guild.id)
-        return commands.when_mentioned_or(guild_config.prefix or CONFIG.discord.prefix)(self, message)
+        return commands.when_mentioned_or(guild_config.prefix or CONFIG.general.prefix)(self, message)
 
     async def close(self) -> None:
 

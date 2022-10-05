@@ -68,7 +68,7 @@ class Settings(commands.Cog):
         await ctx.send(
             embed=utilities.embed(
                 colour=values.MAIN,
-                description=f"This servers prefix is `{guild_config.prefix or CONFIG.discord.prefix}`",
+                description=f"This servers prefix is `{guild_config.prefix or CONFIG.general.prefix}`",
             )
         )
 
@@ -130,7 +130,7 @@ class Settings(commands.Cog):
         await ctx.send(
             embed=utilities.embed(
                 colour=values.GREEN,
-                description=f"This servers prefix is now `{CONFIG.discord.prefix}`",
+                description=f"This servers prefix is now `{CONFIG.general.prefix}`",
             )
         )
 
