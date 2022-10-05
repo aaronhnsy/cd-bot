@@ -67,8 +67,12 @@ class Manager:
 
     async def get_member_config(self, *, guild_id: int, user_id: int) -> objects.MemberConfig:
 
-        user_config = await self.get_user_config(user_id)
+        # make sure a guild record exists because if one
+        # doesn't, creating a member record will violate
+        # the foreign key constraints of the guilds table.
+        await self.get_guild_config(guild_id)
 
+        user_config = await self.get_user_config(user_id)
         if guild_id in user_config.member_configs:
             return user_config.member_configs[guild_id]
 
