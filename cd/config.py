@@ -67,6 +67,7 @@ class Tokens:
 
 @dataclasses.dataclass
 class Dashboard:
+    enabled: bool
     host: str
     port: int
     cookie_secret: str

@@ -59,18 +59,8 @@ class CD(commands.AutoShardedBot):
         self.start_time: float = time.time()
 
         # dashboard
-        self.dashboard: tornado.web.Application = tornado.web.Application(
-            dashboard.setup_routes(bot=self),
-            static_path=os.path.join(os.path.dirname(__file__), "modules/dashboard/static/"),
-            template_path=os.path.join(os.path.dirname(__file__), "modules/dashboard/src/html/"),
-            cookie_secret=CONFIG.dashboard.cookie_secret,
-            default_host=CONFIG.dashboard.host,
-            debug=True
-        )
-        self.http_server: tornado.httpserver.HTTPServer = tornado.httpserver.HTTPServer(
-            self.dashboard,
-            xheaders=True
-        )
+        self.dashboard: tornado.web.Application = utilities.MISSING
+        self.http_server: tornado.httpserver.HTTPServer = utilities.MISSING
         self.http_client: dashboard.HTTPClient = utilities.MISSING
 
     def __repr__(self) -> str:
@@ -137,22 +127,12 @@ class CD(commands.AutoShardedBot):
 
             LOG.info(f"[EXTENSIONS] Loaded - {extension}")
 
-    async def start_dashboard(self) -> None:
-
-        self.http_server.bind(CONFIG.dashboard.port, CONFIG.dashboard.host)
-        self.http_server.start()
-
-        LOG.info("[DASHBOARD] Dashboard has connected.")
-
     async def setup_hook(self) -> None:
 
         self.add_check(checks.global_check, call_once=True)
 
         self.session = aiohttp.ClientSession()
         self.mystbin = mystbin.Client(session=self.session)
-
-        self.http_client = dashboard.HTTPClient(self.loop)
-        await self.http_client.setup()
 
         self.logging_webhooks[enums.LogType.GUILD] = discord.Webhook.from_url(
             session=self.session,
@@ -172,7 +152,28 @@ class CD(commands.AutoShardedBot):
         await self.connect_redis()
         await self.connect_lava()
         await self.load_extensions()
-        await self.start_dashboard()
+
+        if CONFIG.dashboard.enabled:
+
+            self.dashboard = tornado.web.Application(
+                dashboard.setup_routes(bot=self),
+                static_path=os.path.join(os.path.dirname(__file__), "modules/dashboard/static/"),
+                template_path=os.path.join(os.path.dirname(__file__), "modules/dashboard/src/html/"),
+                cookie_secret=CONFIG.dashboard.cookie_secret,
+                default_host=CONFIG.dashboard.host,
+                debug=True
+            )
+            self.http_server = tornado.httpserver.HTTPServer(
+                self.dashboard,
+                xheaders=True
+            )
+
+            self.http_client = dashboard.HTTPClient(self.loop)
+            await self.http_client.setup()
+
+            self.http_server.bind(CONFIG.dashboard.port, CONFIG.dashboard.host)
+            self.http_server.start()
+            LOG.info("[DASHBOARD] Dashboard has connected.")
 
     # Logging
 

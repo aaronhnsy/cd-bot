@@ -34,6 +34,7 @@ uploader_token = ""
 lyrics_token   = ""
 
 [dashboard]
+enabled            = true
 host               = "127.0.0.1"
 port               = 8000
 cookie_secret      = ""
