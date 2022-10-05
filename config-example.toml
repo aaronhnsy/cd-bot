@@ -1,6 +1,9 @@
+[general]
+environment = "production"
+prefix      = ""
+
 [discord]
 token               = ""
-prefix              = ""
 client_id           = 00000
 client_secret       = ""
 guild_log_webhook   = ""

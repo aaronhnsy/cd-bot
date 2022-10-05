@@ -24,7 +24,7 @@ class Todo(commands.Cog):
     _TODO_OPTIONAL_CONTENT_CONVERTER = commands.parameter(converter=converters.TodoContentConverter, default=None)
     _TODO_CONVERTER = commands.parameter(converter=converters.TodoConverter)
 
-    # Commands (Support slash commands)
+    # Commands
 
     @commands.hybrid_group(name="todo", aliases=["todos"], invoke_without_command=True)
     async def _todo(self, ctx: custom.Context, *, content: str | None = _TODO_OPTIONAL_CONTENT_CONVERTER) -> None:

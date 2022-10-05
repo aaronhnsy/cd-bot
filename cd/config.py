@@ -7,6 +7,8 @@ import dacite
 import toml
 from discord.ext import lava
 
+from cd import enums
+
 
 __all__ = (
     "CONFIG",
@@ -14,9 +16,14 @@ __all__ = (
 
 
 @dataclasses.dataclass
+class General:
+    environment: enums.Environment
+    prefix: str
+
+
+@dataclasses.dataclass
 class Discord:
     token: str
-    prefix: str
     client_id: int
     client_secret: str
     guild_log_webhook: str
@@ -69,6 +76,7 @@ class Dashboard:
 
 @dataclasses.dataclass
 class Config:
+    general: General
     discord: Discord
     connections: Connections
     spotify: Spotify

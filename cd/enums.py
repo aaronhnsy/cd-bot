@@ -8,6 +8,7 @@ from cd import custom, exceptions, utilities
 
 
 __all__ = (
+    "Environment",
     "DateTimeFormat",
     "LogType",
     "Effect",
@@ -18,6 +19,11 @@ __all__ = (
 
 
 EnumType = TypeVar("EnumType", bound=Enum)
+
+
+class Environment(Enum):
+    PRODUCTION = "production"
+    DEVELOPMENT = "development"
 
 
 class DateTimeFormat(Enum):
