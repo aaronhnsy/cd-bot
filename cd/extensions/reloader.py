@@ -38,7 +38,7 @@ class Reloader(commands.Cog):
 
         for extension in list(self.bot.extensions.keys()):
 
-            if extension in ["jishaku", "cd.modules.voice"]:
+            if extension in ["jishaku", "cd.modules.voice", "cd.modules.economy", "cd.modules.skeleton-clique"]:
                 continue
 
             modified_time = self.get_modified_time(extension)
@@ -61,7 +61,7 @@ class Reloader(commands.Cog):
 
         for extension in self.bot.extensions.keys():
 
-            if extension in ["jishaku", "cd.modules.voice", "cd.modules.economy"]:
+            if extension in ["jishaku", "cd.modules.voice", "cd.modules.economy", "cd.modules.skeleton-clique"]:
                 continue
 
             self.last_modified_times[extension] = self.get_modified_time(extension)

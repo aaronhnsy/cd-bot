@@ -17,9 +17,6 @@ __all__ = (
     "Economy",
 )
 
-_MEMBER_DEFAULT: Callable[[custom.Context], discord.User | discord.Member] = lambda ctx: ctx.author
-_MEMBER_CONVERTER = commands.parameter(default=_MEMBER_DEFAULT)
-
 
 class Economy(commands.Cog):
 
@@ -32,6 +29,9 @@ class Economy(commands.Cog):
             raise commands.NoPrivateMessage()
 
         return True
+
+    _MEMBER_DEFAULT: Callable[[custom.Context], discord.User | discord.Member] = lambda ctx: ctx.author
+    _MEMBER_CONVERTER = commands.parameter(default=_MEMBER_DEFAULT)
 
     @commands.hybrid_command(name="level", aliases=["lvl", "rank"])
     async def level(self, ctx: custom.Context, person: discord.Member = _MEMBER_CONVERTER) -> None:

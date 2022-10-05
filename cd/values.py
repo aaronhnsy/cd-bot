@@ -38,6 +38,7 @@ EXTENSIONS: list[str] = [
     "jishaku",
     "cd.modules.voice",
     "cd.modules.economy",
+    "cd.modules.skeleton-clique",
     "cd.extensions.events",
     "cd.extensions.information",
     "cd.extensions.reloader",
@@ -67,7 +68,7 @@ INVITE_LINK_NO_PERMISSIONS: str = discord.utils.oauth_url(
 )
 
 SUPPORT_LINK: str = "https://discord.gg/w9f6NkQbde"
-GITHUB_LINK: str = "https://github.com/Axelware/cd-bot"
+GITHUB_LINK: str = "https://github.com/Axelancerr/cd-bot"
 
 MAIN: discord.Colour = discord.Colour(0xE91E63)
 RED: discord.Colour = discord.Colour.red()
@@ -99,9 +100,15 @@ PLAYER_LOOP_CURRENT: str = "<:lc:959620032596430849>"
 ##############
 # CODEBLOCKS #
 ##############
-CODEBLOCK_START: str = "```\n"
-
 ANSI_CODEBLOCK_START: str = "```ansi\n"
 PYTHON_CODEBLOCK_START: str = "```py\n"
-
+CODEBLOCK_START: str = "```\n"
 CODEBLOCK_END: str = "\n```"
+
+
+###################
+# SKELETON-CLIQUE #
+###################
+SKELETON_CLIQUE_GUILD_ID: int = 470584033668104212
+SKELETON_CLIQUE_GENERAL_CHANNEL_ID: int = 470584033668104214
+SKELETON_CLIQUE_MEMBER_ROLE_ID: int = 473204189183475732
