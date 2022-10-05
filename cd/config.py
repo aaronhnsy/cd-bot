@@ -32,7 +32,7 @@ class Discord:
 
 
 @dataclasses.dataclass
-class LavaNode:
+class DiscordExtLavaNode:
     host: str
     port: int
     identifier: str
@@ -44,7 +44,7 @@ class LavaNode:
 class Connections:
     postgres_dsn: str
     redis_dsn: str
-    lava_nodes: list[LavaNode]
+    discord_ext_lava_nodes: list[DiscordExtLavaNode]
 
 
 @dataclasses.dataclass
@@ -88,8 +88,14 @@ class Config:
 def load_config(file: io.TextIOWrapper) -> Config:
     try:
         return dacite.from_dict(
-            Config, toml.load(file),
-            dacite.Config(type_hooks={lava.Provider: lava.Provider.__getitem__})
+            Config,
+            toml.load(file),
+            dacite.Config(
+                type_hooks={
+                    lava.Provider: lava.Provider.__getitem__,
+                    enums.Environment: enums.Environment.__getitem__
+                }
+            )
         )
     except toml.TomlDecodeError as error:
         sys.exit(f"'{file.name}' is not a valid TOML file: {error}")
@@ -106,7 +112,7 @@ parser.add_argument(
     default="cd-config.toml",
     type=open,
     required=False,
-    help="Choose a custom config.toml for the bot to run with."
+    help="Choose a custom .toml config for the bot to run with."
 )
 namespace = parser.parse_args()
 

@@ -110,7 +110,7 @@ class CD(commands.AutoShardedBot):
 
         self.lava = lava.Pool()
 
-        for node in CONFIG.connections.lava_nodes:
+        for node in CONFIG.connections.discord_ext_lava_nodes:
             try:
                 await self.lava.create_node(
                     bot=self,

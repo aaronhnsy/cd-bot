@@ -1,5 +1,5 @@
 [general]
-environment = "production"
+environment = "PRODUCTION"
 prefix      = ""
 
 [discord]
@@ -14,7 +14,7 @@ command_log_webhook = ""
 postgres_dsn = "postgres://USER:PASSWORD@HOST:PORT/DB"
 redis_dsn    = "redis://PASSWORD@HOST:PORT/0"
 
-[[connections.lava_nodes]]
+[[connections.discord_ext_lava_nodes]]
 host       = ""
 port       = 00000
 identifier = ""

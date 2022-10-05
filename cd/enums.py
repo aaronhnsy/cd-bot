@@ -22,8 +22,8 @@ EnumType = TypeVar("EnumType", bound=Enum)
 
 
 class Environment(Enum):
-    PRODUCTION = "production"
-    DEVELOPMENT = "development"
+    PRODUCTION = 0
+    DEVELOPMENT = 1
 
 
 class DateTimeFormat(Enum):
