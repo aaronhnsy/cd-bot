@@ -83,8 +83,9 @@ class BasePaginator(abc.ABC):
 
         self.page = page
 
-        await self.update_state()
-        self.view.update_state()
+        async with self.ctx.typing():
+            await self.update_state()
+            self.view.update_state()
 
         if not self.message:
             return
