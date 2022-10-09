@@ -42,8 +42,13 @@ class FilePaginator(BasePaginator):
 
         self.header: str = header or ""
         self._cache: dict[int, str] = {}
+        self._typing_triggered: bool = False
 
     async def update_state(self) -> None:
+
+        if not self._typing_triggered:
+            await self.ctx.typing()
+            self._typing_triggered = True
 
         if not (url := self._cache.get(self.page)):
             buffer = await self.entries[self.page]()
