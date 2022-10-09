@@ -41,7 +41,13 @@ class EconomyEvents(commands.Cog):
         xp = random.randint(10, 20)
         member_config = await self.bot.manager.get_member_config(guild_id=message.guild.id, user_id=message.author.id)
 
-        if xp >= member_config.xp_until_next_level and (member_config.level_up_notifications is True or member_config.guild_id == values.SKELETON_CLIQUE_GUILD_ID):
+        if (
+            (xp >= member_config.xp_until_next_level)
+            and
+            (member_config.level_up_notifications is True or member_config.guild_id == values.SKELETON_CLIQUE_GUILD_ID)
+            and
+            (message.channel.id != values.SKELETON_CLIQUE_COUNT_TO_INFINITY_CHANNEL_ID)
+        ):
             await message.reply(f"You are now level `{member_config.level + 1}`!")
 
         await member_config.change_xp(enums.Operation.ADD, amount=xp)
