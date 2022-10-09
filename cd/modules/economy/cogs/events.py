@@ -7,6 +7,7 @@ import discord
 from discord.ext import commands
 
 from cd import enums, values
+from cd.config import CONFIG
 
 
 if TYPE_CHECKING:
@@ -24,12 +25,17 @@ class EconomyEvents(commands.Cog):
         self.bot: CD = bot
 
     @commands.Cog.listener("on_message")
-    async def _handle_xp_gain_on_message(self, message: discord.Message) -> None:
+    async def handle_economy_xp_gain(self, message: discord.Message) -> None:
 
-        if message.guild is None or message.author.bot is True:
-            return
-
-        if (await self.bot.redis.exists(f"{message.author.id}_{message.guild.id}_xp_gain")) == 1:
+        if (
+            (CONFIG.general.environment is not enums.Environment.PRODUCTION)
+            or
+            (message.guild is None)
+            or
+            (message.author.bot is True)
+            or
+            (await self.bot.redis.exists(f"{message.author.id}_{message.guild.id}_xp_gain") == 1)
+        ):
             return
 
         xp = random.randint(10, 20)
