@@ -67,7 +67,7 @@ class SkeletonCliqueEvents(commands.Cog):
             return
 
         try:
-            number = int(message.content)
+            number = int(discord.utils.remove_markdown(message.content))
         except ValueError:
             await message.reply(
                 "That wasn't a valid number!",
@@ -81,7 +81,7 @@ class SkeletonCliqueEvents(commands.Cog):
             try:
                 assert isinstance(message.channel, discord.TextChannel)
                 messages = [msg async for msg in message.channel.history(limit=25) if msg.content.isdecimal()]
-                self.last_count_to_infinity_number = int(messages[1].content)
+                self.last_count_to_infinity_number = int(discord.utils.remove_markdown(messages[1].content))
             except (discord.HTTPException, discord.Forbidden, IndexError, ValueError):
                 return
 
