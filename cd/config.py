@@ -62,7 +62,6 @@ class LastFM:
 @dataclasses.dataclass
 class Tokens:
     uploader_token: str
-    lyrics_token: str
 
 
 @dataclasses.dataclass
