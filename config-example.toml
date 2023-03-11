@@ -31,7 +31,6 @@ api_secret = ""
 
 [tokens]
 uploader_token = ""
-lyrics_token   = ""
 
 [dashboard]
 enabled            = true
