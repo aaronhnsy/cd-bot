@@ -43,7 +43,7 @@ class Economy(commands.Cog):
 
         async with ctx.typing():
             member_config = await self.bot.manager.get_member_config(guild_id=ctx.guild.id, user_id=person.id)
-            await ctx.send(file=await member_config.create_level_card())
+            await ctx.send(await member_config.create_level_card())
 
     @commands.hybrid_command(name="leaderboard", aliases=["lb"])
     async def leaderboard(self, ctx: custom.Context) -> None:

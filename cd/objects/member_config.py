@@ -202,7 +202,7 @@ class MemberConfig:
         buffer.seek(0)
         return buffer
 
-    async def create_level_card(self) -> discord.File:
+    async def create_level_card(self) -> str:
 
         guild = self.bot.get_guild(self.guild_id)
         if guild is None:
@@ -222,7 +222,10 @@ class MemberConfig:
         )
         avatar_buffer.close()
 
-        file = discord.File(card_buffer, filename="level_card.png")
+        url = await utilities.upload_file(
+            self.bot.session,
+            fp=card_buffer, format="png"
+        )
         card_buffer.close()
 
-        return file
+        return url

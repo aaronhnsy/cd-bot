@@ -28,7 +28,7 @@ async def upload_file(
     data.add_field("file", fp, filename=f"file.{format.lower()}")
 
     async with session.post(
-            "https://uploader.axelancerr.xyz/api/upload",
+            "https://uploader.axel.casa/api/upload",
             headers={"Authorization": CONFIG.tokens.uploader_token},
             data=data
     ) as response:
@@ -38,7 +38,7 @@ async def upload_file(
 
         post = await response.json()
 
-    return f"https://uploader.axelancerr.xyz/{post['user_id']}/{post['format']}/{post['name']}.{post['format']}"
+    return f"https://uploader.axel.casa/{post['user_id']}/{post['format']}/{post['name']}.{post['format']}"
 
 
 async def upload_text(
