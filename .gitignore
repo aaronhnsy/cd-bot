@@ -1,10 +1,3 @@
-*.pyc
-*.log*
-
-node_modules/
-static/
-venv/
-build/
 .idea/
 
 *-config.toml
