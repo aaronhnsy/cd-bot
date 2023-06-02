@@ -3,39 +3,37 @@ requires      = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
-name        = "CD-bot"
-version     = "0.0.1"
+name        = "cd-bot"
+version     = "1.0.0"
 description = "A general purpose music bot."
-authors     = ["Axel <axelancerr@gmail.com>"]
+authors     = ["Aaron Hennessey <axelancerr@gmail.com>"]
 
 [tool.poetry.dependencies]
-python           = "^3.11.0"
-async-timeout    = "~4.0.0"
-asyncpg          = "~0.27.0"
-colorama         = "~0.4.0"
-colorthief       = "~0.2.0"
-dacite           = "~1.8.0"
-discord-ext-lava = "~0.5.0"
-humanize         = "~4.6.0"
-mystbin-py       = "~5.1.0"
-pendulum         = "~2.1.0"
-pillow           = "~9.4.0"
-rapidfuzz        = "~2.13.0"
-toml             = "~0.10.0"
-tornado          = "~6.2.0"
-wand             = "~0.6.0"
-aiohttp    = { version = "~3.8.0", extras = ["speedups"] }
-discord-py = { version = "~2.2.0", extras = ["voice", "speed"] }
-jishaku    = { version = "~2.5.0", extras = ["voice", "procinfo"] }
-redis      = { version = "~4.5.0", extras = ["hiredis"] }
+python            = "~3.11.0"
+aiohttp           = { version = "~3.8.0"  }
+async-timeout     = { version = "~4.0.0"  }
+asyncpg           = { version = "~0.27.0" }
+asyncpg-stubs     = { version = "~0.27.0" }
+colorama          = { version = "~0.4.0"  }
+dacite            = { version = "~1.8.0"  }
+discord-py        = { version = "~2.2.0", extras = ["speed", "voice"] }
+humanize          = { version = "~4.6.0"  }
+jishaku           = { version = "~2.5.0", extras = ["procinfo"] }
+mystbin-py        = { version = "~5.1.0"  }
+orjson            = { version = "~3.8.0"  }
+pendulum          = { version = "~2.1.0"  }
+rapidfuzz         = { version = "~3.0.0"  }
+redis             = { version = "~4.5.0", extras = ["hiredis"] }
+toml              = { version = "~0.10.0" }
+typing-extensions = { version = "~4.6.0"  }
+
+discord-ext-lava = { path = "../discord-ext-lava" }
 
 [tool.pyright]
 include                = ["cd", "launcher.py"]
-pythonVersion          = "3.10"
+pythonVersion          = "3.11"
 typeCheckingMode       = "strict"
 useLibraryCodeForTypes = true
-reportPrivateUsage       = false
-reportUnknownMemberType  = false
-reportImportCycles       = false
-reportMissingTypeStubs   = false
-reportPrivateImportUsage = false
+reportPrivateUsage      = false
+reportUnknownMemberType = false
+reportImportCycles      = false

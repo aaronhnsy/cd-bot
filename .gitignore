@@ -1,3 +1,10 @@
+# ide
 .idea/
 
-*-config.toml
+# python
+*.pyc
+
+# bot
+*.log*
+cd.config.toml
+lavalink.jar
