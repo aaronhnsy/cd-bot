@@ -17,7 +17,8 @@ __all__ = ["GuildData"]
 
 @dataclasses.dataclass
 class GuildData:
-    id: str
+    id: int
+    prefix: str | None
 
     @classmethod
     async def get(cls, bot: CD, id: int) -> Self:

@@ -17,7 +17,7 @@ __all__ = ["UserData"]
 
 @dataclasses.dataclass
 class UserData:
-    id: str
+    id: int
 
     @classmethod
     async def get(cls, bot: CD, id: int) -> Self:

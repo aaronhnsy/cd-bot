@@ -22,7 +22,7 @@ class CD(commands.AutoShardedBot):
             allowed_mentions=values.ALLOWED_MENTIONS,
             status=values.STATUS,
             activity=values.ACTIVITY,
-            command_prefix=CONFIG.discord.prefix,
+            command_prefix=self.__class__._get_prefix,  # type: ignore
         )
         self.pool: Pool = discord.utils.MISSING
         self.redis: Redis = discord.utils.MISSING
@@ -30,6 +30,14 @@ class CD(commands.AutoShardedBot):
         self.user_data_cache: dict[int, objects.UserData] = {}
         self.guild_data_cache: dict[int, objects.GuildData] = {}
         self.member_data_cache: dict[tuple[int, int], objects.MemberData] = {}
+
+    async def _get_prefix(self, message: discord.Message) -> list[str]:
+        if message.guild is not None:
+            guild_data = await objects.GuildData.get(self, message.guild.id)
+            prefixes = commands.when_mentioned_or(guild_data.prefix or CONFIG.discord.prefix)
+        else:
+            prefixes = commands.when_mentioned_or(CONFIG.discord.prefix)
+        return prefixes(self, message)
 
     async def _connect_postgresql(self) -> None:
         try:
