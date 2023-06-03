@@ -2,12 +2,12 @@ import logging
 
 import asyncpg
 import discord
-from discord.ext import commands
+from discord.ext import commands, lava
 from redis import asyncio as aioredis
 
 from cd import objects, values
 from cd.config import CONFIG
-from cd.types import Pool, Redis
+from cd.types import Database, Redis, Lavalink
 
 
 __all__ = ["CD"]
@@ -24,8 +24,9 @@ class CD(commands.AutoShardedBot):
             activity=values.ACTIVITY,
             command_prefix=self.__class__._get_prefix,  # type: ignore
         )
-        self.pool: Pool = discord.utils.MISSING
+        self.database: Database = discord.utils.MISSING
         self.redis: Redis = discord.utils.MISSING
+        self.lavalink: Lavalink = discord.utils.MISSING
 
         self.user_data_cache: dict[int, objects.UserData] = {}
         self.guild_data_cache: dict[int, objects.GuildData] = {}
@@ -42,7 +43,7 @@ class CD(commands.AutoShardedBot):
     async def _connect_postgresql(self) -> None:
         try:
             __log__.debug("Attempting postgresql connection.")
-            pool: Pool = await asyncpg.create_pool(  # pyright: ignore
+            database: Database = await asyncpg.create_pool(  # pyright: ignore
                 CONFIG.connections.postgresql.dsn,
                 max_inactive_connection_lifetime=0,
                 min_size=1, max_size=5,
@@ -52,7 +53,7 @@ class CD(commands.AutoShardedBot):
             raise error
         else:
             __log__.info("Successfully connected to postgresql.")
-            self.pool = pool
+            self.database = database
 
     async def _connect_redis(self) -> None:
         try:
@@ -68,6 +69,28 @@ class CD(commands.AutoShardedBot):
             __log__.info("Successfully connected to redis.")
             self.redis = redis
 
+    async def _connect_lavalink(self) -> None:
+        # TODO: Add support for multiple lavalink nodes.
+        for link in CONFIG.discord.ext.lava.links:
+            try:
+                __log__.debug("Attempting lavalink connection.")
+                lavalink: Lavalink = lava.Link(
+                    host=link.host,
+                    port=link.port,
+                    password=link.password,
+                    user_id=self.user.id,
+                    spotify_client_id=CONFIG.connections.spotify.client_id,
+                    spotify_client_secret=CONFIG.connections.spotify.client_secret,
+                )
+                await lavalink.connect()
+            except Exception as error:
+                __log__.critical("Error while connecting to lavalink.")
+                raise error
+            else:
+                __log__.info("Successfully connected to lavalink.")
+                self.lavalink = lavalink
+
     async def setup_hook(self) -> None:
         await self._connect_postgresql()
         await self._connect_redis()
+        await self._connect_lavalink()

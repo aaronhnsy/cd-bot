@@ -26,7 +26,7 @@ class MemberData:
         if (user_id, guild_id) in bot.member_data_cache:
             return bot.member_data_cache[(user_id, guild_id)]
         # otherwise, fetch it from the database, creating a new entry if necessary
-        data: asyncpg.Record = await bot.pool.fetchrow(  # pyright: ignore - is always a record
+        data: asyncpg.Record = await bot.database.fetchrow(  # pyright: ignore - is always a record
             "INSERT INTO members (user_id, guild_id) VALUES ($1, $2) "
             "ON CONFLICT (user_id, guild_id)"
             "DO UPDATE SET user_id = $1, guild_id = $2 "

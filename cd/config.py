@@ -87,8 +87,8 @@ class Connections:
 
 @dataclasses.dataclass
 class LoggingLevels:
-    cd: Literal["NOTSET", "CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"] = "INFO"
-    discord: Literal["NOTSET", "CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"] = "INFO"
+    cd: Literal["NOTSET", "CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"] = "DEBUG"
+    discord: Literal["NOTSET", "CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"] = "NOTSET"
 
 
 @dataclasses.dataclass

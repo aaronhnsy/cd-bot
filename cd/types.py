@@ -1,22 +1,27 @@
 from __future__ import annotations
 
-from typing import NewType, TypeAlias, Any
+from typing import Any, NewType, TypeAlias
 
 import asyncpg
 import redis.asyncio as aioredis
+from discord.ext import lava
 
 
 __all__ = [
-    "Pool",
+    "Database",
+    "Redis",
     "Colour",
     "FileSize",
 ]
 
 # asyncpg
-Pool: TypeAlias = "asyncpg.Pool[asyncpg.Record]"
+Database: TypeAlias = "asyncpg.Pool[asyncpg.Record]"
 
 # redis
 Redis: TypeAlias = "aioredis.Redis[Any]"
+
+# lavalink
+Lavalink: TypeAlias = "lava.Link[Any]"
 
 # custom
 Colour = NewType("Colour", str)
