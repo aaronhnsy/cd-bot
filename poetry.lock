@@ -565,6 +565,24 @@ type = "directory"
 url = "../discord-ext-lava"
 
 [[package]]
+name = "discord-ext-paginators"
+version = "1.0.0"
+description = "A discord.py extension for my collection of paginators."
+optional = false
+python-versions = "^3.11.0"
+files = []
+develop = false
+
+[package.dependencies]
+aiohttp = "^3.8.0"
+discord-py = "^2.2.0"
+typing-extensions = "^4.6.0"
+
+[package.source]
+type = "directory"
+url = "../discord-ext-paginators"
+
+[[package]]
 name = "discord-py"
 version = "2.2.3"
 description = "A Python wrapper for the Discord API"
@@ -1522,4 +1540,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.11.0"
-content-hash = "fdde4942ba75e497767b06245bffe7676f3d287aed28043a725d40a24ca4c77f"
+content-hash = "41a1f5abb093a13f5a2bf144ba16c02ed0130dd32176025083b29339fc6800e4"

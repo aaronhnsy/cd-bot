@@ -27,7 +27,8 @@ redis             = { version = "~4.5.0", extras = ["hiredis"] }
 toml              = { version = "~0.10.0" }
 typing-extensions = { version = "~4.6.0"  }
 
-discord-ext-lava = { path = "../discord-ext-lava" }
+discord-ext-lava       = { path = "../discord-ext-lava" }
+discord-ext-paginators = { path = "../discord-ext-paginators" }
 
 [tool.pyright]
 include                = ["cd", "launcher.py"]

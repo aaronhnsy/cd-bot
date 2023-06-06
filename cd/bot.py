@@ -78,7 +78,7 @@ class CD(commands.AutoShardedBot):
                     host=link.host,
                     port=link.port,
                     password=link.password,
-                    user_id=self.user.id,
+                    user_id=self.user.id,  # pyright: ignore - user is not None
                     spotify_client_id=CONFIG.connections.spotify.client_id,
                     spotify_client_secret=CONFIG.connections.spotify.client_secret,
                 )
@@ -94,3 +94,4 @@ class CD(commands.AutoShardedBot):
         await self._connect_postgresql()
         await self._connect_redis()
         await self._connect_lavalink()
+        await self.load_extension("jishaku")
