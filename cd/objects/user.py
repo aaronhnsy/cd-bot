@@ -25,7 +25,7 @@ class UserData:
         if id in bot.user_data_cache:
             return bot.user_data_cache[id]
         # otherwise, fetch it from the database, creating a new entry if necessary
-        data: asyncpg.Record = await bot.database.fetchrow(  # pyright: ignore - is always a record
+        data: asyncpg.Record = await bot.database.fetchrow(  # pyright: ignore - data is always a record
             "INSERT INTO users (id) VALUES ($1) ON CONFLICT (id) DO UPDATE set id = $1 RETURNING *",
             id
         )

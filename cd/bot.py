@@ -7,7 +7,8 @@ from redis import asyncio as aioredis
 
 from cd import objects, values
 from cd.config import CONFIG
-from cd.types import Database, Redis, Lavalink
+from cd.modules import help
+from cd.types import Database, Lavalink, Redis
 
 
 __all__ = ["CD"]
@@ -22,6 +23,7 @@ class CD(commands.AutoShardedBot):
             allowed_mentions=values.ALLOWED_MENTIONS,
             status=values.STATUS,
             activity=values.ACTIVITY,
+            help_command=help.HelpCommand(),
             command_prefix=self.__class__._get_prefix,  # type: ignore
         )
         self.database: Database = discord.utils.MISSING
@@ -78,7 +80,7 @@ class CD(commands.AutoShardedBot):
                     host=link.host,
                     port=link.port,
                     password=link.password,
-                    user_id=self.user.id,  # pyright: ignore - user is not None
+                    user_id=self.user.id,  # pyright: ignore - bot.user is not None
                     spotify_client_id=CONFIG.connections.spotify.client_id,
                     spotify_client_secret=CONFIG.connections.spotify.client_secret,
                 )
@@ -95,3 +97,4 @@ class CD(commands.AutoShardedBot):
         await self._connect_redis()
         await self._connect_lavalink()
         await self.load_extension("jishaku")
+        await self.load_extension("cd.modules.voice")

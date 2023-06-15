@@ -1,2 +1,3 @@
 from .helpers import *
-from .parsing import *
+from .parsers import *
+from .strings import *

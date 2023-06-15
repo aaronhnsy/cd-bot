@@ -10,6 +10,8 @@ from cd.config import CONFIG
 jishaku.Flags.HIDE = True
 jishaku.Flags.NO_UNDERSCORE = True
 jishaku.Flags.NO_DM_TRACEBACK = True
+jishaku.Jishaku.description = "A set of useful debugging and utility commands."
+jishaku.Jishaku.emoji = "\N{HAMMER AND WRENCH}"
 
 # logging
 logger.setup()

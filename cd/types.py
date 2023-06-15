@@ -1,18 +1,19 @@
-from __future__ import annotations
+from typing import Any, NewType, TYPE_CHECKING, TypeAlias
 
-from typing import Any, NewType, TypeAlias
-
-import asyncpg
-import redis.asyncio as aioredis
-from discord.ext import lava
+if TYPE_CHECKING:
+    import asyncpg
+    import redis.asyncio as aioredis
+    from discord.ext import lava
 
 
 __all__ = [
     "Database",
     "Redis",
+    "Lavalink",
     "Colour",
     "FileSize",
 ]
+
 
 # asyncpg
 Database: TypeAlias = "asyncpg.Pool[asyncpg.Record]"

@@ -16,16 +16,17 @@ asyncpg           = { version = "~0.27.0" }
 asyncpg-stubs     = { version = "~0.27.0" }
 colorama          = { version = "~0.4.0"  }
 dacite            = { version = "~1.8.0"  }
-discord-py        = { version = "~2.2.0", extras = ["speed", "voice"] }
-humanize          = { version = "~4.6.0"  }
+discord-py        = { version = "~2.3.0", extras = ["speed", "voice"] }
+isort             = { version = "~5.12.0" }
+humanize          = { version = "~4.7.0"  }
 jishaku           = { version = "~2.5.0", extras = ["procinfo"] }
 mystbin-py        = { version = "~5.1.0"  }
-orjson            = { version = "~3.8.0"  }
+orjson            = { version = "~3.9.0"  }
 pendulum          = { version = "~2.1.0"  }
-rapidfuzz         = { version = "~3.0.0"  }
-redis             = { version = "~4.5.0", extras = ["hiredis"] }
+rapidfuzz         = { version = "~3.1.0"  }
+redis             = { version = "~4.6.0", extras = ["hiredis"] }
 toml              = { version = "~0.10.0" }
-typing-extensions = { version = "~4.6.0"  }
+typing-extensions = { version = "~4.7.0"  }
 
 discord-ext-lava       = { path = "../discord-ext-lava" }
 discord-ext-paginators = { path = "../discord-ext-paginators" }
