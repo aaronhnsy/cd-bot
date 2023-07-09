@@ -1,14 +1,19 @@
 from __future__ import annotations
 
+# Standard Library
 import dataclasses
-from typing import Self, TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
+# Libraries
 import asyncpg
 import dacite
 
+# Project
 from cd import utilities
 
+
 if TYPE_CHECKING:
+    # Project
     from cd.bot import CD
 
 

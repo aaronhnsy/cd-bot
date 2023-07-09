@@ -1,10 +1,14 @@
+# Standard Library
 import asyncio
 
+# Libraries
 import jishaku
 
+# Project
 from cd import logger
 from cd.bot import CD
 from cd.config import CONFIG
+
 
 # jishaku
 jishaku.Flags.HIDE = True

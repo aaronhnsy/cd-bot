@@ -1,8 +1,15 @@
-from typing import Any, TYPE_CHECKING, TypeAlias
+# Standard Library
+from typing import TYPE_CHECKING, Any, TypeAlias
+
 
 if TYPE_CHECKING:
+    # Libraries
     from discord.ext import commands
+
+    # Project
     from cd import custom
+
+    # Local Folder
     from .command import HelpCommandCategory
 
 

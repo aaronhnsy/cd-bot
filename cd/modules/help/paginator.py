@@ -1,9 +1,13 @@
+# Libraries
 import discord
 from discord.ext import paginators
 
+# Project
 from cd import custom, utilities, values
-from .types import HelpCommandCategories
+
+# Local Folder
 from .controller import HelpCommandController
+from .types import HelpCommandCategories
 
 
 __all__ = ["HelpCommandPaginator"]

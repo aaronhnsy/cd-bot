@@ -1,10 +1,13 @@
+# Standard Library
 import logging
 
+# Libraries
 import asyncpg
 import discord
 from discord.ext import commands, lava
 from redis import asyncio as aioredis
 
+# Project
 from cd import objects, values
 from cd.config import CONFIG
 from cd.modules import help

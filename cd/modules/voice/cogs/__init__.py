@@ -1,11 +1,15 @@
 from __future__ import annotations
 
+# Standard Library
 from typing import TYPE_CHECKING
 
+# Local Folder
 from .effects import *
 from .player import *
 
+
 if TYPE_CHECKING:
+    # Project
     from cd.bot import CD
 
 

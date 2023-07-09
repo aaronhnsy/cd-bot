@@ -1,9 +1,12 @@
+# Standard Library
 import dataclasses
 import logging
 import logging.handlers
 
+# Libraries
 import colorama
 
+# Project
 from cd.config import CONFIG
 
 

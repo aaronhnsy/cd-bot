@@ -1,11 +1,16 @@
+# Standard Library
 import dataclasses
 from collections.abc import Mapping
 
+# Libraries
 import discord
 from discord.ext import commands, paginators
 
+# Project
 from cd import custom, utilities, values
 from cd.config import CONFIG
+
+# Local Folder
 from .paginator import HelpCommandPaginator
 from .types import Command, GroupCommand, HelpCommandCategories, SingleCommand
 

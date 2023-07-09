@@ -1,6 +1,9 @@
-from typing import Any, NewType, TYPE_CHECKING, TypeAlias
+# Standard Library
+from typing import TYPE_CHECKING, Any, NewType, TypeAlias
+
 
 if TYPE_CHECKING:
+    # Libraries
     import asyncpg
     import redis.asyncio as aioredis
     from discord.ext import lava
