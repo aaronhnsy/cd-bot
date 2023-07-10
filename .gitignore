@@ -7,5 +7,3 @@
 # bot
 *.log*
 cd.config.toml
-lavalink.jar
-application.yaml
