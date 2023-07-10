@@ -7,6 +7,9 @@ from typing import TYPE_CHECKING, Self, TypedDict
 import discord
 from discord.ext import paginators
 
+# Project
+from cd import values
+
 
 if TYPE_CHECKING:
     # Local Folder
@@ -64,12 +67,12 @@ class HelpCommandController(paginators.BaseController["HelpCommandPaginator"]):
                     for category in paginator.categories.values()
                 ],
             ),
-            "first":    paginators.FirstPageButton[Self](emoji="<:pf:959624334127800330>"),
-            "previous": paginators.PreviousPageButton[Self](emoji="<:pp:959624365140492348>"),
+            "first":    paginators.FirstPageButton[Self](emoji=values.PAGINATOR_FIRST_BUTTON_EMOJI),
+            "previous": paginators.PreviousPageButton[Self](emoji=values.PAGINATOR_PREVIOUS_BUTTON_EMOJI),
             "label":    paginators.LabelButton[Self](label="?"),
-            "next":     paginators.NextPageButton[Self](emoji="<:pn:959624356558946325>"),
-            "last":     paginators.LastPageButton[Self](emoji="<:pl:959624322765447218>"),
-            "stop":     paginators.StopButton[Self](emoji="<:s:959624343246241913>")
+            "next":     paginators.NextPageButton[Self](emoji=values.PAGINATOR_NEXT_BUTTON_EMOJI),
+            "last":     paginators.LastPageButton[Self](emoji=values.PAGINATOR_LAST_BUTTON_EMOJI),
+            "stop":     paginators.StopButton[Self](emoji=values.PAGINATOR_STOP_BUTTON_EMOJI),
         }
         self.set_item_visibilities()
 

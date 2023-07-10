@@ -1,6 +1,9 @@
 # Libraries
 from discord.ext import paginators
 
+# Project
+from cd import values
+
 
 __all__ = ["PaginatorController"]
 
@@ -9,10 +12,10 @@ class PaginatorController(paginators.DefaultController[paginators.PaginatorT]):
 
     def __init__(self, paginator: paginators.PaginatorT) -> None:
         super().__init__(paginator)
-        self.items["stop"].emoji = "<:s:959624343246241913>"
+        self.items["stop"].emoji = values.PAGINATOR_STOP_BUTTON_EMOJI
         if "first" in self.items:
-            self.items["first"].emoji = "<:pf:959624334127800330>"
-            self.items["last"].emoji = "<:pl:959624322765447218>"
+            self.items["first"].emoji = values.PAGINATOR_FIRST_BUTTON_EMOJI
+            self.items["last"].emoji = values.PAGINATOR_LAST_BUTTON_EMOJI
         if "previous" in self.items:
-            self.items["previous"].emoji = "<:pp:959624365140492348>"
-            self.items["next"].emoji = "<:pn:959624356558946325>"
+            self.items["previous"].emoji = values.PAGINATOR_PREVIOUS_BUTTON_EMOJI
+            self.items["next"].emoji = values.PAGINATOR_NEXT_BUTTON_EMOJI
