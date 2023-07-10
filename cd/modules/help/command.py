@@ -1,6 +1,5 @@
 # Standard Library
 import dataclasses
-from collections.abc import Mapping
 
 # Libraries
 import discord
@@ -12,7 +11,7 @@ from cd.config import CONFIG
 
 # Local Folder
 from .paginator import HelpCommandPaginator
-from .types import Command, GroupCommand, HelpCommandCategories, SingleCommand
+from .types import BotCommandMapping, Cog, Command, GroupCommand, HelpCommandCategories, SingleCommand
 
 
 __all__ = [
@@ -84,13 +83,13 @@ class HelpCommand(commands.HelpCommand):
             )
         return {k: v for k, v in sorted(categories.items(), key=lambda item: item[0][0])}
 
-    async def send_bot_help(self, mapping: Mapping[custom.Cog, list[Command]], /) -> None:  # pyright: ignore
+    async def send_bot_help(self, mapping: BotCommandMapping, /) -> None:  # pyright: ignore
         await HelpCommandPaginator(
             ctx=self.context,
             categories=self._get_categories()
         ).start()
 
-    async def send_cog_help(self, cog: custom.Cog, /) -> None:  # pyright: ignore
+    async def send_cog_help(self, cog: Cog, /) -> None:  # pyright: ignore
         await HelpCommandPaginator(
             ctx=self.context,
             categories=self._get_categories(),
