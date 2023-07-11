@@ -98,30 +98,21 @@ class HelpCommand(commands.HelpCommand):
 
     # command help
 
-    def _get_group_or_command_help_embed(self, command: Command, /) -> discord.Embed:
-        assert self.context.bot.user is not None
-        # build the description
-        description = self._get_command_help(command)
-        if len(command.aliases) >= 1:
-            description += f"\n\n**Aliases:**\n" + "\n".join(
-                [f"● {alias}" for alias in self._get_command_aliases(command)]
-            )
-        if isinstance(command, commands.Group):
-            description += f"\n\n**Subcommands:**"
-        # return the embed
-        return utilities.embed(
+    def _get_embed(self, command: Command, /) -> discord.Embed:
+        embed = utilities.embed(
             colour=values.THEME_COLOUR,
             title=self._get_command_name(command),
-            description="".join(description),
-            thumbnail=utilities.asset_url(self.context.bot.user.display_avatar)
+            thumbnail=utilities.asset_url(self.context.bot.user.display_avatar)  # pyright: ignore
         )
+        embed.description = f"{self._get_command_help(command)}"
+        if len(command.aliases) >= 1:
+            aliases = "\n".join([f"● {alias}" for alias in self._get_command_aliases(command)])
+            embed.description += f"\n\n**Aliases:**\n{aliases}"
+        return embed
 
     async def send_group_help(self, group: GroupCommand, /) -> None:
-        # send a normal help message if there are no subcommands
-        if len(group.all_commands) < 0:
-            await self.send_command_help(group)
-            return
-        # send a paginated help message if there are subcommands
+        if len(group.all_commands) == 0:
+            return await self.send_command_help(group)
         fields = [
             (
                 f"● {self._get_command_name(command)}",
@@ -130,16 +121,18 @@ class HelpCommand(commands.HelpCommand):
             )
             for command in self._filter_commands([*group.walk_commands()])
         ]
+        embed = self._get_embed(group)
+        embed.description += f"\n\n**Subcommands:**\n"  # pyright: ignore
         await paginators.EmbedFieldsPaginator(
             ctx=self.context,
             fields=fields,
             fields_per_page=5,
             controller=custom.PaginatorController,
-            embed=self._get_group_or_command_help_embed(group),
+            embed=embed,
         ).start()
 
     async def send_command_help(self, command: SingleCommand, /) -> None:
-        await self.context.reply(embed=self._get_group_or_command_help_embed(command))
+        await self.context.reply(embed=self._get_embed(command))
 
     # error handling
 
@@ -147,14 +140,12 @@ class HelpCommand(commands.HelpCommand):
         return f"There are no commands or categories named **{utilities.truncate(string, 25)}**."
 
     def subcommand_not_found(self, command: Command, string: str, /) -> str:
-        if isinstance(command, commands.Group) and len(command.all_commands) > 0:
+        if isinstance(command, commands.Group) and len(command.all_commands) != 0:
             return f"**{command.qualified_name}** does not have a sub-command named " \
                    f"**{utilities.truncate(string, 25)}**."
-        else:
-            return f"**{command.qualified_name}** does not have any sub-commands."
+        return f"**{command.qualified_name}** does not have any sub-commands."
 
     async def send_error_message(self, error: str, /) -> None:
-        assert self.context.bot.user is not None
         await self.context.reply(
             embed=utilities.embed(
                 colour=values.ERROR_COLOUR,

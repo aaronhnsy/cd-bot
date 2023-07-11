@@ -32,7 +32,7 @@ class HelpCommandPaginator(paginators.EmbedFieldsPaginator[custom.Context, HelpC
             embed=utilities.embed(
                 colour=values.THEME_COLOUR,
                 title=f"**{initial_category}**",
-                thumbnail=utilities.asset_url(ctx.bot.user.display_avatar)  # pyright: ignore - bot.user is not None
+                thumbnail=utilities.asset_url(ctx.bot.user.display_avatar)  # pyright: ignore
             )
         )
         # store the categories
