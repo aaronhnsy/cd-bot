@@ -1,41 +1,31 @@
 [general]
 environment = "PRODUCTION"
-prefix      = ""
 
 [discord]
-token               = ""
-client_id           = 00000
-client_secret       = ""
-guild_log_webhook   = ""
-error_log_webhook   = ""
-command_log_webhook = ""
+prefix        = "!"
+token         = "<token>"
+client_id     = 000000000000000000
+client_secret = "<secret>"
 
-[connections]
-postgres_dsn = "postgres://USER:PASSWORD@HOST:PORT/DB"
-redis_dsn    = "redis://PASSWORD@HOST:PORT/0"
+[discord.webhooks]
+guilds   = "<url>"
+commands = "<url>"
+errors   = "<url>"
 
-[[connections.discord_ext_lava_nodes]]
-host       = ""
-port       = 00000
-identifier = ""
-password   = ""
-provider   = "LAVALINK"
+[[discord.ext.lava.links]]
+host     = "<ip>"
+port     = 00000
+password = "<password>"
 
-[spotify]
-client_id     = ""
-client_secret = ""
+[connections.postgresql]
+dsn = "<dsn>"
 
-[lastfm]
-api_key    = ""
-api_secret = ""
+[connections.redis]
+dsn = "<dsn>"
 
-[tokens]
-uploader_token = ""
+[connections.spotify]
+client_id     = "<id>"
+client_secret = "<secret>"
 
-[dashboard]
-enabled            = true
-host               = "127.0.0.1"
-port               = 8000
-cookie_secret      = ""
-redirect_url       = "http://127.0.0.1:8000/discord/login"
-excluded_guild_ids = []
+[connections.uploader]
+token = "<token>"
