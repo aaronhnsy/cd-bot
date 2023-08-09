@@ -25,17 +25,17 @@ class UserData:
     id: int
 
     @classmethod
-    async def get(cls, bot: CD, id: int) -> Self:
+    async def get(cls, bot: CD, _id: int) -> Self:
         # return user data from the cache if possible
-        if id in bot.user_data_cache:
-            return bot.user_data_cache[id]
+        if _id in bot.user_data_cache:
+            return bot.user_data_cache[_id]
         # otherwise, fetch it from the database, creating a new entry if necessary
         data: asyncpg.Record = await bot.database.fetchrow(  # pyright: ignore - data is always a record
             "INSERT INTO users (id) VALUES ($1) ON CONFLICT (id) DO UPDATE set id = $1 RETURNING *",
-            id
+            _id
         )
         # convert the data into a user data object and cache it
         user_data = dacite.from_dict(cls, {**data}, config=utilities.DACITE_CONFIG)
-        bot.user_data_cache[id] = user_data
+        bot.user_data_cache[_id] = user_data
         # return the user data
         return user_data
