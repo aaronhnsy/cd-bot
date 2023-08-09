@@ -1,5 +1,6 @@
 # Standard Library
 import dataclasses
+from importlib import import_module
 
 # Libraries
 import discord
@@ -7,7 +8,6 @@ from discord.ext import commands, paginators
 
 # Project
 from cd import custom, utilities, values
-from cd.config import CONFIG
 
 # Local Folder
 from .paginator import HelpCommandPaginator
@@ -48,12 +48,13 @@ class HelpCommand(commands.HelpCommand):
 
     @staticmethod
     def _get_command_name(command: Command, /) -> str:
-        return f"{CONFIG.discord.prefix}{command.qualified_name} {command.signature}"
+
+        return f"{import_module('cd.config').CONFIG.discord.prefix}{command.qualified_name} {command.signature}"
 
     @staticmethod
     def _get_command_aliases(command: Command, /) -> list[str]:
         return [
-            f"{CONFIG.discord.prefix}{command.full_parent_name} {alias} {command.signature}"
+            f"{import_module('cd.config').CONFIG.discord.prefix}{command.full_parent_name} {alias} {command.signature}"
             for alias in command.aliases
         ]
 

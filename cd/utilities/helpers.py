@@ -5,9 +5,14 @@ from typing import Literal
 # Libraries
 import discord
 
+# Project
+from cd import custom
+
 
 __all__ = [
     "asset_url",
+    "codeblock",
+    "role_mention",
     "embed",
 ]
 
@@ -24,6 +29,26 @@ def asset_url(
             size=(size or 1024),
         ).url if asset else None
     )
+
+
+def codeblock(
+    content: str,
+    language: str | None = None
+) -> str:
+    return f"```{language or ''}\n" \
+           f"{content}\n" \
+           f"```"
+
+
+def role_mention(ctx: custom.Context, obj: discord.Role | int | str) -> str:
+    if isinstance(obj, discord.Role):
+        return obj.mention
+    elif isinstance(obj, int):
+        if ctx.guild and (role := ctx.guild.get_role(obj)):
+            return role.mention
+        return f"@deleted-role"
+    else:
+        return f"@{obj}"
 
 
 def embed(

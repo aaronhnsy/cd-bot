@@ -1,4 +1,5 @@
 # Standard Library
+import collections
 import logging
 
 # Libraries
@@ -8,9 +9,8 @@ from discord.ext import commands, lava
 from redis import asyncio as aioredis
 
 # Project
-from cd import objects, values
+from cd import custom, objects, values
 from cd.config import CONFIG
-from cd.modules import help
 from cd.types import Database, Lavalink, Redis
 
 
@@ -26,16 +26,28 @@ class CD(commands.AutoShardedBot):
             allowed_mentions=values.ALLOWED_MENTIONS,
             status=values.STATUS,
             activity=values.ACTIVITY,
-            help_command=help.HelpCommand(),
+            help_command=custom.HelpCommand(),
             command_prefix=self.__class__._get_prefix,  # type: ignore
         )
+        # connections
         self.database: Database = discord.utils.MISSING
         self.redis: Redis = discord.utils.MISSING
         self.lavalink: Lavalink = discord.utils.MISSING
-
+        # cache
         self.user_data_cache: dict[int, objects.UserData] = {}
         self.guild_data_cache: dict[int, objects.GuildData] = {}
         self.member_data_cache: dict[tuple[int, int], objects.MemberData] = {}
+        # stats
+        self.socket_stats: collections.Counter[str] = collections.Counter()
+        self.command_stats: dict[str, collections.Counter[str]] = {
+            "total":      collections.Counter(),
+            "successful": collections.Counter(),
+            "failed":     collections.Counter(),
+        }
+        # webhooks
+        self.guilds_webhook: discord.Webhook = discord.utils.MISSING
+        self.commands_webhook: discord.Webhook = discord.utils.MISSING
+        self.errors_webhook: discord.Webhook = discord.utils.MISSING
 
     async def _get_prefix(self, message: discord.Message) -> list[str]:
         if message.guild is not None:
@@ -97,6 +109,9 @@ class CD(commands.AutoShardedBot):
 
     async def _load_extensions(self) -> None:
         await self.load_extension("jishaku")
+        await self.load_extension("cd.modules.errors")
+        await self.load_extension("cd.modules.misc")
+        await self.load_extension("cd.modules.stats")
         await self.load_extension("cd.modules.voice")
 
     async def setup_hook(self) -> None:
