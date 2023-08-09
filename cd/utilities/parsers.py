@@ -1,6 +1,7 @@
 # Standard Library
 import datetime
 import re
+from typing import NewType
 
 # Libraries
 import dacite
@@ -8,12 +9,13 @@ import dacite
 # Project
 from cd import utilities
 from cd.enums import Environment
-from cd.types import Colour, FileSize
 
 
 __all__ = [
     "parse_time",
+    "Colour",
     "parse_colour",
+    "FileSize",
     "parse_file_size",
     "DACITE_CONFIG",
 ]
@@ -24,11 +26,11 @@ def parse_time(time: str) -> datetime.time:
         return datetime.time.fromisoformat(time)
     except ValueError:
         raise ValueError(
-            f"The value '{utilities.truncate(time, 25)}' is not a valid time. It must be in the format of "
-            f"'HH:MM:SS'."
+            f"The value '{utilities.truncate(time, 25)}' is not a valid time. It must be in the format of 'HH:MM:SS'."
         )
 
 
+Colour = NewType("Colour", str)
 _COLOUR_REGEX: re.Pattern[str] = re.compile(
     r"^#[0-9a-f]{6}$",
     re.IGNORECASE
@@ -38,12 +40,12 @@ _COLOUR_REGEX: re.Pattern[str] = re.compile(
 def parse_colour(colour: str) -> Colour:
     if _COLOUR_REGEX.fullmatch(colour) is None:
         raise ValueError(
-            f"The value '{utilities.truncate(colour, 25)}' is not a valid colour. It must be in the format of "
-            f"'#RRGGBB'."
+            f"The value '{utilities.truncate(colour, 25)}' is not a valid colour. It must be in the format of '#RRGGBB'."
         )
     return Colour(colour)
 
 
+FileSize = NewType("FileSize", int)
 _UNITS_TO_BYTES: dict[str, int] = {
     "b":  1,
     "kb": 2 ** 10,

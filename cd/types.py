@@ -1,5 +1,5 @@
 # Standard Library
-from typing import TYPE_CHECKING, Any, NewType, TypeAlias
+from typing import TYPE_CHECKING, Any, TypeAlias
 
 
 if TYPE_CHECKING:
@@ -13,8 +13,6 @@ __all__ = [
     "Database",
     "Redis",
     "Lavalink",
-    "Colour",
-    "FileSize",
 ]
 
 
@@ -26,7 +24,3 @@ Redis: TypeAlias = "aioredis.Redis[Any]"
 
 # lavalink
 Lavalink: TypeAlias = "lava.Link[Any]"
-
-# custom
-Colour = NewType("Colour", str)
-FileSize = NewType("FileSize", int)

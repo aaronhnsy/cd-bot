@@ -13,8 +13,7 @@ import dacite
 
 # Project
 from cd.enums import Environment
-from cd.types import FileSize
-from cd.utilities import DACITE_CONFIG, parse_file_size
+from cd.utilities import DACITE_CONFIG, FileSize, parse_file_size
 
 
 __all__ = ["CONFIG"]
