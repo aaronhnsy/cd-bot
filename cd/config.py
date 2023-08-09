@@ -149,7 +149,7 @@ def load_config(file: io.BufferedReader) -> Config:
 
 _argument_parser = argparse.ArgumentParser(
     prog="launcher.py",
-    description="CLI options for running uploader's API.",
+    description="CLI options for running cd-bot",
 )
 _argument_parser.add_argument(
     "-c", "--config",
