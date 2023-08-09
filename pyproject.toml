@@ -20,10 +20,10 @@ discord-py        = { version = "~2.3.0", extras = ["speed", "voice"] }
 isort             = { version = "~5.12.0" }
 humanize          = { version = "~4.7.0"  }
 jishaku           = { version = "~2.5.0", extras = ["procinfo"] }
-mystbin-py        = { version = "~5.1.0"  }
+mystbin-py        = { version = "~6.0.0"  }
 orjson            = { version = "~3.9.0"  }
 pendulum          = { version = "~2.1.0"  }
-rapidfuzz         = { version = "~3.1.0"  }
+rapidfuzz         = { version = "~3.2.0"  }
 redis             = { version = "~4.6.0", extras = ["hiredis"] }
 toml              = { version = "~0.10.0" }
 typing-extensions = { version = "~4.7.0"  }
@@ -36,9 +36,7 @@ include                = ["cd", "launcher.py"]
 pythonVersion          = "3.11"
 typeCheckingMode       = "strict"
 useLibraryCodeForTypes = true
-reportPrivateUsage      = false
 reportUnknownMemberType = false
-reportImportCycles      = false
 
 [tool.isort]
 line_length                = 120
