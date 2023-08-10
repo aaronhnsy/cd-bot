@@ -46,8 +46,10 @@ def setup() -> None:
 
     # set up handlers for each logger
     for field in dataclasses.fields(CONFIG.logging.levels):
-        logger = logging.getLogger(field.name)
+        # set basic logger config
+        logger = logging.getLogger(field.name.replace("_", "."))
         logger.setLevel(getattr(CONFIG.logging.levels, field.name, logging.INFO))
+        logger.propagate = False
         # file handler
         if CONFIG.logging.file_handler.enabled:
             file = CONFIG.logging.file_handler.path / f"{field.name}.log"
