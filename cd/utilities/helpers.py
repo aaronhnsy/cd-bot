@@ -1,5 +1,7 @@
 # Standard Library
 import datetime
+import re
+import traceback
 from typing import Literal
 
 # Libraries
@@ -10,11 +12,19 @@ from cd import custom
 
 
 __all__ = [
+    "format_traceback",
     "asset_url",
-    "codeblock",
     "role_mention",
     "embed",
 ]
+
+
+def format_traceback(exception: Exception) -> str:
+    return re.sub(
+        r'File ".*((?:/site-packages/|/cd-bot/|/python[.0-9]+/).*)"',
+        r'File "\1"',
+        "".join(traceback.format_exception(exception))
+    )
 
 
 def asset_url(
@@ -29,15 +39,6 @@ def asset_url(
             size=(size or 1024),
         ).url if asset else None
     )
-
-
-def codeblock(
-    content: str,
-    language: str | None = None
-) -> str:
-    return f"```{language or ''}\n" \
-           f"{content}\n" \
-           f"```"
 
 
 def role_mention(ctx: custom.Context, obj: discord.Role | int | str) -> str:

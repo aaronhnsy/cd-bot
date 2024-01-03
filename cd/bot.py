@@ -1,21 +1,26 @@
 # Standard Library
 import collections
 import logging
+from typing import Any, TypeAlias
 
 # Libraries
+import aiohttp
 import asyncpg
 import discord
 from discord.ext import commands, lava
 from redis import asyncio as aioredis
 
 # Project
-from cd import custom, objects, values
+from cd import custom, objects, values, webhooks
 from cd.config import CONFIG
-from cd.types import Database, Lavalink, Redis
 
 
 __all__ = ["CD"]
 __log__ = logging.getLogger("cd.bot")
+
+Database: TypeAlias = "asyncpg.Pool[asyncpg.Record]"
+Redis: TypeAlias = "aioredis.Redis[Any]"
+Lavalink: TypeAlias = lava.Link[Any]
 
 
 class CD(commands.AutoShardedBot):
@@ -30,6 +35,8 @@ class CD(commands.AutoShardedBot):
             command_prefix=self.__class__._get_prefix,  # type: ignore
         )
         # connections
+        self.session: aiohttp.ClientSession = discord.utils.MISSING
+        self.webhooks: webhooks.Webhooks = discord.utils.MISSING
         self.database: Database = discord.utils.MISSING
         self.redis: Redis = discord.utils.MISSING
         self.lavalink: Lavalink = discord.utils.MISSING
@@ -44,10 +51,6 @@ class CD(commands.AutoShardedBot):
             "successful": collections.Counter(),
             "failed":     collections.Counter(),
         }
-        # webhooks
-        self.guilds_webhook: discord.Webhook = discord.utils.MISSING
-        self.commands_webhook: discord.Webhook = discord.utils.MISSING
-        self.errors_webhook: discord.Webhook = discord.utils.MISSING
 
     async def _get_prefix(self, message: discord.Message) -> list[str]:
         if message.guild is not None:
@@ -115,7 +118,20 @@ class CD(commands.AutoShardedBot):
         await self.load_extension("cd.modules.voice")
 
     async def setup_hook(self) -> None:
+        self.session = aiohttp.ClientSession()
+        self.webhooks = webhooks.Webhooks(self)
         await self._connect_postgresql()
         await self._connect_redis()
         await self._connect_lavalink()
         await self._load_extensions()
+
+    async def close(self) -> None:
+        await self.session.close()
+        self.webhooks.loop.stop()
+        if self.database:
+            await self.database.close()
+        if self.redis:
+            await self.redis.close()
+        if self.lavalink:
+            await self.lavalink._reset_state()
+        await super().close()

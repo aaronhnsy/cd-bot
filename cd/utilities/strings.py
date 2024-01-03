@@ -6,6 +6,7 @@ __all__ = [
     "pretty_join",
     "plural",
     "truncate",
+    "codeblock",
 ]
 
 
@@ -24,3 +25,10 @@ def plural(word: str, count: int) -> str:
 def truncate(string: str, length: int) -> str:
     """Truncates a string to a given length, adding an ellipsis if it was truncated."""
     return f"{string[:length]}..." if len(string) > length else string
+
+
+def codeblock(content: str, language: str | None = None) -> str:
+    """Wraps a string within a codeblock with the given language."""
+    return f"```{language or ''}\n" \
+           f"{content}\n" \
+           f"```"

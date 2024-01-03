@@ -13,6 +13,9 @@ if TYPE_CHECKING:
     from cd.bot import CD
 
 
+__all__ = ["setup"]
+
+
 async def setup(bot: CD) -> None:
     await bot.add_cog(ErrorsCommands(bot))
     await bot.add_cog(ErrorsEvents(bot))

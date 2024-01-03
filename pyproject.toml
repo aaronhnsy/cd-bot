@@ -6,37 +6,39 @@ build-backend = "poetry.core.masonry.api"
 name        = "cd-bot"
 version     = "1.0.0"
 description = "A general purpose music bot."
-authors     = ["Aaron Hennessey <axelancerr@gmail.com>"]
+authors     = ["Aaron Hennessey <aaronhnsy@gmail.com>"]
 
 [tool.poetry.dependencies]
-python            = "~3.11.0"
-aiohttp           = { version = "~3.8.0"  }
+python            = "~3.12.0"
+aiohttp           = { version = "~3.9.0"  }
 async-timeout     = { version = "~4.0.0"  }
-asyncpg           = { version = "~0.28.0" }
-asyncpg-stubs     = { version = "~0.28.0" }
+asyncpg           = { version = "~0.29.0" }
+asyncpg-stubs     = { version = "~0.29.0" }
 colorama          = { version = "~0.4.0"  }
 dacite            = { version = "~1.8.0"  }
 discord-py        = { version = "~2.3.0", extras = ["speed", "voice"] }
-isort             = { version = "~5.12.0" }
-humanize          = { version = "~4.7.0"  }
+isort             = { version = "~5.13.0" }
+humanize          = { version = "~4.9.0"  }
 jishaku           = { version = "~2.5.0", extras = ["procinfo"] }
 mystbin-py        = { version = "~6.0.0"  }
 orjson            = { version = "~3.9.0"  }
-pendulum          = { version = "~2.1.0"  }
-rapidfuzz         = { version = "~3.2.0"  }
-redis             = { version = "~4.6.0", extras = ["hiredis"] }
+pendulum          = { version = "~3.0.0"  }
+rapidfuzz         = { version = "~3.6.0"  }
+redis             = { version = "~5.0.0", extras = ["hiredis"] }
 toml              = { version = "~0.10.0" }
-typing-extensions = { version = "~4.7.0"  }
+typing-extensions = { version = "~4.9.0"  }
 
 discord-ext-lava       = { path = "../discord-ext-lava" }
 discord-ext-paginators = { path = "../discord-ext-paginators" }
 
 [tool.pyright]
 include                = ["cd", "launcher.py"]
-pythonVersion          = "3.11"
+pythonVersion          = "3.12"
 typeCheckingMode       = "strict"
 useLibraryCodeForTypes = true
-reportUnknownMemberType = false
+reportPrivateUsage       = false
+reportPrivateImportUsage = false
+reportUnknownMemberType  = false
 
 [tool.isort]
 line_length                = 120

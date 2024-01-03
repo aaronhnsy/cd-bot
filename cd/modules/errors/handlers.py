@@ -1,7 +1,6 @@
 # Standard Library
 import asyncio
 import dataclasses
-import traceback
 from collections.abc import Callable
 from typing import TypeAlias, TypeVar
 
@@ -40,7 +39,7 @@ async def original(
     if CONFIG.general.environment == Environment.DEVELOPMENT:
         await ctx.reply(
             embed=embed,
-            content=utilities.codeblock("".join(traceback.format_exception(error)), "py")
+            content=utilities.codeblock(utilities.format_traceback(error), "py")
         )
     else:
         await ctx.reply(

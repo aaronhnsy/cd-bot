@@ -23,7 +23,7 @@ class HelpCommandPaginator(paginators.EmbedFieldsPaginator[custom.Context, HelpC
         # use the first category if no initial category is selected
         if initial_category is None:
             initial_category = [*categories.keys()][0]
-        # initialise the paginator
+        # initialize the paginator
         super().__init__(
             ctx=ctx,
             fields=categories[initial_category].fields,
