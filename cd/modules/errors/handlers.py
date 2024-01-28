@@ -2,7 +2,7 @@
 import asyncio
 import dataclasses
 from collections.abc import Callable
-from typing import TypeAlias, TypeVar
+from typing import TypeVar
 
 # Libraries
 import discord
@@ -154,7 +154,7 @@ def bad_argument(
     return Response(description=f"Your input for one of this command's arguments is not valid.")
 
 
-NotFoundError: TypeAlias = (
+type NotFoundError = (
     commands.MessageNotFound | commands.MemberNotFound | commands.GuildNotFound | commands.UserNotFound |
     commands.ChannelNotFound | commands.RoleNotFound | commands.EmojiNotFound | commands.GuildStickerNotFound |
     commands.ScheduledEventNotFound | commands.ThreadNotFound | commands.BadColourArgument |

@@ -1,7 +1,7 @@
 # Standard Library
 import collections
 import logging
-from typing import Any, TypeAlias
+from typing import Any
 
 # Libraries
 import aiohttp
@@ -18,9 +18,9 @@ from cd.config import CONFIG
 __all__ = ["CD"]
 __log__ = logging.getLogger("cd.bot")
 
-Database: TypeAlias = "asyncpg.Pool[asyncpg.Record]"
-Redis: TypeAlias = "aioredis.Redis[Any]"
-Lavalink: TypeAlias = lava.Link[Any]
+type Database = "asyncpg.Pool[asyncpg.Record]"
+type Redis = "aioredis.Redis"
+type Lavalink = lava.Link[Any]
 
 
 class CD(commands.AutoShardedBot):

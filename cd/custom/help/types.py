@@ -1,6 +1,6 @@
 # Standard Library
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeAlias
+from typing import TYPE_CHECKING, Any
 
 # Libraries
 from discord.ext import commands
@@ -24,11 +24,11 @@ __all__ = [
 ]
 
 
-Cog: TypeAlias = custom.Cog
+type Cog = custom.Cog
 
-SingleCommand: TypeAlias = commands.Command[Cog, Any, Any] | commands.Command[None, Any, Any]
-GroupCommand: TypeAlias = commands.Group[Cog, Any, Any] | commands.Group[None, Any, Any]
-Command: TypeAlias = SingleCommand | GroupCommand
-BotCommandMapping: TypeAlias = Mapping[Cog | None, list[Command]]
+type SingleCommand = commands.Command[Cog, Any, Any] | commands.Command[None, Any, Any]
+type GroupCommand = commands.Group[Cog, Any, Any] | commands.Group[None, Any, Any]
+type Command = SingleCommand | GroupCommand
+type BotCommandMapping = Mapping[Cog | None, list[Command]]
 
-HelpCommandCategories: TypeAlias = dict[str, "HelpCommandCategory"]
+type HelpCommandCategories = dict[str, HelpCommandCategory]

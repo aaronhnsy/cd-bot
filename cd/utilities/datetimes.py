@@ -1,6 +1,6 @@
 # Standard Library
 import datetime as dt
-from typing import Literal, TypeAlias
+from typing import Literal
 
 # Libraries
 import pendulum
@@ -15,27 +15,20 @@ __all__ = [
     "format_seconds",
 ]
 
-PythonDateTime: TypeAlias = dt.datetime
 
-PendulumDateTime: TypeAlias = pendulum.DateTime
-PendulumDate: TypeAlias = pendulum.Date
-PendulumTime: TypeAlias = pendulum.Time
-PendulumDateAndOrTime: TypeAlias = PendulumDateTime | PendulumDate | PendulumTime
-
-
-def convert_datetime(datetime: PythonDateTime) -> PendulumDateTime:
+def convert_datetime(datetime: dt.datetime) -> pendulum.DateTime:
     datetime = datetime.replace(tzinfo=None)
     return pendulum.instance(datetime)
 
 
 def format_date_and_or_time(
-    date_and_or_time: PythonDateTime | PendulumDateAndOrTime,
+    date_and_or_time: dt.datetime | pendulum.Date | pendulum.Time | pendulum.DateTime,
     /, *,
     format: enums.DateTimeFormat,
     timezone_format: Literal["Z", "ZZ", "z", "zz"] | None = None
 ) -> str:
     fmt = format.value + (f" ({timezone_format})" if timezone_format else "")
-    if isinstance(date_and_or_time, PendulumDateAndOrTime):
+    if isinstance(date_and_or_time, pendulum.Date | pendulum.Time | pendulum.DateTime):
         return date_and_or_time.format(fmt)
     return convert_datetime(date_and_or_time).format(fmt)
 

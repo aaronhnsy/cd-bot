@@ -2,7 +2,7 @@ from __future__ import annotations
 
 # Standard Library
 import dataclasses
-from typing import TYPE_CHECKING, Self
+from typing import TYPE_CHECKING
 
 # Libraries
 import asyncpg
@@ -26,7 +26,7 @@ class GuildData:
     prefix: str | None
 
     @classmethod
-    async def get(cls, bot: CD, _id: int) -> Self:
+    async def get(cls, bot: CD, _id: int) -> GuildData:
         # return guild data from the cache if possible
         if _id in bot.guild_data_cache:
             return bot.guild_data_cache[_id]

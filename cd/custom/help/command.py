@@ -32,7 +32,7 @@ class HelpCommand(commands.HelpCommand):
 
     def __init__(self) -> None:
         super().__init__(command_attrs={"help": "Shows the help page for a category or command."})
-        self.context: custom.Context = discord.utils.MISSING
+        self.context: custom.Context = discord.utils.MISSING  # pyright: ignore
 
     # utility methods
 
@@ -48,7 +48,6 @@ class HelpCommand(commands.HelpCommand):
 
     @staticmethod
     def _get_command_name(command: Command, /) -> str:
-
         return f"{import_module('cd.config').CONFIG.discord.prefix}{command.qualified_name} {command.signature}"
 
     @staticmethod
