@@ -3,7 +3,7 @@ from discord.ext import commands
 
 # Project
 from cd import custom, enums, utilities, values
-from cd.modules.errors.handlers import HANDLERS, command_not_found
+from cd.modules.errors.handlers import HANDLERS, command_not_found, original
 
 
 __all__ = ["ErrorsEvents"]
@@ -54,10 +54,8 @@ class ErrorsEvents(custom.Cog):
                 )
             )
         elif isinstance(error, commands.ConversionError | commands.CommandInvokeError | commands.HybridCommandError):
-            pass
-            # await original(error.original, ctx)
+            await original(error.original, ctx)
         elif isinstance(error, commands.CommandNotFound):
             await command_not_found(error, ctx)
         else:
-            pass
-            # await original(error, ctx)
+            await original(error, ctx)

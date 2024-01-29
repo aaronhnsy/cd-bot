@@ -36,7 +36,7 @@ class CD(commands.AutoShardedBot):
         )
         # connections
         self.session: aiohttp.ClientSession = discord.utils.MISSING
-        self.webhooks: webhooks.Webhooks = discord.utils.MISSING
+        self.webhooks: webhooks.WebhookManager = discord.utils.MISSING
         self.database: Database = discord.utils.MISSING
         self.redis: Redis = discord.utils.MISSING
         self.lavalink: Lavalink = discord.utils.MISSING
@@ -78,7 +78,7 @@ class CD(commands.AutoShardedBot):
     async def _connect_redis(self) -> None:
         try:
             __log__.debug("Attempting redis connection.")
-            redis: Redis = await aioredis.Redis.from_url(  # pyright: ignore
+            redis: Redis = await aioredis.Redis.from_url(
                 CONFIG.connections.redis.dsn,
                 decode_responses=True, retry_on_timeout=True
             )
@@ -119,7 +119,7 @@ class CD(commands.AutoShardedBot):
 
     async def setup_hook(self) -> None:
         self.session = aiohttp.ClientSession()
-        self.webhooks = webhooks.Webhooks(self)
+        self.webhooks = webhooks.WebhookManager(self)
         await self._connect_postgresql()
         await self._connect_redis()
         await self._connect_lavalink()

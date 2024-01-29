@@ -17,10 +17,11 @@ if TYPE_CHECKING:
     # Project
     from cd.bot import CD
 
-__all__ = ["Webhooks"]
+
+__all__ = ["WebhookManager"]
 
 
-class Webhooks:
+class WebhookManager:
 
     def __init__(self, bot: CD) -> None:
         self._bot: CD = bot
@@ -29,7 +30,7 @@ class Webhooks:
         self.loop.start()
 
     def __repr__(self) -> str:
-        return f"<cd.webhooks.Manager: queues={self._queues}>"
+        return f"<cd.WebhookManager: queues={self._queues}>"
 
     def __getitem__(self, item: str) -> discord.Webhook:
         return self._webhooks[item]
