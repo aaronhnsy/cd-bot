@@ -3,11 +3,11 @@ import asyncio
 import dataclasses
 from collections.abc import Callable
 from typing import TypeVar
+from typing_extensions import Self
 
 # Libraries
 import discord
 from discord.ext import commands
-from typing_extensions import Self
 
 # Project
 from cd import custom, utilities, values
