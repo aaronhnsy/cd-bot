@@ -1,18 +1,14 @@
 from __future__ import annotations
 
-# Standard Library
 from typing import TYPE_CHECKING, Self, TypedDict
 
-# Libraries
 import discord
 from discord.ext import paginators
 
-# Project
 from cd import values
 
 
 if TYPE_CHECKING:
-    # Local Folder
     from .paginator import HelpCommandPaginator
 
 

@@ -1,12 +1,9 @@
-# Standard Library
 import datetime
 import re
 from typing import NewType
 
-# Libraries
 import dacite
 
-# Project
 from cd import utilities
 from cd.enums import Environment
 

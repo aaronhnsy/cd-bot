@@ -5,10 +5,10 @@ from discord.ext import commands
 from cd import custom
 
 
-__all__ = ["Effects"]
+__all__ = ["VoiceEffects"]
 
 
-class Effects(custom.Cog):
+class VoiceEffects(custom.Cog):
 
     @commands.command(name="effect")
     async def play(self, ctx: custom.Context) -> None:

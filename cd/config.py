@@ -1,4 +1,3 @@
-# Standard Library
 import argparse
 import dataclasses
 import io
@@ -7,11 +6,9 @@ import sys
 import tomllib
 from typing import Literal
 
-# Libraries
 import colorama
 import dacite
 
-# Project
 from cd.enums import Environment
 from cd.utilities import DACITE_CONFIG, FileSize, parse_file_size
 

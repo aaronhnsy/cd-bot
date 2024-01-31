@@ -1,11 +1,8 @@
-# Standard Library
 from collections.abc import Callable, Coroutine
 from typing import Literal
 
-# Libraries
 from discord.ext import commands
 
-# Project
 from cd import custom, exceptions
 
 

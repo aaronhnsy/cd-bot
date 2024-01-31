@@ -1,20 +1,16 @@
 from __future__ import annotations
 
-# Standard Library
 import collections
 import dataclasses
 from typing import TYPE_CHECKING, overload
 
-# Libraries
 import discord
 from discord.ext import tasks
 
-# Project
 from cd.config import CONFIG
 
 
 if TYPE_CHECKING:
-    # Project
     from cd.bot import CD
 
 

@@ -1,10 +1,7 @@
-# Libraries
 from discord.ext import paginators
 
-# Project
 from cd import custom, utilities, values
 
-# Local Folder
 from .controller import HelpCommandController
 from .types import HelpCommandCategories
 

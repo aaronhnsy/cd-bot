@@ -1,16 +1,12 @@
-# Standard Library
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any
 
-# Libraries
 from discord.ext import commands
 
-# Project
 from cd import custom
 
 
 if TYPE_CHECKING:
-    # Local Folder
     from .command import HelpCommandCategory
 
 

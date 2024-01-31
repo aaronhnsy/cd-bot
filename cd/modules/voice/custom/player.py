@@ -1,14 +1,16 @@
-# Standard Library
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
-# Libraries
 from discord.ext import lava
 
 
 if TYPE_CHECKING:
-    # Project
-    from cd.bot import CD
+    from cd.bot import CD  # type: ignore
+
+
+__all__ = ["Player"]
     
 
-class Player(lava.Player[CD]):
+class Player(lava.Player["CD"]):
     pass

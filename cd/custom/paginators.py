@@ -1,7 +1,5 @@
-# Libraries
 from discord.ext import paginators
 
-# Project
 from cd import values
 
 

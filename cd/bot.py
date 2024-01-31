@@ -1,16 +1,13 @@
-# Standard Library
 import collections
 import logging
 from typing import Any
 
-# Libraries
 import aiohttp
 import asyncpg
 import discord
 from discord.ext import commands, lava
 from redis import asyncio as aioredis
 
-# Project
 from cd import custom, objects, values, webhooks
 from cd.config import CONFIG
 

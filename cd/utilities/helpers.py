@@ -1,13 +1,10 @@
-# Standard Library
 import datetime
 import re
 import traceback
 from typing import Literal
 
-# Libraries
 import discord
 
-# Project
 from cd import custom
 
 

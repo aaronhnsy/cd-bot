@@ -1,15 +1,11 @@
-# Standard Library
 import dataclasses
 from importlib import import_module
 
-# Libraries
 import discord
 from discord.ext import commands, paginators
 
-# Project
 from cd import custom, utilities, values
 
-# Local Folder
 from .paginator import HelpCommandPaginator
 from .types import BotCommandMapping, Cog, Command, GroupCommand, HelpCommandCategories, SingleCommand
 

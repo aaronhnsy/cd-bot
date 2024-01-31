@@ -5,10 +5,10 @@ from discord.ext import commands
 from cd import custom
 
 
-__all__ = ["Player"]
+__all__ = ["VoicePlayer"]
 
 
-class Player(custom.Cog):
+class VoicePlayer(custom.Cog):
 
     @commands.command(name="play", aliases=["p", "pl", "ply"])
     async def play(self, ctx: custom.Context) -> None:

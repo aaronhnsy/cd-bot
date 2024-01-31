@@ -1,15 +1,12 @@
-# Standard Library
 import asyncio
 import dataclasses
 from collections.abc import Callable
 from typing import TypeVar
 from typing_extensions import Self
 
-# Libraries
 import discord
 from discord.ext import commands
 
-# Project
 from cd import custom, utilities, values
 from cd.config import CONFIG
 from cd.enums import Environment
