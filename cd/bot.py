@@ -1,23 +1,26 @@
+from __future__ import annotations
+
 import collections
 import logging
-from typing import Any
 
 import aiohttp
 import asyncpg
 import discord
 from discord.ext import commands, lava
+from discord.utils import MISSING
 from redis import asyncio as aioredis
 
 from cd import custom, objects, values, webhooks
 from cd.config import CONFIG
+from cd.modules.voice.custom import Player
 
 
 __all__ = ["CD"]
 __log__ = logging.getLogger("cd.bot")
 
-type Database = "asyncpg.Pool[asyncpg.Record]"
-type Redis = "aioredis.Redis"
-type Lavalink = lava.Link[Any]
+type Database = asyncpg.Pool[asyncpg.Record]
+type Redis = aioredis.Redis
+type Lavalink = lava.Link[Player]
 
 
 class CD(commands.AutoShardedBot):
@@ -48,6 +51,14 @@ class CD(commands.AutoShardedBot):
             "successful": collections.Counter(),
             "failed":     collections.Counter(),
         }
+
+    async def get_context(
+        self,
+        origin: discord.Message | discord.Interaction,
+        /, *,
+        cls: type[commands.Context[CD]] = MISSING,
+    ) -> custom.Context:
+        return await super().get_context(origin, cls=custom.Context)
 
     async def _get_prefix(self, message: discord.Message) -> list[str]:
         if message.guild is not None:

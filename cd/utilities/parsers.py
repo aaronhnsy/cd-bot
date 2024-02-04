@@ -23,7 +23,8 @@ def parse_time(time: str) -> datetime.time:
         return datetime.time.fromisoformat(time)
     except ValueError:
         raise ValueError(
-            f"The value '{utilities.truncate(time, 25)}' is not a valid time. It must be in the format of 'HH:MM:SS'."
+            f"The value '{utilities.truncate(time, 25)}' is not a valid time. It must be in the "
+            f"format of 'HH:MM:SS'."
         )
 
 
@@ -37,7 +38,8 @@ _COLOUR_REGEX: re.Pattern[str] = re.compile(
 def parse_colour(colour: str) -> Colour:
     if _COLOUR_REGEX.fullmatch(colour) is None:
         raise ValueError(
-            f"The value '{utilities.truncate(colour, 25)}' is not a valid colour. It must be in the format of '#RRGGBB'."
+            f"The value '{utilities.truncate(colour, 25)}' is not a valid colour. It must be in the "
+            f"format of '#RRGGBB'."
         )
     return Colour(colour)
 
