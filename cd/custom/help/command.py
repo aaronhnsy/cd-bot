@@ -1,4 +1,3 @@
-import dataclasses
 from importlib import import_module
 
 import discord
@@ -7,21 +6,11 @@ from discord.ext import commands, paginators
 from cd import custom, utilities, values
 
 from .paginator import HelpCommandPaginator
-from .types import BotCommandMapping, Cog, Command, GroupCommand, HelpCommandCategories, SingleCommand
+from .types import BotCommandMapping, Command, GroupCommand, HelpCommandCategories, HelpCommandCategory
+from .types import SingleCommand
 
 
-__all__ = [
-    "HelpCommand",
-    "HelpCommandCategory",
-]
-
-
-@dataclasses.dataclass
-class HelpCommandCategory:
-    name: str
-    description: str
-    emoji: str
-    fields: list[tuple[str, str, bool]]
+__all__ = ["HelpCommand"]
 
 
 class HelpCommand(commands.HelpCommand):
@@ -35,9 +24,9 @@ class HelpCommand(commands.HelpCommand):
     def _filter_commands(self, _commands: list[Command], /) -> list[Command]:
         return [*filter(
             lambda command: (
-                (self.context.author.id in values.OWNER_IDS)
-                or not (command.hidden)
-                and not (command.root_parent and command.root_parent.hidden)
+                ((self.context.author.id in values.OWNER_IDS) is True)
+                or (command.hidden is False)
+                and ((command.root_parent and command.root_parent.hidden) is False)
             ),
             _commands
         )]
@@ -85,7 +74,7 @@ class HelpCommand(commands.HelpCommand):
             categories=self._get_categories()
         ).start()
 
-    async def send_cog_help(self, cog: Cog, /) -> None:  # pyright: ignore
+    async def send_cog_help(self, cog: custom.Cog, /) -> None:  # pyright: ignore
         await HelpCommandPaginator(
             ctx=self.context,
             categories=self._get_categories(),

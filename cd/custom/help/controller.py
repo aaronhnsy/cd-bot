@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Self, TypedDict
+from typing import TYPE_CHECKING, Self
 
 import discord
 from discord.ext import paginators
@@ -10,17 +10,18 @@ from cd import values
 
 if TYPE_CHECKING:
     from .paginator import HelpCommandPaginator
+    from .types import HelpCommandControllerItems
 
 
 __all__ = ["HelpCommandController"]
 
 
-class HelpCommandSelect(discord.ui.Select["HelpCommandController"]):
+class HelpCommandControllerSelect(discord.ui.Select["HelpCommandController"]):
 
     async def callback(self, interaction: discord.Interaction) -> None:
         # noinspection PyUnresolvedReferences
         await interaction.response.defer()
-        # set the paginators pages to the selected category
+        # set the paginator pages to the selected category
         assert self.view is not None
         fields = self.view.paginator.categories[self.values[0]].fields
         fields_per_page = self.view.paginator.items_per_page
@@ -30,28 +31,18 @@ class HelpCommandSelect(discord.ui.Select["HelpCommandController"]):
         ]
         # update the paginator embed title
         self.view.paginator.embeds[0].title = f"**{self.values[0]}**"
-        # add/remove the controllers items based on the number of new pages
+        # add/remove the controller items based on the number of new pages
         self.view.set_item_visibilities()
         # go back to the first page
         await self.view.paginator.change_page(1)
-
-
-class PaginatorControllerItems(TypedDict):
-    select: HelpCommandSelect
-    first: paginators.FirstPageButton[HelpCommandController]
-    previous: paginators.PreviousPageButton[HelpCommandController]
-    label: paginators.LabelButton[HelpCommandController]
-    next: paginators.NextPageButton[HelpCommandController]
-    last: paginators.LastPageButton[HelpCommandController]
-    stop: paginators.StopButton[HelpCommandController]
 
 
 class HelpCommandController(paginators.BaseController["HelpCommandPaginator"]):
 
     def __init__(self, paginator: HelpCommandPaginator) -> None:
         super().__init__(paginator)
-        self.items: PaginatorControllerItems = {
-            "select":   HelpCommandSelect(
+        self.items: HelpCommandControllerItems = {
+            "select":   HelpCommandControllerSelect(
                 placeholder="Select a category:",
                 options=[
                     discord.SelectOption(
