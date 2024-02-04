@@ -10,7 +10,6 @@ from cd import utilities
 
 
 if TYPE_CHECKING:
-    # Project
     from cd.bot import CD
 
 

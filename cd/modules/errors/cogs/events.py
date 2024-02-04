@@ -1,7 +1,5 @@
-# Libraries
 from discord.ext import commands
 
-# Project
 from cd import custom, enums, utilities, values
 from cd.modules.errors.handlers import HANDLERS, command_not_found, original
 

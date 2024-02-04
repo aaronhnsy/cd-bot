@@ -1,8 +1,7 @@
-# Libraries
 from discord.ext import commands
 
-# Project
 from cd import custom
+
 from ..custom import Player
 
 

@@ -1,7 +1,5 @@
-# Libraries
 import discord
 
-# Project
 from cd import custom
 
 
