@@ -39,16 +39,7 @@ async def original(
             content=utilities.codeblock(utilities.format_traceback(error), "py")
         )
     else:
-        await ctx.reply(
-            embed=embed,
-            view=discord.ui.View().add_item(
-                discord.ui.Button(
-                    style=discord.ButtonStyle.link,
-                    label="Support Server",
-                    url=values.SUPPORT_SERVER_URL
-                )
-            )
-        )
+        await ctx.reply(embed=embed)
 
 
 async def command_not_found(
@@ -140,7 +131,7 @@ def bad_literal_argument(
 ) -> Response:
     return Response(
         description=f"Your input for the **{error.param.name}** argument must match one of the following:\n"
-                    f"{values.NL.join(f'- {value}' for value in error.literals)}"
+                    f"{"\n".join(f'- {value}' for value in error.literals)}"
     )
 
 
@@ -349,8 +340,8 @@ def missing_any_role(
 ) -> Response:
     roles = [utilities.role_mention(ctx, role) for role in error.missing_roles]
     descriptions = {
-        commands.MissingAnyRole:    f"You need one of the following roles to use this command:\n{values.NL.join(roles)}",
-        commands.BotMissingAnyRole: f"I need one of the following roles to use this command:\n{values.NL.join(roles)}",
+        commands.MissingAnyRole:    f"You need one of the following roles to use this command:\n{"\n".join(roles)}",
+        commands.BotMissingAnyRole: f"I need one of the following roles to use this command:\n{"\n".join(roles)}",
     }
     return Response(description=descriptions[type(error)])
 
