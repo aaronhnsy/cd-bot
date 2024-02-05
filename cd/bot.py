@@ -36,7 +36,7 @@ class CD(commands.AutoShardedBot):
         )
         # connections
         self.session: aiohttp.ClientSession = discord.utils.MISSING
-        self.webhooks: webhooks.WebhookManager = discord.utils.MISSING
+        self.webhooks: webhooks.Webhooks = discord.utils.MISSING
         self.database: Database = discord.utils.MISSING
         self.redis: Redis = discord.utils.MISSING
         self.lavalink: Lavalink = discord.utils.MISSING
@@ -127,7 +127,7 @@ class CD(commands.AutoShardedBot):
 
     async def setup_hook(self) -> None:
         self.session = aiohttp.ClientSession()
-        self.webhooks = webhooks.WebhookManager(self)
+        self.webhooks = webhooks.Webhooks(self)
         await self._connect_postgresql()
         await self._connect_redis()
         await self._connect_lavalink()
@@ -135,7 +135,7 @@ class CD(commands.AutoShardedBot):
 
     async def close(self) -> None:
         await self.session.close()
-        self.webhooks.loop.stop()
+        self.webhooks.cleanup()
         if self.database:
             await self.database.close()
         if self.redis:
