@@ -1,7 +1,7 @@
 import datetime
 import re
 import traceback
-from typing import Literal
+from typing import Literal, NotRequired, TypedDict, Unpack
 
 import discord
 
@@ -12,6 +12,7 @@ __all__ = [
     "format_traceback",
     "asset_url",
     "role_mention",
+    "EmbedParameters",
     "embed",
 ]
 
@@ -49,42 +50,35 @@ def role_mention(ctx: custom.Context, obj: discord.Role | int | str) -> str:
         return f"@{obj}"
 
 
-def embed(
-    *,
-    # base
-    colour: discord.Colour | None = None,
-    title: str | None = None,
-    url: str | None = None,
-    description: str | None = None,
-    timestamp: datetime.datetime | None = None,
-    # author
-    author: str | None = None,
-    author_url: str | None = None,
-    author_icon: str | None = None,
-    # footer
-    footer: str | None = None,
-    footer_icon: str | None = None,
-    # images
-    image: str | None = None,
-    thumbnail: str | None = None,
-) -> discord.Embed:
-    if (author_icon or author_url) and not author:
-        raise ValueError("'author_icon' and 'author_url' cannot be specified without 'author'.")
-    if footer_icon and not footer:
-        raise ValueError("'footer_icon' cannot be specified without 'footer'.")
+class EmbedParameters(TypedDict):
+    colour: NotRequired[discord.Colour | None]
+    title: NotRequired[str | None]
+    url: NotRequired[str | None]
+    description: NotRequired[str | None]
+    timestamp: NotRequired[datetime.datetime | None]
+    author: NotRequired[str | None]
+    author_url: NotRequired[str | None]
+    author_icon: NotRequired[str | None]
+    footer: NotRequired[str | None]
+    footer_icon: NotRequired[str | None]
+    image: NotRequired[str | None]
+    thumbnail: NotRequired[str | None]
+
+
+def embed(**kwargs: Unpack[EmbedParameters]) -> discord.Embed:
     _embed = discord.Embed(
-        colour=colour,
-        title=title,
-        url=url,
-        description=description,
-        timestamp=timestamp,
+        colour=kwargs.get("colour"),
+        title=kwargs.get("title"),
+        url=kwargs.get("url"),
+        description=kwargs.get("description"),
+        timestamp=kwargs.get("timestamp"),
     )
-    if author is not None:
-        _embed.set_author(name=author, url=author_url, icon_url=author_icon)
-    if footer is not None:
-        _embed.set_footer(text=footer, icon_url=footer_icon)
-    if image is not None:
+    if author := kwargs.get("author"):
+        _embed.set_author(name=author, url=kwargs.get("author_url"), icon_url=kwargs.get("author_icon"))
+    if footer := kwargs.get("footer"):
+        _embed.set_footer(text=footer, icon_url=kwargs.get("footer_icon"))
+    if image := kwargs.get("image"):
         _embed.set_image(url=image)
-    if thumbnail is not None:
+    if thumbnail := kwargs.get("thumbnail"):
         _embed.set_thumbnail(url=thumbnail)
     return _embed

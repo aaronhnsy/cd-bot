@@ -18,12 +18,6 @@ __all__ = [
 ]
 
 
-@dataclasses.dataclass
-class Response:
-    description: str
-    footer: str | None = None
-
-
 async def original(
     error: Exception,
     ctx: custom.Context
@@ -48,6 +42,12 @@ async def command_not_found(
     await ctx.message.add_reaction(values.STOP_EMOJI)
     await asyncio.sleep(2.5)
     await ctx.message.remove_reaction(values.STOP_EMOJI, ctx.me)
+
+
+@dataclasses.dataclass
+class Response:
+    description: str
+    footer: str | None = None
 
 
 def disabled_command(

@@ -39,6 +39,7 @@ useLibraryCodeForTypes = true
 reportPrivateUsage       = false
 reportPrivateImportUsage = false
 reportUnknownMemberType  = false
+reportMissingTypeStubs  = false
 
 [tool.isort]
 line_length                = 110

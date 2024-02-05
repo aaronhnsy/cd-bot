@@ -444,7 +444,7 @@ dev = ["black", "coveralls", "mypy", "pre-commit", "pylint", "pytest (>=5)", "py
 
 [[package]]
 name = "discord-ext-lava"
-version = "1.0.0a5"
+version = "1.0.0a1"
 description = "A discord.py extension for the Lavalink API and WebSocket."
 optional = false
 python-versions = "^3.12.0"
