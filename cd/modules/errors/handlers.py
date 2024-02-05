@@ -1,8 +1,7 @@
 import asyncio
 import dataclasses
 from collections.abc import Callable
-from typing import TypeVar
-from typing_extensions import Self
+from typing import Self
 
 import discord
 from discord.ext import commands
@@ -15,7 +14,7 @@ from cd.enums import Environment
 __all__ = [
     "original",
     "command_not_found",
-    "HANDLERS",
+    "ERROR_HANDLERS",
 ]
 
 
@@ -36,7 +35,7 @@ async def original(
     if CONFIG.general.environment == Environment.DEVELOPMENT:
         await ctx.reply(
             embed=embed,
-            content=utilities.codeblock(utilities.format_traceback(error), "py")
+            content=utilities.codeblock(utilities.format_traceback(error), language="py")
         )
     else:
         await ctx.reply(embed=embed)
@@ -353,19 +352,13 @@ def nsfw_channel_required(
     return Response(description="This command can only be used in NSFW channels.")
 
 
-T = TypeVar("T", bound=commands.CommandError, contravariant=True)
+class ErrorHandlers:
 
-
-class Handlers:
-
-    def __getitem__(self: Self, item: type[T]) -> Callable[[T, custom.Context], Response]:
-        ...
-
-    def __contains__(self: Self, item: type[T]) -> bool:
+    def get[T: commands.CommandError](self: Self, item: type[T]) -> Callable[[T, custom.Context], Response] | None:
         ...
 
 
-HANDLERS: Handlers = {  # type: ignore
+ERROR_HANDLERS: ErrorHandlers = {  # type: ignore
     # commands.CommandError ->
     commands.DisabledCommand:               disabled_command,
     commands.CommandOnCooldown:             command_on_cooldown,
