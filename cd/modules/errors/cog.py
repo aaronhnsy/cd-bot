@@ -4,10 +4,12 @@ from cd import custom, enums, utilities, values
 from cd.modules.errors.handlers import ERROR_HANDLERS, command_not_found, original
 
 
-__all__ = ["ErrorsEvents"]
+__all__ = ["Errors"]
 
 
-class ErrorsEvents(custom.Cog):
+class Errors(custom.Cog, name="Errors"):
+    emoji = "🚫"
+    description = "Error handling and testing commands."
 
     @custom.Cog.listener("on_command_error")
     async def on_command_error(self, ctx: custom.Context, error: commands.CommandError) -> None:
@@ -54,3 +56,8 @@ class ErrorsEvents(custom.Cog):
             await original(error.original, ctx)
         else:
             await original(error, ctx)
+
+    @commands.command(name="error")
+    async def error(self, ctx: custom.Context) -> None:
+        """Raises an error to test the error handler."""
+        raise ValueError("This is a test error.")

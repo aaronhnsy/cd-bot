@@ -14,7 +14,7 @@ __all__ = ["Cog"]
 
 class Cog(commands.Cog):
     emoji: str = "\N{WHITE QUESTION MARK ORNAMENT}"
-    description: str = "No description provided."  # pyright: ignore - idc about incorrectly overriding this
+    description: str = "No description provided."  # type: ignore
 
     def __init__(self, bot: CD) -> None:
         self.bot: CD = bot

@@ -53,9 +53,10 @@ class HelpCommand(commands.HelpCommand):
         for command in self._filter_commands([*self.context.bot.walk_commands()]):
             category = command.cog.qualified_name if command.cog else "Miscellaneous"
             if category not in categories:
+                miscellaneous_description = "Uncategorized miscellaneous commands."
                 categories[category] = HelpCommandCategory(
                     name=category,
-                    description=command.cog.description if command.cog else "Miscellaneous commands.",
+                    description=command.cog.description if command.cog else miscellaneous_description,
                     emoji=command.cog.emoji if command.cog else "\N{JUGGLING}",
                     fields=[]
                 )

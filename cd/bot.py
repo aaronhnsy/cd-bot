@@ -121,7 +121,7 @@ class CD(commands.AutoShardedBot):
     async def _load_extensions(self) -> None:
         await self.load_extension("jishaku")
         await self.load_extension("cd.modules.errors")
-        await self.load_extension("cd.modules.misc")
+        await self.load_extension("cd.modules.meta")
         await self.load_extension("cd.modules.stats")
         await self.load_extension("cd.modules.voice")
 

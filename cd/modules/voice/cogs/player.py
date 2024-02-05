@@ -12,8 +12,8 @@ class VoicePlayer(custom.Cog):
 
     @commands.command(name="join", aliases=["connect"])
     async def join(self, ctx: custom.Context) -> None:
-        await ctx.author.voice.channel.connect(cls=Player(link=self.bot.lavalink))
+        await ctx.author.voice.channel.connect(cls=Player(link=self.bot.lavalink))  # type: ignore
 
     @commands.command(name="play")
     async def play(self, ctx: custom.Context, *, search: str) -> None:
-        await ctx.voice_client.update(track=(await self.bot.lavalink.search(f"ytsearch:{search}")).tracks[0])
+        await ctx.player.update(track=(await self.bot.lavalink.search(f"ytsearch:{search}")).tracks[0])  # type: ignore

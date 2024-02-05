@@ -11,8 +11,12 @@ class VoiceEvents(custom.Cog):
 
     @custom.Cog.listener("on_lava_track_start")
     async def on_lava_track_start(self, player: Player, event: lava.TrackStartEvent) -> None:
+        if not player._channel:
+            return
         await player._channel.send(f"Playing {event.track.title}.")
 
     @custom.Cog.listener("on_lava_track_end")
     async def on_lava_track_end(self, player: Player, event: lava.TrackEndEvent) -> None:
+        if not player._channel:
+            return
         await player._channel.send(f"Finished {event.track.title}.")
