@@ -5,7 +5,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry]
 name        = "cd-bot"
 version     = "1.0.0"
-description = "A general purpose music bot."
+description = "A general purpose discord music bot."
 authors     = ["Aaron Hennessey <aaronhnsy@gmail.com>"]
 
 [tool.poetry.dependencies]
