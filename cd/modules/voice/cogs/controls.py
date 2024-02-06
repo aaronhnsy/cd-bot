@@ -65,12 +65,43 @@ class VoiceControls(custom.Cog, name="Voice Controls"):
     @are_bot_and_user_in_same_voice_channel()
     async def leave(self, ctx: custom.Context) -> None:
         """Disconnects the bot from the voice channel."""
-        assert ctx.player is not None
-        assert ctx.player.channel is not None
-        channel = ctx.player.channel
-        await ctx.player.disconnect()
+        player: Player = ctx.player  # pyright: ignore
+        channel: VoiceChannel = player.channel  # pyright: ignore
+        await player.disconnect()
         raise exceptions.EmbedResponse(
             description=f"I've disconnected from {channel.mention}.",
+            colour=values.SUCCESS_COLOUR,
+        )
+
+    @commands.command(name="pause")
+    @are_bot_and_user_in_same_voice_channel()
+    async def pause(self, ctx: custom.Context) -> None:
+        """Pauses the current track."""
+        player: Player = ctx.player # pyright: ignore
+        if player.is_paused():
+            raise exceptions.EmbedResponse(
+                description="The player is already paused.",
+                colour=values.ERROR_COLOUR,
+            )
+        await player.pause()
+        raise exceptions.EmbedResponse(
+            description="The player has been paused.",
+            colour=values.SUCCESS_COLOUR,
+        )
+
+    @commands.command(name="resume")
+    @are_bot_and_user_in_same_voice_channel()
+    async def resume(self, ctx: custom.Context) -> None:
+        """Resumes the current track."""
+        player: Player = ctx.player # pyright: ignore
+        if not player.is_paused():
+            raise exceptions.EmbedResponse(
+                description="The player is not paused.",
+                colour=values.ERROR_COLOUR,
+            )
+        await player.resume()
+        raise exceptions.EmbedResponse(
+            description="The player has been resumed.",
             colour=values.SUCCESS_COLOUR,
         )
 
