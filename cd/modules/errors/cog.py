@@ -38,7 +38,7 @@ class Errors(custom.Cog, name="Errors"):
 
     @custom.Cog.listener("on_command_error")
     async def on_command_error(self, ctx: custom.Context, error: commands.CommandError) -> None:
-        if isinstance(error, exceptions.EmbedError):
+        if isinstance(error, exceptions.EmbedResponse):
             await ctx.reply(
                 embed=error.embed,
                 view=error.view or discord.utils.MISSING,
@@ -46,7 +46,7 @@ class Errors(custom.Cog, name="Errors"):
             return
         # log the error to the webhook provided in the config
         await self.bot.webhooks["errors"].send(
-            content=utilities.codeblock(utilities.format_traceback(error), language="py"),
+            content=utilities.codeblock(utilities.format_traceback(error)[-1990:], language="py"),
             embed=self._build_error_webhook_embed(ctx, error),
         )
         # show a user-friendly error message depending on its type
